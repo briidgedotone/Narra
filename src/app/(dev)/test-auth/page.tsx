@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser, useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,14 @@ export default function TestAuthPage() {
                   <p className="text-sm text-muted-foreground">
                     Authentication is working but no user is signed in
                   </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button asChild className="flex-1">
+                    <Link href="/sign-in">Test Sign In</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="flex-1">
+                    <Link href="/sign-up">Test Sign Up</Link>
+                  </Button>
                 </div>
               </div>
             )}
