@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { APP_CONFIG } from "@/config";
+import { APP_CONFIG, devLog } from "@/config";
 
 export default function TestUIPage() {
+  // Test development logging
+  devLog("Test UI page loaded successfully!");
+
   return (
     <div className="container mx-auto p-8 space-y-8">
       <h1 className="text-3xl font-bold">{APP_CONFIG.name} - UI Test</h1>
