@@ -3,3 +3,6 @@
 // Example: export * from './permissions';
 
 // This file will be populated as we create auth utilities
+
+// Auth utilities and exports
+export * from "./clerk";

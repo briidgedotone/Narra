@@ -1,6 +1,6 @@
 // Global type definitions will be exported from here
-// Example: export * from './user';
-// Example: export * from './post';
-// Example: export * from './board';
+export * from "./database";
 
-// This file will be populated as we create type definitions
+// Additional app-specific types will be added here
+// Example: export * from './api';
+// Example: export * from './components';
