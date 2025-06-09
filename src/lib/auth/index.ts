@@ -6,3 +6,4 @@
 
 // Auth utilities and exports
 export * from "./clerk";
+export * from "./sync";
