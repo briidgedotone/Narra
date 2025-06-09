@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser, useAuth } from "@clerk/nextjs";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -129,6 +130,24 @@ export default function TestAuthPage() {
                   <div>
                     <strong>Name:</strong> {user.firstName} {user.lastName}
                   </div>
+                  <div>
+                    <strong>Auth Method:</strong>{" "}
+                    {user.externalAccounts?.length > 0
+                      ? `OAuth (${user.externalAccounts[0]?.provider})`
+                      : "Email/Password"}
+                  </div>
+                  {user.imageUrl && (
+                    <div>
+                      <strong>Profile Image:</strong>{" "}
+                      <Image
+                        src={user.imageUrl}
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full inline-block ml-2"
+                      />
+                    </div>
+                  )}
                 </div>
                 <Button
                   onClick={() => signOut()}
@@ -144,20 +163,43 @@ export default function TestAuthPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Next Steps</CardTitle>
+            <CardTitle>Google OAuth Test</CardTitle>
             <CardDescription>
-              What to do to complete authentication setup
+              Test Google authentication integration
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                If Google OAuth is enabled in Clerk, you should see a
+                &ldquo;Continue with Google&rdquo; button on the sign-in and
+                sign-up pages.
+              </p>
+              <div className="flex gap-2">
+                <Button asChild size="sm">
+                  <Link href="/sign-in">Test Google Sign In</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/sign-up">Test Google Sign Up</Link>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Next Steps</CardTitle>
+            <CardDescription>Authentication setup progress</CardDescription>
+          </CardHeader>
+          <CardContent>
             <ol className="list-decimal list-inside space-y-2 text-sm">
-              <li>
-                Copy your Clerk keys to <code>.env.local</code>
-              </li>
-              <li>Restart the development server</li>
-              <li>Test this page again</li>
-              <li>Create sign-in and sign-up pages</li>
-              <li>Add authentication to other routes</li>
+              <li>✅ Clerk keys configured</li>
+              <li>✅ Sign-in and sign-up pages created</li>
+              <li>✅ Dashboard protection working</li>
+              <li>✅ Google OAuth enabled</li>
+              <li>🔄 Test Google authentication flow</li>
+              <li>⏳ User database synchronization</li>
             </ol>
           </CardContent>
         </Card>
