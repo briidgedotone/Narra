@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { BoardCard, type BoardData } from "./board-card";
 import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { ConfirmDialog } from "./confirm-dialog";
@@ -25,6 +26,13 @@ import { Loading } from "./loading";
 import { Modal } from "./modal";
 import { PostGrid, type PostGridItem } from "./post-grid";
 import { ProfileCard, ProfileAvatar, type ProfileData } from "./profile-card";
+import {
+  SearchBar,
+  FilterPanel,
+  SearchResultsHeader,
+  type SearchFilters,
+  type SearchSuggestion,
+} from "./search-filter";
 
 export function ColorTest() {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -148,6 +156,110 @@ export function ColorTest() {
       isFollowing: false,
     },
   ];
+
+  const mockBoards: BoardData[] = [
+    {
+      id: "1",
+      name: "Tech Inspiration",
+      description:
+        "Amazing tech content and coding tutorials from top creators",
+      postCount: 24,
+      isPublic: true,
+      previewPosts: [
+        {
+          id: "1",
+          thumbnail: "https://picsum.photos/150/200?random=20",
+          platform: "tiktok",
+        },
+        {
+          id: "2",
+          thumbnail: "https://picsum.photos/150/200?random=21",
+          platform: "instagram",
+        },
+        {
+          id: "3",
+          thumbnail: "https://picsum.photos/150/200?random=22",
+          platform: "tiktok",
+        },
+        {
+          id: "4",
+          thumbnail: "https://picsum.photos/150/200?random=23",
+          platform: "instagram",
+        },
+      ],
+      createdAt: "2024-01-10",
+      updatedAt: "2024-01-15",
+      folderId: "work",
+      folderName: "Work Projects",
+    },
+    {
+      id: "2",
+      name: "Design Trends",
+      description: "Latest UI/UX design trends and inspiration",
+      postCount: 18,
+      isPublic: false,
+      previewPosts: [
+        {
+          id: "5",
+          thumbnail: "https://picsum.photos/150/200?random=24",
+          platform: "instagram",
+        },
+        {
+          id: "6",
+          thumbnail: "https://picsum.photos/150/200?random=25",
+          platform: "tiktok",
+        },
+      ],
+      createdAt: "2024-01-08",
+      updatedAt: "2024-01-14",
+      folderId: "personal",
+      folderName: "Personal",
+    },
+    {
+      id: "3",
+      name: "Marketing Ideas",
+      description: "Creative marketing campaigns and strategies",
+      postCount: 31,
+      isPublic: true,
+      previewPosts: [
+        {
+          id: "7",
+          thumbnail: "https://picsum.photos/150/200?random=26",
+          platform: "tiktok",
+        },
+        {
+          id: "8",
+          thumbnail: "https://picsum.photos/150/200?random=27",
+          platform: "instagram",
+        },
+        {
+          id: "9",
+          thumbnail: "https://picsum.photos/150/200?random=28",
+          platform: "tiktok",
+        },
+      ],
+      createdAt: "2024-01-05",
+      updatedAt: "2024-01-13",
+    },
+  ];
+
+  const mockSuggestions: SearchSuggestion[] = [
+    { id: "1", text: "@creativecoder", type: "handle", count: 12500 },
+    { id: "2", text: "@designguru", type: "handle", count: 8900 },
+    { id: "3", text: "#webdev", type: "hashtag", count: 45600 },
+    { id: "4", text: "#uidesign", type: "hashtag", count: 23400 },
+    { id: "5", text: "react tutorial", type: "keyword", count: 1200 },
+    { id: "6", text: "figma tips", type: "keyword", count: 890 },
+  ];
+
+  // Search state
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchFilters, setSearchFilters] = React.useState<SearchFilters>({
+    query: "",
+    platform: "all",
+    dateRange: "all",
+    sortBy: "recent",
+  });
 
   return (
     <div className="content-spacing">
@@ -497,6 +609,111 @@ export function ColorTest() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Board Cards */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">Board Cards</h3>
+
+            {/* Default Board Cards */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Default Variant</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
+                {mockBoards.map(board => (
+                  <BoardCard
+                    key={board.id}
+                    board={board}
+                    onViewBoard={board => alert(`View board: ${board.name}`)}
+                    onEditBoard={board => alert(`Edit board: ${board.name}`)}
+                    onShareBoard={board => alert(`Share board: ${board.name}`)}
+                    onDeleteBoard={board =>
+                      alert(`Delete board: ${board.name}`)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Compact Board Cards */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Compact Variant</h4>
+              <div className="space-y-2 max-w-md">
+                {mockBoards.map(board => (
+                  <BoardCard
+                    key={board.id}
+                    board={board}
+                    variant="compact"
+                    onViewBoard={board => alert(`View board: ${board.name}`)}
+                    onEditBoard={board => alert(`Edit board: ${board.name}`)}
+                    onShareBoard={board => alert(`Share board: ${board.name}`)}
+                    onDeleteBoard={board =>
+                      alert(`Delete board: ${board.name}`)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Search and Filter Components */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">
+              Search & Filter Components
+            </h3>
+
+            {/* Search Bar */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">
+                Search Bar with Suggestions
+              </h4>
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                onSearch={query => alert(`Searching for: ${query}`)}
+                suggestions={mockSuggestions}
+                className="max-w-lg"
+              />
+            </div>
+
+            {/* Filter Panel */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Filter Panel</h4>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-1">
+                  <FilterPanel
+                    filters={searchFilters}
+                    onChange={setSearchFilters}
+                    onReset={() =>
+                      setSearchFilters({
+                        query: "",
+                        platform: "all",
+                        dateRange: "all",
+                        sortBy: "recent",
+                      })
+                    }
+                  />
+                </div>
+                <div className="lg:col-span-2">
+                  <div className="bg-muted rounded-lg p-4">
+                    <h5 className="font-medium mb-2">Current Filters:</h5>
+                    <pre className="text-sm text-muted-foreground">
+                      {JSON.stringify(searchFilters, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Results Header */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Search Results Header</h4>
+              <SearchResultsHeader
+                query={searchQuery || "example search"}
+                totalResults={1234}
+                filters={searchFilters}
+                onFiltersChange={setSearchFilters}
+              />
             </div>
           </div>
         </CardContent>
