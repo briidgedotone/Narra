@@ -1,9 +1,15 @@
+import { useState } from "react";
+
 import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import { ConfirmDialog } from "./confirm-dialog";
 import { ErrorMessage } from "./error-message";
 import { Loading } from "./loading";
+import { Modal } from "./modal";
 
 export function ColorTest() {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   return (
     <div className="content-spacing">
       <Card>
@@ -102,6 +108,35 @@ export function ColorTest() {
             </div>
           </div>
 
+          {/* Modal & Dialog Components */}
+          <div className="space-y-2">
+            <h3 className="font-semibold">Modal & Dialog Components</h3>
+            <div className="flex gap-2">
+              <Modal
+                trigger={<Button variant="outline">Open Modal</Button>}
+                title="Example Modal"
+                description="This is a sample modal dialog"
+              >
+                <div className="space-y-4">
+                  <p>
+                    This is the modal content area. You can put any content
+                    here.
+                  </p>
+                  <div className="flex justify-end">
+                    <Button>Done</Button>
+                  </div>
+                </div>
+              </Modal>
+
+              <Button
+                variant="destructive"
+                onClick={() => setConfirmOpen(true)}
+              >
+                Delete Action
+              </Button>
+            </div>
+          </div>
+
           {/* Background Colors */}
           <div className="space-y-2">
             <h3 className="font-semibold">Background & Text</h3>
@@ -114,6 +149,21 @@ export function ColorTest() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Confirm Delete"
+        description="Are you sure you want to delete this item? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+        onConfirm={() => {
+          // Handle delete action
+          console.log("Item deleted");
+        }}
+      />
     </div>
   );
 }
