@@ -3,10 +3,10 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "./button";
 
 interface ErrorMessageProps {
-  title?: string;
+  title?: string | undefined;
   message: string;
-  onRetry?: () => void;
-  showIcon?: boolean;
+  onRetry?: (() => void) | undefined;
+  showIcon?: boolean | undefined;
 }
 
 export function ErrorMessage({

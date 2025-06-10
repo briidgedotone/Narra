@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/nextjs";
 
 interface HeaderProps {
-  title?: string;
+  title?: string | undefined;
 }
 
 export function Header({ title }: HeaderProps) {

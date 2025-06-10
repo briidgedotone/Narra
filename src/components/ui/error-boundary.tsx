@@ -6,7 +6,7 @@ import { ErrorMessage } from "./error-message";
 
 interface ErrorBoundaryState {
   hasError: boolean;
-  error?: Error;
+  error?: Error | undefined;
 }
 
 interface ErrorBoundaryProps {

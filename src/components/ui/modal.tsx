@@ -14,10 +14,10 @@ import {
 interface ModalProps {
   trigger: ReactNode;
   title: string;
-  description?: string;
+  description?: string | undefined;
   children: ReactNode;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
 }
 
 export function Modal({
@@ -29,7 +29,10 @@ export function Modal({
   onOpenChange,
 }: ModalProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      {...(open !== undefined && { open })}
+      {...(onOpenChange && { onOpenChange })}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
