@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "./card";
 
 export function ColorTest() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="content-spacing">
       <Card>
         <CardHeader>
           <CardTitle>Use Narra Design System Test</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="content-spacing">
           {/* Primary Colors */}
           <div className="space-y-2">
             <h3 className="font-semibold">Primary (Purple/Violet)</h3>
@@ -52,6 +52,28 @@ export function ColorTest() {
               </p>
               <p className="text-small">Small text for secondary information</p>
               <p className="text-caption">Caption text for labels</p>
+            </div>
+          </div>
+
+          {/* Spacing System */}
+          <div className="space-y-2">
+            <h3 className="font-semibold">Spacing & Layout System</h3>
+            <div className="bg-muted rounded-md card-spacing">
+              <h4>Card Spacing Example</h4>
+              <p className="text-small">
+                This card uses the card-spacing utility for consistent padding.
+              </p>
+            </div>
+            <div className="bg-muted rounded-md p-4">
+              <div className="content-spacing">
+                <h4>Content Spacing Example</h4>
+                <p className="text-small">
+                  Multiple items with content-spacing utility.
+                </p>
+                <p className="text-small">
+                  Creates consistent vertical rhythm.
+                </p>
+              </div>
             </div>
           </div>
 
