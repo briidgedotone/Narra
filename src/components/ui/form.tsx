@@ -263,6 +263,7 @@ interface FormSubmitProps {
   loading?: boolean;
   disabled?: boolean;
   className?: string;
+  type?: "submit" | "button";
   variant?:
     | "default"
     | "destructive"
@@ -277,6 +278,7 @@ export function FormSubmit({
   loading,
   disabled,
   className,
+  type = "submit",
   variant = "default",
 }: FormSubmitProps) {
   const { form } = useFormContext();
@@ -284,7 +286,7 @@ export function FormSubmit({
 
   return (
     <Button
-      type="submit"
+      type={type}
       disabled={disabled || isSubmitting}
       variant={variant}
       className={className}
@@ -367,6 +369,9 @@ export const contactFormSchema = z.object({
   email: validationSchemas.email,
   subject: validationSchemas.required("Subject is required"),
   message: validationSchemas.required("Message is required"),
+  priority: z.enum(["low", "medium", "high", "urgent"], {
+    required_error: "Please select a priority level",
+  }),
 });
 
 export const profileSearchSchema = z.object({
