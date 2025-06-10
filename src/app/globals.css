@@ -123,4 +123,27 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Use Narra Typography System */
+  h1 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply text-xl font-semibold;
+  }
+  h4 {
+    @apply text-lg font-medium;
+  }
+  p {
+    @apply leading-relaxed;
+  }
+  .text-small {
+    @apply text-sm text-muted-foreground;
+  }
+  .text-caption {
+    @apply text-xs text-muted-foreground uppercase tracking-wider;
+  }
 }
