@@ -1,5 +1,6 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
 import { Folder, Users, BookOpen, Settings } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
@@ -91,7 +92,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
 
   return (
     <div className={getContentSpacing()}>
-      {/* Dashboard Header with Settings */}
+      {/* Dashboard Header with Profile and Settings */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -99,15 +100,18 @@ export function DashboardContent({ userId }: DashboardContentProps) {
             Welcome back! Here&apos;s what&apos;s happening with your content.
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setSettingsOpen(true)}
-          className="flex items-center gap-2"
-        >
-          <Settings className="h-4 w-4" />
-          Customize
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSettingsOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Customize
+          </Button>
+          <UserButton />
+        </div>
       </div>
 
       {/* Stats Cards */}
