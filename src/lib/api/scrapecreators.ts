@@ -1,85 +1,113 @@
 // ScrapeCreators API Client
 import type {
-  ScrapeCreatorsSearchRequest,
-  ScrapeCreatorsSearchResponse,
-  ScrapeCreatorsError,
+  InstagramProfile,
+  InstagramPost,
+  ScrapeCreatorsResponse,
+  DiscoverySearchParams,
 } from "@/types/api";
 
-class ScrapeCreatorsAPI {
+const BASE_URL = "https://api.scrapecreators.com/v1";
+
+class ScrapeCreatorsClient {
   private apiKey: string;
-  private baseUrl: string;
 
-  constructor() {
-    this.apiKey = process.env.SCRAPECREATORS_API_KEY || "";
-    this.baseUrl =
-      process.env.SCRAPECREATORS_BASE_URL || "https://api.scrapecreators.com";
-
-    if (!this.apiKey) {
-      console.warn("ScrapeCreators API key not found. API calls will fail.");
-    }
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
   }
 
-  /**
-   * Search for profiles and posts
-   */
-  async searchProfiles(
-    request: ScrapeCreatorsSearchRequest
-  ): Promise<ScrapeCreatorsSearchResponse> {
+  private async request<T>(
+    endpoint: string
+  ): Promise<ScrapeCreatorsResponse<T>> {
     try {
-      const url = new URL(`${this.baseUrl}/search`);
-
-      // Add query parameters
-      if (request.handle) url.searchParams.set("handle", request.handle);
-      if (request.url) url.searchParams.set("url", request.url);
-      if (request.platform) url.searchParams.set("platform", request.platform);
-      if (request.limit)
-        url.searchParams.set("limit", request.limit.toString());
-      if (request.offset)
-        url.searchParams.set("offset", request.offset.toString());
-
-      // Add filter parameters
-      if (request.filters) {
-        const { filters } = request;
-        if (filters.recency) url.searchParams.set("recency", filters.recency);
-        if (filters.date_range)
-          url.searchParams.set("date_range", filters.date_range.toString());
-        if (filters.min_likes)
-          url.searchParams.set("min_likes", filters.min_likes.toString());
-        if (filters.max_likes)
-          url.searchParams.set("max_likes", filters.max_likes.toString());
-        if (filters.min_comments)
-          url.searchParams.set("min_comments", filters.min_comments.toString());
-        if (filters.max_comments)
-          url.searchParams.set("max_comments", filters.max_comments.toString());
-      }
-
-      const response = await fetch(url.toString(), {
-        method: "GET",
+      const response = await fetch(`${BASE_URL}${endpoint}`, {
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          "Content-Type": "application/json",
+          "x-api-key": this.apiKey,
         },
       });
 
       if (!response.ok) {
-        const errorData: ScrapeCreatorsError = await response.json();
-        throw new Error(`ScrapeCreators API Error: ${errorData.message}`);
+        return {
+          success: false,
+          error: `API Error: ${response.status} - ${response.statusText}`,
+        };
       }
 
-      return await response.json();
+      const data = await response.json();
+      return {
+        success: true,
+        data,
+      };
     } catch (error) {
-      console.error("ScrapeCreators API Error:", error);
-      throw error;
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
-  /**
-   * Check if API is configured
-   */
-  isConfigured(): boolean {
-    return !!this.apiKey;
+  // Get Instagram profile by handle
+  async getInstagramProfile(
+    handle: string
+  ): Promise<ScrapeCreatorsResponse<InstagramProfile>> {
+    return this.request<InstagramProfile>(
+      `/instagram/profile?handle=${encodeURIComponent(handle)}`
+    );
+  }
+
+  // Get Instagram post by URL
+  async getInstagramPost(
+    postUrl: string
+  ): Promise<ScrapeCreatorsResponse<InstagramPost>> {
+    return this.request<InstagramPost>(
+      `/instagram/post?url=${encodeURIComponent(postUrl)}`
+    );
+  }
+
+  // Search for content (main discovery function)
+  async searchContent(params: DiscoverySearchParams): Promise<
+    ScrapeCreatorsResponse<{
+      profile: InstagramProfile;
+      posts: InstagramPost[];
+    }>
+  > {
+    const { handle, platform } = params;
+
+    if (platform === "instagram") {
+      const profileResult = await this.getInstagramProfile(handle);
+
+      if (!profileResult.success || !profileResult.data) {
+        return {
+          success: false,
+          error: profileResult.error || "Failed to fetch profile",
+        };
+      }
+
+      // For MVP, we'll return profile with empty posts array
+      // Posts will be fetched separately based on filters
+      return {
+        success: true,
+        data: {
+          profile: profileResult.data,
+          posts: [],
+        },
+      };
+    }
+
+    return {
+      success: false,
+      error: "TikTok not implemented yet",
+    };
   }
 }
 
 // Export singleton instance
-export const scrapeCreatorsAPI = new ScrapeCreatorsAPI();
+const getApiKey = (): string => {
+  const apiKey = process.env.SCRAPECREATORS_API_KEY;
+  if (!apiKey) {
+    throw new Error("SCRAPECREATORS_API_KEY environment variable is required");
+  }
+  return apiKey;
+};
+
+export const scrapeCreators = new ScrapeCreatorsClient(getApiKey());
+export { ScrapeCreatorsClient };

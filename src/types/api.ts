@@ -1,9 +1,9 @@
-// API types for external integrations
+// ScrapeCreators API Response Types
 
-// ScrapeCreators API types
-export interface ScrapeCreatorsProfile {
+// Instagram Profile Response
+export interface InstagramProfile {
+  id: string;
   handle: string;
-  platform: "instagram" | "tiktok";
   display_name?: string;
   bio?: string;
   followers_count?: number;
@@ -13,9 +13,10 @@ export interface ScrapeCreatorsProfile {
   verified?: boolean;
 }
 
-export interface ScrapeCreatorsPost {
+// Instagram Post Response
+export interface InstagramPost {
   id: string;
-  platform: "instagram" | "tiktok";
+  platform_post_id: string;
   embed_url: string;
   caption?: string;
   transcript?: string;
@@ -29,31 +30,27 @@ export interface ScrapeCreatorsPost {
   };
 }
 
-export interface ScrapeCreatorsSearchRequest {
-  handle?: string;
-  url?: string;
-  platform?: "instagram" | "tiktok";
-  filters?: {
-    recency?: "latest" | "most_viewed";
-    date_range?: 30 | 60 | 90 | 180 | 365;
-    min_likes?: number;
-    max_likes?: number;
-    min_comments?: number;
-    max_comments?: number;
-  };
+// API Response wrapper
+export interface ScrapeCreatorsResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// Search filters for posts
+export interface PostFilters {
+  recency?: "latest" | "most_viewed";
+  date_range?: 30 | 60 | 90 | 180 | 365; // days
+  min_likes?: number;
+  max_likes?: number;
+  min_comments?: number;
+  max_comments?: number;
+}
+
+// Discovery search params
+export interface DiscoverySearchParams {
+  handle: string;
+  platform: "instagram" | "tiktok";
+  filters?: PostFilters;
   limit?: number;
-  offset?: number;
-}
-
-export interface ScrapeCreatorsSearchResponse {
-  profile: ScrapeCreatorsProfile;
-  posts: ScrapeCreatorsPost[];
-  total_posts: number;
-  has_more: boolean;
-}
-
-export interface ScrapeCreatorsError {
-  error: string;
-  message: string;
-  status_code: number;
 }

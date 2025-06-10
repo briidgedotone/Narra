@@ -1,49 +1,30 @@
-import { NextResponse } from "next/server";
+// Test route for ScrapeCreators API integration
+import { NextRequest, NextResponse } from "next/server";
 
-import { scrapeCreatorsAPI } from "@/lib/api/scrapecreators";
+import { scrapeCreators } from "@/lib/api/scrapecreators";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Check if API is configured
-    if (!scrapeCreatorsAPI.isConfigured()) {
-      return NextResponse.json(
-        {
-          error: "ScrapeCreators API not configured",
-          message: "Please add SCRAPECREATORS_API_KEY to environment variables",
-        },
-        { status: 500 }
-      );
-    }
+    const { searchParams } = new URL(request.url);
+    const handle = searchParams.get("handle") || "instagram"; // Default test handle
 
-    // Test with a simple search (using a popular account for testing)
-    const testRequest = {
-      handle: "test",
-      platform: "instagram" as const,
-      limit: 1,
-      filters: {
-        date_range: 30 as const,
-      },
-    };
+    console.log(`Testing ScrapeCreators API with handle: ${handle}`);
 
-    const result = await scrapeCreatorsAPI.searchProfiles(testRequest);
+    const result = await scrapeCreators.getInstagramProfile(handle);
 
     return NextResponse.json({
       success: true,
-      message: "ScrapeCreators API working",
-      data: {
-        profile: result.profile,
-        posts_count: result.posts.length,
-        total_posts: result.total_posts,
-        has_more: result.has_more,
-      },
+      result,
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error("ScrapeCreators test error:", error);
 
     return NextResponse.json(
       {
-        error: "ScrapeCreators API test failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );
