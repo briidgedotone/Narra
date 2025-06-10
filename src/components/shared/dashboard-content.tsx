@@ -1,12 +1,13 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { Folder, Users, BookOpen, Settings } from "lucide-react";
+import { Folder, Users, BookOpen, Settings, Search } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
 import { StatsCard, ActivityItem, QuickActions } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { db } from "@/lib/database";
 
 import {
@@ -41,6 +42,7 @@ export function DashboardContent({ userId }: DashboardContentProps) {
   const [activityError, setActivityError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Dashboard settings
   const { settings, updateSettings } = useDashboardSettings();
@@ -92,25 +94,38 @@ export function DashboardContent({ userId }: DashboardContentProps) {
 
   return (
     <div className={getContentSpacing()}>
-      {/* Dashboard Header with Profile and Settings */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here&apos;s what&apos;s happening with your content.
-          </p>
+      {/* Dashboard Header with Search, Profile and Settings */}
+      <div className="space-y-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground">
+              Welcome back! Here&apos;s what&apos;s happening with your content.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSettingsOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Customize
+            </Button>
+            <UserButton />
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSettingsOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Settings className="h-4 w-4" />
-            Customize
-          </Button>
-          <UserButton />
+
+        {/* Search Bar */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search content, profiles, or boards..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
       </div>
 

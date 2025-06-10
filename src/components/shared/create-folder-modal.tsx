@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { z } from "zod";
 
+import { useToast } from "@/components/ui/toast";
 import { db } from "@/lib/database";
 
 const createFolderSchema = z.object({
@@ -33,6 +34,7 @@ export function CreateFolderModal({
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +60,25 @@ export function CreateFolderModal({
       setDescription("");
       setError("");
       onSuccess?.();
-      alert("Folder created successfully!");
+
+      // Show success toast
+      toast({
+        type: "success",
+        title: "Folder created successfully!",
+        description: `"${name.trim()}" has been added to your folders.`,
+      });
+
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating folder:", error);
-      setError("Failed to create folder. Please try again.");
+
+      // Show error toast
+      toast({
+        type: "error",
+        title: "Failed to create folder",
+        description:
+          "Please try again or contact support if the problem persists.",
+      });
     } finally {
       setIsSubmitting(false);
     }
