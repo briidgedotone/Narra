@@ -31,7 +31,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               onClick={() => setMobileMenuOpen(false)}
             />
             {/* Sidebar */}
-            <div className="fixed left-0 top-0 h-full z-50">
+            <div className="fixed left-0 top-0 h-screen z-50 bg-background">
               <Sidebar />
             </div>
           </div>
