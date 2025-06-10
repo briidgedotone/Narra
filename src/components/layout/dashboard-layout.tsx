@@ -21,7 +21,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
 
           {/* Page Content */}
           <main className="flex-1 overflow-auto">
-            <div className="container-narra section-spacing">{children}</div>
+            <div className="container-narra py-6">{children}</div>
           </main>
         </div>
       </div>
