@@ -1,5 +1,7 @@
 import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import { ErrorMessage } from "./error-message";
+import { Loading } from "./loading";
 
 export function ColorTest() {
   return (
@@ -73,6 +75,29 @@ export function ColorTest() {
                 <p className="text-small">
                   Creates consistent vertical rhythm.
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Loading & Error States */}
+          <div className="space-y-2">
+            <h3 className="font-semibold">Loading & Error Components</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-muted rounded-md p-4">
+                <h4 className="mb-2">Loading State</h4>
+                <div className="bg-background rounded-md">
+                  <Loading size="sm" text="Loading data..." />
+                </div>
+              </div>
+              <div className="bg-muted rounded-md p-4">
+                <h4 className="mb-2">Error State</h4>
+                <div className="bg-background rounded-md">
+                  <ErrorMessage
+                    title="Test Error"
+                    message="This is a sample error message"
+                    showIcon={false}
+                  />
+                </div>
               </div>
             </div>
           </div>
