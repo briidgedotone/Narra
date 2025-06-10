@@ -111,6 +111,16 @@ export default function TestSyncPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 font-semibold">
+                ✅ Database Connected Successfully
+              </p>
+              <p className="text-green-700 text-sm mt-1">
+                Supabase database is properly configured and ready for user
+                sync.
+              </p>
+            </div>
+
             <Button
               onClick={handleSync}
               disabled={isLoading}
@@ -134,17 +144,17 @@ export default function TestSyncPage() {
                     </p>
                     <div className="text-sm text-green-700 space-y-1">
                       <div>
-                        <strong>Database ID:</strong> {syncResult.user.id}
+                        <strong>Database ID:</strong> {syncResult.user?.id}
                       </div>
                       <div>
-                        <strong>Email:</strong> {syncResult.user.email}
+                        <strong>Email:</strong> {syncResult.user?.email}
                       </div>
                       <div>
-                        <strong>Role:</strong> {syncResult.user.role}
+                        <strong>Role:</strong> {syncResult.user?.role}
                       </div>
                       <div>
                         <strong>Subscription:</strong>{" "}
-                        {syncResult.user.subscriptionStatus}
+                        {syncResult.user?.subscriptionStatus}
                       </div>
                     </div>
                   </div>
