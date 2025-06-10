@@ -23,6 +23,8 @@ import {
 } from "./form";
 import { Loading } from "./loading";
 import { Modal } from "./modal";
+import { PostGrid, type PostGridItem } from "./post-grid";
+import { ProfileCard, ProfileAvatar, type ProfileData } from "./profile-card";
 
 export function ColorTest() {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -71,6 +73,81 @@ export function ColorTest() {
       boardForm.reset();
     }, 1000);
   };
+
+  // Mock data for specialized components
+  const mockPosts: PostGridItem[] = [
+    {
+      id: "1",
+      embedUrl: "https://example.com/post1",
+      thumbnail: "https://picsum.photos/300/400?random=1",
+      platform: "tiktok",
+      metrics: { likes: 1200, comments: 45, views: 5400 },
+      datePosted: "2024-01-15",
+      aspectRatio: 9 / 16,
+    },
+    {
+      id: "2",
+      embedUrl: "https://example.com/post2",
+      thumbnail: "https://picsum.photos/300/500?random=2",
+      platform: "instagram",
+      metrics: { likes: 890, comments: 23 },
+      datePosted: "2024-01-14",
+      aspectRatio: 4 / 5,
+    },
+    {
+      id: "3",
+      embedUrl: "https://example.com/post3",
+      thumbnail: "https://picsum.photos/300/350?random=3",
+      platform: "tiktok",
+      metrics: { likes: 2100, comments: 87, views: 12000 },
+      datePosted: "2024-01-13",
+      aspectRatio: 9 / 16,
+    },
+    {
+      id: "4",
+      embedUrl: "https://example.com/post4",
+      thumbnail: "https://picsum.photos/300/450?random=4",
+      platform: "instagram",
+      metrics: { likes: 654, comments: 12 },
+      datePosted: "2024-01-12",
+      aspectRatio: 1 / 1,
+    },
+  ];
+
+  const mockProfiles: ProfileData[] = [
+    {
+      id: "1",
+      handle: "@creativecoder",
+      displayName: "Creative Coder",
+      bio: "Building amazing digital experiences • Tech content creator • React & TypeScript enthusiast",
+      avatar: "https://picsum.photos/100/100?random=10",
+      platform: "tiktok",
+      metrics: { followers: 12500, following: 450, posts: 89 },
+      verified: true,
+      isFollowing: false,
+    },
+    {
+      id: "2",
+      handle: "@designguru",
+      displayName: "Design Guru",
+      bio: "UI/UX Designer sharing design tips and inspiration",
+      avatar: "https://picsum.photos/100/100?random=11",
+      platform: "instagram",
+      metrics: { followers: 8900, following: 230, posts: 156 },
+      verified: false,
+      isFollowing: true,
+    },
+    {
+      id: "3",
+      handle: "@techreviewer",
+      displayName: "Tech Reviewer",
+      bio: "Honest tech reviews and tutorials for everyone",
+      platform: "tiktok",
+      metrics: { followers: 45600, following: 120, posts: 234 },
+      verified: true,
+      isFollowing: false,
+    },
+  ];
 
   return (
     <div className="content-spacing">
@@ -336,6 +413,94 @@ export function ColorTest() {
           console.log("Item deleted");
         }}
       />
+
+      {/* Phase 4.3: Specialized Components */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">
+            Phase 4.3: Specialized Components
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Content-specific UI components for Use Narra
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          {/* Pinterest-style Post Grid */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Pinterest-style Post Grid</h3>
+            <PostGrid
+              posts={mockPosts}
+              onPostClick={post => alert(`Clicked post: ${post.id}`)}
+              onSavePost={post => alert(`Saved post: ${post.id}`)}
+              className="max-w-4xl"
+            />
+          </div>
+
+          {/* Loading Post Grid */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Loading State</h3>
+            <PostGrid posts={[]} loading={true} className="max-w-4xl" />
+          </div>
+
+          {/* Profile Cards */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">Profile Cards</h3>
+
+            {/* Default Profile Cards */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Default Variant</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
+                {mockProfiles.map(profile => (
+                  <ProfileCard
+                    key={profile.id}
+                    profile={profile}
+                    onFollow={profile => alert(`Followed: ${profile.handle}`)}
+                    onUnfollow={profile =>
+                      alert(`Unfollowed: ${profile.handle}`)
+                    }
+                    onViewProfile={profile =>
+                      alert(`View profile: ${profile.handle}`)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Compact Profile Cards */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Compact Variant</h4>
+              <div className="space-y-2 max-w-md">
+                {mockProfiles.map(profile => (
+                  <ProfileCard
+                    key={profile.id}
+                    profile={profile}
+                    variant="compact"
+                    onFollow={profile => alert(`Followed: ${profile.handle}`)}
+                    onUnfollow={profile =>
+                      alert(`Unfollowed: ${profile.handle}`)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Profile Avatars */}
+            <div className="space-y-3">
+              <h4 className="text-lg font-medium">Profile Avatars</h4>
+              <div className="flex items-center space-x-6">
+                {mockProfiles.map(profile => (
+                  <div key={profile.id} className="text-center space-y-2">
+                    <ProfileAvatar profile={profile} size="lg" />
+                    <p className="text-sm text-muted-foreground">
+                      {profile.handle}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
