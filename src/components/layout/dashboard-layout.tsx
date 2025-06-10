@@ -24,17 +24,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Mobile Sidebar Overlay */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 md:hidden">
+          <>
             {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black bg-opacity-50"
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
             {/* Sidebar */}
-            <div className="fixed left-0 top-0 h-screen z-50 bg-background">
+            <div className="fixed left-0 top-0 h-full z-50 md:hidden">
               <Sidebar />
             </div>
-          </div>
+          </>
         )}
 
         {/* Main Content */}
