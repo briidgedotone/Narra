@@ -306,6 +306,169 @@ export class DatabaseService {
     if (error) throw error;
     return data;
   }
+
+  // User Statistics
+  async getUserStats(userId: string) {
+    // Get folder and board counts
+    const { data: folderData, error: folderError } = await this.client
+      .from("folders")
+      .select("id, boards(id)")
+      .eq("user_id", userId);
+
+    if (folderError) throw folderError;
+
+    // Get following count
+    const { count: followingCount, error: followingError } = await this.client
+      .from("follows")
+      .select("id", { count: "exact" })
+      .eq("user_id", userId);
+
+    if (followingError) throw followingError;
+
+    // Get saved posts count (posts in user's boards)
+    const { count: savedPostsCount, error: savedPostsError } = await this.client
+      .from("board_posts")
+      .select("id", { count: "exact" })
+      .in(
+        "board_id",
+        folderData?.flatMap(f => f.boards?.map(b => b.id) || []) || []
+      );
+
+    if (savedPostsError) throw savedPostsError;
+
+    // Calculate totals
+    const foldersCount = folderData?.length || 0;
+    const boardsCount =
+      folderData?.reduce(
+        (total, folder) => total + (folder.boards?.length || 0),
+        0
+      ) || 0;
+
+    return {
+      folders: foldersCount,
+      boards: boardsCount,
+      following: followingCount || 0,
+      savedPosts: savedPostsCount || 0,
+    };
+  }
+
+  // Recent Activity
+  async getRecentActivity(userId: string, limit = 5) {
+    const activities: Array<{
+      type:
+        | "saved_post"
+        | "followed_profile"
+        | "created_board"
+        | "created_folder";
+      description: string;
+      timestamp: string;
+    }> = [];
+
+    try {
+      // Get recent saved posts
+      const userFolders = await this.getFoldersByUser(userId);
+      const userBoardIds =
+        userFolders?.flatMap(f => f.boards?.map((b: any) => b.id) || []) || [];
+
+      if (userBoardIds.length > 0) {
+        const { data: recentSaves } = await this.client
+          .from("board_posts")
+          .select("added_at, boards(name), posts(platform)")
+          .in("board_id", userBoardIds)
+          .order("added_at", { ascending: false })
+          .limit(3);
+
+        recentSaves?.forEach(save => {
+          if (save.boards && save.posts) {
+            const board = Array.isArray(save.boards)
+              ? save.boards[0]
+              : save.boards;
+            const post = Array.isArray(save.posts) ? save.posts[0] : save.posts;
+            if (board && post) {
+              activities.push({
+                type: "saved_post",
+                description: `Saved ${post.platform} post to "${board.name}"`,
+                timestamp: save.added_at,
+              });
+            }
+          }
+        });
+      }
+
+      // Get recent follows
+      const { data: recentFollows } = await this.client
+        .from("follows")
+        .select("created_at, profiles(handle, platform)")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      recentFollows?.forEach(follow => {
+        if (follow.profiles) {
+          const profile = Array.isArray(follow.profiles)
+            ? follow.profiles[0]
+            : follow.profiles;
+          if (profile) {
+            activities.push({
+              type: "followed_profile",
+              description: `Followed @${profile.handle} on ${profile.platform}`,
+              timestamp: follow.created_at,
+            });
+          }
+        }
+      });
+
+      // Get recent boards
+      const { data: recentBoards } = await this.client
+        .from("boards")
+        .select("created_at, name, folders(name)")
+        .in("folder_id", userFolders?.map(f => f.id) || [])
+        .order("created_at", { ascending: false })
+        .limit(2);
+
+      recentBoards?.forEach(board => {
+        if (board.folders) {
+          const folder = Array.isArray(board.folders)
+            ? board.folders[0]
+            : board.folders;
+          if (folder) {
+            activities.push({
+              type: "created_board",
+              description: `Created board "${board.name}" in ${folder.name}`,
+              timestamp: board.created_at,
+            });
+          }
+        }
+      });
+
+      // Get recent folders
+      const { data: recentFolders } = await this.client
+        .from("folders")
+        .select("created_at, name")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(2);
+
+      recentFolders?.forEach(folder => {
+        activities.push({
+          type: "created_folder",
+          description: `Created folder "${folder.name}"`,
+          timestamp: folder.created_at,
+        });
+      });
+
+      // Sort all activities by timestamp and return limited results
+      return activities
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
+        .slice(0, limit);
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+      return [];
+    }
+  }
 }
 
 // Export singleton instance
