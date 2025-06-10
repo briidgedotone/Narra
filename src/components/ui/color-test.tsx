@@ -6,11 +6,71 @@ import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { ConfirmDialog } from "./confirm-dialog";
 import { ErrorMessage } from "./error-message";
+import {
+  Form,
+  FormInput,
+  FormTextarea,
+  FormSelect,
+  FormSubmit,
+  FormErrorSummary,
+  useNarraForm,
+  contactFormSchema,
+  profileSearchSchema,
+  boardCreateSchema,
+  type ContactFormData,
+  type ProfileSearchData,
+  type BoardCreateData,
+} from "./form";
 import { Loading } from "./loading";
 import { Modal } from "./modal";
 
 export function ColorTest() {
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  // Form examples
+  const contactForm = useNarraForm(contactFormSchema, {
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const searchForm = useNarraForm(profileSearchSchema, {
+    handle: "",
+  });
+
+  const boardForm = useNarraForm(boardCreateSchema, {
+    name: "",
+    description: "",
+    folderId: undefined,
+  });
+
+  const handleContactSubmit = (data: ContactFormData) => {
+    console.log("Contact form submitted:", data);
+    // Simulate API call
+    setTimeout(() => {
+      alert("Message sent successfully!");
+      contactForm.reset();
+    }, 1000);
+  };
+
+  const handleSearchSubmit = (data: ProfileSearchData) => {
+    console.log("Search form submitted:", data);
+    // Simulate search
+    setTimeout(() => {
+      alert(`Searching for ${data.handle} on ${data.platform}`);
+      searchForm.reset();
+    }, 1000);
+  };
+
+  const handleBoardSubmit = (data: BoardCreateData) => {
+    console.log("Board form submitted:", data);
+    // Simulate board creation
+    setTimeout(() => {
+      alert(`Board "${data.name}" created successfully!`);
+      boardForm.reset();
+    }, 1000);
+  };
 
   return (
     <div className="content-spacing">
@@ -107,6 +167,116 @@ export function ColorTest() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Form Components */}
+          <div className="space-y-2">
+            <h3 className="font-semibold">Form Components with Validation</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Contact Form Example */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Contact Form</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form form={contactForm} onSubmit={handleContactSubmit}>
+                    <FormErrorSummary />
+                    <FormInput
+                      name="name"
+                      label="Your Name"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                    <FormInput
+                      name="email"
+                      label="Email Address"
+                      type="email"
+                      placeholder="your@email.com"
+                      required
+                    />
+                    <FormInput
+                      name="subject"
+                      label="Subject"
+                      placeholder="What is this about?"
+                      required
+                    />
+                    <FormTextarea
+                      name="message"
+                      label="Message"
+                      placeholder="Tell us more..."
+                      rows={4}
+                      required
+                    />
+                    <FormSubmit>Send Message</FormSubmit>
+                  </Form>
+                </CardContent>
+              </Card>
+
+              {/* Profile Search Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Profile Search</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form form={searchForm} onSubmit={handleSearchSubmit}>
+                    <FormErrorSummary />
+                    <FormSelect
+                      name="platform"
+                      label="Platform"
+                      placeholder="Select platform..."
+                      options={[
+                        { value: "tiktok", label: "TikTok" },
+                        { value: "instagram", label: "Instagram" },
+                      ]}
+                      required
+                    />
+                    <FormInput
+                      name="handle"
+                      label="Profile Handle"
+                      placeholder="@username or profile link"
+                      description="Enter the username or paste the profile URL"
+                      required
+                    />
+                    <FormSubmit>Search Profile</FormSubmit>
+                  </Form>
+                </CardContent>
+              </Card>
+
+              {/* Board Creation Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Create Board</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form form={boardForm} onSubmit={handleBoardSubmit}>
+                    <FormErrorSummary />
+                    <FormInput
+                      name="name"
+                      label="Board Name"
+                      placeholder="My awesome board"
+                      required
+                    />
+                    <FormTextarea
+                      name="description"
+                      label="Description"
+                      placeholder="Describe what this board is for..."
+                      rows={3}
+                    />
+                    <FormSelect
+                      name="folderId"
+                      label="Folder"
+                      placeholder="Select folder (optional)..."
+                      options={[
+                        { value: "work", label: "Work Projects" },
+                        { value: "personal", label: "Personal" },
+                        { value: "inspiration", label: "Inspiration" },
+                      ]}
+                    />
+                    <FormSubmit>Create Board</FormSubmit>
+                  </Form>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
