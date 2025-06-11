@@ -12,41 +12,73 @@ interface ProfileCardProps {
 
 export function ProfileCard({ profile, platform }: ProfileCardProps) {
   const isInstagram = platform === "instagram";
-  const userData = profile.user;
+  const userData = profile?.user;
 
-  // Extract common fields based on platform
+  // Add defensive checks
+  if (!userData) {
+    return (
+      <Card className="mb-6 border-red-200">
+        <CardContent className="p-6">
+          <p className="text-red-500">Error: Unable to load profile data</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Extract common fields based on platform with safe access
   const username = isInstagram
-    ? (userData as InstagramProfileData["user"]).username
-    : (userData as TikTokProfileData["user"]).unique_id;
+    ? (userData as InstagramProfileData["user"])?.username
+    : (userData as TikTokProfileData["user"])?.unique_id;
 
   const displayName = isInstagram
-    ? (userData as InstagramProfileData["user"]).full_name
-    : (userData as TikTokProfileData["user"]).nickname;
+    ? (userData as InstagramProfileData["user"])?.full_name
+    : (userData as TikTokProfileData["user"])?.nickname;
 
   const bio = isInstagram
-    ? (userData as InstagramProfileData["user"]).biography
-    : (userData as TikTokProfileData["user"]).signature;
+    ? (userData as InstagramProfileData["user"])?.biography
+    : (userData as TikTokProfileData["user"])?.signature;
 
   const avatar = isInstagram
-    ? (userData as InstagramProfileData["user"]).profile_pic_url
-    : (userData as TikTokProfileData["user"]).avatar_url;
+    ? (userData as InstagramProfileData["user"])?.profile_pic_url
+    : (userData as TikTokProfileData["user"])?.avatar_url;
 
   const isVerified = isInstagram
-    ? (userData as InstagramProfileData["user"]).is_verified
-    : (userData as TikTokProfileData["user"]).verified;
+    ? (userData as InstagramProfileData["user"])?.is_verified
+    : (userData as TikTokProfileData["user"])?.verified;
 
   const followers = isInstagram
-    ? (userData as InstagramProfileData["user"]).edge_followed_by?.count
-    : (userData as TikTokProfileData["user"]).follower_count;
+    ? (userData as InstagramProfileData["user"])?.edge_followed_by?.count
+    : (userData as TikTokProfileData["user"])?.follower_count;
 
   const following = isInstagram
-    ? (userData as InstagramProfileData["user"]).edge_follow?.count
-    : (userData as TikTokProfileData["user"]).following_count;
+    ? (userData as InstagramProfileData["user"])?.edge_follow?.count
+    : (userData as TikTokProfileData["user"])?.following_count;
 
   const posts = isInstagram
-    ? (userData as InstagramProfileData["user"]).edge_owner_to_timeline_media
+    ? (userData as InstagramProfileData["user"])?.edge_owner_to_timeline_media
         ?.count
-    : (userData as TikTokProfileData["user"]).video_count;
+    : (userData as TikTokProfileData["user"])?.video_count;
+
+  // If we don't have a username, something is wrong with the data
+  if (!username) {
+    return (
+      <Card className="mb-6 border-yellow-200">
+        <CardContent className="p-6">
+          <p className="text-yellow-600">
+            Warning: Incomplete profile data received
+          </p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-sm text-muted-foreground">
+              Debug Info
+            </summary>
+            <pre className="text-xs mt-1 bg-muted p-2 rounded overflow-auto max-h-32">
+              {JSON.stringify(profile, null, 2)}
+            </pre>
+          </details>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card

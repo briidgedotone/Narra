@@ -53,6 +53,24 @@ export async function GET(request: NextRequest) {
       result = await fetchTikTokProfile(cleanHandle);
     }
 
+    // Add debugging
+    console.log("ScrapeCreators API Response for", platform, cleanHandle, ":");
+    console.log("Success:", result.success);
+    if (result.success && result.data) {
+      console.log("Data keys:", Object.keys(result.data));
+      if (result.data.user) {
+        console.log("User keys:", Object.keys(result.data.user));
+      } else {
+        console.log("No 'user' property found in data");
+        console.log(
+          "Full data structure:",
+          JSON.stringify(result.data, null, 2)
+        );
+      }
+    } else if (!result.success) {
+      console.log("Error:", result.error);
+    }
+
     // Return the result from our ScrapeCreators client
     return NextResponse.json(result);
   } catch (error) {

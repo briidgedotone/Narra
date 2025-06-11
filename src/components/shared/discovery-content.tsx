@@ -160,6 +160,26 @@ export function DiscoveryContent() {
             </Button>
           </div>
 
+          {/* Debug Info - Temporary */}
+          <Card className="mb-6 border-blue-200">
+            <CardContent className="p-4">
+              <h4 className="font-medium mb-2">
+                🐛 Debug: API Response Structure
+              </h4>
+              <details>
+                <summary className="cursor-pointer text-sm text-muted-foreground mb-2">
+                  Click to view raw response
+                </summary>
+                <pre className="text-xs bg-muted p-2 rounded overflow-auto max-h-40">
+                  {JSON.stringify(results, null, 2)}
+                </pre>
+              </details>
+              <p className="text-xs text-muted-foreground mt-2">
+                This debug info will be removed after fixing the issue
+              </p>
+            </CardContent>
+          </Card>
+
           {/* Profile Card */}
           {(platform === "instagram" ||
             (platform === "tiktok" &&
