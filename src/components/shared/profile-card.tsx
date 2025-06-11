@@ -27,6 +27,7 @@ export function ProfileCard({
 }: ProfileCardProps) {
   const [isFollowed, setIsFollowed] = useState(profile.isFollowed || false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleFollowToggle = async () => {
     setIsLoading(true);
@@ -129,11 +130,12 @@ export function ProfileCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center -mt-8 border-2 border-background">
-              {profile.avatar ? (
+              {profile.avatar && !imageError ? (
                 <img
                   src={profile.avatar}
                   alt={`@${profile.handle}`}
                   className="w-full h-full rounded-full object-cover"
+                  onError={() => setImageError(true)}
                 />
               ) : (
                 <span className="text-lg font-medium">

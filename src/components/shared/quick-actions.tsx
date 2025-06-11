@@ -31,7 +31,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
   };
 
   // Debug log
-  console.log("QuickActions render:", { createFolderOpen, userId });
+  // console.log("QuickActions render:", { createFolderOpen, userId });
 
   return (
     <>

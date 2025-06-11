@@ -9,17 +9,24 @@ export interface Post {
     comments: number;
     shares: number;
   };
-  datePosted: Date;
+  datePosted: Date | string;
   profile: {
+    id: string;
     handle: string;
+    platform: "instagram" | "tiktok";
     avatar?: string;
+    displayName?: string;
     followers?: number;
     following?: number;
     postsCount?: number;
     bio?: string;
+    isVerified?: boolean;
   };
   caption?: string;
   transcript?: string;
+  isLiked?: boolean;
+  isSaved?: boolean;
+  originalData?: any;
 }
 
 export interface Profile {
@@ -27,11 +34,15 @@ export interface Profile {
   handle: string;
   platform: "instagram" | "tiktok";
   avatar?: string;
+  displayName?: string;
+  bio?: string;
   followers: number;
   following: number;
   postsCount: number;
-  bio?: string;
+  isVerified?: boolean;
+  isBusiness?: boolean;
   isFollowed?: boolean;
+  lastUpdated?: Date;
 }
 
 export interface Board {

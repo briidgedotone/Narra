@@ -13,7 +13,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-15"),
     profile: {
+      id: "creativestudio",
       handle: "creativestudio",
+      platform: "instagram" as const,
       followers: 120000,
       following: 500,
       postsCount: 89,
@@ -35,7 +37,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-14"),
     profile: {
+      id: "brandingpro",
       handle: "brandingpro",
+      platform: "instagram" as const,
       followers: 89000,
       following: 300,
       postsCount: 156,
@@ -56,7 +60,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-13"),
     profile: {
+      id: "smallbiztech",
       handle: "smallbiztech",
+      platform: "tiktok" as const,
       followers: 5400,
       following: 150,
       postsCount: 34,
@@ -79,7 +85,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-12"),
     profile: {
+      id: "marketingguru",
       handle: "marketingguru",
+      platform: "instagram" as const,
       followers: 156000,
       following: 800,
       postsCount: 423,
@@ -101,7 +109,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-11"),
     profile: {
+      id: "contentqueen",
       handle: "contentqueen",
+      platform: "tiktok" as const,
       followers: 340000,
       following: 1200,
       postsCount: 267,
@@ -122,7 +132,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-10"),
     profile: {
+      id: "designdaily",
       handle: "designdaily",
+      platform: "instagram" as const,
       followers: 23000,
       following: 400,
       postsCount: 178,
@@ -144,7 +156,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-09"),
     profile: {
+      id: "socialmediaexpert",
       handle: "socialmediaexpert",
+      platform: "tiktok" as const,
       followers: 890000,
       following: 2300,
       postsCount: 445,
@@ -166,7 +180,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-08"),
     profile: {
+      id: "startuplife",
       handle: "startuplife",
+      platform: "instagram" as const,
       followers: 12000,
       following: 800,
       postsCount: 67,
@@ -187,7 +203,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-07"),
     profile: {
+      id: "techreviews",
       handle: "techreviews",
+      platform: "tiktok" as const,
       followers: 234000,
       following: 450,
       postsCount: 189,
@@ -209,7 +227,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-06"),
     profile: {
+      id: "workfromhome",
       handle: "workfromhome",
+      platform: "instagram" as const,
       followers: 67000,
       following: 1200,
       postsCount: 234,
@@ -230,7 +250,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-05"),
     profile: {
+      id: "foodiehacks",
       handle: "foodiehacks",
+      platform: "tiktok" as const,
       followers: 45000,
       following: 300,
       postsCount: 123,
@@ -252,7 +274,9 @@ export const mockPosts: Post[] = [
     },
     datePosted: new Date("2024-12-04"),
     profile: {
+      id: "fitnessjourney",
       handle: "fitnessjourney",
+      platform: "instagram" as const,
       followers: 156000,
       following: 890,
       postsCount: 567,

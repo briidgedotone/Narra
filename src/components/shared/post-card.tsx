@@ -26,6 +26,7 @@ export function PostCard({
   className,
 }: PostCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleSave = () => {
     onSave?.(post);
@@ -35,25 +36,32 @@ export function PostCard({
     onViewDetails?.(post);
   };
 
+  const handleClick = () => {
+    // Open the video/post in a new tab
+    window.open(post.embedUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       className={cn(
         "group relative bg-card rounded-lg overflow-hidden shadow-sm transition-all duration-200",
-        "hover:shadow-lg hover:scale-[1.02]",
+        "hover:shadow-lg hover:scale-[1.02] cursor-pointer",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleClick}
     >
       {/* Main Content */}
       <div className="relative aspect-[3/4] bg-muted">
         {/* Video/Image Placeholder */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
-          {post.thumbnailUrl ? (
+          {post.thumbnailUrl && !imageError ? (
             <img
               src={post.thumbnailUrl}
               alt="Post thumbnail"
               className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
@@ -82,7 +90,10 @@ export function PostCard({
             <Button
               size="sm"
               variant="secondary"
-              onClick={handleSave}
+              onClick={e => {
+                e.stopPropagation();
+                handleSave();
+              }}
               className="bg-background/90 hover:bg-background"
             >
               <Bookmark className="w-4 h-4 mr-1" />
@@ -91,7 +102,10 @@ export function PostCard({
             <Button
               size="sm"
               variant="secondary"
-              onClick={handleViewDetails}
+              onClick={e => {
+                e.stopPropagation();
+                handleViewDetails();
+              }}
               className="bg-background/90 hover:bg-background"
             >
               View Details
@@ -142,7 +156,10 @@ export function PostCard({
           <Button
             size="sm"
             variant="ghost"
-            onClick={handleSave}
+            onClick={e => {
+              e.stopPropagation();
+              handleSave();
+            }}
             className="h-6 px-2 text-xs"
           >
             <Bookmark className="w-3 h-3" />

@@ -15,6 +15,7 @@ export { ActivityItem } from "./activity-item";
 export { QuickActions } from "./quick-actions";
 export { CreateFolderModal } from "./create-folder-modal";
 export { DashboardContent } from "./dashboard-content";
+export { DiscoveryContent } from "./discovery-content";
 export {
   DashboardSettingsModal,
   useDashboardSettings,

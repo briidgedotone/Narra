@@ -104,12 +104,14 @@ export default function TestAuthPage() {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button asChild className="flex-1">
-                    <Link href="/sign-in">Test Sign In</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="flex-1">
-                    <Link href="/sign-up">Test Sign Up</Link>
-                  </Button>
+                  <Link href="/sign-in" className="flex-1">
+                    <Button className="w-full">Test Sign In</Button>
+                  </Link>
+                  <Link href="/sign-up" className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      Test Sign Up
+                    </Button>
+                  </Link>
                 </div>
               </div>
             )}
@@ -176,12 +178,14 @@ export default function TestAuthPage() {
                 sign-up pages.
               </p>
               <div className="flex gap-2">
-                <Button asChild size="sm">
-                  <Link href="/sign-in">Test Google Sign In</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href="/sign-up">Test Google Sign Up</Link>
-                </Button>
+                <Link href="/sign-in">
+                  <Button size="sm">Test Google Sign In</Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button variant="outline" size="sm">
+                    Test Google Sign Up
+                  </Button>
+                </Link>
               </div>
             </div>
           </CardContent>
