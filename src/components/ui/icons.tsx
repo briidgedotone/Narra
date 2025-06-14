@@ -46,6 +46,7 @@ import {
   TimeQuarterIcon,
   FavouriteCircleIcon,
   Calendar03Icon,
+  LaptopVideoIcon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -121,3 +122,4 @@ export const Instagram = InstagramIcon;
 export const TimeQuarter = TimeQuarterIcon;
 export const FavouriteCircle = FavouriteCircleIcon;
 export const Calendar03 = Calendar03Icon;
+export const LaptopVideo = LaptopVideoIcon;

@@ -1,8 +1,8 @@
 import { EmptyState } from "@/components/ui/empty-state";
 import {
-  FileText,
-  Link,
-  Files,
+  Instagram,
+  LaptopVideo,
+  TikTok,
   Search,
   MessageSquare,
   Mail,
@@ -19,7 +19,7 @@ function EmptyStateDefault() {
     <EmptyState
       title="No Posts Saved"
       description="Start discovering content and save posts to this board to see them here."
-      icons={[FileText, Link, Files]}
+      icons={[Instagram, LaptopVideo, TikTok]}
       action={{
         label: "Discover Content",
         onClick: () => console.log("Discover content clicked"),

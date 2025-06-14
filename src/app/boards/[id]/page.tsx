@@ -15,9 +15,7 @@ import {
   TimeQuarter,
   FavouriteCircle,
   Calendar03,
-  FileText,
-  Link,
-  Files,
+  LaptopVideo,
 } from "@/components/ui/icons";
 
 interface BoardPageProps {
@@ -238,7 +236,7 @@ export default function BoardPage({ params }: BoardPageProps) {
             <EmptyState
               title="No posts saved yet"
               description="Start discovering content and save posts to this board to see them here."
-              icons={[FileText, Link, Files]}
+              icons={[Instagram, LaptopVideo, TikTok]}
               action={{
                 label: "Discover Content",
                 onClick: () => {
