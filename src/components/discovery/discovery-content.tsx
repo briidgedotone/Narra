@@ -459,7 +459,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
       {/* Collections */}
       {!searchResults && !isSearching && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
           {collections.map((collection, index) => (
             <CollectionCard
               key={index}
