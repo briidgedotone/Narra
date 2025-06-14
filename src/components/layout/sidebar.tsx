@@ -3,7 +3,7 @@
 import { UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -57,6 +57,7 @@ const mockFolders = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useUser();
   const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
   const [folders, setFolders] = useState(mockFolders);
@@ -91,6 +92,9 @@ export function Sidebar() {
     if (!expandedFolders.includes(folderId)) {
       setExpandedFolders(prev => [...prev, folderId]);
     }
+
+    // Navigate to the new board
+    router.push(newBoard.href);
   };
 
   return (
