@@ -69,7 +69,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Page Content */}
           <main className="flex-1 overflow-auto">
-            <div className="container-narra py-6">{children}</div>
+            <div className="p-6">{children}</div>
           </main>
         </div>
       </div>
