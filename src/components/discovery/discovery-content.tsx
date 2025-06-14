@@ -6,6 +6,7 @@ import { useState, useCallback } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Grid,
   List,
@@ -15,6 +16,10 @@ import {
   Calendar,
   Bookmark,
   UserPlus,
+  Search,
+  FileText,
+  Link,
+  FileQuestion,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -61,6 +66,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const loadPosts = useCallback(
     async (profileId: string) => {
@@ -107,10 +114,15 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       setIsSearching(true);
       setSearchResults(null);
       setPosts([]);
+      setSearchError(null);
+      setHasSearched(true);
 
       try {
         // Mock API call - replace with actual ScrapeCreators integration
         await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // For demo purposes, always find a profile
+        // In production, this would be based on actual API response
 
         // Mock profile data
         const mockProfile: Profile = {
@@ -131,6 +143,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         loadPosts(mockProfile.id);
       } catch (error) {
         console.error("Search failed:", error);
+        setSearchError("Search failed. Please try again.");
       } finally {
         setIsSearching(false);
       }
@@ -192,7 +205,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           <div className="relative w-[600px]">
             <Search01Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Enter Instagram or TikTok handle (e.g., @username)"
+              placeholder="Search creators (e.g., @mrbeast, @charlidamelio, @khaby.lame)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               onKeyDown={e => {
@@ -202,6 +215,15 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               }}
               className="pl-10 w-[600px] h-[36px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"
             />
+            {searchQuery && (
+              <Button
+                onClick={() => handleSearch(searchQuery)}
+                size="sm"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-3 text-xs"
+              >
+                Search
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -417,17 +439,97 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         </div>
       )}
 
-      {/* Empty state when no search */}
-      {!searchResults && !isSearching && (
-        <div className="flex justify-center items-center min-h-[60vh]">
+      {/* Popular Creators Suggestions */}
+      {!searchResults && !isSearching && !hasSearched && (
+        <div className="space-y-6">
           <div className="text-center">
-            <p className="text-muted-foreground text-lg">
-              Search for Instagram or TikTok creators to discover their content
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Enter a handle or profile link in the search bar above
+            <h2 className="text-lg font-semibold mb-2">
+              Popular Creators to Explore
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Click on any creator below to see their latest content
             </p>
           </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              {
+                handle: "@mrbeast",
+                name: "MrBeast",
+                platform: "YouTube/Instagram",
+              },
+              {
+                handle: "@charlidamelio",
+                name: "Charli D'Amelio",
+                platform: "TikTok",
+              },
+              { handle: "@khaby.lame", name: "Khaby Lame", platform: "TikTok" },
+              {
+                handle: "@addisonre",
+                name: "Addison Rae",
+                platform: "TikTok/Instagram",
+              },
+            ].map(creator => (
+              <Button
+                key={creator.handle}
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-accent"
+                onClick={() => handleSearch(creator.handle)}
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  {creator.name.charAt(0)}
+                </div>
+                <div className="text-center">
+                  <div className="font-medium text-sm">{creator.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {creator.handle}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {creator.platform}
+                  </div>
+                </div>
+              </Button>
+            ))}
+          </div>
+
+          <div className="flex justify-center">
+            <EmptyState
+              title="Or Search for Any Creator"
+              description="Enter any Instagram or TikTok handle in the search bar above to discover their content."
+              icons={[Search, FileText, Link]}
+              className="max-w-md"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Loading state during search */}
+      {isSearching && (
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <EmptyState
+            title="Searching for Creator..."
+            description="We're fetching the latest content and profile information."
+            icons={[Search]}
+          />
+        </div>
+      )}
+
+      {/* Error state when search fails or no results */}
+      {!searchResults && !isSearching && hasSearched && searchError && (
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <EmptyState
+            title="No Results Found"
+            description={`We couldn't find a creator with the handle "${searchQuery}". Try checking the spelling or searching for a different creator.`}
+            icons={[Search, FileQuestion]}
+            action={{
+              label: "Try Another Search",
+              onClick: () => {
+                setSearchQuery("");
+                setHasSearched(false);
+                setSearchError(null);
+              },
+            }}
+          />
         </div>
       )}
     </div>

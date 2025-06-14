@@ -88,6 +88,16 @@ export const MessageCircle = MessageMultiple01Icon;
 export const Share = Share01Icon;
 export const UserPlus = UserAdd01Icon;
 
+// EmptyState component icons - using existing icons as alternatives
+export const FileText = AiBookIcon; // Using book icon as alternative to file text
+export const Link = LinkSquare01Icon; // Using existing link icon
+export const Files = AiFolder01Icon; // Using folder icon as alternative to files
+export const Search02 = AiSearchIcon; // Using existing search icon
+export const MessageSquare = MessageMultiple01Icon; // Using existing message icon
+export const Mail = MessageMultiple01Icon; // Using message icon as alternative to mail
+export const Image = ViewIcon; // Using view icon as alternative to image
+export const FileQuestion = AlertCircleIcon; // Using alert circle as alternative
+
 // Export the icon type for compatibility
 export type IconType = React.ComponentType<{
   className?: string;
