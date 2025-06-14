@@ -1,5 +1,6 @@
 "use client";
 
+import { Search01Icon } from "hugeicons-react";
 import Image from "next/image";
 import { useState, useCallback } from "react";
 
@@ -191,7 +192,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         {/* Search Bar - Centered on entire screen */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="relative w-[600px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search01Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Enter Instagram or TikTok handle (e.g., @username)"
               value={searchQuery}
@@ -201,7 +202,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   handleSearch(searchQuery);
                 }
               }}
-              className="pl-10 w-[600px] h-[31px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"
+              className="pl-10 w-[600px] h-[36px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"
             />
           </div>
         </div>
