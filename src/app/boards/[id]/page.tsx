@@ -1,8 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
+"use client";
+
+import { useAuth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
 import { DashboardLayout } from "@/components/layout";
 import { BoardHeader } from "@/components/shared/board-header";
+import { Clipboard } from "@/components/ui/icons";
 
 interface BoardPageProps {
   params: Promise<{
@@ -10,26 +14,63 @@ interface BoardPageProps {
   }>;
 }
 
-export default async function BoardPage({ params }: BoardPageProps) {
-  const { userId } = await auth();
-  const { id } = await params;
+export default function BoardPage({ params }: BoardPageProps) {
+  const { userId } = useAuth();
+  const [boardName, setBoardName] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempName, setTempName] = useState("");
 
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  // This will be replaced with proper async handling
+  const { id } = React.use(params);
 
-  // Mock board names for display
-  const boardNames: Record<string, string> = {
-    "1": "Social Media",
-    "2": "Email Campaigns",
-    "3": "UI/UX",
-    "4": "Branding",
+  useEffect(() => {
+    if (!userId) {
+      redirect("/sign-in");
+      return;
+    }
+
+    // Mock board names for display
+    const boardNames: Record<string, string> = {
+      "1": "Social Media",
+      "2": "Email Campaigns",
+      "3": "UI/UX",
+      "4": "Branding",
+    };
+
+    // Check if it's a dynamically created board (timestamp-based ID)
+    const isNewBoard = !boardNames[id] && !isNaN(Number(id));
+    const initialName =
+      boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
+
+    setBoardName(initialName);
+    setTempName(initialName);
+  }, [id, userId]);
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setTempName(boardName);
   };
 
-  // Check if it's a dynamically created board (timestamp-based ID)
-  const isNewBoard = !boardNames[id] && !isNaN(Number(id));
-  const boardName =
-    boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
+  const handleEditSave = () => {
+    if (tempName.trim()) {
+      setBoardName(tempName.trim());
+      setIsEditing(false);
+      // TODO: Update in database and sync with sidebar
+    }
+  };
+
+  const handleEditCancel = () => {
+    setTempName(boardName);
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleEditSave();
+    } else if (e.key === "Escape") {
+      handleEditCancel();
+    }
+  };
 
   return (
     <DashboardLayout
@@ -39,9 +80,29 @@ export default async function BoardPage({ params }: BoardPageProps) {
         {/* Section 1: Board Title and Description */}
         <div className="space-y-4">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground mb-2">
-              {boardName}
-            </h1>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Clipboard className="w-5 h-5 text-primary" />
+              </div>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={e => setTempName(e.target.value)}
+                  onBlur={handleEditSave}
+                  onKeyDown={handleKeyDown}
+                  className="text-2xl font-semibold text-foreground bg-transparent border-b-2 border-primary focus:outline-none"
+                  autoFocus
+                />
+              ) : (
+                <h1
+                  className="text-2xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                  onClick={handleEditStart}
+                >
+                  {boardName}
+                </h1>
+              )}
+            </div>
             <p className="text-muted-foreground text-base">
               Curated collection of inspiring content and ideas for your
               creative projects.
