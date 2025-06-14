@@ -439,67 +439,18 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         </div>
       )}
 
-      {/* Popular Creators Suggestions */}
+      {/* Empty state when no search */}
       {!searchResults && !isSearching && !hasSearched && (
-        <div className="space-y-6">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold mb-2">
-              Popular Creators to Explore
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Click on any creator below to see their latest content
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              {
-                handle: "@mrbeast",
-                name: "MrBeast",
-                platform: "YouTube/Instagram",
-              },
-              {
-                handle: "@charlidamelio",
-                name: "Charli D'Amelio",
-                platform: "TikTok",
-              },
-              { handle: "@khaby.lame", name: "Khaby Lame", platform: "TikTok" },
-              {
-                handle: "@addisonre",
-                name: "Addison Rae",
-                platform: "TikTok/Instagram",
-              },
-            ].map(creator => (
-              <Button
-                key={creator.handle}
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-accent"
-                onClick={() => handleSearch(creator.handle)}
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  {creator.name.charAt(0)}
-                </div>
-                <div className="text-center">
-                  <div className="font-medium text-sm">{creator.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {creator.handle}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {creator.platform}
-                  </div>
-                </div>
-              </Button>
-            ))}
-          </div>
-
-          <div className="flex justify-center">
-            <EmptyState
-              title="Or Search for Any Creator"
-              description="Enter any Instagram or TikTok handle in the search bar above to discover their content."
-              icons={[Search, FileText, Link]}
-              className="max-w-md"
-            />
-          </div>
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <EmptyState
+            title="Start Your Content Discovery"
+            description="Search for Instagram or TikTok creators to explore their latest posts and find inspiration for your content strategy."
+            icons={[Search, FileText, Link]}
+            action={{
+              label: "Try Sample Search",
+              onClick: () => handleSearch("@mrbeast"),
+            }}
+          />
         </div>
       )}
 
