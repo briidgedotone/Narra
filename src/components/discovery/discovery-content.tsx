@@ -67,36 +67,38 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   // Collections data
   const collections = [
     {
-      title: "The Dara Denney Collection",
+      title: "The MrBeast Collection",
       description:
-        "Personal ad picks from the world&apos;s best creative strategist",
-      authorName: "Dara Denney",
-      authorInitial: "D",
+        "Viral content strategies from YouTube&apos;s biggest philanthropist and entrepreneur",
+      username: "MrBeast",
+      authorInitial: "M",
       authorBadgeColor: "bg-orange-500",
       backgroundColor: "#FDA02C",
     },
     {
-      title: "The Evan Lee Collection",
+      title: "The Charli D&apos;Amelio Collection",
       description:
-        "Big swing favorites from Motion&apos;s Evan Lee, AKA &quot;Mr. Creative Strategy&quot;",
-      authorName: "Motion",
-      authorInitial: "M",
+        "Dance trends and lifestyle content from TikTok&apos;s most-followed creator",
+      username: "Charli D'Amelio",
+      authorInitial: "C",
       authorBadgeColor: "bg-black",
       backgroundColor: "#E87BD1",
     },
     {
-      title: "The Jess Bachman Collection",
-      description: "The secret stash from the creative master of DTC.",
-      authorName: "Jess Bachman",
-      authorInitial: "J",
+      title: "The Khaby Lame Collection",
+      description:
+        "Silent comedy gold and life hacks from TikTok&apos;s king of reactions",
+      username: "Khaby Lame",
+      authorInitial: "K",
       authorBadgeColor: "bg-purple-500",
       backgroundColor: "#EE97DB",
     },
     {
-      title: "The Savannah Sanchez Collection",
-      description: "Trending hooks and ad formats with high-performers.",
-      authorName: "Savannah Sanchez",
-      authorInitial: "S",
+      title: "The Addison Rae Collection",
+      description:
+        "Fashion, beauty, and dance content from the multi-platform influencer",
+      username: "Addison Rae",
+      authorInitial: "A",
       authorBadgeColor: "bg-blue-500",
       backgroundColor: "#B078F9",
     },
@@ -466,7 +468,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                 key={index}
                 title={collection.title}
                 description={collection.description}
-                authorName={collection.authorName}
+                username={collection.username}
                 authorInitial={collection.authorInitial}
                 authorBadgeColor={collection.authorBadgeColor}
                 backgroundColor={collection.backgroundColor}
