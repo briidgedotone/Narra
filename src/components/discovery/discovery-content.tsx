@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Search,
-  Filter,
   Grid,
   List,
   ExternalLink,
@@ -184,20 +183,14 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   return (
     <div className="  space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="text-lg font-semibold text-[#171717]">
-            Discover Content
-          </h1>
-          <p className="text-muted-foreground">
-            Search for creators and discover inspiring content from Instagram
-            and TikTok
-          </p>
-        </div>
+      <div className="relative flex items-center">
+        <h1 className="text-base font-semibold text-[#171717]">
+          Discover Content
+        </h1>
 
-        {/* Search Bar */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
+        {/* Search Bar - Centered on entire screen */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div className="relative w-[600px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Enter Instagram or TikTok handle (e.g., @username)"
@@ -208,30 +201,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   handleSearch(searchQuery);
                 }
               }}
-              className="pl-10"
+              className="pl-10 w-[600px] h-[31px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"
             />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => handleSearch(searchQuery)}
-              disabled={!searchQuery.trim() || isSearching}
-              className="flex items-center gap-2"
-            >
-              {isSearching ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4" />
-                  Search
-                </>
-              )}
-            </Button>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </div>
