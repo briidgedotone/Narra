@@ -48,22 +48,31 @@ export function DashboardContent({}: DashboardContentProps) {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col justify-center items-center min-h-[calc(100vh-280px)] space-y-8">
+      {/* Header Section */}
+      <div className="text-center space-y-3">
+        <h1 className="text-3xl font-semibold text-foreground">
+          Welcome to Use Narra
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Discover, save, and organize inspiring content from your favorite
+          creators.
+        </p>
+      </div>
+
       {/* Collections */}
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-          {collections.map((collection, index) => (
-            <CollectionCard
-              key={index}
-              title={collection.title}
-              description={collection.description}
-              username={collection.username}
-              authorInitial={collection.authorInitial}
-              authorBadgeColor={collection.authorBadgeColor}
-              backgroundColor={collection.backgroundColor}
-            />
-          ))}
-        </div>
+      <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
+        {collections.map((collection, index) => (
+          <CollectionCard
+            key={index}
+            title={collection.title}
+            description={collection.description}
+            username={collection.username}
+            authorInitial={collection.authorInitial}
+            authorBadgeColor={collection.authorBadgeColor}
+            backgroundColor={collection.backgroundColor}
+          />
+        ))}
       </div>
     </div>
   );
