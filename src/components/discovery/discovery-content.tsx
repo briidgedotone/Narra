@@ -6,9 +6,7 @@ import { useState, useCallback } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  Search,
   Grid,
   List,
   ExternalLink,
@@ -210,8 +208,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
       {/* Profile Results */}
       {searchResults && (
-        <Card>
-          <CardContent className="p-6">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="p-6">
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Profile Avatar */}
               <div className="flex-shrink-0">
@@ -288,8 +286,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Posts Section */}
@@ -322,17 +320,20 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           {isLoadingPosts ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <Card key={i} className="overflow-hidden">
+                <div
+                  key={i}
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                >
                   <Skeleton className="aspect-[3/4] w-full" />
-                  <CardContent className="p-4 space-y-2">
+                  <div className="p-4 space-y-2">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />
                     <div className="flex justify-between">
                       <Skeleton className="h-4 w-16" />
                       <Skeleton className="h-4 w-16" />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
@@ -344,10 +345,10 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               )}
             >
               {posts.map(post => (
-                <Card
+                <div
                   key={post.id}
                   className={cn(
-                    "group overflow-hidden cursor-pointer transition-all hover:shadow-lg",
+                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
                     viewMode === "list" && "flex flex-row"
                   )}
                 >
@@ -378,7 +379,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                     </div>
                   </div>
 
-                  <CardContent
+                  <div
                     className={cn(
                       "p-4 space-y-3",
                       viewMode === "list" && "flex-1"
@@ -408,50 +409,149 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                         {formatDate(post.datePosted)}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Collections */}
       {!searchResults && !isSearching && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-              <Search className="h-12 w-12 text-muted-foreground" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* The Dara Denney Collection */}
+          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
+            <div className="flex h-full">
+              <div className="w-[120px] h-[120px] bg-gradient-to-br from-orange-400 to-orange-500 flex-shrink-0 rounded-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=120&h=120&fit=crop&crop=face"
+                  alt="Dara Denney"
+                  width={120}
+                  height={120}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <div className="pl-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    The Dara Denney Collection
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Personal ad picks from the world&apos;s best creative
+                    strategist
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">D</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Dara Denney
+                  </span>
+                </div>
+              </div>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Start Discovering</h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Enter an Instagram or TikTok handle to discover amazing content
-              and get inspired by top creators.
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Badge
-                variant="outline"
-                className="cursor-pointer"
-                onClick={() => {
-                  setSearchQuery("@instagram");
-                  handleSearch("@instagram");
-                }}
-              >
-                Try @instagram
-              </Badge>
-              <Badge
-                variant="outline"
-                className="cursor-pointer"
-                onClick={() => {
-                  setSearchQuery("@tiktok");
-                  handleSearch("@tiktok");
-                }}
-              >
-                Try @tiktok
-              </Badge>
+          </div>
+
+          {/* The Evan Lee Collection */}
+          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
+            <div className="flex h-full">
+              <div className="w-[120px] h-[120px] bg-gradient-to-br from-pink-400 to-pink-500 flex-shrink-0 rounded-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face"
+                  alt="Evan Lee"
+                  width={120}
+                  height={120}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <div className="pl-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    The Evan Lee Collection
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Big swing favorites from Motion&apos;s Evan Lee, AKA
+                    &quot;Mr. Creative Strategy&quot;
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">M</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">Motion</span>
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* The Jess Bachman Collection */}
+          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
+            <div className="flex h-full">
+              <div className="w-[120px] h-[120px] bg-gradient-to-br from-pink-400 to-purple-500 flex-shrink-0 rounded-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face"
+                  alt="Jess Bachman"
+                  width={120}
+                  height={120}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <div className="pl-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    The Jess Bachman Collection
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    The secret stash from the creative master of DTC.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">J</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Jess Bachman
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* The Savannah Sanchez Collection */}
+          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
+            <div className="flex h-full">
+              <div className="w-[120px] h-[120px] bg-gradient-to-br from-purple-400 to-blue-500 flex-shrink-0 rounded-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face"
+                  alt="Savannah Sanchez"
+                  width={120}
+                  height={120}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <div className="pl-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    The Savannah Sanchez Collection
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Trending hooks and ad formats with high-performers.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">S</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Savannah Sanchez
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
