@@ -51,7 +51,11 @@ export function PageError({
 }) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
-      <ErrorMessage title="Page Error" message={message} onRetry={onRetry} />
+      <ErrorMessage
+        title="Page Error"
+        message={message}
+        {...(onRetry && { onRetry })}
+      />
     </div>
   );
 }
@@ -69,8 +73,7 @@ export function CardError({
       <ErrorMessage
         title="Failed to load"
         message={message}
-        onRetry={onRetry}
-        showIcon={false}
+        {...(onRetry && { onRetry })}
       />
     </div>
   );

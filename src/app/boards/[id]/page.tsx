@@ -6,7 +6,15 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { DashboardLayout } from "@/components/layout";
 import { BoardHeader } from "@/components/shared/board-header";
-import { Clipboard, Grid, Calendar, Heart } from "@/components/ui/icons";
+import {
+  Clipboard,
+  SearchList,
+  TikTok,
+  Instagram,
+  TimeQuarter,
+  FavouriteCircle,
+  Calendar03,
+} from "@/components/ui/icons";
 
 interface BoardPageProps {
   params: Promise<{
@@ -18,6 +26,7 @@ export default function BoardPage({ params }: BoardPageProps) {
   const { userId } = useAuth();
   const [boardName, setBoardName] = useState("");
   const [boardDescription, setBoardDescription] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // This will be replaced with proper async handling
@@ -140,34 +149,81 @@ export default function BoardPage({ params }: BoardPageProps) {
         {/* Section 2: Horizontal Filters */}
         <div className="space-y-4">
           <div className="flex items-center gap-3 overflow-x-auto pb-2">
-            <div className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium whitespace-nowrap">
-              <Grid className="w-4 h-4" />
+            <button
+              onClick={() => setActiveFilter("all")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "all"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <SearchList className="w-4 h-4" style={{ color: "#8F8F8F" }} />
               All Posts
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#DBDBDB] text-foreground rounded-md text-sm font-medium whitespace-nowrap hover:bg-[#F8F8F8] cursor-pointer">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-2.84v.44a4.83 4.83 0 01-3.77 4.25A4.83 4.83 0 015.44 11v.44H2.6v2.84h2.84V14.72a4.83 4.83 0 013.77 4.25V19.4h2.84v-.44a4.83 4.83 0 013.77-4.25A4.83 4.83 0 0118.56 11v-.44h2.84V7.72h-2.84V6.69z" />
-              </svg>
+            </button>
+            <button
+              onClick={() => setActiveFilter("tiktok")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "tiktok"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <TikTok className="w-4 h-4" style={{ color: "#8F8F8F" }} />
               TikTok
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#DBDBDB] text-foreground rounded-md text-sm font-medium whitespace-nowrap hover:bg-[#F8F8F8] cursor-pointer">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
+            </button>
+            <button
+              onClick={() => setActiveFilter("instagram")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "instagram"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <Instagram className="w-4 h-4" style={{ color: "#8F8F8F" }} />
               Instagram
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#DBDBDB] text-foreground rounded-md text-sm font-medium whitespace-nowrap hover:bg-[#F8F8F8] cursor-pointer">
-              <Calendar className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setActiveFilter("recent")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "recent"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <TimeQuarter className="w-4 h-4" style={{ color: "#8F8F8F" }} />
               Recent
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#DBDBDB] text-foreground rounded-md text-sm font-medium whitespace-nowrap hover:bg-[#F8F8F8] cursor-pointer">
-              <Heart className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setActiveFilter("liked")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "liked"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <FavouriteCircle
+                className="w-4 h-4"
+                style={{ color: "#8F8F8F" }}
+              />
               Most Liked
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#DBDBDB] text-foreground rounded-md text-sm font-medium whitespace-nowrap hover:bg-[#F8F8F8] cursor-pointer">
-              <Calendar className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setActiveFilter("week")}
+              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                activeFilter === "week"
+                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+              }`}
+              style={{ fontSize: "14px" }}
+            >
+              <Calendar03 className="w-4 h-4" style={{ color: "#8F8F8F" }} />
               This Week
-            </div>
+            </button>
           </div>
         </div>
 

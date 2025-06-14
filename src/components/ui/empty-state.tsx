@@ -32,7 +32,7 @@ export function EmptyState({
       )}
     >
       <div className="flex justify-center isolate">
-        {icons.length === 3 ? (
+        {icons.length === 3 && icons[0] && icons[1] && icons[2] ? (
           <>
             <div className="bg-background size-12 grid place-items-center rounded-xl relative left-2.5 top-1.5 -rotate-6 shadow-lg ring-1 ring-border group-hover:-translate-x-5 group-hover:-rotate-12 group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
               {React.createElement(icons[0], {
@@ -50,7 +50,7 @@ export function EmptyState({
               })}
             </div>
           </>
-        ) : icons.length === 1 ? (
+        ) : icons.length === 1 && icons[0] ? (
           <div className="bg-background size-12 grid place-items-center rounded-xl shadow-lg ring-1 ring-border group-hover:-translate-y-0.5 transition duration-500 group-hover:duration-200">
             {React.createElement(icons[0], {
               className: "w-6 h-6 text-muted-foreground",

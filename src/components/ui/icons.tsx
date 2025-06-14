@@ -40,6 +40,12 @@ import {
   MessageMultiple01Icon,
   Share01Icon,
   UserAdd01Icon,
+  SearchList01Icon,
+  TiktokIcon,
+  InstagramIcon,
+  TimeQuarterIcon,
+  FavouriteCircleIcon,
+  Calendar03Icon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -107,3 +113,11 @@ export type IconType = React.ComponentType<{
 
 // For components that use LucideIcon type
 export type LucideIcon = IconType;
+
+// New filter icons
+export const SearchList = SearchList01Icon;
+export const TikTok = TiktokIcon;
+export const Instagram = InstagramIcon;
+export const TimeQuarter = TimeQuarterIcon;
+export const FavouriteCircle = FavouriteCircleIcon;
+export const Calendar03 = Calendar03Icon;
