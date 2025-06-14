@@ -73,10 +73,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       authorName: "Dara Denney",
       authorInitial: "D",
       authorBadgeColor: "bg-orange-500",
-      imageUrl:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=120&h=120&fit=crop&crop=face",
-      gradientFrom: "from-orange-400",
-      gradientTo: "to-orange-500",
+      backgroundColor: "#FDA02C",
     },
     {
       title: "The Evan Lee Collection",
@@ -85,10 +82,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       authorName: "Motion",
       authorInitial: "M",
       authorBadgeColor: "bg-black",
-      imageUrl:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face",
-      gradientFrom: "from-pink-400",
-      gradientTo: "to-pink-500",
+      backgroundColor: "#E87BD1",
     },
     {
       title: "The Jess Bachman Collection",
@@ -96,10 +90,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       authorName: "Jess Bachman",
       authorInitial: "J",
       authorBadgeColor: "bg-purple-500",
-      imageUrl:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face",
-      gradientFrom: "from-pink-400",
-      gradientTo: "to-purple-500",
+      backgroundColor: "#EE97DB",
     },
     {
       title: "The Savannah Sanchez Collection",
@@ -107,10 +98,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       authorName: "Savannah Sanchez",
       authorInitial: "S",
       authorBadgeColor: "bg-blue-500",
-      imageUrl:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face",
-      gradientFrom: "from-purple-400",
-      gradientTo: "to-blue-500",
+      backgroundColor: "#B078F9",
     },
   ];
 
@@ -480,9 +468,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               authorName={collection.authorName}
               authorInitial={collection.authorInitial}
               authorBadgeColor={collection.authorBadgeColor}
-              imageUrl={collection.imageUrl}
-              gradientFrom={collection.gradientFrom}
-              gradientTo={collection.gradientTo}
+              backgroundColor={collection.backgroundColor}
             />
           ))}
         </div>

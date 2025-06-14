@@ -1,14 +1,10 @@
-import Image from "next/image";
-
 interface CollectionCardProps {
   title: string;
   description: string;
   authorName: string;
   authorInitial: string;
   authorBadgeColor: string;
-  imageUrl: string;
-  gradientFrom: string;
-  gradientTo: string;
+  backgroundColor: string;
 }
 
 export function CollectionCard({
@@ -17,24 +13,15 @@ export function CollectionCard({
   authorName,
   authorInitial,
   authorBadgeColor,
-  imageUrl,
-  gradientFrom,
-  gradientTo,
+  backgroundColor,
 }: CollectionCardProps) {
   return (
     <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
       <div className="flex h-full">
         <div
-          className={`w-[120px] h-[120px] bg-gradient-to-br ${gradientFrom} ${gradientTo} flex-shrink-0 rounded-lg`}
-        >
-          <Image
-            src={imageUrl}
-            alt={authorName}
-            width={120}
-            height={120}
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
+          className={`w-[120px] h-[120px] flex-shrink-0 rounded-lg`}
+          style={{ backgroundColor }}
+        ></div>
         <div className="pl-4 flex-1 flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-semibold mb-2">{title}</h3>
