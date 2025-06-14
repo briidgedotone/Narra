@@ -1,253 +1,204 @@
 "use client";
 
-import { Settings, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Settings, Eye, EyeOff } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 
+// Dashboard settings type
 export interface DashboardSettings {
+  viewMode: "comfortable" | "compact";
   showStats: boolean;
   showActivity: boolean;
   showQuickActions: boolean;
-  viewMode: "compact" | "expanded";
+  theme: "light" | "dark" | "system";
 }
 
-interface DashboardSettingsProps {
-  settings: DashboardSettings;
-  onSettingsChange: (settings: DashboardSettings) => void;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
+// Default settings
 const defaultSettings: DashboardSettings = {
+  viewMode: "comfortable",
   showStats: true,
   showActivity: true,
   showQuickActions: true,
-  viewMode: "expanded",
+  theme: "system",
 };
-
-export function DashboardSettingsModal({
-  settings,
-  onSettingsChange,
-  open,
-  onOpenChange,
-}: DashboardSettingsProps) {
-  const [localSettings, setLocalSettings] =
-    useState<DashboardSettings>(settings);
-
-  useEffect(() => {
-    setLocalSettings(settings);
-  }, [settings]);
-
-  const handleSave = () => {
-    onSettingsChange(localSettings);
-    onOpenChange(false);
-  };
-
-  const handleCancel = () => {
-    setLocalSettings(settings);
-    onOpenChange(false);
-  };
-
-  const handleToggle = (
-    key: keyof DashboardSettings,
-    value: boolean | string
-  ) => {
-    setLocalSettings(prev => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  if (!open) return null;
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px",
-      }}
-      onClick={handleCancel}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "0",
-          maxWidth: "500px",
-          width: "100%",
-          maxHeight: "90vh",
-          overflow: "auto",
-          boxShadow:
-            "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-          border: "1px solid #e5e7eb",
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        <Card className="border-0 shadow-none">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Settings className="h-5 w-5" />
-              Dashboard Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Section Visibility */}
-            <div>
-              <h3 className="font-medium mb-4">Section Visibility</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    {localSettings.showStats ? (
-                      <Eye className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    )}
-                    Statistics Cards
-                  </Label>
-                  <Button
-                    variant={localSettings.showStats ? "default" : "outline"}
-                    size="sm"
-                    onClick={() =>
-                      handleToggle("showStats", !localSettings.showStats)
-                    }
-                  >
-                    {localSettings.showStats ? "Visible" : "Hidden"}
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    {localSettings.showActivity ? (
-                      <Eye className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    )}
-                    Recent Activity
-                  </Label>
-                  <Button
-                    variant={localSettings.showActivity ? "default" : "outline"}
-                    size="sm"
-                    onClick={() =>
-                      handleToggle("showActivity", !localSettings.showActivity)
-                    }
-                  >
-                    {localSettings.showActivity ? "Visible" : "Hidden"}
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    {localSettings.showQuickActions ? (
-                      <Eye className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    )}
-                    Quick Actions
-                  </Label>
-                  <Button
-                    variant={
-                      localSettings.showQuickActions ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() =>
-                      handleToggle(
-                        "showQuickActions",
-                        !localSettings.showQuickActions
-                      )
-                    }
-                  >
-                    {localSettings.showQuickActions ? "Visible" : "Hidden"}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* View Mode */}
-            <div>
-              <h3 className="font-medium mb-4">View Mode</h3>
-              <div className="flex gap-2">
-                <Button
-                  variant={
-                    localSettings.viewMode === "compact" ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleToggle("viewMode", "compact")}
-                  className="flex-1"
-                >
-                  Compact
-                </Button>
-                <Button
-                  variant={
-                    localSettings.viewMode === "expanded"
-                      ? "default"
-                      : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleToggle("viewMode", "expanded")}
-                  className="flex-1"
-                >
-                  Expanded
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">
-                {localSettings.viewMode === "compact"
-                  ? "Compact view shows more content in less space"
-                  : "Expanded view provides more spacing and larger elements"}
-              </p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 pt-4">
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleSave} className="flex-1">
-                Save Changes
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
 
 // Hook for managing dashboard settings
 export function useDashboardSettings() {
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
 
+  // Load settings from localStorage on mount
   useEffect(() => {
-    // Load settings from localStorage
-    const saved = localStorage.getItem("dashboard-settings");
-    if (saved) {
-      try {
-        setSettings(JSON.parse(saved));
-      } catch (error) {
-        console.error("Error loading dashboard settings:", error);
+    try {
+      const saved = localStorage.getItem("dashboard-settings");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setSettings({ ...defaultSettings, ...parsed });
       }
+    } catch (error) {
+      console.error("Error loading dashboard settings:", error);
     }
   }, []);
 
-  const updateSettings = (newSettings: DashboardSettings) => {
-    setSettings(newSettings);
-    localStorage.setItem("dashboard-settings", JSON.stringify(newSettings));
+  // Save settings to localStorage when they change
+  const updateSettings = (newSettings: Partial<DashboardSettings>) => {
+    const updated = { ...settings, ...newSettings };
+    setSettings(updated);
+
+    try {
+      localStorage.setItem("dashboard-settings", JSON.stringify(updated));
+    } catch (error) {
+      console.error("Error saving dashboard settings:", error);
+    }
   };
 
   return { settings, updateSettings };
+}
+
+// Settings modal component
+interface DashboardSettingsModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  settings: DashboardSettings;
+  onSettingsChange: (settings: Partial<DashboardSettings>) => void;
+}
+
+export function DashboardSettingsModal({
+  open,
+  onOpenChange,
+  settings,
+  onSettingsChange,
+}: DashboardSettingsModalProps) {
+  const toggleSetting = (key: keyof DashboardSettings) => {
+    if (typeof settings[key] === "boolean") {
+      onSettingsChange({ [key]: !settings[key] });
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Dashboard Settings
+          </DialogTitle>
+          <DialogDescription>
+            Customize your dashboard layout and preferences.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6">
+          {/* View Mode */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">View Mode</Label>
+            <Select
+              value={settings.viewMode}
+              onValueChange={(value: string) =>
+                onSettingsChange({
+                  viewMode: value as "comfortable" | "compact",
+                })
+              }
+              options={[
+                { value: "comfortable", label: "Comfortable" },
+                { value: "compact", label: "Compact" },
+              ]}
+            />
+          </div>
+
+          {/* Theme */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Theme</Label>
+            <Select
+              value={settings.theme}
+              onValueChange={(value: string) =>
+                onSettingsChange({
+                  theme: value as "light" | "dark" | "system",
+                })
+              }
+              options={[
+                { value: "light", label: "Light" },
+                { value: "dark", label: "Dark" },
+                { value: "system", label: "System" },
+              ]}
+            />
+          </div>
+
+          {/* Visibility Settings */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Dashboard Sections</Label>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Statistics Cards</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleSetting("showStats")}
+                  className="h-8 w-8 p-0"
+                >
+                  {settings.showStats ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Recent Activity</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleSetting("showActivity")}
+                  className="h-8 w-8 p-0"
+                >
+                  {settings.showActivity ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Quick Actions</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleSetting("showQuickActions")}
+                  className="h-8 w-8 p-0"
+                >
+                  {settings.showQuickActions ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Reset Button */}
+          <div className="pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => onSettingsChange(defaultSettings)}
+              className="w-full"
+            >
+              Reset to Defaults
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }

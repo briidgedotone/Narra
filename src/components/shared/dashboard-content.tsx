@@ -1,12 +1,18 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { Folder, Users, BookOpen, Settings, Search } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
 import { StatsCard, ActivityItem, QuickActions } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Folder,
+  Users,
+  BookOpen,
+  Settings,
+  Search,
+} from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/database";
 
@@ -199,10 +205,10 @@ export function DashboardContent({ userId }: DashboardContentProps) {
 
       {/* Settings Modal */}
       <DashboardSettingsModal
-        settings={settings}
-        onSettingsChange={updateSettings}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
+        settings={settings}
+        onSettingsChange={updateSettings}
       />
     </div>
   );

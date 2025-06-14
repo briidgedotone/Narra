@@ -1,11 +1,13 @@
-import { Loader2 } from "lucide-react";
+import { Loader2 } from "@/components/ui/icons";
+import { cn } from "@/lib/utils";
 
 interface LoadingProps {
   size?: "sm" | "md" | "lg";
   text?: string;
+  className?: string;
 }
 
-export function Loading({ size = "md", text = "Loading..." }: LoadingProps) {
+export function Loading({ size = "md", text, className }: LoadingProps) {
   const sizeClasses = {
     sm: "h-4 w-4",
     md: "h-6 w-6",
@@ -13,13 +15,23 @@ export function Loading({ size = "md", text = "Loading..." }: LoadingProps) {
   };
 
   return (
-    <div className="flex items-center justify-center p-6">
-      <div className="flex items-center space-x-2">
-        <Loader2 className={`animate-spin text-primary ${sizeClasses[size]}`} />
-        <span className="text-muted-foreground">{text}</span>
+    <div className={cn("flex items-center justify-center p-4", className)}>
+      <div className="flex flex-col items-center space-y-2">
+        <Loader2
+          className={cn(
+            "animate-spin text-muted-foreground",
+            sizeClasses[size]
+          )}
+        />
+        {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     </div>
   );
+}
+
+// Inline loading spinner for buttons and small spaces
+export function LoadingSpinner({ className }: { className?: string }) {
+  return <Loader2 className={cn("h-4 w-4 animate-spin", className)} />;
 }
 
 // Page-level loading component

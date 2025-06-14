@@ -1,37 +1,42 @@
-import { AlertCircle, RefreshCw } from "lucide-react";
-
-import { Button } from "./button";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, RefreshCw } from "@/components/ui/icons";
+import { cn } from "@/lib/utils";
 
 interface ErrorMessageProps {
-  title?: string | undefined;
+  title?: string;
   message: string;
-  onRetry?: (() => void) | undefined;
-  showIcon?: boolean | undefined;
+  onRetry?: () => void;
+  className?: string;
 }
 
 export function ErrorMessage({
   title = "Something went wrong",
   message,
   onRetry,
-  showIcon = true,
+  className,
 }: ErrorMessageProps) {
   return (
-    <div className="flex items-center justify-center p-6">
-      <div className="text-center space-y-3">
-        {showIcon && (
-          <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
-        )}
-        <div className="space-y-2">
-          <h3 className="font-medium text-foreground">{title}</h3>
-          <p className="text-small max-w-md">{message}</p>
-        </div>
-        {onRetry && (
-          <Button onClick={onRetry} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Try Again
-          </Button>
-        )}
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center p-8 text-center space-y-4",
+        className
+      )}
+    >
+      <div className="p-3 bg-destructive/10 rounded-full">
+        <AlertCircle className="h-8 w-8 text-destructive" />
       </div>
+
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <p className="text-sm text-muted-foreground max-w-md">{message}</p>
+      </div>
+
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline" className="mt-4">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Try Again
+        </Button>
+      )}
     </div>
   );
 }

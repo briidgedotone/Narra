@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import {
   Eye,
   Share2,
@@ -9,10 +12,7 @@ import {
   Globe,
   Calendar,
   Hash,
-} from "lucide-react";
-import { useState } from "react";
-
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatMetric } from "@/lib/utils/format";
 import type { Board } from "@/types/content";
@@ -198,71 +198,60 @@ export function BoardCard({
           </div>
         )}
 
-        {/* Privacy Badge */}
-        <div className="absolute top-2 right-2">
-          <div className="px-2 py-1 bg-black/50 rounded-md text-xs text-white font-medium">
-            {board.isPublic ? (
-              <>
-                <Globe className="w-3 h-3 inline mr-1" />
-                Public
-              </>
-            ) : (
-              <>
-                <Lock className="w-3 h-3 inline mr-1" />
-                Private
-              </>
-            )}
-          </div>
-        </div>
-
         {/* Hover Actions */}
         {isHovered && showActions && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center space-x-2 transition-opacity duration-200">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={e => {
-                e.stopPropagation();
-                handleView();
-              }}
-              className="bg-background/90 hover:bg-background"
-            >
-              <Eye className="w-3 h-3 mr-1" />
-              View
-            </Button>
-            {board.isPublic && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="flex space-x-2">
               <Button
                 size="sm"
                 variant="secondary"
                 onClick={e => {
                   e.stopPropagation();
-                  handleShare();
+                  handleView();
                 }}
-                className="bg-background/90 hover:bg-background"
               >
-                <Share2 className="w-3 h-3 mr-1" />
-                Share
+                <Eye className="w-3 h-3 mr-1" />
+                View
               </Button>
-            )}
+              {board.isPublic && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleShare();
+                  }}
+                >
+                  <Share2 className="w-3 h-3 mr-1" />
+                  Share
+                </Button>
+              )}
+            </div>
           </div>
         )}
+
+        {/* Privacy Indicator */}
+        <div className="absolute top-2 right-2">
+          {board.isPublic ? (
+            <div className="bg-green-500 text-white p-1 rounded-full">
+              <Globe className="w-3 h-3" />
+            </div>
+          ) : (
+            <div className="bg-gray-500 text-white p-1 rounded-full">
+              <Lock className="w-3 h-3" />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Board Info */}
-      <div className="p-4 space-y-3">
-        {/* Title and Actions */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold truncate">{board.name}</h3>
-            {board.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                {board.description}
-              </p>
-            )}
-          </div>
-
+      {/* Card Content */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-medium text-foreground line-clamp-1 flex-1">
+            {board.name}
+          </h3>
           {showActions && (
-            <div className="flex items-center space-x-1 ml-2">
+            <div className="flex space-x-1 ml-2">
               <Button
                 size="sm"
                 variant="ghost"
@@ -281,7 +270,7 @@ export function BoardCard({
                   e.stopPropagation();
                   handleDelete();
                 }}
-                className="h-6 w-6 p-0"
+                className="h-6 w-6 p-0 text-destructive hover:text-destructive"
               >
                 <Trash2 className="w-3 h-3" />
               </Button>
@@ -289,17 +278,26 @@ export function BoardCard({
           )}
         </div>
 
-        {/* Stats */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center space-x-1">
-            <Hash className="w-3 h-3" />
+        {board.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+            {board.description}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center space-x-3">
             <span>{formatMetric(board.postCount)} posts</span>
+            <span className="flex items-center">
+              <Calendar className="w-3 h-3 mr-1" />
+              {new Date(board.updatedAt).toLocaleDateString()}
+            </span>
           </div>
           <div className="flex items-center space-x-1">
-            <Calendar className="w-3 h-3" />
-            <span>
-              Updated {new Date(board.updatedAt).toLocaleDateString()}
-            </span>
+            {board.isPublic ? (
+              <span className="text-green-600">Public</span>
+            ) : (
+              <span className="text-gray-500">Private</span>
+            )}
           </div>
         </div>
       </div>

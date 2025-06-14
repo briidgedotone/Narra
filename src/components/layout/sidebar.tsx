@@ -1,8 +1,9 @@
 "use client";
 
-import { Home, Search, Bookmark, Users, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { Home, Search, Bookmark, Users, Settings } from "@/components/ui/icons";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
