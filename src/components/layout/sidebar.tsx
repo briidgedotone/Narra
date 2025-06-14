@@ -4,6 +4,7 @@ import { UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import {
   Home,
@@ -12,6 +13,9 @@ import {
   Users,
   Settings,
   Clipboard,
+  Folder,
+  ChevronDown,
+  ChevronUp,
 } from "@/components/ui/icons";
 
 const mainNavigation = [
@@ -31,9 +35,38 @@ const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
+// Mock data for folders and boards - replace with real data later
+const mockFolders = [
+  {
+    id: 1,
+    name: "Marketing Ideas",
+    boards: [
+      { id: 1, name: "Social Media", href: "/boards/1" },
+      { id: 2, name: "Email Campaigns", href: "/boards/2" },
+    ],
+  },
+  {
+    id: 2,
+    name: "Design Inspiration",
+    boards: [
+      { id: 3, name: "UI/UX", href: "/boards/3" },
+      { id: 4, name: "Branding", href: "/boards/4" },
+    ],
+  },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
+
+  const toggleFolder = (folderId: number) => {
+    setExpandedFolders(prev =>
+      prev.includes(folderId)
+        ? prev.filter(id => id !== folderId)
+        : [...prev, folderId]
+    );
+  };
 
   return (
     <div className="sidebar-narra h-full flex flex-col">
@@ -46,7 +79,7 @@ export function Sidebar() {
       </div>
 
       {/* Main Navigation */}
-      <nav className="flex-1 px-3 py-3 space-y-1">
+      <nav className="px-3 py-3 space-y-1">
         {mainNavigation.map(item => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -70,6 +103,57 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Folders Section */}
+      <div className="flex-1 px-3 border-t border-[var(--sidebar-border-color)] pt-3">
+        <div className="mb-2">
+          <h3 className="text-xs font-semibold text-[var(--sidebar-text-secondary)] uppercase tracking-wider px-2">
+            Folders
+          </h3>
+        </div>
+        <div className="space-y-1 max-h-64 overflow-y-auto">
+          {mockFolders.map(folder => {
+            const isExpanded = expandedFolders.includes(folder.id);
+            const ChevronIcon = isExpanded ? ChevronUp : ChevronDown;
+
+            return (
+              <div key={folder.id}>
+                {/* Folder Header */}
+                <button
+                  onClick={() => toggleFolder(folder.id)}
+                  className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors text-left"
+                >
+                  <Folder className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="flex-1 truncate">{folder.name}</span>
+                  <ChevronIcon className="h-4 w-4 flex-shrink-0" />
+                </button>
+
+                {/* Boards List */}
+                {isExpanded && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    {folder.boards.map(board => {
+                      const isBoardActive = pathname === board.href;
+
+                      return (
+                        <Link
+                          key={board.id}
+                          href={board.href}
+                          className={`sidebar-nav-item flex items-center px-2 py-1 rounded-md text-sm ${
+                            isBoardActive ? "active" : ""
+                          }`}
+                        >
+                          <Clipboard className="mr-2 h-3 w-3 flex-shrink-0 opacity-60" />
+                          <span className="truncate">{board.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Bottom Section */}
       <div className="px-3 pb-3 space-y-3">
