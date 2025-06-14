@@ -70,6 +70,12 @@ export function Sidebar() {
     );
   };
 
+  const handleAddBoard = (folderId: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent folder toggle
+    // TODO: Implement add board functionality
+    console.log(`Add board to folder ${folderId}`);
+  };
+
   return (
     <div className="sidebar-narra h-full flex flex-col">
       {/* Brand Header */}
@@ -122,14 +128,28 @@ export function Sidebar() {
             return (
               <div key={folder.id}>
                 {/* Folder Header */}
-                <button
-                  onClick={() => toggleFolder(folder.id)}
-                  className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors text-left"
-                >
-                  <FolderIcon className="mr-2 h-5 w-5 flex-shrink-0" />
-                  <span className="flex-1 truncate">{folder.name}</span>
-                  <ChevronIcon className="h-4 w-4 flex-shrink-0" />
-                </button>
+                <div className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors">
+                  <button
+                    onClick={() => toggleFolder(folder.id)}
+                    className="flex items-center flex-1 text-left"
+                  >
+                    <FolderIcon className="mr-2 h-5 w-5 flex-shrink-0" />
+                    <span className="flex-1 truncate">{folder.name}</span>
+                  </button>
+                  <button
+                    onClick={e => handleAddBoard(folder.id, e)}
+                    className="p-0.5 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors mr-1"
+                    title="Add board to folder"
+                  >
+                    <PlusCircle className="h-3 w-3 flex-shrink-0 text-[var(--sidebar-text-secondary)] hover:text-[var(--sidebar-text-primary)]" />
+                  </button>
+                  <button
+                    onClick={() => toggleFolder(folder.id)}
+                    className="p-0.5"
+                  >
+                    <ChevronIcon className="h-4 w-4 flex-shrink-0" />
+                  </button>
+                </div>
 
                 {/* Boards List */}
                 {isExpanded && (
