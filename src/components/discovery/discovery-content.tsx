@@ -64,44 +64,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      if (!query.trim()) return;
-
-      setIsSearching(true);
-      setSearchResults(null);
-      setPosts([]);
-
-      try {
-        // Mock API call - replace with actual ScrapeCreators integration
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Mock profile data
-        const mockProfile: Profile = {
-          id: "1",
-          handle: query.replace("@", ""),
-          displayName: "Sample Creator",
-          platform: query.includes("tiktok") ? "tiktok" : "instagram",
-          followers: 125000,
-          following: 892,
-          posts: 1247,
-          bio: "Content creator sharing daily inspiration and tips for entrepreneurs. Building in public 🚀",
-          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${query}`,
-          verified: true,
-          isFollowing: false,
-        };
-
-        setSearchResults(mockProfile);
-        loadPosts(mockProfile.id);
-      } catch (error) {
-        console.error("Search failed:", error);
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    [loadPosts]
-  );
-
   const loadPosts = useCallback(
     async (profileId: string) => {
       // profileId will be used to fetch posts from ScrapeCreators API
@@ -138,6 +100,44 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       }
     },
     [searchResults]
+  );
+
+  const handleSearch = useCallback(
+    async (query: string) => {
+      if (!query.trim()) return;
+
+      setIsSearching(true);
+      setSearchResults(null);
+      setPosts([]);
+
+      try {
+        // Mock API call - replace with actual ScrapeCreators integration
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Mock profile data
+        const mockProfile: Profile = {
+          id: "1",
+          handle: query.replace("@", ""),
+          displayName: "Sample Creator",
+          platform: query.includes("tiktok") ? "tiktok" : "instagram",
+          followers: 125000,
+          following: 892,
+          posts: 1247,
+          bio: "Content creator sharing daily inspiration and tips for entrepreneurs. Building in public 🚀",
+          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${query}`,
+          verified: true,
+          isFollowing: false,
+        };
+
+        setSearchResults(mockProfile);
+        loadPosts(mockProfile.id);
+      } catch (error) {
+        console.error("Search failed:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [loadPosts]
   );
 
   const formatNumber = (num: number) => {
