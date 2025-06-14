@@ -15,22 +15,18 @@ interface QuickActionsProps {
 
 export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
   const [createFolderOpen, setCreateFolderOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState<string | null>(null);
-
-  const handleAction = async (action: string) => {
-    setIsLoading(action);
-
-    // Simulate action
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    setIsLoading(null);
-    onSuccess?.();
-  };
 
   const handleFolderCreated = () => {
     setCreateFolderOpen(false);
     onSuccess?.();
   };
+
+  const handleCreateFolder = () => {
+    setCreateFolderOpen(true);
+  };
+
+  // Debug log
+  // console.log("QuickActions render:", { createFolderOpen, userId });
 
   const actions = [
     {
@@ -45,7 +41,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
       label: "Create Folder",
       description: "Organize your content",
       icon: FolderPlus,
-      action: () => handleAction("create-folder"),
+      action: handleCreateFolder,
     },
     {
       id: "saved-posts",
@@ -73,7 +69,6 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {actions.map(action => {
               const Icon = action.icon;
-              const loading = isLoading === action.id;
 
               // If it has an href, render as a link
               if (action.href) {
@@ -86,7 +81,6 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
                     <Button
                       variant="outline"
                       className="h-auto p-4 flex flex-col items-center space-y-2 w-full"
-                      disabled={loading}
                     >
                       <Icon className="h-6 w-6" />
                       <div className="text-center">
@@ -107,7 +101,6 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
                   variant="outline"
                   className="h-auto p-4 flex flex-col items-center space-y-2"
                   onClick={action.action}
-                  disabled={loading}
                 >
                   <Icon className="h-6 w-6" />
                   <div className="text-center">

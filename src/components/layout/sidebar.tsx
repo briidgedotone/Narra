@@ -1,34 +1,40 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Home, Search, Bookmark, Users, Settings } from "@/components/ui/icons";
 
-const navigation = [
+const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Discovery", href: "/discovery", icon: Search },
   { name: "Saved Posts", href: "/saved", icon: Bookmark },
   { name: "Following", href: "/following", icon: Users },
+];
+
+const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
 
   return (
     <div className="sidebar-narra h-full flex flex-col">
       {/* Brand Header */}
-      <div className="p-6 border-b border-[var(--sidebar-border-color)]">
+      <div className="p-3 border-[var(--sidebar-border-color)]">
         <h2 className="sidebar-brand text-lg font-semibold">Use Narra</h2>
         <p className="text-xs text-[var(--sidebar-text-secondary)] mt-1">
           Content Curation Platform
         </p>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-2">
-        {navigation.map(item => {
+      {/* Main Navigation */}
+      <nav className="flex-1 px-3 py-3 space-y-1">
+        {mainNavigation.map(item => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
@@ -36,22 +42,56 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`sidebar-nav-item flex items-center px-3 py-3 rounded-lg text-sm font-medium ${
+              className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
                 isActive ? "active" : ""
               }`}
             >
-              <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
-              <span>{item.name}</span>
+              <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <span className="text-sm py-2">{item.name}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-[var(--sidebar-border-color)]">
-        <div className="text-xs text-[var(--sidebar-text-secondary)] text-center">
-          <p>© 2024 Use Narra</p>
-          <p className="mt-1">v1.0.0</p>
+      {/* Bottom Section */}
+      <div className="px-3 pb-3 space-y-3">
+        {/* Settings Navigation */}
+        <nav className="space-y-1">
+          {bottomNavigation.map(item => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
+                  isActive ? "active" : ""
+                }`}
+              >
+                <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="text-sm py-2">{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Profile Section */}
+        <div className="border-t border-[var(--sidebar-border-color)] pt-3">
+          <div className="flex items-center px-2 py-2 rounded-md hover:bg-[var(--sidebar-hover-bg)] transition-colors cursor-pointer">
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-8 w-8",
+                },
+              }}
+            />
+            <div className="ml-2 flex-1 min-w-0">
+              <p className="text-sm font-medium text-[var(--sidebar-text-primary)] truncate">
+                {user?.firstName || user?.username || "User"}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
