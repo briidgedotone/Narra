@@ -20,8 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-import { CollectionCard } from "./collection-card";
-
 interface DiscoveryContentProps {
   userId: string;
 }
@@ -63,46 +61,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  // Collections data
-  const collections = [
-    {
-      title: "The MrBeast Collection",
-      description:
-        "Viral content strategies from YouTube&apos;s biggest philanthropist and entrepreneur",
-      username: "MrBeast",
-      authorInitial: "M",
-      authorBadgeColor: "bg-orange-500",
-      backgroundColor: "#FDA02C",
-    },
-    {
-      title: "The Charli D&apos;Amelio Collection",
-      description:
-        "Dance trends and lifestyle content from TikTok&apos;s most-followed creator",
-      username: "Charli D'Amelio",
-      authorInitial: "C",
-      authorBadgeColor: "bg-black",
-      backgroundColor: "#E87BD1",
-    },
-    {
-      title: "The Khaby Lame Collection",
-      description:
-        "Silent comedy gold and life hacks from TikTok&apos;s king of reactions",
-      username: "Khaby Lame",
-      authorInitial: "K",
-      authorBadgeColor: "bg-purple-500",
-      backgroundColor: "#EE97DB",
-    },
-    {
-      title: "The Addison Rae Collection",
-      description:
-        "Fashion, beauty, and dance content from the multi-platform influencer",
-      username: "Addison Rae",
-      authorInitial: "A",
-      authorBadgeColor: "bg-blue-500",
-      backgroundColor: "#B078F9",
-    },
-  ];
 
   const loadPosts = useCallback(
     async (profileId: string) => {
@@ -459,21 +417,16 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         </div>
       )}
 
-      {/* Collections */}
+      {/* Empty state when no search */}
       {!searchResults && !isSearching && (
         <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-            {collections.map((collection, index) => (
-              <CollectionCard
-                key={index}
-                title={collection.title}
-                description={collection.description}
-                username={collection.username}
-                authorInitial={collection.authorInitial}
-                authorBadgeColor={collection.authorBadgeColor}
-                backgroundColor={collection.backgroundColor}
-              />
-            ))}
+          <div className="text-center">
+            <p className="text-muted-foreground text-lg">
+              Search for Instagram or TikTok creators to discover their content
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Enter a handle or profile link in the search bar above
+            </p>
           </div>
         </div>
       )}
