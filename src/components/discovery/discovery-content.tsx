@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
+import { CollectionCard } from "./collection-card";
+
 interface DiscoveryContentProps {
   userId: string;
 }
@@ -61,6 +63,56 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Collections data
+  const collections = [
+    {
+      title: "The Dara Denney Collection",
+      description:
+        "Personal ad picks from the world&apos;s best creative strategist",
+      authorName: "Dara Denney",
+      authorInitial: "D",
+      authorBadgeColor: "bg-orange-500",
+      imageUrl:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=120&h=120&fit=crop&crop=face",
+      gradientFrom: "from-orange-400",
+      gradientTo: "to-orange-500",
+    },
+    {
+      title: "The Evan Lee Collection",
+      description:
+        "Big swing favorites from Motion&apos;s Evan Lee, AKA &quot;Mr. Creative Strategy&quot;",
+      authorName: "Motion",
+      authorInitial: "M",
+      authorBadgeColor: "bg-black",
+      imageUrl:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face",
+      gradientFrom: "from-pink-400",
+      gradientTo: "to-pink-500",
+    },
+    {
+      title: "The Jess Bachman Collection",
+      description: "The secret stash from the creative master of DTC.",
+      authorName: "Jess Bachman",
+      authorInitial: "J",
+      authorBadgeColor: "bg-purple-500",
+      imageUrl:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face",
+      gradientFrom: "from-pink-400",
+      gradientTo: "to-purple-500",
+    },
+    {
+      title: "The Savannah Sanchez Collection",
+      description: "Trending hooks and ad formats with high-performers.",
+      authorName: "Savannah Sanchez",
+      authorInitial: "S",
+      authorBadgeColor: "bg-blue-500",
+      imageUrl:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face",
+      gradientFrom: "from-purple-400",
+      gradientTo: "to-blue-500",
+    },
+  ];
 
   const loadPosts = useCallback(
     async (profileId: string) => {
@@ -420,137 +472,19 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       {/* Collections */}
       {!searchResults && !isSearching && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* The Dara Denney Collection */}
-          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
-            <div className="flex h-full">
-              <div className="w-[120px] h-[120px] bg-gradient-to-br from-orange-400 to-orange-500 flex-shrink-0 rounded-lg">
-                <Image
-                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=120&h=120&fit=crop&crop=face"
-                  alt="Dara Denney"
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="pl-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    The Dara Denney Collection
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Personal ad picks from the world&apos;s best creative
-                    strategist
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">D</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Dara Denney
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* The Evan Lee Collection */}
-          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
-            <div className="flex h-full">
-              <div className="w-[120px] h-[120px] bg-gradient-to-br from-pink-400 to-pink-500 flex-shrink-0 rounded-lg">
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face"
-                  alt="Evan Lee"
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="pl-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    The Evan Lee Collection
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Big swing favorites from Motion&apos;s Evan Lee, AKA
-                    &quot;Mr. Creative Strategy&quot;
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">M</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">Motion</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* The Jess Bachman Collection */}
-          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
-            <div className="flex h-full">
-              <div className="w-[120px] h-[120px] bg-gradient-to-br from-pink-400 to-purple-500 flex-shrink-0 rounded-lg">
-                <Image
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face"
-                  alt="Jess Bachman"
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="pl-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    The Jess Bachman Collection
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    The secret stash from the creative master of DTC.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">J</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Jess Bachman
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* The Savannah Sanchez Collection */}
-          <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-lg overflow-hidden">
-            <div className="flex h-full">
-              <div className="w-[120px] h-[120px] bg-gradient-to-br from-purple-400 to-blue-500 flex-shrink-0 rounded-lg">
-                <Image
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face"
-                  alt="Savannah Sanchez"
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="pl-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    The Savannah Sanchez Collection
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Trending hooks and ad formats with high-performers.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">S</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Savannah Sanchez
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          {collections.map((collection, index) => (
+            <CollectionCard
+              key={index}
+              title={collection.title}
+              description={collection.description}
+              authorName={collection.authorName}
+              authorInitial={collection.authorInitial}
+              authorBadgeColor={collection.authorBadgeColor}
+              imageUrl={collection.imageUrl}
+              gradientFrom={collection.gradientFrom}
+              gradientTo={collection.gradientTo}
+            />
+          ))}
         </div>
       )}
     </div>
