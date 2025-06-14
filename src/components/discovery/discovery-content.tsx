@@ -17,8 +17,6 @@ import {
   Bookmark,
   UserPlus,
   Search,
-  FileText,
-  Link,
   FileQuestion,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
@@ -68,6 +66,9 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<
+    "instagram" | "tiktok"
+  >("instagram");
 
   const loadPosts = useCallback(
     async (profileId: string) => {
@@ -124,16 +125,20 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         // For demo purposes, always find a profile
         // In production, this would be based on actual API response
 
-        // Mock profile data
+        // Mock profile data based on selected platform
+        const platform = selectedPlatform;
         const mockProfile: Profile = {
           id: "1",
           handle: query.replace("@", ""),
           displayName: "Sample Creator",
-          platform: query.includes("tiktok") ? "tiktok" : "instagram",
-          followers: 125000,
-          following: 892,
-          posts: 1247,
-          bio: "Content creator sharing daily inspiration and tips for entrepreneurs. Building in public 🚀",
+          platform: platform,
+          followers: platform === "tiktok" ? 89500000 : 125000, // TikTok typically has higher follower counts
+          following: platform === "tiktok" ? 234 : 892,
+          posts: platform === "tiktok" ? 2847 : 1247,
+          bio:
+            platform === "tiktok"
+              ? "Creating viral content and spreading positivity ✨ | 89M+ followers 🎉"
+              : "Content creator sharing daily inspiration and tips for entrepreneurs. Building in public 🚀",
           avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${query}`,
           verified: true,
           isFollowing: false,
@@ -148,7 +153,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setIsSearching(false);
       }
     },
-    [loadPosts]
+    [loadPosts, selectedPlatform]
   );
 
   const formatNumber = (num: number) => {
@@ -205,7 +210,11 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           <div className="relative w-[600px]">
             <Search01Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search creators (e.g., @mrbeast, @charlidamelio, @khaby.lame)"
+              placeholder={
+                selectedPlatform === "instagram"
+                  ? "Search Instagram creators (e.g., @mrbeast, @cristiano)"
+                  : "Search TikTok creators (e.g., @charlidamelio, @khaby.lame)"
+              }
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               onKeyDown={e => {
@@ -442,15 +451,44 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       {/* Empty state when no search */}
       {!searchResults && !isSearching && !hasSearched && (
         <div className="flex justify-center items-center min-h-[60vh]">
-          <EmptyState
-            title="Start Your Content Discovery"
-            description="Search for Instagram or TikTok creators to explore their latest posts and find inspiration for your content strategy."
-            icons={[Search, FileText, Link]}
-            action={{
-              label: "Try Sample Search",
-              onClick: () => handleSearch("@mrbeast"),
-            }}
-          />
+          <div className="text-center space-y-8 max-w-2xl">
+            {/* Platform Selection */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold text-foreground">
+                Start Your Content Discovery
+              </h2>
+              <p className="text-muted-foreground">
+                Choose a platform and search for creators to explore their
+                latest posts and find inspiration for your content strategy.
+              </p>
+            </div>
+
+            {/* Platform Buttons */}
+            <div className="flex justify-center gap-4">
+              <Button
+                variant={
+                  selectedPlatform === "instagram" ? "default" : "outline"
+                }
+                onClick={() => setSelectedPlatform("instagram")}
+                className="flex items-center gap-2 px-6 py-3"
+              >
+                <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">IG</span>
+                </div>
+                Instagram
+              </Button>
+              <Button
+                variant={selectedPlatform === "tiktok" ? "default" : "outline"}
+                onClick={() => setSelectedPlatform("tiktok")}
+                className="flex items-center gap-2 px-6 py-3"
+              >
+                <div className="w-5 h-5 bg-black rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">TT</span>
+                </div>
+                TikTok
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
