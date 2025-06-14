@@ -5,13 +5,21 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Home, Search, Bookmark, Users, Settings } from "@/components/ui/icons";
+import {
+  Home,
+  Search,
+  Bookmark,
+  Users,
+  Settings,
+  Clipboard,
+} from "@/components/ui/icons";
 
 const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Discovery", href: "/discovery", icon: Search },
   { name: "Saved Posts", href: "/saved", icon: Bookmark },
   { name: "Following", href: "/following", icon: Users },
+  { name: "Create Board", href: "/boards/create", icon: Clipboard },
 ];
 
 const bottomNavigation = [

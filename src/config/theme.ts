@@ -22,8 +22,8 @@ export const THEME = {
       textPrimary: "#1F2937",
       textSecondary: "#6B7280",
       hoverBg: "#F3F4F6",
-      activeBg: "#3C82F6",
-      activeText: "#FFFFFF",
+      activeBg: "#E8E8E8",
+      activeText: "#1F2937",
     },
 
     // Semantic colors
@@ -55,14 +55,14 @@ export const THEME = {
     text: {
       primary: "#1F2937", // Updated to match new theme
       secondary: "#6B7280", // Muted text
-      active: "#FFFFFF", // White text on active
+      active: "#1F2937", // Dark text on light active background
     },
     hover: {
       background: "#F3F4F6", // Updated to match new theme
     },
     active: {
-      background: "#3C82F6", // Updated primary color
-      text: "#FFFFFF", // White text on active
+      background: "#E8E8E8", // Updated to light gray
+      text: "#1F2937", // Dark text on light background
     },
   },
 

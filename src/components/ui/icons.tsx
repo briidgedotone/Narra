@@ -28,6 +28,7 @@ import {
   FolderAddIcon,
   GridIcon,
   Calendar01Icon,
+  ClipboardIcon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -57,6 +58,7 @@ export const Folder = AiFolder01Icon;
 export const FolderPlus = FolderAddIcon;
 export const Hash = GridIcon;
 export const Calendar = Calendar01Icon;
+export const Clipboard = ClipboardIcon;
 
 // Export the icon type for compatibility
 export type IconType = React.ComponentType<{
