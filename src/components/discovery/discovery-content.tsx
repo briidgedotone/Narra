@@ -459,18 +459,20 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
       {/* Collections */}
       {!searchResults && !isSearching && (
-        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-          {collections.map((collection, index) => (
-            <CollectionCard
-              key={index}
-              title={collection.title}
-              description={collection.description}
-              authorName={collection.authorName}
-              authorInitial={collection.authorInitial}
-              authorBadgeColor={collection.authorBadgeColor}
-              backgroundColor={collection.backgroundColor}
-            />
-          ))}
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
+            {collections.map((collection, index) => (
+              <CollectionCard
+                key={index}
+                title={collection.title}
+                description={collection.description}
+                authorName={collection.authorName}
+                authorInitial={collection.authorInitial}
+                authorBadgeColor={collection.authorBadgeColor}
+                backgroundColor={collection.backgroundColor}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
