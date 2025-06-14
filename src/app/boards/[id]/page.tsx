@@ -17,8 +17,6 @@ interface BoardPageProps {
 export default function BoardPage({ params }: BoardPageProps) {
   const { userId } = useAuth();
   const [boardName, setBoardName] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempName, setTempName] = useState("");
 
   // This will be replaced with proper async handling
   const { id } = React.use(params);
@@ -43,33 +41,11 @@ export default function BoardPage({ params }: BoardPageProps) {
       boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
 
     setBoardName(initialName);
-    setTempName(initialName);
   }, [id, userId]);
 
-  const handleEditStart = () => {
-    setIsEditing(true);
-    setTempName(boardName);
-  };
-
-  const handleEditSave = () => {
-    if (tempName.trim()) {
-      setBoardName(tempName.trim());
-      setIsEditing(false);
-      // TODO: Update in database and sync with sidebar
-    }
-  };
-
-  const handleEditCancel = () => {
-    setTempName(boardName);
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleEditSave();
-    } else if (e.key === "Escape") {
-      handleEditCancel();
-    }
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBoardName(e.target.value);
+    // TODO: Debounce and update in database and sync with sidebar
   };
 
   return (
@@ -81,27 +57,16 @@ export default function BoardPage({ params }: BoardPageProps) {
         <div className="space-y-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 flex items-center justify-center">
                 <Clipboard className="w-5 h-5 text-primary" />
               </div>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={tempName}
-                  onChange={e => setTempName(e.target.value)}
-                  onBlur={handleEditSave}
-                  onKeyDown={handleKeyDown}
-                  className="text-2xl font-semibold text-foreground bg-transparent border-b-2 border-primary focus:outline-none"
-                  autoFocus
-                />
-              ) : (
-                <h1
-                  className="text-2xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
-                  onClick={handleEditStart}
-                >
-                  {boardName}
-                </h1>
-              )}
+              <input
+                type="text"
+                value={boardName}
+                onChange={handleNameChange}
+                className="text-2xl font-semibold text-foreground bg-transparent focus:outline-none"
+                autoFocus
+              />
             </div>
             <p className="text-muted-foreground text-base">
               Curated collection of inspiring content and ideas for your
