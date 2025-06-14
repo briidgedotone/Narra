@@ -103,6 +103,18 @@ export function Sidebar() {
     localStorage.setItem("narra-folders", JSON.stringify(folders));
   }, [folders]);
 
+  // Listen for storage events to update sidebar when board names change
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "narra-folders" && e.newValue) {
+        setFolders(JSON.parse(e.newValue));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const toggleFolder = (folderId: number) => {
     setExpandedFolders(prev =>
       prev.includes(folderId)

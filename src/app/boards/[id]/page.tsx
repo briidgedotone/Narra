@@ -17,6 +17,7 @@ interface BoardPageProps {
 export default function BoardPage({ params }: BoardPageProps) {
   const { userId } = useAuth();
   const [boardName, setBoardName] = useState("");
+  const [boardDescription, setBoardDescription] = useState("");
 
   // This will be replaced with proper async handling
   const { id } = React.use(params);
@@ -41,11 +42,49 @@ export default function BoardPage({ params }: BoardPageProps) {
       boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
 
     setBoardName(initialName);
+    setBoardDescription(
+      "Curated collection of inspiring content and ideas for your creative projects."
+    );
   }, [id, userId]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBoardName(e.target.value);
-    // TODO: Debounce and update in database and sync with sidebar
+    // TODO: Update in database and sync with sidebar
+    updateSidebarBoardName(id, e.target.value);
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setBoardDescription(e.target.value);
+    // TODO: Update in database
+  };
+
+  // Function to update sidebar board name in localStorage
+  const updateSidebarBoardName = (boardId: string, newName: string) => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("narra-folders");
+      if (saved) {
+        const folders = JSON.parse(saved);
+        const updatedFolders = folders.map((folder: any) => ({
+          ...folder,
+          boards: folder.boards.map((board: any) =>
+            board.href === `/boards/${boardId}`
+              ? { ...board, name: newName }
+              : board
+          ),
+        }));
+        localStorage.setItem("narra-folders", JSON.stringify(updatedFolders));
+
+        // Trigger a storage event to update sidebar
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "narra-folders",
+            newValue: JSON.stringify(updatedFolders),
+          })
+        );
+      }
+    }
   };
 
   return (
@@ -58,7 +97,7 @@ export default function BoardPage({ params }: BoardPageProps) {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 flex items-center justify-center">
-                <Clipboard className="w-5 h-5 text-primary" />
+                <Clipboard className="w-6 h-6" style={{ color: "#3C82F6" }} />
               </div>
               <input
                 type="text"
@@ -68,10 +107,13 @@ export default function BoardPage({ params }: BoardPageProps) {
                 autoFocus
               />
             </div>
-            <p className="text-muted-foreground text-base">
-              Curated collection of inspiring content and ideas for your
-              creative projects.
-            </p>
+            <textarea
+              value={boardDescription}
+              onChange={handleDescriptionChange}
+              placeholder="Type the description for this board"
+              className="text-muted-foreground text-base bg-transparent focus:outline-none resize-none w-full"
+              rows={2}
+            />
           </div>
         </div>
 
