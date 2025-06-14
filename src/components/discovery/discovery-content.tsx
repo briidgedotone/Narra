@@ -186,7 +186,9 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       {/* Header */}
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Discover Content</h1>
+          <h1 className="text-lg font-semibold text-[#171717]">
+            Discover Content
+          </h1>
           <p className="text-muted-foreground">
             Search for creators and discover inspiring content from Instagram
             and TikTok
