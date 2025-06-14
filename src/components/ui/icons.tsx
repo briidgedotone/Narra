@@ -32,6 +32,14 @@ import {
   Folder01Icon,
   Folder02Icon,
   PlusSignCircleIcon,
+  FilterIcon,
+  ViewIcon,
+  Menu02Icon,
+  LinkSquare01Icon,
+  FavouriteIcon,
+  MessageMultiple01Icon,
+  Share01Icon,
+  UserAdd01Icon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -69,6 +77,16 @@ export const FolderOpen = Folder02Icon;
 
 // Plus icon for create actions
 export const PlusCircle = PlusSignCircleIcon;
+
+// Discovery page icons
+export const Filter = FilterIcon;
+export const Grid = ViewIcon;
+export const List = Menu02Icon;
+export const ExternalLink = LinkSquare01Icon;
+export const Heart = FavouriteIcon;
+export const MessageCircle = MessageMultiple01Icon;
+export const Share = Share01Icon;
+export const UserPlus = UserAdd01Icon;
 
 // Export the icon type for compatibility
 export type IconType = React.ComponentType<{
