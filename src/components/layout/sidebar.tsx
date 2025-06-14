@@ -4,7 +4,7 @@ import { UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Home,
@@ -35,8 +35,21 @@ const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
+// Types for sidebar data
+interface SidebarBoard {
+  id: number;
+  name: string;
+  href: string;
+}
+
+interface SidebarFolder {
+  id: number;
+  name: string;
+  boards: SidebarBoard[];
+}
+
 // Mock data for folders and boards - replace with real data later
-const mockFolders = [
+const mockFolders: SidebarFolder[] = [
   {
     id: 1,
     name: "Marketing Ideas",
@@ -59,8 +72,36 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
-  const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
-  const [folders, setFolders] = useState(mockFolders);
+
+  // Initialize expanded folders from localStorage
+  const [expandedFolders, setExpandedFolders] = useState<number[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("narra-expanded-folders");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  const [folders, setFolders] = useState<SidebarFolder[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("narra-folders");
+      return saved ? JSON.parse(saved) : mockFolders;
+    }
+    return mockFolders;
+  });
+
+  // Persist expanded folders to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "narra-expanded-folders",
+      JSON.stringify(expandedFolders)
+    );
+  }, [expandedFolders]);
+
+  // Persist folders to localStorage
+  useEffect(() => {
+    localStorage.setItem("narra-folders", JSON.stringify(folders));
+  }, [folders]);
 
   const toggleFolder = (folderId: number) => {
     setExpandedFolders(prev =>
@@ -74,14 +115,14 @@ export function Sidebar() {
     event.stopPropagation(); // Prevent folder toggle when clicking plus
 
     const newBoardId = Date.now(); // Simple ID generation
-    const newBoard = {
+    const newBoard: SidebarBoard = {
       id: newBoardId,
       name: "Untitled Board",
       href: `/boards/${newBoardId}`,
     };
 
-    setFolders(prev =>
-      prev.map(folder =>
+    setFolders((prev: SidebarFolder[]) =>
+      prev.map((folder: SidebarFolder) =>
         folder.id === folderId
           ? { ...folder, boards: [...folder.boards, newBoard] }
           : folder
@@ -141,7 +182,7 @@ export function Sidebar() {
           </h3>
         </div>
         <div className="space-y-1 max-h-64 overflow-y-auto">
-          {folders.map(folder => {
+          {folders.map((folder: SidebarFolder) => {
             const isExpanded = expandedFolders.includes(folder.id);
             const FolderIcon = isExpanded ? FolderOpen : FolderClosed;
 
@@ -168,7 +209,7 @@ export function Sidebar() {
                 {/* Boards List */}
                 {isExpanded && (
                   <div className="ml-6 mt-1 space-y-1">
-                    {folder.boards.map(board => {
+                    {folder.boards.map((board: SidebarBoard) => {
                       const isBoardActive = pathname === board.href;
 
                       return (
