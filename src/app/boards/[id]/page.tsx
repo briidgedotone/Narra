@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { DashboardLayout } from "@/components/layout";
+import { BoardHeader } from "@/components/shared/board-header";
 
 interface BoardPageProps {
   params: Promise<{
@@ -32,16 +33,9 @@ export default async function BoardPage({ params }: BoardPageProps) {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">{boardName}</h1>
-            <p className="text-muted-foreground">
-              View and manage posts in this board
-            </p>
-          </div>
-        </div>
+      <BoardHeader boardName={boardName} boardId={id} />
 
+      <div className="p-6 space-y-6">
         <div className="bg-card rounded-lg border p-8">
           <div className="text-center text-muted-foreground">
             <h3 className="text-lg font-medium mb-2">Board Content</h3>

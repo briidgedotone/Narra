@@ -10,6 +10,7 @@ export { ActivityItem } from "./activity-item";
 export { QuickActions } from "./quick-actions";
 export { CreateFolderModal } from "./create-folder-modal";
 export { DashboardContent } from "./dashboard-content";
+export { BoardHeader } from "./board-header";
 export {
   DashboardSettingsModal,
   useDashboardSettings,
