@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-background">
       <div className="flex">
         {/* Desktop Sidebar */}
-        <div className="hidden md:block">
+        <div className="hidden md:block fixed left-0 top-0 h-full z-30">
           <Sidebar />
         </div>
 
@@ -30,28 +30,41 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            {/* Sidebar */}
+            {/* Mobile Sidebar */}
             <div className="fixed left-0 top-0 h-full z-50 md:hidden">
-              <Sidebar />
+              <div className="relative h-full">
+                <Sidebar />
+                {/* Close Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="absolute top-4 right-4 h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </>
         )}
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className="flex-1 md:ml-[var(--sidebar-width)]">
           {/* Mobile Menu Button */}
-          <div className="md:hidden p-4 border-b border-border">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(true)}
-              className="flex items-center gap-2"
-            >
-              <Menu className="h-4 w-4" />
-              <span className="text-lg font-semibold text-primary">
-                Use Narra
-              </span>
-            </Button>
+          <div className="md:hidden p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(true)}
+                className="flex items-center gap-2"
+              >
+                <Menu className="h-4 w-4" />
+                <span className="sidebar-brand text-lg font-semibold">
+                  Use Narra
+                </span>
+              </Button>
+            </div>
           </div>
 
           {/* Page Content */}

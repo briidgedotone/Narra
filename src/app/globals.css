@@ -76,6 +76,22 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Use Narra Custom Sidebar Theme */
+  --sidebar-width: 250px;
+  --sidebar-bg: #f8f8f8;
+  --sidebar-border-color: #e2e2e2;
+  --sidebar-text-primary: #1a1a1a;
+  --sidebar-text-secondary: #6b7280;
+  --sidebar-text-active: #3d52a0;
+  --sidebar-hover-bg: #f0f0f0;
+  --sidebar-active-bg: #3d52a0;
+  --sidebar-active-text: #ffffff;
+
+  /* Brand Colors */
+  --brand-primary: #3d52a0;
+  --brand-secondary: #7091e6;
+  --brand-accent: #ede8f5;
 }
 
 .dark {
@@ -114,6 +130,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Dark mode sidebar adjustments */
+  --sidebar-bg: #2a2a2a;
+  --sidebar-border-color: #404040;
+  --sidebar-text-primary: #ffffff;
+  --sidebar-text-secondary: #a0a0a0;
+  --sidebar-hover-bg: #353535;
 }
 
 @layer base {
@@ -162,5 +185,32 @@
   }
   .content-spacing-compact {
     @apply space-y-4 md:space-y-6;
+  }
+
+  /* Custom Sidebar Styles */
+  .sidebar-narra {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border-color);
+  }
+
+  .sidebar-nav-item {
+    color: var(--sidebar-text-secondary);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-primary);
+  }
+
+  .sidebar-nav-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+  }
+
+  .sidebar-brand {
+    color: var(--brand-primary);
+    font-weight: 600;
   }
 }

@@ -16,11 +16,17 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-card border-r border-border h-full">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-primary">Use Narra</h2>
+    <div className="sidebar-narra h-full flex flex-col">
+      {/* Brand Header */}
+      <div className="p-6 border-b border-[var(--sidebar-border-color)]">
+        <h2 className="sidebar-brand text-lg font-semibold">Use Narra</h2>
+        <p className="text-xs text-[var(--sidebar-text-secondary)] mt-1">
+          Content Curation Platform
+        </p>
       </div>
-      <nav className="px-4 space-y-2">
+
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-6 space-y-2">
         {navigation.map(item => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -29,18 +35,24 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              className={`sidebar-nav-item flex items-center px-3 py-3 rounded-lg text-sm font-medium ${
+                isActive ? "active" : ""
               }`}
             >
-              <Icon className="mr-3 h-4 w-4" />
-              {item.name}
+              <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
+              <span>{item.name}</span>
             </Link>
           );
         })}
       </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-[var(--sidebar-border-color)]">
+        <div className="text-xs text-[var(--sidebar-text-secondary)] text-center">
+          <p>© 2024 Use Narra</p>
+          <p className="mt-1">v1.0.0</p>
+        </div>
+      </div>
     </div>
   );
 }
