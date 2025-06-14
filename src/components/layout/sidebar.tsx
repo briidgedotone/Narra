@@ -175,13 +175,13 @@ export function Sidebar() {
       </nav>
 
       {/* Folders Section */}
-      <div className="flex-1 px-3 border-t border-[var(--sidebar-border-color)] pt-3">
+      <div className="flex-1 px-3 border-t border-[var(--sidebar-border-color)] pt-3 flex flex-col min-h-0">
         <div className="mb-2">
           <h3 className="text-xs font-semibold text-[var(--sidebar-text-secondary)] uppercase tracking-wider px-2">
             Folders
           </h3>
         </div>
-        <div className="space-y-1 max-h-64 overflow-y-auto">
+        <div className="space-y-1 flex-1 overflow-y-auto">
           {folders.map((folder: SidebarFolder) => {
             const isExpanded = expandedFolders.includes(folder.id);
             const FolderIcon = isExpanded ? FolderOpen : FolderClosed;
