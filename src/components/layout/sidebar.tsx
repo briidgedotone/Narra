@@ -13,9 +13,11 @@ import {
   Users,
   Settings,
   Clipboard,
-  Folder,
+  FolderClosed,
+  FolderOpen,
   ChevronDown,
   ChevronUp,
+  PlusCircle,
 } from "@/components/ui/icons";
 
 const mainNavigation = [
@@ -26,7 +28,7 @@ const mainNavigation = [
   {
     name: "Create Board",
     href: "/boards/create",
-    icon: Clipboard,
+    icon: PlusCircle,
     special: true,
   },
 ];
@@ -115,6 +117,7 @@ export function Sidebar() {
           {mockFolders.map(folder => {
             const isExpanded = expandedFolders.includes(folder.id);
             const ChevronIcon = isExpanded ? ChevronUp : ChevronDown;
+            const FolderIcon = isExpanded ? FolderOpen : FolderClosed;
 
             return (
               <div key={folder.id}>
@@ -123,7 +126,7 @@ export function Sidebar() {
                   onClick={() => toggleFolder(folder.id)}
                   className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors text-left"
                 >
-                  <Folder className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <FolderIcon className="mr-2 h-5 w-5 flex-shrink-0" />
                   <span className="flex-1 truncate">{folder.name}</span>
                   <ChevronIcon className="h-4 w-4 flex-shrink-0" />
                 </button>
@@ -142,7 +145,7 @@ export function Sidebar() {
                             isBoardActive ? "active" : ""
                           }`}
                         >
-                          <Clipboard className="mr-2 h-3 w-3 flex-shrink-0 opacity-60" />
+                          <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
                           <span className="truncate">{board.name}</span>
                         </Link>
                       );

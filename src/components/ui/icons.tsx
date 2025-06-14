@@ -29,6 +29,9 @@ import {
   GridIcon,
   Calendar01Icon,
   ClipboardIcon,
+  Folder01Icon,
+  Folder02Icon,
+  PlusSignCircleIcon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -59,6 +62,13 @@ export const FolderPlus = FolderAddIcon;
 export const Hash = GridIcon;
 export const Calendar = Calendar01Icon;
 export const Clipboard = ClipboardIcon;
+
+// Specific folder icons for open/closed states
+export const FolderClosed = Folder01Icon;
+export const FolderOpen = Folder02Icon;
+
+// Plus icon for create actions
+export const PlusCircle = PlusSignCircleIcon;
 
 // Export the icon type for compatibility
 export type IconType = React.ComponentType<{
