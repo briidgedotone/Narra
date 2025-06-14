@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { DashboardLayout } from "@/components/layout";
 import { BoardHeader } from "@/components/shared/board-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Clipboard,
   SearchList,
@@ -14,6 +15,9 @@ import {
   TimeQuarter,
   FavouriteCircle,
   Calendar03,
+  FileText,
+  Link,
+  Files,
 } from "@/components/ui/icons";
 
 interface BoardPageProps {
@@ -230,32 +234,19 @@ export default function BoardPage({ params }: BoardPageProps) {
         {/* Section 3: Saved Posts */}
         <div className="space-y-6">
           {/* Empty State */}
-          <div className="bg-card rounded-lg border p-12">
-            <div className="text-center text-muted-foreground">
-              <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium mb-2">No posts saved yet</h3>
-              <p className="text-base mb-4">
-                Start discovering content and save posts to this board to see
-                them here.
-              </p>
-              <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90">
-                Discover Content
-              </button>
-            </div>
+          <div className="flex justify-center">
+            <EmptyState
+              title="No posts saved yet"
+              description="Start discovering content and save posts to this board to see them here."
+              icons={[FileText, Link, Files]}
+              action={{
+                label: "Discover Content",
+                onClick: () => {
+                  // TODO: Navigate to discovery page
+                  console.log("Navigate to discovery page");
+                },
+              }}
+            />
           </div>
         </div>
       </div>
