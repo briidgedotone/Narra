@@ -19,7 +19,12 @@ const mainNavigation = [
   { name: "Discovery", href: "/discovery", icon: Search },
   { name: "Saved Posts", href: "/saved", icon: Bookmark },
   { name: "Following", href: "/following", icon: Users },
-  { name: "Create Board", href: "/boards/create", icon: Clipboard },
+  {
+    name: "Create Board",
+    href: "/boards/create",
+    icon: Clipboard,
+    special: true,
+  },
 ];
 
 const bottomNavigation = [
@@ -45,6 +50,7 @@ export function Sidebar() {
         {mainNavigation.map(item => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
+          const isCreateBoard = item.special;
 
           return (
             <Link
@@ -53,8 +59,12 @@ export function Sidebar() {
               className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
                 isActive ? "active" : ""
               }`}
+              style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
             >
-              <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <Icon
+                className="mr-2 h-4 w-4 flex-shrink-0"
+                style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
+              />
               <span className="text-sm py-2">{item.name}</span>
             </Link>
           );
