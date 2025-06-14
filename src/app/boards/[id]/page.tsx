@@ -32,10 +32,10 @@ export default async function BoardPage({ params }: BoardPageProps) {
     boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
 
   return (
-    <DashboardLayout>
-      <BoardHeader boardName={boardName} boardId={id} />
-
-      <div className="p-6 space-y-6">
+    <DashboardLayout
+      header={<BoardHeader boardName={boardName} boardId={id} />}
+    >
+      <div className="px-[76px] py-[56px] space-y-6">
         <div className="bg-card rounded-lg border p-8">
           <div className="text-center text-muted-foreground">
             <h3 className="text-lg font-medium mb-2">Board Content</h3>

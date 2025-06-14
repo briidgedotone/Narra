@@ -9,9 +9,10 @@ import { Sidebar } from "./sidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
+  header?: ReactNode;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, header }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -69,7 +70,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Page Content */}
           <main className="flex-1 overflow-auto">
-            <div className="p-6">{children}</div>
+            {header}
+            <div className={header ? "" : "p-6"}>{children}</div>
           </main>
         </div>
       </div>

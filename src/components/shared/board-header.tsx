@@ -32,17 +32,17 @@ export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
   };
 
   return (
-    <div className="h-14 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
-      <div className="flex items-center justify-between h-full px-6">
+    <div className="h-14 sticky top-0 z-10">
+      <div className="flex items-center justify-between h-full">
         {/* Left side - Board name */}
-        <div className="flex items-center">
+        <div className="flex items-center pl-6">
           <h1 className="text-sm font-medium text-foreground truncate max-w-md">
             {boardName}
           </h1>
         </div>
 
         {/* Right side - Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 pr-6">
           {/* Copy Link Button */}
           <Button
             variant="outline"
