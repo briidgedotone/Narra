@@ -1,6 +1,6 @@
 "use client";
 
-import { Search01Icon } from "hugeicons-react";
+import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useState, useCallback } from "react";
 
@@ -464,27 +464,33 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             </div>
 
             {/* Platform Buttons */}
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-6">
               <Button
                 variant={
                   selectedPlatform === "instagram" ? "default" : "outline"
                 }
                 onClick={() => setSelectedPlatform("instagram")}
-                className="flex items-center gap-2 px-6 py-3"
+                className={cn(
+                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
+                  selectedPlatform === "instagram"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg"
+                    : "border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
+                )}
               >
-                <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">IG</span>
-                </div>
+                <InstagramIcon className="w-7 h-7" />
                 Instagram
               </Button>
               <Button
                 variant={selectedPlatform === "tiktok" ? "default" : "outline"}
                 onClick={() => setSelectedPlatform("tiktok")}
-                className="flex items-center gap-2 px-6 py-3"
+                className={cn(
+                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
+                  selectedPlatform === "tiktok"
+                    ? "bg-black text-white border-0 shadow-lg hover:bg-gray-800"
+                    : "border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-50"
+                )}
               >
-                <div className="w-5 h-5 bg-black rounded-lg flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">TT</span>
-                </div>
+                <TiktokIcon className="w-7 h-7" />
                 TikTok
               </Button>
             </div>
