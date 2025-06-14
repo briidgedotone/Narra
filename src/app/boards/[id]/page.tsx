@@ -25,7 +25,10 @@ export default async function BoardPage({ params }: BoardPageProps) {
     "4": "Branding",
   };
 
-  const boardName = boardNames[id] || `Board ${id}`;
+  // Check if it's a dynamically created board (timestamp-based ID)
+  const isNewBoard = !boardNames[id] && !isNaN(Number(id));
+  const boardName =
+    boardNames[id] || (isNewBoard ? "Untitled Board" : `Board ${id}`);
 
   return (
     <DashboardLayout>

@@ -15,8 +15,6 @@ import {
   Clipboard,
   FolderClosed,
   FolderOpen,
-  ChevronDown,
-  ChevronUp,
   PlusCircle,
 } from "@/components/ui/icons";
 
@@ -61,6 +59,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
+  const [folders, setFolders] = useState(mockFolders);
 
   const toggleFolder = (folderId: number) => {
     setExpandedFolders(prev =>
@@ -70,10 +69,28 @@ export function Sidebar() {
     );
   };
 
-  const handleAddBoard = (folderId: number, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent folder toggle
-    // TODO: Implement add board functionality
-    console.log(`Add board to folder ${folderId}`);
+  const createNewBoard = (folderId: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent folder toggle when clicking plus
+
+    const newBoardId = Date.now(); // Simple ID generation
+    const newBoard = {
+      id: newBoardId,
+      name: "Untitled Board",
+      href: `/boards/${newBoardId}`,
+    };
+
+    setFolders(prev =>
+      prev.map(folder =>
+        folder.id === folderId
+          ? { ...folder, boards: [...folder.boards, newBoard] }
+          : folder
+      )
+    );
+
+    // Expand the folder if it's not already expanded
+    if (!expandedFolders.includes(folderId)) {
+      setExpandedFolders(prev => [...prev, folderId]);
+    }
   };
 
   return (
@@ -120,9 +137,8 @@ export function Sidebar() {
           </h3>
         </div>
         <div className="space-y-1 max-h-64 overflow-y-auto">
-          {mockFolders.map(folder => {
+          {folders.map(folder => {
             const isExpanded = expandedFolders.includes(folder.id);
-            const ChevronIcon = isExpanded ? ChevronUp : ChevronDown;
             const FolderIcon = isExpanded ? FolderOpen : FolderClosed;
 
             return (
@@ -137,17 +153,11 @@ export function Sidebar() {
                     <span className="flex-1 truncate">{folder.name}</span>
                   </button>
                   <button
-                    onClick={e => handleAddBoard(folder.id, e)}
-                    className="p-0.5 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors mr-1"
-                    title="Add board to folder"
+                    onClick={e => createNewBoard(folder.id, e)}
+                    className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                    title="Create new board"
                   >
-                    <PlusCircle className="h-3 w-3 flex-shrink-0 text-[var(--sidebar-text-secondary)] hover:text-[var(--sidebar-text-primary)]" />
-                  </button>
-                  <button
-                    onClick={() => toggleFolder(folder.id)}
-                    className="p-0.5"
-                  >
-                    <ChevronIcon className="h-4 w-4 flex-shrink-0" />
+                    <PlusCircle className="h-4 w-4 flex-shrink-0" />
                   </button>
                 </div>
 
