@@ -2,7 +2,7 @@
 
 import { useAuth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { DashboardLayout } from "@/components/layout";
 import { BoardHeader } from "@/components/shared/board-header";
@@ -18,6 +18,7 @@ export default function BoardPage({ params }: BoardPageProps) {
   const { userId } = useAuth();
   const [boardName, setBoardName] = useState("");
   const [boardDescription, setBoardDescription] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // This will be replaced with proper async handling
   const { id } = React.use(params);
@@ -47,6 +48,15 @@ export default function BoardPage({ params }: BoardPageProps) {
     );
   }, [id, userId]);
 
+  // Auto-resize textarea on initial load and when description changes
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, [boardDescription]);
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBoardName(e.target.value);
     // TODO: Update in database and sync with sidebar
@@ -57,6 +67,9 @@ export default function BoardPage({ params }: BoardPageProps) {
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setBoardDescription(e.target.value);
+    // Auto-resize textarea
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
     // TODO: Update in database
   };
 
@@ -112,7 +125,7 @@ export default function BoardPage({ params }: BoardPageProps) {
               onChange={handleDescriptionChange}
               placeholder="Type the description for this board"
               className="text-muted-foreground text-base bg-transparent focus:outline-none resize-none w-full"
-              rows={2}
+              ref={textareaRef}
             />
           </div>
         </div>
