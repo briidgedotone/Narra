@@ -89,9 +89,45 @@
   --sidebar-active-text: #ffffff;
 
   /* Brand Colors */
-  --brand-primary: #3d52a0;
-  --brand-secondary: #7091e6;
-  --brand-accent: #ede8f5;
+  --brand-primary: #3c82f6;
+  --brand-secondary: #2563eb;
+  --brand-accent: #60a5fa;
+
+  /* Sidebar Colors */
+  --sidebar-bg: #f8f8f8;
+  --sidebar-border-color: #e2e2e2;
+  --sidebar-text-primary: #1f2937;
+  --sidebar-text-secondary: #6b7280;
+  --sidebar-hover-bg: #f3f4f6;
+  --sidebar-active-bg: #3c82f6;
+  --sidebar-active-text: #ffffff;
+
+  /* Component Colors */
+  --button-primary-bg: #3c82f6;
+  --button-primary-hover: #2563eb;
+  --button-primary-text: #ffffff;
+
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  /* Semantic Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3c82f6;
+
+  /* Neutral Colors */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
 }
 
 .dark {
@@ -192,16 +228,16 @@
     width: var(--sidebar-width);
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--sidebar-border-color);
+    color: var(--sidebar-text-primary);
   }
 
   .sidebar-nav-item {
-    color: var(--sidebar-text-secondary);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--sidebar-text-primary);
+    transition: all 0.2s ease;
   }
 
   .sidebar-nav-item:hover {
     background-color: var(--sidebar-hover-bg);
-    color: var(--sidebar-text-primary);
   }
 
   .sidebar-nav-item.active {
@@ -210,7 +246,24 @@
   }
 
   .sidebar-brand {
-    color: var(--brand-primary);
+    color: var(--sidebar-text-primary);
     font-weight: 600;
   }
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.btn-primary:hover {
+  background-color: var(--button-primary-hover);
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
 }

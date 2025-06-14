@@ -75,22 +75,21 @@ export function Sidebar() {
             );
           })}
         </nav>
-
-        {/* Profile Section */}
-        <div className="border-t border-[var(--sidebar-border-color)] pt-3">
-          <div className="flex items-center px-2 py-2 rounded-md hover:bg-[var(--sidebar-hover-bg)] transition-colors cursor-pointer">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-8 w-8",
-                },
-              }}
-            />
-            <div className="ml-2 flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--sidebar-text-primary)] truncate">
-                {user?.firstName || user?.username || "User"}
-              </p>
-            </div>
+      </div>
+      {/* Profile Section */}
+      <div className="border-t border-[var(--sidebar-border-color)] p-3 pt-1.5">
+        <div className="flex items-center px-2 py-2 rounded-md hover:bg-[var(--sidebar-hover-bg)] transition-colors cursor-pointer">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-8 w-8",
+              },
+            }}
+          />
+          <div className="ml-2 flex-1 min-w-0">
+            <p className="text-sm font-medium text-[var(--sidebar-text-primary)] truncate">
+              {user?.firstName || user?.username || "User"}
+            </p>
           </div>
         </div>
       </div>

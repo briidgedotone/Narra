@@ -1,10 +1,50 @@
 // Use Narra Theme Configuration
 export const THEME = {
-  // Brand Colors
-  brand: {
-    primary: "#3D52A0", // Dark Blue
-    secondary: "#7091E6", // Medium Blue
-    accent: "#EDE8F5", // Light Purple/Pink
+  colors: {
+    // Primary brand colors
+    primary: {
+      50: "#EFF6FF",
+      100: "#DBEAFE",
+      200: "#BFDBFE",
+      300: "#93C5FD",
+      400: "#60A5FA",
+      500: "#3C82F6", // Main primary color
+      600: "#2563EB",
+      700: "#1D4ED8",
+      800: "#1E40AF",
+      900: "#1E3A8A",
+    },
+
+    // Sidebar specific colors
+    sidebar: {
+      background: "#F8F8F8",
+      borderColor: "#E2E2E2",
+      textPrimary: "#1F2937",
+      textSecondary: "#6B7280",
+      hoverBg: "#F3F4F6",
+      activeBg: "#3C82F6",
+      activeText: "#FFFFFF",
+    },
+
+    // Semantic colors
+    success: "#10B981",
+    warning: "#F59E0B",
+    error: "#EF4444",
+    info: "#3C82F6",
+
+    // Neutral colors
+    gray: {
+      50: "#F9FAFB",
+      100: "#F3F4F6",
+      200: "#E5E7EB",
+      300: "#D1D5DB",
+      400: "#9CA3AF",
+      500: "#6B7280",
+      600: "#4B5563",
+      700: "#374151",
+      800: "#1F2937",
+      900: "#111827",
+    },
   },
 
   // Sidebar Theme
@@ -13,15 +53,15 @@ export const THEME = {
     background: "#F8F8F8", // Light gray background
     border: "#E2E2E2", // Light gray border
     text: {
-      primary: "#1A1A1A", // Dark text
+      primary: "#1F2937", // Updated to match new theme
       secondary: "#6B7280", // Muted text
-      active: "#3D52A0", // Brand primary for active states
+      active: "#FFFFFF", // White text on active
     },
     hover: {
-      background: "#F0F0F0", // Slightly darker on hover
+      background: "#F3F4F6", // Updated to match new theme
     },
     active: {
-      background: "#3D52A0", // Brand primary background
+      background: "#3C82F6", // Updated primary color
       text: "#FFFFFF", // White text on active
     },
   },
@@ -48,17 +88,17 @@ export const THEME = {
   // Typography
   typography: {
     fontFamily: {
-      sans: "var(--font-geist-sans)",
-      mono: "var(--font-geist-mono)",
+      sans: ["Inter", "system-ui", "sans-serif"],
+      mono: ["JetBrains Mono", "monospace"],
     },
     fontSize: {
-      xs: "12px",
-      sm: "14px",
-      base: "16px",
-      lg: "18px",
-      xl: "20px",
-      "2xl": "24px",
-      "3xl": "30px",
+      xs: "0.75rem",
+      sm: "0.875rem",
+      base: "1rem",
+      lg: "1.125rem",
+      xl: "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
     },
     fontWeight: {
       normal: "400",
@@ -95,28 +135,43 @@ export const THEME = {
   components: {
     button: {
       primary: {
-        background: "#3D52A0",
+        bg: "#3C82F6",
+        hoverBg: "#2563EB",
         text: "#FFFFFF",
-        hover: "#2A3B7A",
       },
       secondary: {
-        background: "#7091E6",
-        text: "#FFFFFF",
-        hover: "#5A7BD9",
+        bg: "#F3F4F6",
+        hoverBg: "#E5E7EB",
+        text: "#374151",
       },
       outline: {
         background: "transparent",
-        text: "#3D52A0",
-        border: "#3D52A0",
+        text: "#3C82F6", // Updated to new primary
+        border: "#3C82F6", // Updated to new primary
         hover: "#F8F8F8",
       },
     },
     card: {
-      background: "#FFFFFF",
-      border: "#E2E2E2",
+      bg: "#FFFFFF",
+      border: "#E5E7EB",
       shadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
     },
   },
+} as const;
+
+// Backward-compatible theme export for test page
+export const theme = {
+  brand: {
+    primary: "#3C82F6",
+    secondary: "#2563EB",
+    accent: "#60A5FA",
+  },
+  sidebar: THEME.sidebar,
+  components: THEME.components,
+  typography: THEME.typography,
+  layout: THEME.layout,
+  shadows: THEME.shadows,
+  animation: THEME.animation,
 } as const;
 
 // CSS Custom Properties for the theme
@@ -133,9 +188,9 @@ export const THEME_CSS_VARS = {
   "--sidebar-active-text": THEME.sidebar.active.text,
 
   // Brand
-  "--brand-primary": THEME.brand.primary,
-  "--brand-secondary": THEME.brand.secondary,
-  "--brand-accent": THEME.brand.accent,
+  "--brand-primary": THEME.colors.primary[500],
+  "--brand-secondary": THEME.colors.primary[600],
+  "--brand-accent": THEME.colors.primary[400],
 } as const;
 
 // Type for theme access

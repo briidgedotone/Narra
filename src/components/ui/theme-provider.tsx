@@ -2,10 +2,10 @@
 
 import { createContext, useContext, useEffect, ReactNode } from "react";
 
-import { THEME, THEME_CSS_VARS, type ThemeConfig } from "@/config/theme";
+import { theme, THEME_CSS_VARS } from "@/config/theme";
 
 interface ThemeContextType {
-  theme: ThemeConfig;
+  theme: typeof theme;
   cssVars: typeof THEME_CSS_VARS;
 }
 
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, []);
 
   const contextValue: ThemeContextType = {
-    theme: THEME,
+    theme: theme,
     cssVars: THEME_CSS_VARS,
   };
 
