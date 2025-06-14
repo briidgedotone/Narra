@@ -62,7 +62,7 @@ export function Sidebar() {
               style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
             >
               <Icon
-                className="mr-2 h-4 w-4 flex-shrink-0"
+                className="mr-2 h-5 w-5 flex-shrink-0"
                 style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
               />
               <span className="text-sm py-2">{item.name}</span>
@@ -87,7 +87,7 @@ export function Sidebar() {
                   isActive ? "active" : ""
                 }`}
               >
-                <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <Icon className="mr-2 h-5 w-5 flex-shrink-0" />
                 <span className="text-sm py-2">{item.name}</span>
               </Link>
             );
