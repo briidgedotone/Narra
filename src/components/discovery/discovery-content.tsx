@@ -380,13 +380,13 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
           {/* Posts Grid */}
           {isLoadingPosts ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {Array.from({ length: 10 }).map((_, i) => (
                 <div
                   key={i}
                   className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
                 >
-                  <Skeleton className="aspect-[3/4] w-full" />
+                  <Skeleton className="aspect-[9/16] w-full rounded-t-lg" />
                   <div className="p-4 space-y-2">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />
@@ -402,7 +402,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             <div
               className={cn(
                 viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"
                   : "space-y-4"
               )}
             >
@@ -411,28 +411,43 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   key={post.id}
                   onClick={() => handlePostClick(post)}
                   className={cn(
-                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
+                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02]",
                     viewMode === "list" && "flex flex-row"
                   )}
                 >
                   <div
                     className={cn(
                       "relative",
-                      viewMode === "grid" ? "aspect-[3/4]" : "w-48 aspect-[3/4]"
+                      viewMode === "grid"
+                        ? "aspect-[9/16]"
+                        : "w-48 aspect-[9/16]"
                     )}
                   >
-                    <Image
-                      src={post.thumbnail}
-                      alt="Post thumbnail"
-                      fill
-                      className="object-cover"
-                      onError={e => {
-                        // Fallback to placeholder if image fails to load
-                        e.currentTarget.src = "/placeholder-post.jpg";
-                      }}
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    {post.platform === "tiktok" ? (
+                      <iframe
+                        src={`https://www.tiktok.com/embed/v2/${post.id}`}
+                        className="w-full h-full rounded-lg"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    ) : (
+                      <>
+                        <Image
+                          src={post.thumbnail}
+                          alt="Post thumbnail"
+                          fill
+                          className="object-cover rounded-lg"
+                          onError={e => {
+                            // Fallback to placeholder if image fails to load
+                            e.currentTarget.src = "/placeholder-post.jpg";
+                          }}
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
+                      </>
+                    )}
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         size="sm"
@@ -449,31 +464,33 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
                   <div
                     className={cn(
-                      "p-4 space-y-3",
+                      "p-3 space-y-2",
                       viewMode === "list" && "flex-1"
                     )}
                   >
-                    <p className="text-sm line-clamp-2">{post.caption}</p>
+                    <p className="text-xs line-clamp-2 leading-relaxed">
+                      {post.caption}
+                    </p>
 
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
+                          <Heart className="h-2.5 w-2.5" />
                           {formatNumber(post.metrics.likes)}
                         </div>
                         <div className="flex items-center gap-1">
-                          <MessageCircle className="h-3 w-3" />
+                          <MessageCircle className="h-2.5 w-2.5" />
                           {formatNumber(post.metrics.comments)}
                         </div>
                         {post.metrics.views && (
                           <div className="flex items-center gap-1">
-                            <div className="h-3 w-3 rounded-full bg-current opacity-60" />
+                            <div className="h-2.5 w-2.5 rounded-full bg-current opacity-60" />
                             {formatNumber(post.metrics.views)}
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
+                        <Calendar className="h-2.5 w-2.5" />
                         {formatDate(post.datePosted)}
                       </div>
                     </div>
