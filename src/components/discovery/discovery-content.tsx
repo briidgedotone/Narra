@@ -124,6 +124,9 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     "instagram" | "tiktok"
   >("tiktok");
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "transcript">(
+    "overview"
+  );
 
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
@@ -301,7 +304,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setIsSearching(false);
       }
     },
-    [loadPosts, selectedPlatform]
+    [selectedPlatform]
   );
 
   const formatNumber = (num: number) => {
@@ -347,6 +350,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
   const handlePostClick = (post: Post) => {
     setSelectedPost(post);
+    setActiveTab("overview");
   };
 
   return (
@@ -750,93 +754,150 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   </div>
                 </div>
 
-                {/* Right: Post Details */}
-                <div className="space-y-6">
-                  {/* Caption */}
-                  <div>
-                    <h3 className="font-semibold mb-2">Caption</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {selectedPost.caption}
-                    </p>
-                  </div>
-
-                  {/* Metrics */}
-                  <div>
-                    <h3 className="font-semibold mb-3">Performance</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {selectedPost.metrics.views && (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded-full bg-blue-500" />
-                          <div>
-                            <div className="text-sm font-medium">
-                              {formatNumber(selectedPost.metrics.views)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Views
-                            </div>
-                          </div>
-                        </div>
+                {/* Right: Tabbed Content */}
+                <div className="space-y-4">
+                  {/* Tab Navigation */}
+                  <div className="flex border-b border-gray-200">
+                    <button
+                      onClick={() => setActiveTab("overview")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "overview"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
                       )}
-                      <div className="flex items-center gap-2">
-                        <Heart className="w-4 h-4 text-red-500" />
-                        <div>
-                          <div className="text-sm font-medium">
-                            {formatNumber(selectedPost.metrics.likes)}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Likes
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MessageCircle className="w-4 h-4 text-blue-500" />
-                        <div>
-                          <div className="text-sm font-medium">
-                            {formatNumber(selectedPost.metrics.comments)}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Comments
-                          </div>
-                        </div>
-                      </div>
-                      {selectedPost.metrics.shares && (
-                        <div className="flex items-center gap-2">
-                          <ExternalLink className="w-4 h-4 text-green-500" />
-                          <div>
-                            <div className="text-sm font-medium">
-                              {formatNumber(selectedPost.metrics.shares)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Shares
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Post Date */}
-                  <div>
-                    <h3 className="font-semibold mb-2">Posted</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(selectedPost.datePosted)}
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-3 pt-4 border-t">
-                    <Button
-                      className="flex-1"
-                      onClick={() => handleSavePost(selectedPost.id)}
                     >
-                      <Bookmark className="w-4 h-4 mr-2" />
-                      Save to Board
-                    </Button>
-                    <Button variant="outline">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Share
-                    </Button>
+                      Overview
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("transcript")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "transcript"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      Transcript
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="space-y-6">
+                    {activeTab === "overview" && (
+                      <>
+                        {/* Caption */}
+                        <div>
+                          <h3 className="font-semibold mb-2">Caption</h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {selectedPost.caption}
+                          </p>
+                        </div>
+
+                        {/* Metrics */}
+                        <div>
+                          <h3 className="font-semibold mb-3">Performance</h3>
+                          <div className="grid grid-cols-2 gap-4">
+                            {selectedPost.metrics.views && (
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 rounded-full bg-blue-500" />
+                                <div>
+                                  <div className="text-sm font-medium">
+                                    {formatNumber(selectedPost.metrics.views)}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Views
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                              <Heart className="w-4 h-4 text-red-500" />
+                              <div>
+                                <div className="text-sm font-medium">
+                                  {formatNumber(selectedPost.metrics.likes)}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Likes
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MessageCircle className="w-4 h-4 text-blue-500" />
+                              <div>
+                                <div className="text-sm font-medium">
+                                  {formatNumber(selectedPost.metrics.comments)}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Comments
+                                </div>
+                              </div>
+                            </div>
+                            {selectedPost.metrics.shares && (
+                              <div className="flex items-center gap-2">
+                                <ExternalLink className="w-4 h-4 text-green-500" />
+                                <div>
+                                  <div className="text-sm font-medium">
+                                    {formatNumber(selectedPost.metrics.shares)}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Shares
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Post Date */}
+                        <div>
+                          <h3 className="font-semibold mb-2">Posted</h3>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(selectedPost.datePosted)}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            className="flex-1"
+                            onClick={() => handleSavePost(selectedPost.id)}
+                          >
+                            <Bookmark className="w-4 h-4 mr-2" />
+                            Save to Board
+                          </Button>
+                          <Button variant="outline">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Share
+                          </Button>
+                        </div>
+                      </>
+                    )}
+
+                    {activeTab === "transcript" && (
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="font-semibold">Transcript</h3>
+                          <Button variant="outline" size="sm">
+                            Copy Transcript
+                          </Button>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                          <p className="text-sm leading-relaxed">
+                            {/* Mock transcript - replace with actual transcript from API */}
+                            This is where the video transcript will appear.
+                            We&apos;ll fetch this from the ScrapeCreators API
+                            transcript endpoint. The transcript will show the
+                            spoken content of the video, making it easy to copy
+                            and use for content inspiration.
+                          </p>
+                        </div>
+                        <div className="mt-4 text-xs text-muted-foreground">
+                          Transcript generated automatically. Accuracy may vary.
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
