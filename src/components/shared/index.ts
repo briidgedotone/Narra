@@ -4,14 +4,12 @@
 
 // This file will be populated as we create shared components
 
-export { BoardCard } from "./board-card";
-export { StatsCard } from "./stats-card";
 export { ActivityItem } from "./activity-item";
-export { QuickActions } from "./quick-actions";
+export { BoardCard } from "./board-card";
+export { BoardHeader } from "./board-header";
 export { CreateFolderModal } from "./create-folder-modal";
 export { DashboardContent } from "./dashboard-content";
-export { BoardHeader } from "./board-header";
-export {
-  DashboardSettingsModal,
-  useDashboardSettings,
-} from "./dashboard-settings";
+export { DashboardSettings } from "./dashboard-settings";
+export { PostDetailModal } from "./post-detail-modal";
+export { QuickActions } from "./quick-actions";
+export { StatsCard } from "./stats-card";

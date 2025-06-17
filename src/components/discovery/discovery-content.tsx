@@ -4,6 +4,7 @@ import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useState, useCallback } from "react";
 
+import { PostDetailModal } from "@/components/shared/post-detail-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -46,6 +47,7 @@ interface Post {
   embedUrl: string;
   caption: string;
   thumbnail: string;
+  transcript?: string;
   metrics: {
     views?: number;
     likes: number;
@@ -54,6 +56,13 @@ interface Post {
   };
   datePosted: string;
   platform: "instagram" | "tiktok";
+  profile: {
+    handle: string;
+    displayName: string;
+    avatarUrl: string;
+    verified: boolean;
+    followers: number;
+  };
 }
 
 export function DiscoveryContent({ userId }: DiscoveryContentProps) {
@@ -70,6 +79,10 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     "instagram" | "tiktok"
   >("tiktok");
 
+  // Post Detail Modal State
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+
   const loadPosts = useCallback(
     async (profileId: string) => {
       // For now, we'll simulate posts since we're focusing on profile integration first
@@ -85,6 +98,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           embedUrl: `https://example.com/embed/${i + 1}`,
           caption: `This is a sample post caption for post ${i + 1}. It contains some engaging content about entrepreneurship and creativity.`,
           thumbnail: `https://picsum.photos/400/600?random=${i + 1}`,
+          transcript: `This is a sample transcript for post ${i + 1}. The content discusses various topics including business strategies, personal development, and creative inspiration. The speaker emphasizes the importance of consistency, authenticity, and providing value to your audience.`,
           metrics: {
             views: Math.floor(Math.random() * 100000) + 10000,
             likes: Math.floor(Math.random() * 5000) + 100,
@@ -95,6 +109,13 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
           ).toISOString(),
           platform: searchResults?.platform || "tiktok",
+          profile: {
+            handle: searchResults?.handle || "creator",
+            displayName: searchResults?.displayName || "Creator",
+            avatarUrl: searchResults?.avatarUrl || "/placeholder-avatar.jpg",
+            verified: searchResults?.verified || false,
+            followers: searchResults?.followers || 0,
+          },
         }));
 
         setPosts(mockPosts);
@@ -189,6 +210,25 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       console.log("Saving post:", postId, "for user:", userId);
     } catch (error) {
       console.error("Failed to save post:", error);
+    }
+  };
+
+  const handlePostClick = (post: Post) => {
+    setSelectedPost(post);
+    setIsPostModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsPostModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleFollowFromModal = async (handle: string) => {
+    try {
+      // Mock API call - replace with actual follow functionality
+      console.log("Following profile:", handle, "for user:", userId);
+    } catch (error) {
+      console.error("Failed to follow profile:", error);
     }
   };
 
@@ -378,6 +418,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               {posts.map(post => (
                 <div
                   key={post.id}
+                  onClick={() => handlePostClick(post)}
                   className={cn(
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
                     viewMode === "list" && "flex flex-row"
@@ -532,6 +573,17 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             }}
           />
         </div>
+      )}
+
+      {/* Post Detail Modal */}
+      {selectedPost && (
+        <PostDetailModal
+          isOpen={isPostModalOpen}
+          onClose={handleCloseModal}
+          post={selectedPost}
+          onSavePost={handleSavePost}
+          onFollowProfile={handleFollowFromModal}
+        />
       )}
     </div>
   );
