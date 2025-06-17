@@ -90,37 +90,66 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       setIsLoadingPosts(true);
 
       try {
-        console.log("Loading real posts for profile:", profileId);
+        // Only load real posts for TikTok, Instagram still uses mock data for now
+        if (searchResults.platform === "tiktok") {
+          console.log(
+            "Loading real TikTok posts for handle:",
+            searchResults.handle
+          );
 
-        // Call our new creator-posts API to get real TikTok posts
-        const response = await fetch(
-          `/api/creator-posts?handle=${encodeURIComponent(searchResults.handle)}&platform=${searchResults.platform}&count=12`
-        );
-        const result = await response.json();
+          const response = await fetch(
+            `/api/tiktok-profile-videos?handle=${encodeURIComponent(searchResults.handle)}`
+          );
 
-        if (result.success && result.data && result.data.posts) {
-          const realPosts: Post[] = result.data.posts.map((video: any) => ({
-            id: video.id,
-            embedUrl: video.embedUrl,
-            caption: video.caption,
-            thumbnail: video.thumbnail,
-            transcript: video.transcript,
-            metrics: video.metrics,
-            datePosted: video.datePosted,
-            platform: video.platform,
-            profile: video.profile,
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result.success && result.data) {
+            console.log(
+              `Successfully loaded ${result.data.posts.length} TikTok videos (cached: ${result.cached})`
+            );
+            setPosts(result.data.posts);
+          } else {
+            throw new Error(result.error || "Failed to load TikTok videos");
+          }
+        } else {
+          // Instagram - use mock data for now
+          console.log("Loading mock posts for Instagram profile:", profileId);
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          const mockPosts: Post[] = Array.from({ length: 12 }, (_, i) => ({
+            id: `post-${i + 1}`,
+            embedUrl: `https://example.com/embed/${i + 1}`,
+            caption: `This is a sample post caption for post ${i + 1}. It contains some engaging content about lifestyle and inspiration.`,
+            thumbnail: `https://picsum.photos/400/600?random=${i + 1}`,
+            transcript: `This is a sample transcript for post ${i + 1}. The content discusses various topics including lifestyle, travel, and personal development.`,
+            metrics: {
+              views: Math.floor(Math.random() * 100000) + 10000,
+              likes: Math.floor(Math.random() * 5000) + 100,
+              comments: Math.floor(Math.random() * 500) + 10,
+              shares: Math.floor(Math.random() * 200) + 5,
+            },
+            datePosted: new Date(
+              Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            platform: "instagram",
+            profile: {
+              handle: searchResults.handle,
+              displayName: searchResults.displayName,
+              avatarUrl: searchResults.avatarUrl,
+              verified: searchResults.verified,
+              followers: searchResults.followers,
+            },
           }));
 
-          setPosts(realPosts);
-          console.log(`Successfully loaded ${realPosts.length} real posts`);
-        } else {
-          console.error("Failed to load posts:", result.error);
-          // Fallback to empty posts array
-          setPosts([]);
+          setPosts(mockPosts);
         }
       } catch (error) {
         console.error("Failed to load posts:", error);
-        // Fallback to empty posts array
+        // Fall back to empty posts array on error
         setPosts([]);
       } finally {
         setIsLoadingPosts(false);

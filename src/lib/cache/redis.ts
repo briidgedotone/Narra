@@ -51,8 +51,6 @@ export const cache = new MemoryCache();
 // Cache key utilities
 export const cacheKeys = {
   tiktokProfile: (handle: string) => `tiktok:profile:${handle}`,
-  tiktokVideos: (handle: string) => `tiktok:videos:${handle}`,
-  tiktokTranscript: (videoId: string) => `tiktok:transcript:${videoId}`,
   instagramProfile: (handle: string) => `instagram:profile:${handle}`,
 };
 
@@ -60,6 +58,5 @@ export const cacheKeys = {
 export const cacheTTL = {
   profile: 300, // 5 minutes for profiles
   posts: 180, // 3 minutes for posts
-  transcript: 3600, // 1 hour for transcripts (they rarely change)
   search: 120, // 2 minutes for search results
 };

@@ -1,7 +1,8 @@
 import { cache, cacheKeys, cacheTTL } from "@/lib/cache/redis";
 
 // ScrapeCreators API client
-const SCRAPECREATORS_BASE_URL = "https://api.scrapecreators.com/v1";
+const SCRAPECREATORS_BASE_URL_V1 = "https://api.scrapecreators.com/v1";
+const SCRAPECREATORS_BASE_URL_V3 = "https://api.scrapecreators.com/v3";
 const API_KEY = process.env.SCRAPECREATORS_API_KEY;
 
 if (!API_KEY) {
@@ -15,8 +16,54 @@ interface ApiResponse<T> {
   cached?: boolean;
 }
 
-// Data transformation interfaces
-export interface TikTokVideo {
+// TikTok Video interfaces for v3 API
+interface TikTokVideoResponse {
+  aweme_list: TikTokVideoItem[];
+  has_more: number;
+  max_cursor: number;
+  min_cursor: number;
+  status_code: number;
+  status_msg: string;
+}
+
+interface TikTokVideoItem {
+  aweme_id: string;
+  desc: string;
+  create_time: number;
+  author: {
+    unique_id: string;
+    nickname: string;
+    avatar_thumb: {
+      url_list: string[];
+    };
+    verification_type: number;
+    follower_count: number;
+  };
+  video: {
+    cover: {
+      url_list: string[];
+    };
+    play_addr: {
+      url_list: string[];
+    };
+    duration: number;
+  };
+  statistics: {
+    play_count: number;
+    digg_count: number;
+    comment_count: number;
+    share_count: number;
+  };
+  cla_info?: {
+    caption_infos?: Array<{
+      url: string;
+      language_code: string;
+    }>;
+  };
+}
+
+// Our standardized Post interface
+interface Post {
   id: string;
   embedUrl: string;
   caption: string;
@@ -39,71 +86,11 @@ export interface TikTokVideo {
   };
 }
 
-export interface TikTokProfile {
-  id: string;
-  handle: string;
-  displayName: string;
-  platform: "tiktok";
-  followers: number;
-  following: number;
-  posts: number;
-  bio: string;
-  avatarUrl: string;
-  verified: boolean;
-}
-
-// Data transformation functions
-export function transformTikTokProfile(rawData: any): TikTokProfile {
-  return {
-    id: rawData.id || rawData.user_id || rawData.secUid,
-    handle: rawData.unique_id || rawData.username || rawData.handle,
-    displayName: rawData.nickname || rawData.display_name || rawData.name,
-    platform: "tiktok",
-    followers: rawData.follower_count || rawData.followers || 0,
-    following: rawData.following_count || rawData.following || 0,
-    posts: rawData.video_count || rawData.posts || 0,
-    bio: rawData.signature || rawData.bio || rawData.description || "",
-    avatarUrl:
-      rawData.avatar_larger || rawData.avatar_thumb || rawData.avatar || "",
-    verified: rawData.verified || false,
-  };
-}
-
-export function transformTikTokVideo(
-  rawVideo: any,
-  profileData: TikTokProfile
-): TikTokVideo {
-  const videoId = rawVideo.id || rawVideo.aweme_id || "";
-
-  return {
-    id: videoId,
-    embedUrl: `https://www.tiktok.com/@${profileData.handle}/video/${videoId}`,
-    caption: rawVideo.desc || rawVideo.description || "",
-    thumbnail: rawVideo.video?.cover || rawVideo.cover || "",
-    metrics: {
-      views: rawVideo.stats?.play_count || rawVideo.view_count,
-      likes: rawVideo.stats?.digg_count || rawVideo.like_count || 0,
-      comments: rawVideo.stats?.comment_count || rawVideo.comment_count || 0,
-      shares: rawVideo.stats?.share_count || rawVideo.share_count,
-    },
-    datePosted: rawVideo.create_time
-      ? new Date(rawVideo.create_time * 1000).toISOString()
-      : new Date().toISOString(),
-    platform: "tiktok",
-    profile: {
-      handle: profileData.handle,
-      displayName: profileData.displayName,
-      avatarUrl: profileData.avatarUrl,
-      verified: profileData.verified,
-      followers: profileData.followers,
-    },
-  };
-}
-
 async function makeRequest<T>(
   endpoint: string,
   cacheKey?: string,
-  ttl?: number
+  ttl?: number,
+  apiVersion: "v1" | "v3" = "v1"
 ): Promise<ApiResponse<T>> {
   // Check cache first if cacheKey provided
   if (cacheKey) {
@@ -114,7 +101,11 @@ async function makeRequest<T>(
   }
 
   try {
-    const response = await fetch(`${SCRAPECREATORS_BASE_URL}${endpoint}`, {
+    const baseUrl =
+      apiVersion === "v3"
+        ? SCRAPECREATORS_BASE_URL_V3
+        : SCRAPECREATORS_BASE_URL_V1;
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       headers: {
         "x-api-key": API_KEY!,
         "Content-Type": "application/json",
@@ -144,6 +135,32 @@ async function makeRequest<T>(
   }
 }
 
+// Helper function to extract transcript from TikTok captions
+function extractTranscript(item: TikTokVideoItem): string | undefined {
+  if (!item.cla_info?.caption_infos?.length) {
+    return undefined;
+  }
+
+  // Find English transcript
+  const englishCaption = item.cla_info.caption_infos.find(
+    caption =>
+      caption.language_code === "en" || caption.language_code === "eng-US"
+  );
+
+  if (englishCaption?.url) {
+    // For now, return a placeholder. In a real implementation,
+    // you'd fetch the transcript from the URL
+    return (
+      "Transcript available - would be fetched from: " + englishCaption.url
+    );
+  }
+
+  return undefined;
+}
+
+// Export types
+export type { Post, TikTokVideoItem, TikTokVideoResponse };
+
 export const scrapeCreatorsApi = {
   // Test connection with a simple TikTok profile (using a known public account)
   async testConnection() {
@@ -161,22 +178,69 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getProfileVideos(handle: string, count: number = 20) {
-      const cacheKey = cacheKeys.tiktokVideos(handle);
-      return await makeRequest(
-        `/tiktok/profile/videos?handle=${handle}&count=${count}`,
-        cacheKey,
-        cacheTTL.posts
-      );
-    },
+    async getProfileVideos(
+      handle: string,
+      maxCursor?: string
+    ): Promise<
+      ApiResponse<{ posts: Post[]; hasMore: boolean; nextCursor?: string }>
+    > {
+      const cacheKey = `tiktok:videos:${handle}:${maxCursor || "initial"}`;
+      const endpoint = `/tiktok/profile/videos?handle=${handle}${maxCursor ? `&max_cursor=${maxCursor}` : ""}`;
 
-    async getVideoTranscript(videoId: string) {
-      const cacheKey = cacheKeys.tiktokTranscript(videoId);
-      return await makeRequest(
-        `/tiktok/video/transcript?video_id=${videoId}`,
+      const response = await makeRequest<TikTokVideoResponse>(
+        endpoint,
         cacheKey,
-        cacheTTL.transcript
+        cacheTTL.posts, // 5 minutes
+        "v3" // Use v3 API for videos
       );
+
+      if (!response.success || !response.data) {
+        return {
+          success: false,
+          error: response.error || "Failed to fetch videos",
+          cached: response.cached || false,
+        };
+      }
+
+      // Transform TikTok API response to our Post format
+      const posts: Post[] = response.data.aweme_list.map(
+        (item: TikTokVideoItem) => ({
+          id: item.aweme_id,
+          embedUrl: `https://www.tiktok.com/@${item.author.unique_id}/video/${item.aweme_id}`,
+          caption: item.desc || "",
+          thumbnail: item.video.cover?.url_list?.[0] || "/placeholder-post.jpg",
+          ...(extractTranscript(item) && {
+            transcript: extractTranscript(item),
+          }),
+          metrics: {
+            views: item.statistics.play_count,
+            likes: item.statistics.digg_count,
+            comments: item.statistics.comment_count,
+            shares: item.statistics.share_count,
+          },
+          datePosted: new Date(item.create_time * 1000).toISOString(),
+          platform: "tiktok" as const,
+          profile: {
+            handle: item.author.unique_id,
+            displayName: item.author.nickname,
+            avatarUrl:
+              item.author.avatar_thumb?.url_list?.[0] ||
+              "/placeholder-avatar.jpg",
+            verified: item.author.verification_type === 1,
+            followers: item.author.follower_count || 0,
+          },
+        })
+      );
+
+      return {
+        success: true,
+        data: {
+          posts,
+          hasMore: response.data.has_more === 1,
+          nextCursor: response.data.max_cursor?.toString(),
+        },
+        cached: response.cached || false,
+      };
     },
   },
 

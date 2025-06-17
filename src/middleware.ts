@@ -11,7 +11,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/test-scrapecreators",
   "/api/test-cache",
   "/api/test-discovery",
-  "/api/creator-posts",
+  "/api/tiktok-profile-videos",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
