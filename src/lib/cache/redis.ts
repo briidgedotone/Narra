@@ -52,6 +52,8 @@ export const cache = new MemoryCache();
 export const cacheKeys = {
   tiktokProfile: (handle: string) => `tiktok:profile:${handle}`,
   instagramProfile: (handle: string) => `instagram:profile:${handle}`,
+  tiktokPosts: (handle: string) => `tiktok:posts:${handle}`,
+  instagramPosts: (handle: string) => `instagram:posts:${handle}`,
 };
 
 // Cache TTL constants (in seconds)

@@ -83,56 +83,12 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
-  const loadPosts = useCallback(
-    async (profileId: string) => {
-      // For now, we'll simulate posts since we're focusing on profile integration first
-      setIsLoadingPosts(true);
-
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Mock posts data - will be replaced with actual posts API in next iteration
-        console.log("Loading posts for profile:", profileId);
-        const mockPosts: Post[] = Array.from({ length: 12 }, (_, i) => ({
-          id: `post-${i + 1}`,
-          embedUrl: `https://example.com/embed/${i + 1}`,
-          caption: `This is a sample post caption for post ${i + 1}. It contains some engaging content about entrepreneurship and creativity.`,
-          thumbnail: `https://picsum.photos/400/600?random=${i + 1}`,
-          transcript: `This is a sample transcript for post ${i + 1}. The content discusses various topics including business strategies, personal development, and creative inspiration. The speaker emphasizes the importance of consistency, authenticity, and providing value to your audience.`,
-          metrics: {
-            views: Math.floor(Math.random() * 100000) + 10000,
-            likes: Math.floor(Math.random() * 5000) + 100,
-            comments: Math.floor(Math.random() * 500) + 10,
-            shares: Math.floor(Math.random() * 200) + 5,
-          },
-          datePosted: new Date(
-            Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
-          ).toISOString(),
-          platform: searchResults?.platform || "tiktok",
-          profile: {
-            handle: searchResults?.handle || "creator",
-            displayName: searchResults?.displayName || "Creator",
-            avatarUrl: searchResults?.avatarUrl || "/placeholder-avatar.jpg",
-            verified: searchResults?.verified || false,
-            followers: searchResults?.followers || 0,
-          },
-        }));
-
-        setPosts(mockPosts);
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-      } finally {
-        setIsLoadingPosts(false);
-      }
-    },
-    [searchResults]
-  );
-
   const handleSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) return;
 
       setIsSearching(true);
+      setIsLoadingPosts(true);
       setSearchResults(null);
       setPosts([]);
       setSearchError(null);
@@ -142,20 +98,28 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         // Clean the handle - remove @ and whitespace
         const cleanHandle = query.replace(/[@\s]/g, "");
 
-        // Call our API route instead of direct API client
+        // Call our API route that now fetches both profile and posts
         const response = await fetch(
           `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
         );
         const result = await response.json();
 
         if (result.success && result.data) {
+          const { profile: profileData, posts: postsData } = result.data;
+
           const profile: Profile = {
-            ...result.data,
+            ...profileData,
             isFollowing: false,
           };
 
           setSearchResults(profile);
-          loadPosts(profile.id);
+
+          // Set posts directly from API response
+          if (postsData && postsData.length > 0) {
+            setPosts(postsData);
+          } else {
+            setPosts([]);
+          }
         } else {
           setSearchError(
             result.error ||
@@ -167,9 +131,10 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setSearchError("Search failed. Please try again.");
       } finally {
         setIsSearching(false);
+        setIsLoadingPosts(false);
       }
     },
-    [loadPosts, selectedPlatform]
+    [selectedPlatform]
   );
 
   const formatNumber = (num: number) => {

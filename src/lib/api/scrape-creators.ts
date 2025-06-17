@@ -75,6 +75,15 @@ export const scrapeCreatorsApi = {
         cacheTTL.profile
       );
     },
+
+    async getPosts(handle: string, limit: number = 20) {
+      const cacheKey = cacheKeys.tiktokPosts(handle);
+      return await makeRequest(
+        `/tiktok/posts?handle=${handle}&limit=${limit}`,
+        cacheKey,
+        cacheTTL.posts
+      );
+    },
   },
 
   // Instagram API endpoints
@@ -85,6 +94,15 @@ export const scrapeCreatorsApi = {
         `/instagram/profile?handle=${handle}`,
         cacheKey,
         cacheTTL.profile
+      );
+    },
+
+    async getPosts(handle: string, limit: number = 20) {
+      const cacheKey = cacheKeys.instagramPosts(handle);
+      return await makeRequest(
+        `/instagram/posts?handle=${handle}&limit=${limit}`,
+        cacheKey,
+        cacheTTL.posts
       );
     },
   },
