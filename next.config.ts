@@ -49,6 +49,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "*.tiktokcdn-eu.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "p16-pu-sign-useast8.tiktokcdn-us.com",
         port: "",
         pathname: "/**",
@@ -56,6 +62,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "p19-pu-sign-useast8.tiktokcdn-us.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "p16-pu-sign-no.tiktokcdn-eu.com",
         port: "",
         pathname: "/**",
       },

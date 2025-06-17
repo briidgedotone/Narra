@@ -2,9 +2,8 @@
 
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
-import { PostDetailModal } from "@/components/shared/post-detail-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,7 +22,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import type { Post } from "@/types/content";
 
 interface DiscoveryContentProps {
   userId: string;
@@ -43,6 +41,69 @@ interface Profile {
   isFollowing?: boolean;
 }
 
+interface Post {
+  id: string;
+  embedUrl: string;
+  caption: string;
+  thumbnail: string;
+  metrics: {
+    views?: number;
+    likes: number;
+    comments: number;
+    shares?: number;
+  };
+  datePosted: string;
+  platform: "instagram" | "tiktok";
+}
+
+interface TikTokVideoData {
+  aweme_id: string;
+  desc: string;
+  video?: {
+    play_addr?: {
+      url_list?: string[];
+    };
+    download_addr?: {
+      url_list?: string[];
+    };
+    origin_cover?: {
+      url_list?: string[];
+    };
+    dynamic_cover?: {
+      url_list?: string[];
+    };
+  };
+  statistics?: {
+    play_count?: number;
+    digg_count?: number;
+    comment_count?: number;
+    share_count?: number;
+  };
+  create_time: number;
+}
+
+interface InstagramPostData {
+  id: string;
+  video_url?: string;
+  display_url?: string;
+  thumbnail_src?: string;
+  edge_media_to_caption?: {
+    edges?: Array<{
+      node?: {
+        text?: string;
+      };
+    }>;
+  };
+  edge_media_preview_like?: {
+    count?: number;
+  };
+  edge_media_to_comment?: {
+    count?: number;
+  };
+  video_view_count?: number;
+  taken_at_timestamp: number;
+}
+
 export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   // userId will be used for saving posts and following profiles when API is integrated
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,9 +118,140 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     "instagram" | "tiktok"
   >("tiktok");
 
-  // Post Detail Modal State
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const loadPosts = useCallback(async () => {
+    if (!searchResults) return;
+
+    setIsLoadingPosts(true);
+    try {
+      // Get the handle from search results
+      const handle = searchResults.handle;
+      const platform = searchResults.platform;
+
+      // Call our API to get real posts
+      const endpoint =
+        platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
+      const response = await fetch(
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=12`
+      );
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        // Handle different possible response structures
+        let videosArray = result.data;
+
+        // Check if data is nested (common in API responses)
+        if (result.data.aweme_list) {
+          // TikTok API returns videos in aweme_list
+          videosArray = result.data.aweme_list;
+        } else if (result.data.videos) {
+          videosArray = result.data.videos;
+        } else if (result.data.data) {
+          videosArray = result.data.data;
+        } else if (!Array.isArray(result.data)) {
+          // If data is not an array, log the structure and set empty array
+          console.log("API response structure:", result.data);
+          console.log("Response keys:", Object.keys(result.data));
+          videosArray = [];
+        }
+
+        // Transform the API response to our Post interface
+        const realPosts: Post[] = Array.isArray(videosArray)
+          ? videosArray.map(
+              (
+                item: TikTokVideoData | InstagramPostData,
+                index: number
+              ): Post => {
+                if (platform === "tiktok") {
+                  // Transform TikTok video data
+                  const tiktokItem = item as TikTokVideoData;
+
+                  // Try to get the best thumbnail URL (prefer non-HEIC formats)
+                  const originCover =
+                    tiktokItem.video?.origin_cover?.url_list?.[0] || "";
+                  const dynamicCover =
+                    tiktokItem.video?.dynamic_cover?.url_list?.[0] || "";
+
+                  // Prefer dynamic cover or try to convert HEIC to a more compatible format
+                  let thumbnailUrl = dynamicCover || originCover;
+
+                  // If we have a HEIC URL, try to convert it to JPEG by changing the file extension
+                  if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                    thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                  }
+
+                  return {
+                    id: tiktokItem.aweme_id || `tiktok-${index}`,
+                    embedUrl:
+                      tiktokItem.video?.play_addr?.url_list?.[0] ||
+                      tiktokItem.video?.download_addr?.url_list?.[0] ||
+                      "",
+                    caption: tiktokItem.desc || "No caption available",
+                    thumbnail: thumbnailUrl,
+                    metrics: {
+                      views: tiktokItem.statistics?.play_count || 0,
+                      likes: tiktokItem.statistics?.digg_count || 0,
+                      comments: tiktokItem.statistics?.comment_count || 0,
+                      shares: tiktokItem.statistics?.share_count || 0,
+                    },
+                    datePosted: new Date(
+                      tiktokItem.create_time * 1000
+                    ).toISOString(),
+                    platform: "tiktok" as const,
+                  };
+                } else {
+                  // Transform Instagram post data
+                  const instagramItem = item as InstagramPostData;
+                  return {
+                    id: instagramItem.id || `instagram-${index}`,
+                    embedUrl:
+                      instagramItem.video_url ||
+                      instagramItem.display_url ||
+                      "",
+                    caption:
+                      instagramItem.edge_media_to_caption?.edges?.[0]?.node
+                        ?.text || "No caption available",
+                    thumbnail:
+                      instagramItem.display_url ||
+                      instagramItem.thumbnail_src ||
+                      "",
+                    metrics: {
+                      likes: instagramItem.edge_media_preview_like?.count || 0,
+                      comments: instagramItem.edge_media_to_comment?.count || 0,
+                      ...(instagramItem.video_view_count !== undefined && {
+                        views: instagramItem.video_view_count,
+                      }),
+                    },
+                    datePosted: new Date(
+                      instagramItem.taken_at_timestamp * 1000
+                    ).toISOString(),
+                    platform: "instagram" as const,
+                  };
+                }
+              }
+            )
+          : [];
+
+        setPosts(realPosts);
+      } else {
+        // Fallback to empty array if API fails
+        console.error("Failed to load posts:", result.error);
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error("Failed to load posts:", error);
+      // Set empty array on error
+      setPosts([]);
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  }, [searchResults]);
+
+  // Auto-load posts when search results change
+  useEffect(() => {
+    if (searchResults) {
+      loadPosts();
+    }
+  }, [searchResults, loadPosts]);
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -88,43 +280,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           };
 
           setSearchResults(profile);
-
-          // Load posts immediately after setting the profile
-          setIsLoadingPosts(true);
-          try {
-            if (profile.platform === "tiktok") {
-              console.log(
-                "Loading real TikTok posts for handle:",
-                profile.handle
-              );
-
-              const postsResponse = await fetch(
-                `/api/tiktok-profile-videos?handle=${encodeURIComponent(profile.handle)}`
-              );
-
-              if (!postsResponse.ok) {
-                throw new Error(`API request failed: ${postsResponse.status}`);
-              }
-
-              const postsResult = await postsResponse.json();
-
-              if (postsResult.success && postsResult.data) {
-                console.log(
-                  `Successfully loaded ${postsResult.data.posts.length} TikTok videos (cached: ${postsResult.cached})`
-                );
-                setPosts(postsResult.data.posts);
-              } else {
-                throw new Error(
-                  postsResult.error || "Failed to load TikTok videos"
-                );
-              }
-            }
-          } catch (error) {
-            console.error("Failed to load posts:", error);
-            setPosts([]);
-          } finally {
-            setIsLoadingPosts(false);
-          }
+          // Don't call loadPosts() here - let useEffect handle it when searchResults updates
         } else {
           setSearchError(
             result.error ||
@@ -138,7 +294,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setIsSearching(false);
       }
     },
-    [selectedPlatform]
+    [loadPosts, selectedPlatform]
   );
 
   const formatNumber = (num: number) => {
@@ -179,25 +335,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       console.log("Saving post:", postId, "for user:", userId);
     } catch (error) {
       console.error("Failed to save post:", error);
-    }
-  };
-
-  const handlePostClick = (post: Post) => {
-    setSelectedPost(post);
-    setIsPostModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsPostModalOpen(false);
-    setSelectedPost(null);
-  };
-
-  const handleFollowFromModal = async (handle: string) => {
-    try {
-      // Mock API call - replace with actual follow functionality
-      console.log("Following profile:", handle, "for user:", userId);
-    } catch (error) {
-      console.error("Failed to follow profile:", error);
     }
   };
 
@@ -387,7 +524,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               {posts.map(post => (
                 <div
                   key={post.id}
-                  onClick={() => handlePostClick(post)}
                   className={cn(
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
                     viewMode === "list" && "flex flex-row"
@@ -399,48 +535,17 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       viewMode === "grid" ? "aspect-[3/4]" : "w-48 aspect-[3/4]"
                     )}
                   >
-                    {post.videoUrl ? (
-                      <video
-                        src={post.videoUrl}
-                        poster={post.thumbnail}
-                        className="w-full h-full object-cover"
-                        loop
-                        muted
-                        playsInline
-                        onMouseEnter={e => {
-                          e.currentTarget.play();
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.pause();
-                          e.currentTarget.currentTime = 0;
-                        }}
-                        onError={e => {
-                          // Fallback to thumbnail image if video fails
-                          const parent = e.currentTarget.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `
-                              <img 
-                                src="${post.thumbnail}" 
-                                alt="Post thumbnail" 
-                                class="w-full h-full object-cover"
-                                onerror="this.src='/placeholder-post.jpg'"
-                              />
-                            `;
-                          }
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src={post.thumbnail}
-                        alt="Post thumbnail"
-                        fill
-                        className="object-cover"
-                        onError={e => {
-                          e.currentTarget.src = "/placeholder-post.jpg";
-                        }}
-                        unoptimized
-                      />
-                    )}
+                    <Image
+                      src={post.thumbnail}
+                      alt="Post thumbnail"
+                      fill
+                      className="object-cover"
+                      onError={e => {
+                        // Fallback to placeholder if image fails to load
+                        e.currentTarget.src = "/placeholder-post.jpg";
+                      }}
+                      unoptimized
+                    />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
@@ -573,17 +678,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             }}
           />
         </div>
-      )}
-
-      {/* Post Detail Modal */}
-      {selectedPost && (
-        <PostDetailModal
-          isOpen={isPostModalOpen}
-          onClose={handleCloseModal}
-          post={selectedPost}
-          onSavePost={handleSavePost}
-          onFollowProfile={handleFollowFromModal}
-        />
       )}
     </div>
   );
