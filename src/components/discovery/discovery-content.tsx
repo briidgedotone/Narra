@@ -6,6 +6,12 @@ import { useState, useCallback, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   Grid,
@@ -117,6 +123,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [selectedPlatform, setSelectedPlatform] = useState<
     "instagram" | "tiktok"
   >("tiktok");
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
@@ -338,6 +345,10 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     }
   };
 
+  const handlePostClick = (post: Post) => {
+    setSelectedPost(post);
+  };
+
   return (
     <div className="  space-y-6">
       {/* Header */}
@@ -524,6 +535,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               {posts.map(post => (
                 <div
                   key={post.id}
+                  onClick={() => handlePostClick(post)}
                   className={cn(
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
                     viewMode === "list" && "flex flex-row"
@@ -535,18 +547,34 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       viewMode === "grid" ? "aspect-[3/4]" : "w-48 aspect-[3/4]"
                     )}
                   >
-                    <Image
-                      src={post.thumbnail}
-                      alt="Post thumbnail"
-                      fill
-                      className="object-cover"
-                      onError={e => {
-                        // Fallback to placeholder if image fails to load
-                        e.currentTarget.src = "/placeholder-post.jpg";
+                    {/* Video that plays on hover */}
+                    <video
+                      src={post.embedUrl}
+                      poster={post.thumbnail}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                      onMouseEnter={e => {
+                        e.currentTarget.play();
                       }}
-                      unoptimized
+                      onMouseLeave={e => {
+                        e.currentTarget.pause();
+                        e.currentTarget.currentTime = 0;
+                      }}
+                      onError={e => {
+                        // Fallback to image if video fails
+                        const img = document.createElement("img");
+                        img.src = post.thumbnail;
+                        img.className = "w-full h-full object-cover";
+                        img.alt = "Post thumbnail";
+                        if (e.currentTarget.parentNode) {
+                          e.currentTarget.parentNode.replaceChild(
+                            img,
+                            e.currentTarget
+                          );
+                        }
+                      }}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         size="sm"
@@ -679,6 +707,143 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           />
         </div>
       )}
+
+      {/* Post Detail Modal */}
+      <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedPost && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-lg font-semibold">
+                  {selectedPost.platform === "tiktok" ? "TikTok" : "Instagram"}{" "}
+                  Post
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left: Video/Image */}
+                <div className="space-y-4">
+                  <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden">
+                    <video
+                      src={selectedPost.embedUrl}
+                      poster={selectedPost.thumbnail}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                      onError={e => {
+                        // Fallback to image if video fails
+                        const img = document.createElement("img");
+                        img.src = selectedPost.thumbnail;
+                        img.className = "w-full h-full object-cover";
+                        img.alt = "Post thumbnail";
+                        if (e.currentTarget.parentNode) {
+                          e.currentTarget.parentNode.replaceChild(
+                            img,
+                            e.currentTarget
+                          );
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Right: Post Details */}
+                <div className="space-y-6">
+                  {/* Caption */}
+                  <div>
+                    <h3 className="font-semibold mb-2">Caption</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {selectedPost.caption}
+                    </p>
+                  </div>
+
+                  {/* Metrics */}
+                  <div>
+                    <h3 className="font-semibold mb-3">Performance</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedPost.metrics.views && (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded-full bg-blue-500" />
+                          <div>
+                            <div className="text-sm font-medium">
+                              {formatNumber(selectedPost.metrics.views)}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Views
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-red-500" />
+                        <div>
+                          <div className="text-sm font-medium">
+                            {formatNumber(selectedPost.metrics.likes)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Likes
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="w-4 h-4 text-blue-500" />
+                        <div>
+                          <div className="text-sm font-medium">
+                            {formatNumber(selectedPost.metrics.comments)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Comments
+                          </div>
+                        </div>
+                      </div>
+                      {selectedPost.metrics.shares && (
+                        <div className="flex items-center gap-2">
+                          <ExternalLink className="w-4 h-4 text-green-500" />
+                          <div>
+                            <div className="text-sm font-medium">
+                              {formatNumber(selectedPost.metrics.shares)}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Shares
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Post Date */}
+                  <div>
+                    <h3 className="font-semibold mb-2">Posted</h3>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      {formatDate(selectedPost.datePosted)}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3 pt-4 border-t">
+                    <Button
+                      className="flex-1"
+                      onClick={() => handleSavePost(selectedPost.id)}
+                    >
+                      <Bookmark className="w-4 h-4 mr-2" />
+                      Save to Board
+                    </Button>
+                    <Button variant="outline">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
