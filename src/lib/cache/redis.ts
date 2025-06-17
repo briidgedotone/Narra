@@ -53,9 +53,11 @@ export const cacheKeys = {
   tiktokProfile: (handle: string) => `tiktok:profile:${handle}`,
   tiktokVideos: (handle: string, count: number) =>
     `tiktok:videos:${handle}:${count}`,
+  tiktokTranscript: (videoId: string) => `tiktok:transcript:${videoId}`,
   instagramProfile: (handle: string) => `instagram:profile:${handle}`,
   instagramPosts: (handle: string, count: number) =>
     `instagram:posts:${handle}:${count}`,
+  instagramTranscript: (postId: string) => `instagram:transcript:${postId}`,
 };
 
 // Cache TTL constants (in seconds)
@@ -63,4 +65,5 @@ export const cacheTTL = {
   profile: 300, // 5 minutes for profiles
   posts: 180, // 3 minutes for posts
   search: 120, // 2 minutes for search results
+  transcript: 1800, // 30 minutes for transcripts (they rarely change)
 };

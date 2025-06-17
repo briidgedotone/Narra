@@ -49,9 +49,11 @@ interface Profile {
 
 interface Post {
   id: string;
+  platformPostId: string;
   embedUrl: string;
   caption: string;
   thumbnail: string;
+  transcript?: string;
   metrics: {
     views?: number;
     likes: number;
@@ -127,6 +129,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "transcript">(
     "overview"
   );
+  const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
+  const [transcriptError, setTranscriptError] = useState<string | null>(null);
 
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
@@ -191,6 +195,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
                   return {
                     id: tiktokItem.aweme_id || `tiktok-${index}`,
+                    platformPostId: tiktokItem.aweme_id || `tiktok-${index}`,
                     embedUrl:
                       tiktokItem.video?.play_addr?.url_list?.[0] ||
                       tiktokItem.video?.download_addr?.url_list?.[0] ||
@@ -213,6 +218,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   const instagramItem = item as InstagramPostData;
                   return {
                     id: instagramItem.id || `instagram-${index}`,
+                    platformPostId: instagramItem.id || `instagram-${index}`,
                     embedUrl:
                       instagramItem.video_url ||
                       instagramItem.display_url ||
@@ -351,6 +357,76 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const handlePostClick = (post: Post) => {
     setSelectedPost(post);
     setActiveTab("overview");
+    setTranscriptError(null);
+  };
+
+  const loadTranscript = useCallback(
+    async (post: Post) => {
+      if (post.transcript) return; // Already loaded
+
+      setIsLoadingTranscript(true);
+      setTranscriptError(null);
+
+      try {
+        const endpoint =
+          post.platform === "tiktok"
+            ? "tiktok-transcript"
+            : "instagram-transcript";
+
+        const response = await fetch(
+          `/api/test-scrapecreators?test=${endpoint}&${post.platform === "tiktok" ? "video_id" : "post_id"}=${encodeURIComponent(post.platformPostId)}`
+        );
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Update the post with transcript data
+          if (selectedPost && selectedPost.id === post.id) {
+            const updatedPost = {
+              ...selectedPost,
+              transcript:
+                result.data.transcript ||
+                result.data.text ||
+                "No transcript available",
+            };
+            setSelectedPost(updatedPost);
+
+            // Also update the posts array
+            setPosts(prev =>
+              prev.map(p => (p.id === post.id ? updatedPost : p))
+            );
+          }
+        } else {
+          setTranscriptError(
+            "Failed to load transcript. This feature may not be available for this post."
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load transcript:", error);
+        setTranscriptError("Failed to load transcript. Please try again.");
+      } finally {
+        setIsLoadingTranscript(false);
+      }
+    },
+    [selectedPost]
+  );
+
+  const copyTranscriptToClipboard = async () => {
+    if (!selectedPost?.transcript) return;
+
+    try {
+      await navigator.clipboard.writeText(selectedPost.transcript);
+      // You could add a toast notification here
+      console.log("Transcript copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy transcript:", error);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = selectedPost.transcript;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
   };
 
   return (
@@ -770,7 +846,16 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       Overview
                     </button>
                     <button
-                      onClick={() => setActiveTab("transcript")}
+                      onClick={() => {
+                        setActiveTab("transcript");
+                        if (
+                          selectedPost &&
+                          !selectedPost.transcript &&
+                          !isLoadingTranscript
+                        ) {
+                          loadTranscript(selectedPost);
+                        }
+                      }}
                       className={cn(
                         "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
                         activeTab === "transcript"
@@ -879,22 +964,31 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       <div>
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="font-semibold">Transcript</h3>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={copyTranscriptToClipboard}
+                          >
                             Copy Transcript
                           </Button>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                          <p className="text-sm leading-relaxed">
-                            {/* Mock transcript - replace with actual transcript from API */}
-                            This is where the video transcript will appear.
-                            We&apos;ll fetch this from the ScrapeCreators API
-                            transcript endpoint. The transcript will show the
-                            spoken content of the video, making it easy to copy
-                            and use for content inspiration.
-                          </p>
+                          {isLoadingTranscript ? (
+                            <div className="flex justify-center items-center">
+                              <Skeleton className="h-4 w-2/3" />
+                            </div>
+                          ) : (
+                            <p className="text-sm leading-relaxed">
+                              {transcriptError ||
+                                selectedPost.transcript ||
+                                "No transcript available"}
+                            </p>
+                          )}
                         </div>
                         <div className="mt-4 text-xs text-muted-foreground">
-                          Transcript generated automatically. Accuracy may vary.
+                          {isLoadingTranscript
+                            ? "Loading..."
+                            : "Transcript generated automatically. Accuracy may vary."}
                         </div>
                       </div>
                     )}

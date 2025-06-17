@@ -84,6 +84,15 @@ export const scrapeCreatorsApi = {
         cacheTTL.posts
       );
     },
+
+    async getVideoTranscript(videoId: string) {
+      const cacheKey = cacheKeys.tiktokTranscript(videoId);
+      return await makeRequest(
+        `/v1/tiktok/video/transcript?video_id=${videoId}`,
+        cacheKey,
+        cacheTTL.transcript
+      );
+    },
   },
 
   // Instagram API endpoints
@@ -103,6 +112,15 @@ export const scrapeCreatorsApi = {
         `/v2/instagram/user/posts?handle=${handle}&count=${count}`,
         cacheKey,
         cacheTTL.posts
+      );
+    },
+
+    async getPostTranscript(postId: string) {
+      const cacheKey = cacheKeys.instagramTranscript(postId);
+      return await makeRequest(
+        `/v1/instagram/post/transcript?post_id=${postId}`,
+        cacheKey,
+        cacheTTL.transcript
       );
     },
   },
