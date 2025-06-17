@@ -63,6 +63,7 @@ interface Post {
   };
   datePosted: string;
   platform: "instagram" | "tiktok";
+  tiktokUrl?: string;
 }
 
 interface TikTokVideoData {
@@ -213,6 +214,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       tiktokItem.create_time * 1000
                     ).toISOString(),
                     platform: "tiktok" as const,
+                    tiktokUrl: `https://www.tiktok.com/@${handle}/video/${tiktokItem.aweme_id}`,
                   };
                 } else {
                   // Transform Instagram post data
@@ -391,10 +393,12 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     if (
       tab === "transcript" &&
       selectedPost &&
+      selectedPost.platform === "tiktok" &&
+      selectedPost.tiktokUrl &&
       !transcript &&
       !isLoadingTranscript
     ) {
-      loadTranscript(selectedPost.embedUrl);
+      loadTranscript(selectedPost.tiktokUrl);
     }
   };
 
@@ -929,14 +933,22 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                             size="sm"
                             onClick={handleCopyTranscript}
                             disabled={
-                              !transcript?.transcript || isLoadingTranscript
+                              !transcript?.transcript ||
+                              isLoadingTranscript ||
+                              selectedPost?.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                          {isLoadingTranscript ? (
+                          {selectedPost?.platform !== "tiktok" ? (
+                            <div className="text-center py-4">
+                              <p className="text-sm text-muted-foreground mb-2">
+                                Transcripts are only available for TikTok videos
+                              </p>
+                            </div>
+                          ) : isLoadingTranscript ? (
                             <div className="space-y-2">
                               <Skeleton className="h-4 w-full" />
                               <Skeleton className="h-4 w-3/4" />
@@ -952,7 +964,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                                 size="sm"
                                 onClick={() =>
                                   selectedPost &&
-                                  loadTranscript(selectedPost.embedUrl)
+                                  selectedPost.tiktokUrl &&
+                                  loadTranscript(selectedPost.tiktokUrl)
                                 }
                               >
                                 Try Again
@@ -972,7 +985,8 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                                 size="sm"
                                 onClick={() =>
                                   selectedPost &&
-                                  loadTranscript(selectedPost.embedUrl)
+                                  selectedPost.tiktokUrl &&
+                                  loadTranscript(selectedPost.tiktokUrl)
                                 }
                               >
                                 Load Transcript
@@ -981,9 +995,11 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                           )}
                         </div>
                         <div className="mt-4 text-xs text-muted-foreground">
-                          {isLoadingTranscript
-                            ? "Loading..."
-                            : "Transcript generated automatically. Accuracy may vary."}
+                          {selectedPost?.platform !== "tiktok"
+                            ? "Transcript feature is TikTok exclusive"
+                            : isLoadingTranscript
+                              ? "Loading..."
+                              : "Transcript generated automatically. Accuracy may vary."}
                         </div>
                       </div>
                     )}
