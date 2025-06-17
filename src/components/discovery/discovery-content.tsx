@@ -83,12 +83,43 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
+  const loadPosts = useCallback(async (handle: string, platform: string) => {
+    setIsLoadingPosts(true);
+
+    try {
+      console.log("Loading real posts for:", handle, "platform:", platform);
+
+      // Call our real posts API
+      const response = await fetch(
+        `/api/creator-posts?handle=${encodeURIComponent(handle)}&platform=${platform}&count=20`
+      );
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        console.log(
+          `Loaded ${result.count} real posts from ${platform}:`,
+          result.cached ? "(cached)" : "(fresh)"
+        );
+        setPosts(result.data);
+      } else {
+        console.error("Failed to load posts:", result.error);
+        // Fallback to empty array on error
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error("Failed to load posts:", error);
+      // Fallback to empty array on error
+      setPosts([]);
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  }, []);
+
   const handleSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) return;
 
       setIsSearching(true);
-      setIsLoadingPosts(true);
       setSearchResults(null);
       setPosts([]);
       setSearchError(null);
@@ -98,28 +129,20 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         // Clean the handle - remove @ and whitespace
         const cleanHandle = query.replace(/[@\s]/g, "");
 
-        // Call our API route that now fetches both profile and posts
+        // Call our API route instead of direct API client
         const response = await fetch(
           `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
         );
         const result = await response.json();
 
         if (result.success && result.data) {
-          const { profile: profileData, posts: postsData } = result.data;
-
           const profile: Profile = {
-            ...profileData,
+            ...result.data,
             isFollowing: false,
           };
 
           setSearchResults(profile);
-
-          // Set posts directly from API response
-          if (postsData && postsData.length > 0) {
-            setPosts(postsData);
-          } else {
-            setPosts([]);
-          }
+          loadPosts(profile.handle, selectedPlatform);
         } else {
           setSearchError(
             result.error ||
@@ -131,10 +154,9 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setSearchError("Search failed. Please try again.");
       } finally {
         setIsSearching(false);
-        setIsLoadingPosts(false);
       }
     },
-    [selectedPlatform]
+    [loadPosts, selectedPlatform]
   );
 
   const formatNumber = (num: number) => {
