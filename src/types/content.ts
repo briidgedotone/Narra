@@ -21,3 +21,24 @@ export interface Folder {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Post {
+  id: string;
+  embedUrl: string;
+  caption: string;
+  thumbnail: string;
+  metrics: {
+    views?: number;
+    likes: number;
+    comments: number;
+    shares?: number;
+  };
+  datePosted: string;
+  platform: "instagram" | "tiktok";
+}
+
+export interface VideoTranscript {
+  id: string;
+  url: string;
+  transcript: string; // WEBVTT format
+}

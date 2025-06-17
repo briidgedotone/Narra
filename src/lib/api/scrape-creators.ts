@@ -85,10 +85,10 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getVideoTranscript(videoId: string) {
-      const cacheKey = cacheKeys.tiktokTranscript(videoId);
+    async getVideoTranscript(videoUrl: string, language: string = "en") {
+      const cacheKey = cacheKeys.tiktokTranscript(videoUrl);
       return await makeRequest(
-        `/v1/tiktok/video/transcript?video_id=${videoId}`,
+        `/v1/tiktok/video/transcript?url=${encodeURIComponent(videoUrl)}&language=${language}`,
         cacheKey,
         cacheTTL.transcript
       );
@@ -112,15 +112,6 @@ export const scrapeCreatorsApi = {
         `/v2/instagram/user/posts?handle=${handle}&count=${count}`,
         cacheKey,
         cacheTTL.posts
-      );
-    },
-
-    async getPostTranscript(postId: string) {
-      const cacheKey = cacheKeys.instagramTranscript(postId);
-      return await makeRequest(
-        `/v1/instagram/post/transcript?post_id=${postId}`,
-        cacheKey,
-        cacheTTL.transcript
       );
     },
   },

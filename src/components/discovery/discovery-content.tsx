@@ -28,6 +28,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { formatNumber, formatDate } from "@/lib/utils/format";
+import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
+import { VideoTranscript } from "@/types/content";
 
 interface DiscoveryContentProps {
   userId: string;
@@ -49,11 +52,9 @@ interface Profile {
 
 interface Post {
   id: string;
-  platformPostId: string;
   embedUrl: string;
   caption: string;
   thumbnail: string;
-  transcript?: string;
   metrics: {
     views?: number;
     likes: number;
@@ -129,6 +130,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "transcript">(
     "overview"
   );
+  const [transcript, setTranscript] = useState<VideoTranscript | null>(null);
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
 
@@ -195,7 +197,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
 
                   return {
                     id: tiktokItem.aweme_id || `tiktok-${index}`,
-                    platformPostId: tiktokItem.aweme_id || `tiktok-${index}`,
                     embedUrl:
                       tiktokItem.video?.play_addr?.url_list?.[0] ||
                       tiktokItem.video?.download_addr?.url_list?.[0] ||
@@ -218,7 +219,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   const instagramItem = item as InstagramPostData;
                   return {
                     id: instagramItem.id || `instagram-${index}`,
-                    platformPostId: instagramItem.id || `instagram-${index}`,
                     embedUrl:
                       instagramItem.video_url ||
                       instagramItem.display_url ||
@@ -269,6 +269,45 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     }
   }, [searchResults, loadPosts]);
 
+  const loadTranscript = useCallback(async (videoUrl: string) => {
+    if (!videoUrl) return;
+
+    setIsLoadingTranscript(true);
+    setTranscriptError(null);
+
+    try {
+      const response = await fetch(
+        `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
+      );
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setTranscript(result.data);
+      } else {
+        setTranscriptError(result.error || "Failed to load transcript");
+      }
+    } catch (error) {
+      console.error("Failed to load transcript:", error);
+      setTranscriptError("Failed to load transcript. Please try again.");
+    } finally {
+      setIsLoadingTranscript(false);
+    }
+  }, []);
+
+  const handleCopyTranscript = async () => {
+    if (!transcript?.transcript) return;
+
+    const cleanText = parseWebVTT(transcript.transcript);
+    const success = await copyToClipboard(cleanText);
+
+    if (success) {
+      // You can add a toast notification here
+      console.log("Transcript copied to clipboard");
+    } else {
+      console.error("Failed to copy transcript");
+    }
+  };
+
   const handleSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) return;
@@ -313,24 +352,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     [selectedPlatform]
   );
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toString();
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) return "1 day ago";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-    return `${Math.ceil(diffDays / 30)} months ago`;
-  };
-
   const handleFollowProfile = async () => {
     if (!searchResults) return;
 
@@ -357,75 +378,23 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const handlePostClick = (post: Post) => {
     setSelectedPost(post);
     setActiveTab("overview");
+    // Reset transcript state when opening new post
+    setTranscript(null);
     setTranscriptError(null);
+    setIsLoadingTranscript(false);
   };
 
-  const loadTranscript = useCallback(
-    async (post: Post) => {
-      if (post.transcript) return; // Already loaded
+  const handleTabChange = (tab: "overview" | "transcript") => {
+    setActiveTab(tab);
 
-      setIsLoadingTranscript(true);
-      setTranscriptError(null);
-
-      try {
-        const endpoint =
-          post.platform === "tiktok"
-            ? "tiktok-transcript"
-            : "instagram-transcript";
-
-        const response = await fetch(
-          `/api/test-scrapecreators?test=${endpoint}&${post.platform === "tiktok" ? "video_id" : "post_id"}=${encodeURIComponent(post.platformPostId)}`
-        );
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          // Update the post with transcript data
-          if (selectedPost && selectedPost.id === post.id) {
-            const updatedPost = {
-              ...selectedPost,
-              transcript:
-                result.data.transcript ||
-                result.data.text ||
-                "No transcript available",
-            };
-            setSelectedPost(updatedPost);
-
-            // Also update the posts array
-            setPosts(prev =>
-              prev.map(p => (p.id === post.id ? updatedPost : p))
-            );
-          }
-        } else {
-          setTranscriptError(
-            "Failed to load transcript. This feature may not be available for this post."
-          );
-        }
-      } catch (error) {
-        console.error("Failed to load transcript:", error);
-        setTranscriptError("Failed to load transcript. Please try again.");
-      } finally {
-        setIsLoadingTranscript(false);
-      }
-    },
-    [selectedPost]
-  );
-
-  const copyTranscriptToClipboard = async () => {
-    if (!selectedPost?.transcript) return;
-
-    try {
-      await navigator.clipboard.writeText(selectedPost.transcript);
-      // You could add a toast notification here
-      console.log("Transcript copied to clipboard!");
-    } catch (error) {
-      console.error("Failed to copy transcript:", error);
-      // Fallback for older browsers
-      const textArea = document.createElement("textarea");
-      textArea.value = selectedPost.transcript;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
+    // Load transcript when transcript tab is opened and we don't have it yet
+    if (
+      tab === "transcript" &&
+      selectedPost &&
+      !transcript &&
+      !isLoadingTranscript
+    ) {
+      loadTranscript(selectedPost.embedUrl);
     }
   };
 
@@ -835,7 +804,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                   {/* Tab Navigation */}
                   <div className="flex border-b border-gray-200">
                     <button
-                      onClick={() => setActiveTab("overview")}
+                      onClick={() => handleTabChange("overview")}
                       className={cn(
                         "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
                         activeTab === "overview"
@@ -846,16 +815,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       Overview
                     </button>
                     <button
-                      onClick={() => {
-                        setActiveTab("transcript");
-                        if (
-                          selectedPost &&
-                          !selectedPost.transcript &&
-                          !isLoadingTranscript
-                        ) {
-                          loadTranscript(selectedPost);
-                        }
-                      }}
+                      onClick={() => handleTabChange("transcript")}
                       className={cn(
                         "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
                         activeTab === "transcript"
@@ -967,22 +927,57 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={copyTranscriptToClipboard}
+                            onClick={handleCopyTranscript}
+                            disabled={
+                              !transcript?.transcript || isLoadingTranscript
+                            }
                           >
                             Copy Transcript
                           </Button>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
                           {isLoadingTranscript ? (
-                            <div className="flex justify-center items-center">
-                              <Skeleton className="h-4 w-2/3" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-full" />
+                              <Skeleton className="h-4 w-3/4" />
+                              <Skeleton className="h-4 w-5/6" />
                             </div>
-                          ) : (
+                          ) : transcriptError ? (
+                            <div className="text-center py-4">
+                              <p className="text-sm text-red-600 mb-2">
+                                {transcriptError}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  selectedPost &&
+                                  loadTranscript(selectedPost.embedUrl)
+                                }
+                              >
+                                Try Again
+                              </Button>
+                            </div>
+                          ) : transcript?.transcript ? (
                             <p className="text-sm leading-relaxed">
-                              {transcriptError ||
-                                selectedPost.transcript ||
-                                "No transcript available"}
+                              {parseWebVTT(transcript.transcript)}
                             </p>
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-sm text-muted-foreground mb-2">
+                                Click to load transcript
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  selectedPost &&
+                                  loadTranscript(selectedPost.embedUrl)
+                                }
+                              >
+                                Load Transcript
+                              </Button>
+                            </div>
                           )}
                         </div>
                         <div className="mt-4 text-xs text-muted-foreground">

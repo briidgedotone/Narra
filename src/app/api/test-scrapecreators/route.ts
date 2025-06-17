@@ -42,33 +42,11 @@ export async function GET(request: NextRequest) {
         );
         break;
 
-      case "tiktok-transcript":
-        const videoId = searchParams.get("video_id");
-        if (!videoId) {
-          return NextResponse.json(
-            { error: "video_id parameter required for transcript" },
-            { status: 400 }
-          );
-        }
-        result = await scrapeCreatorsApi.tiktok.getVideoTranscript(videoId);
-        break;
-
-      case "instagram-transcript":
-        const postId = searchParams.get("post_id");
-        if (!postId) {
-          return NextResponse.json(
-            { error: "post_id parameter required for transcript" },
-            { status: 400 }
-          );
-        }
-        result = await scrapeCreatorsApi.instagram.getPostTranscript(postId);
-        break;
-
       default:
         return NextResponse.json(
           {
             error:
-              "Invalid test parameter. Use: connection, tiktok-profile, tiktok-videos, tiktok-transcript, instagram-profile, instagram-posts, or instagram-transcript",
+              "Invalid test parameter. Use: connection, tiktok-profile, tiktok-videos, instagram-profile, or instagram-posts",
           },
           { status: 400 }
         );

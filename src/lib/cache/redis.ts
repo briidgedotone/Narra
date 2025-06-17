@@ -12,7 +12,7 @@ interface CacheService {
 
 // In-memory cache fallback for development (Redis alternative)
 class MemoryCache implements CacheService {
-  private cache = new Map<string, { value: any; expires: number }>();
+  private cache = new Map<string, { value: unknown; expires: number }>();
 
   async get<T>(key: string): Promise<T | null> {
     const item = this.cache.get(key);
@@ -53,11 +53,11 @@ export const cacheKeys = {
   tiktokProfile: (handle: string) => `tiktok:profile:${handle}`,
   tiktokVideos: (handle: string, count: number) =>
     `tiktok:videos:${handle}:${count}`,
-  tiktokTranscript: (videoId: string) => `tiktok:transcript:${videoId}`,
+  tiktokTranscript: (videoUrl: string) =>
+    `tiktok:transcript:${btoa(videoUrl).slice(0, 20)}`,
   instagramProfile: (handle: string) => `instagram:profile:${handle}`,
   instagramPosts: (handle: string, count: number) =>
     `instagram:posts:${handle}:${count}`,
-  instagramTranscript: (postId: string) => `instagram:transcript:${postId}`,
 };
 
 // Cache TTL constants (in seconds)
@@ -65,5 +65,5 @@ export const cacheTTL = {
   profile: 300, // 5 minutes for profiles
   posts: 180, // 3 minutes for posts
   search: 120, // 2 minutes for search results
-  transcript: 1800, // 30 minutes for transcripts (they rarely change)
+  transcript: 3600, // 1 hour for transcripts (they rarely change)
 };
