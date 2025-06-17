@@ -83,81 +83,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
-  const loadPosts = useCallback(
-    async (profileId: string) => {
-      if (!searchResults) return;
-
-      setIsLoadingPosts(true);
-
-      try {
-        // Only load real posts for TikTok, Instagram still uses mock data for now
-        if (searchResults.platform === "tiktok") {
-          console.log(
-            "Loading real TikTok posts for handle:",
-            searchResults.handle
-          );
-
-          const response = await fetch(
-            `/api/tiktok-profile-videos?handle=${encodeURIComponent(searchResults.handle)}`
-          );
-
-          if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-          }
-
-          const result = await response.json();
-
-          if (result.success && result.data) {
-            console.log(
-              `Successfully loaded ${result.data.posts.length} TikTok videos (cached: ${result.cached})`
-            );
-            setPosts(result.data.posts);
-          } else {
-            throw new Error(result.error || "Failed to load TikTok videos");
-          }
-        } else {
-          // Instagram - use mock data for now
-          console.log("Loading mock posts for Instagram profile:", profileId);
-          await new Promise(resolve => setTimeout(resolve, 500));
-
-          const mockPosts: Post[] = Array.from({ length: 12 }, (_, i) => ({
-            id: `post-${i + 1}`,
-            embedUrl: `https://example.com/embed/${i + 1}`,
-            caption: `This is a sample post caption for post ${i + 1}. It contains some engaging content about lifestyle and inspiration.`,
-            thumbnail: `https://picsum.photos/400/600?random=${i + 1}`,
-            transcript: `This is a sample transcript for post ${i + 1}. The content discusses various topics including lifestyle, travel, and personal development.`,
-            metrics: {
-              views: Math.floor(Math.random() * 100000) + 10000,
-              likes: Math.floor(Math.random() * 5000) + 100,
-              comments: Math.floor(Math.random() * 500) + 10,
-              shares: Math.floor(Math.random() * 200) + 5,
-            },
-            datePosted: new Date(
-              Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            platform: "instagram",
-            profile: {
-              handle: searchResults.handle,
-              displayName: searchResults.displayName,
-              avatarUrl: searchResults.avatarUrl,
-              verified: searchResults.verified,
-              followers: searchResults.followers,
-            },
-          }));
-
-          setPosts(mockPosts);
-        }
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-        // Fall back to empty posts array on error
-        setPosts([]);
-      } finally {
-        setIsLoadingPosts(false);
-      }
-    },
-    [searchResults]
-  );
-
   const handleSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) return;
@@ -185,7 +110,43 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           };
 
           setSearchResults(profile);
-          loadPosts(profile.id);
+
+          // Load posts immediately after setting the profile
+          setIsLoadingPosts(true);
+          try {
+            if (profile.platform === "tiktok") {
+              console.log(
+                "Loading real TikTok posts for handle:",
+                profile.handle
+              );
+
+              const postsResponse = await fetch(
+                `/api/tiktok-profile-videos?handle=${encodeURIComponent(profile.handle)}`
+              );
+
+              if (!postsResponse.ok) {
+                throw new Error(`API request failed: ${postsResponse.status}`);
+              }
+
+              const postsResult = await postsResponse.json();
+
+              if (postsResult.success && postsResult.data) {
+                console.log(
+                  `Successfully loaded ${postsResult.data.posts.length} TikTok videos (cached: ${postsResult.cached})`
+                );
+                setPosts(postsResult.data.posts);
+              } else {
+                throw new Error(
+                  postsResult.error || "Failed to load TikTok videos"
+                );
+              }
+            }
+          } catch (error) {
+            console.error("Failed to load posts:", error);
+            setPosts([]);
+          } finally {
+            setIsLoadingPosts(false);
+          }
         } else {
           setSearchError(
             result.error ||
@@ -199,7 +160,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
         setIsSearching(false);
       }
     },
-    [loadPosts, selectedPlatform]
+    [selectedPlatform]
   );
 
   const formatNumber = (num: number) => {
