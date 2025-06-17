@@ -1,3 +1,5 @@
+import { cache, cacheKeys, cacheTTL } from "@/lib/cache/redis";
+
 // ScrapeCreators API client
 const SCRAPECREATORS_BASE_URL = "https://api.scrapecreators.com/v1";
 const API_KEY = process.env.SCRAPECREATORS_API_KEY;
@@ -10,9 +12,22 @@ interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
+  cached?: boolean;
 }
 
-async function makeRequest<T>(endpoint: string): Promise<ApiResponse<T>> {
+async function makeRequest<T>(
+  endpoint: string,
+  cacheKey?: string,
+  ttl?: number
+): Promise<ApiResponse<T>> {
+  // Check cache first if cacheKey provided
+  if (cacheKey) {
+    const cached = await cache.get<T>(cacheKey);
+    if (cached) {
+      return { success: true, data: cached, cached: true };
+    }
+  }
+
   try {
     const response = await fetch(`${SCRAPECREATORS_BASE_URL}${endpoint}`, {
       headers: {
@@ -29,6 +44,12 @@ async function makeRequest<T>(endpoint: string): Promise<ApiResponse<T>> {
     }
 
     const data = await response.json();
+
+    // Cache the response if cacheKey provided
+    if (cacheKey && ttl) {
+      await cache.set(cacheKey, data, { ttl });
+    }
+
     return { success: true, data };
   } catch (error) {
     return {
@@ -47,14 +68,24 @@ export const scrapeCreatorsApi = {
   // TikTok API endpoints
   tiktok: {
     async getProfile(handle: string) {
-      return await makeRequest(`/tiktok/profile?handle=${handle}`);
+      const cacheKey = cacheKeys.tiktokProfile(handle);
+      return await makeRequest(
+        `/tiktok/profile?handle=${handle}`,
+        cacheKey,
+        cacheTTL.profile
+      );
     },
   },
 
   // Instagram API endpoints
   instagram: {
     async getProfile(handle: string) {
-      return await makeRequest(`/instagram/profile?handle=${handle}`);
+      const cacheKey = cacheKeys.instagramProfile(handle);
+      return await makeRequest(
+        `/instagram/profile?handle=${handle}`,
+        cacheKey,
+        cacheTTL.profile
+      );
     },
   },
 };
