@@ -83,37 +83,51 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
-  const loadPosts = useCallback(async (handle: string, platform: string) => {
-    setIsLoadingPosts(true);
+  const loadPosts = useCallback(
+    async (profileId: string) => {
+      if (!searchResults) return;
 
-    try {
-      console.log("Loading real posts for:", handle, "platform:", platform);
+      setIsLoadingPosts(true);
 
-      // Call our real posts API
-      const response = await fetch(
-        `/api/creator-posts?handle=${encodeURIComponent(handle)}&platform=${platform}&count=20`
-      );
-      const result = await response.json();
+      try {
+        console.log("Loading real posts for profile:", profileId);
 
-      if (result.success && result.data) {
-        console.log(
-          `Loaded ${result.count} real posts from ${platform}:`,
-          result.cached ? "(cached)" : "(fresh)"
+        // Call our new creator-posts API to get real TikTok posts
+        const response = await fetch(
+          `/api/creator-posts?handle=${encodeURIComponent(searchResults.handle)}&platform=${searchResults.platform}&count=12`
         );
-        setPosts(result.data);
-      } else {
-        console.error("Failed to load posts:", result.error);
-        // Fallback to empty array on error
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.posts) {
+          const realPosts: Post[] = result.data.posts.map((video: any) => ({
+            id: video.id,
+            embedUrl: video.embedUrl,
+            caption: video.caption,
+            thumbnail: video.thumbnail,
+            transcript: video.transcript,
+            metrics: video.metrics,
+            datePosted: video.datePosted,
+            platform: video.platform,
+            profile: video.profile,
+          }));
+
+          setPosts(realPosts);
+          console.log(`Successfully loaded ${realPosts.length} real posts`);
+        } else {
+          console.error("Failed to load posts:", result.error);
+          // Fallback to empty posts array
+          setPosts([]);
+        }
+      } catch (error) {
+        console.error("Failed to load posts:", error);
+        // Fallback to empty posts array
         setPosts([]);
+      } finally {
+        setIsLoadingPosts(false);
       }
-    } catch (error) {
-      console.error("Failed to load posts:", error);
-      // Fallback to empty array on error
-      setPosts([]);
-    } finally {
-      setIsLoadingPosts(false);
-    }
-  }, []);
+    },
+    [searchResults]
+  );
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -142,7 +156,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           };
 
           setSearchResults(profile);
-          loadPosts(profile.handle, selectedPlatform);
+          loadPosts(profile.id);
         } else {
           setSearchError(
             result.error ||

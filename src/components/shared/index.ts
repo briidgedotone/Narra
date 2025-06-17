@@ -9,7 +9,11 @@ export { BoardCard } from "./board-card";
 export { BoardHeader } from "./board-header";
 export { CreateFolderModal } from "./create-folder-modal";
 export { DashboardContent } from "./dashboard-content";
-export { DashboardSettings } from "./dashboard-settings";
+export {
+  DashboardSettingsModal,
+  useDashboardSettings,
+} from "./dashboard-settings";
+export type { DashboardSettings } from "./dashboard-settings";
 export { PostDetailModal } from "./post-detail-modal";
 export { QuickActions } from "./quick-actions";
 export { StatsCard } from "./stats-card";
