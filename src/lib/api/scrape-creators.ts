@@ -66,6 +66,7 @@ interface TikTokVideoItem {
 interface Post {
   id: string;
   embedUrl: string;
+  videoUrl?: string; // Direct video URL for embedding
   caption: string;
   thumbnail: string;
   transcript?: string;
@@ -207,6 +208,7 @@ export const scrapeCreatorsApi = {
         (item: TikTokVideoItem) => ({
           id: item.aweme_id,
           embedUrl: `https://www.tiktok.com/@${item.author.unique_id}/video/${item.aweme_id}`,
+          videoUrl: item.video.play_addr?.url_list?.[0], // Direct video URL
           caption: item.desc || "",
           thumbnail: item.video.cover?.url_list?.[0] || "/placeholder-post.jpg",
           ...(extractTranscript(item) && {
