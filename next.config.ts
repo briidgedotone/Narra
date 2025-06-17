@@ -34,9 +34,28 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      // TikTok CDN domains - specific patterns
       {
         protocol: "https",
         hostname: "*.tiktokcdn.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.tiktokcdn-us.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "p16-pu-sign-useast8.tiktokcdn-us.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "p19-pu-sign-useast8.tiktokcdn-us.com",
         port: "",
         pathname: "/**",
       },

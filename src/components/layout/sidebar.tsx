@@ -13,9 +13,10 @@ import {
   Users,
   Settings,
   Clipboard,
-  FolderClosed,
-  FolderOpen,
+  Folder,
   PlusCircle,
+  ChevronDown,
+  ChevronUp,
 } from "@/components/ui/icons";
 
 const mainNavigation = [
@@ -74,37 +75,47 @@ export function Sidebar() {
   const { user } = useUser();
 
   // Initialize expanded folders from localStorage
-  const [expandedFolders, setExpandedFolders] = useState<number[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("narra-expanded-folders");
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
+  const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
+  const [folders, setFolders] = useState<SidebarFolder[]>(mockFolders);
+  const [isClient, setIsClient] = useState(false);
 
-  const [folders, setFolders] = useState<SidebarFolder[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("narra-folders");
-      return saved ? JSON.parse(saved) : mockFolders;
+  // Set client-side flag after hydration
+  useEffect(() => {
+    setIsClient(true);
+
+    // Load from localStorage only on client
+    const savedExpanded = localStorage.getItem("narra-expanded-folders");
+    if (savedExpanded) {
+      setExpandedFolders(JSON.parse(savedExpanded));
     }
-    return mockFolders;
-  });
+
+    const savedFolders = localStorage.getItem("narra-folders");
+    if (savedFolders) {
+      setFolders(JSON.parse(savedFolders));
+    }
+  }, []);
 
   // Persist expanded folders to localStorage
   useEffect(() => {
-    localStorage.setItem(
-      "narra-expanded-folders",
-      JSON.stringify(expandedFolders)
-    );
-  }, [expandedFolders]);
+    if (isClient) {
+      localStorage.setItem(
+        "narra-expanded-folders",
+        JSON.stringify(expandedFolders)
+      );
+    }
+  }, [expandedFolders, isClient]);
 
   // Persist folders to localStorage
   useEffect(() => {
-    localStorage.setItem("narra-folders", JSON.stringify(folders));
-  }, [folders]);
+    if (isClient) {
+      localStorage.setItem("narra-folders", JSON.stringify(folders));
+    }
+  }, [folders, isClient]);
 
   // Listen for storage events to update sidebar when board names change
   useEffect(() => {
+    if (!isClient) return;
+
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "narra-folders" && e.newValue) {
         setFolders(JSON.parse(e.newValue));
@@ -113,7 +124,7 @@ export function Sidebar() {
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [isClient]);
 
   const toggleFolder = (folderId: number) => {
     setExpandedFolders(prev =>
@@ -196,7 +207,6 @@ export function Sidebar() {
         <div className="space-y-1 flex-1 overflow-y-auto">
           {folders.map((folder: SidebarFolder) => {
             const isExpanded = expandedFolders.includes(folder.id);
-            const FolderIcon = isExpanded ? FolderOpen : FolderClosed;
 
             return (
               <div key={folder.id}>
@@ -206,8 +216,17 @@ export function Sidebar() {
                     onClick={() => toggleFolder(folder.id)}
                     className="flex items-center flex-1 text-left"
                   >
-                    <FolderIcon className="mr-2 h-5 w-5 flex-shrink-0" />
+                    <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
                     <span className="flex-1 truncate">{folder.name}</span>
+                    {isClient && (
+                      <span className="ml-2">
+                        {isExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={e => createNewBoard(folder.id, e)}

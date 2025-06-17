@@ -68,18 +68,17 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<
     "instagram" | "tiktok"
-  >("instagram");
+  >("tiktok");
 
   const loadPosts = useCallback(
     async (profileId: string) => {
-      // profileId will be used to fetch posts from ScrapeCreators API
+      // For now, we'll simulate posts since we're focusing on profile integration first
       setIsLoadingPosts(true);
 
       try {
-        // Mock API call - replace with actual ScrapeCreators integration
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Mock posts data - will use profileId to fetch from ScrapeCreators API
+        // Mock posts data - will be replaced with actual posts API in next iteration
         console.log("Loading posts for profile:", profileId);
         const mockPosts: Post[] = Array.from({ length: 12 }, (_, i) => ({
           id: `post-${i + 1}`,
@@ -95,7 +94,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           datePosted: new Date(
             Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
           ).toISOString(),
-          platform: searchResults?.platform || "instagram",
+          platform: searchResults?.platform || "tiktok",
         }));
 
         setPosts(mockPosts);
@@ -119,33 +118,29 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       setHasSearched(true);
 
       try {
-        // Mock API call - replace with actual ScrapeCreators integration
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Clean the handle - remove @ and whitespace
+        const cleanHandle = query.replace(/[@\s]/g, "");
 
-        // For demo purposes, always find a profile
-        // In production, this would be based on actual API response
+        // Call our API route instead of direct API client
+        const response = await fetch(
+          `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
+        );
+        const result = await response.json();
 
-        // Mock profile data based on selected platform
-        const platform = selectedPlatform;
-        const mockProfile: Profile = {
-          id: "1",
-          handle: query.replace("@", ""),
-          displayName: "Sample Creator",
-          platform: platform,
-          followers: platform === "tiktok" ? 89500000 : 125000, // TikTok typically has higher follower counts
-          following: platform === "tiktok" ? 234 : 892,
-          posts: platform === "tiktok" ? 2847 : 1247,
-          bio:
-            platform === "tiktok"
-              ? "Creating viral content and spreading positivity ✨ | 89M+ followers 🎉"
-              : "Content creator sharing daily inspiration and tips for entrepreneurs. Building in public 🚀",
-          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${query}`,
-          verified: true,
-          isFollowing: false,
-        };
+        if (result.success && result.data) {
+          const profile: Profile = {
+            ...result.data,
+            isFollowing: false,
+          };
 
-        setSearchResults(mockProfile);
-        loadPosts(mockProfile.id);
+          setSearchResults(profile);
+          loadPosts(profile.id);
+        } else {
+          setSearchError(
+            result.error ||
+              "Profile not found. Please check the handle and try again."
+          );
+        }
       } catch (error) {
         console.error("Search failed:", error);
         setSearchError("Search failed. Please try again.");
@@ -213,7 +208,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
               placeholder={
                 selectedPlatform === "instagram"
                   ? "Search Instagram creators (e.g., @mrbeast, @cristiano)"
-                  : "Search TikTok creators (e.g., @charlidamelio, @khaby.lame)"
+                  : "Search TikTok creators (e.g., @iamsydneythomas, @khaby.lame)"
               }
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -251,6 +246,11 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                     width={80}
                     height={80}
                     className="w-20 h-20 rounded-full object-cover"
+                    onError={e => {
+                      // Fallback to placeholder if image fails to load
+                      e.currentTarget.src = "/placeholder-avatar.jpg";
+                    }}
+                    unoptimized
                   />
                   {searchResults.verified && (
                     <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1">
@@ -394,6 +394,11 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                       alt="Post thumbnail"
                       fill
                       className="object-cover"
+                      onError={e => {
+                        // Fallback to placeholder if image fails to load
+                        e.currentTarget.src = "/placeholder-post.jpg";
+                      }}
+                      unoptimized
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -466,21 +471,6 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
             {/* Platform Buttons */}
             <div className="flex justify-center gap-6">
               <Button
-                variant={
-                  selectedPlatform === "instagram" ? "default" : "outline"
-                }
-                onClick={() => setSelectedPlatform("instagram")}
-                className={cn(
-                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
-                  selectedPlatform === "instagram"
-                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg"
-                    : "border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
-                )}
-              >
-                <InstagramIcon className="w-7 h-7" />
-                Instagram
-              </Button>
-              <Button
                 variant={selectedPlatform === "tiktok" ? "default" : "outline"}
                 onClick={() => setSelectedPlatform("tiktok")}
                 className={cn(
@@ -491,7 +481,23 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                 )}
               >
                 <TiktokIcon className="w-7 h-7" />
-                TikTok
+                TikTok ✨
+              </Button>
+              <Button
+                variant={
+                  selectedPlatform === "instagram" ? "default" : "outline"
+                }
+                onClick={() => setSelectedPlatform("instagram")}
+                className={cn(
+                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center opacity-50",
+                  selectedPlatform === "instagram"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg"
+                    : "border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
+                )}
+                disabled
+              >
+                <InstagramIcon className="w-7 h-7" />
+                Instagram (Soon)
               </Button>
             </div>
           </div>
