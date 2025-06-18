@@ -182,7 +182,6 @@ This development plan breaks down the Use Narra SaaS platform into manageable ph
 - [x] Create search functionality in header
 - [x] Build notification system
 - [x] Set up user menu and profile dropdown
-- [ ] Implement keyboard navigation
 
 ---
 
@@ -225,14 +224,12 @@ This development plan breaks down the Use Narra SaaS platform into manageable ph
 - [x] Create "Follow Profile" action
 - [x] Build "Copy Transcript" feature
 - [x] Add post sharing capabilities
-- [ ] Implement post reporting system
 
 ### **8.3 Transcript Features**
 - [x] Create transcript display component
 - [x] Implement copy-to-clipboard functionality
 - [ ] Build transcript search (future enhancement)
 - [x] Set up transcript formatting
-- [ ] Add timestamp navigation
 
 ---
 
@@ -241,9 +238,7 @@ This development plan breaks down the Use Narra SaaS platform into manageable ph
 ### **9.1 Folder System**
 - [x] Create folder CRUD operations
 - [x] Build folder tree navigation
-- [ ] Implement drag-and-drop functionality
 - [ ] Create folder sharing capabilities
-- [ ] Set up folder permissions
 
 ### **9.2 Board Management**
 - [x] Build board creation and editing
@@ -254,10 +249,7 @@ This development plan breaks down the Use Narra SaaS platform into manageable ph
 
 ### **9.3 Organization Features**
 - [ ] Implement bulk post operations
-- [ ] Create board templates
-- [ ] Build board collaboration features
 - [ ] Set up board export functionality
-- [ ] Add board analytics and insights
 
 ---
 
@@ -270,14 +262,8 @@ This development plan breaks down the Use Narra SaaS platform into manageable ph
 - [ ] Set up follow notifications
 - [ ] Create following analytics
 
-### **10.2 Content Updates**
-- [ ] Set up daily content refresh cron job
-- [ ] Build background job processing
-- [ ] Implement new content notifications
-- [ ] Create content update tracking
-- [ ] Set up automatic post fetching
 
-### **10.3 Following Page**
+### **10.2 Following Page**
 - [x] Build following page layout
 - [x] Create latest posts grid (optimized - profiles only with on-demand posts)
 - [x] Implement profile filtering
