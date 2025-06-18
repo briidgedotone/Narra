@@ -6,7 +6,22 @@ import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
+import {
+  updateFolder,
+  deleteFolder,
+  updateBoard,
+  deleteBoard,
+} from "@/app/actions/folders";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,6 +41,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useFolders } from "@/hooks/useFolders";
 
@@ -51,11 +67,22 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
-  const { folders, isLoading, createNewBoard, createNewFolder } = useFolders();
+  const { folders, isLoading, createNewBoard, createNewFolder, loadFolders } =
+    useFolders();
 
   // Initialize expanded folders from localStorage
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
+
+  // Dialog states
+  const [renameDialog, setRenameDialog] = useState<{
+    open: boolean;
+    type: "folder" | "board";
+    id: string;
+    currentName: string;
+  }>({ open: false, type: "folder", id: "", currentName: "" });
+  const [newName, setNewName] = useState("");
+  const [isRenaming, setIsRenaming] = useState(false);
 
   // Set client-side flag after hydration
   useEffect(() => {
@@ -119,23 +146,135 @@ export function Sidebar() {
   };
 
   const handleRenameFolder = (folderId: string) => {
-    // TODO: Implement rename folder functionality
-    console.log("Rename folder:", folderId);
+    const folder = folders.find(f => f.id === folderId);
+    if (folder) {
+      setRenameDialog({
+        open: true,
+        type: "folder",
+        id: folderId,
+        currentName: folder.name,
+      });
+      setNewName(folder.name);
+    }
   };
 
-  const handleDeleteFolder = (folderId: string) => {
-    // TODO: Implement delete folder functionality
-    console.log("Delete folder:", folderId);
+  const handleDeleteFolder = async (folderId: string) => {
+    const folder = folders.find(f => f.id === folderId);
+    if (!folder) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${folder.name}"? This will also delete all boards inside this folder. This action cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        const result = await deleteFolder(folderId);
+        if (result.success) {
+          toast.success("Folder deleted successfully");
+          await loadFolders();
+        } else {
+          toast.error(result.error || "Failed to delete folder");
+        }
+      } catch (error) {
+        console.error("Error deleting folder:", error);
+        toast.error("Failed to delete folder");
+      }
+    }
   };
 
   const handleRenameBoard = (boardId: string) => {
-    // TODO: Implement rename board functionality
-    console.log("Rename board:", boardId);
+    // Find the board in folders
+    let boardName = "";
+    for (const folder of folders) {
+      const board = folder.boards?.find(b => b.id === boardId);
+      if (board) {
+        boardName = board.name;
+        break;
+      }
+    }
+
+    if (boardName) {
+      setRenameDialog({
+        open: true,
+        type: "board",
+        id: boardId,
+        currentName: boardName,
+      });
+      setNewName(boardName);
+    }
   };
 
-  const handleDeleteBoard = (boardId: string) => {
-    // TODO: Implement delete board functionality
-    console.log("Delete board:", boardId);
+  const handleDeleteBoard = async (boardId: string) => {
+    // Find the board name
+    let boardName = "";
+    for (const folder of folders) {
+      const board = folder.boards?.find(b => b.id === boardId);
+      if (board) {
+        boardName = board.name;
+        break;
+      }
+    }
+
+    if (!boardName) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${boardName}"? This action cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        const result = await deleteBoard(boardId);
+        if (result.success) {
+          toast.success("Board deleted successfully");
+          await loadFolders();
+        } else {
+          toast.error(result.error || "Failed to delete board");
+        }
+      } catch (error) {
+        console.error("Error deleting board:", error);
+        toast.error("Failed to delete board");
+      }
+    }
+  };
+
+  const handleRenameSubmit = async () => {
+    if (!newName.trim() || newName.trim() === renameDialog.currentName) {
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setNewName("");
+      return;
+    }
+
+    setIsRenaming(true);
+    try {
+      if (renameDialog.type === "folder") {
+        const result = await updateFolder(renameDialog.id, {
+          name: newName.trim(),
+        });
+        if (result.success) {
+          toast.success("Folder renamed successfully");
+          await loadFolders();
+        } else {
+          toast.error(result.error || "Failed to rename folder");
+        }
+      } else {
+        const result = await updateBoard(renameDialog.id, {
+          name: newName.trim(),
+        });
+        if (result.success) {
+          toast.success("Board renamed successfully");
+          await loadFolders();
+        } else {
+          toast.error(result.error || "Failed to rename board");
+        }
+      }
+    } catch (error) {
+      console.error("Error renaming:", error);
+      toast.error(`Failed to rename ${renameDialog.type}`);
+    } finally {
+      setIsRenaming(false);
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setNewName("");
+    }
   };
 
   return (
@@ -234,7 +373,7 @@ export function Sidebar() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <button
-                                  className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                                  className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors cursor-pointer"
                                   onClick={e => e.stopPropagation()}
                                 >
                                   <MoreHorizontal className="h-4 w-4" />
@@ -296,7 +435,7 @@ export function Sidebar() {
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <button
-                                      className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                                      className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors cursor-pointer"
                                       onClick={e => e.stopPropagation()}
                                     >
                                       <MoreHorizontal className="h-4 w-4" />
@@ -378,6 +517,74 @@ export function Sidebar() {
           </div>
         </div>
       </div>
+
+      {/* Rename Dialog */}
+      <Dialog
+        open={renameDialog.open}
+        onOpenChange={open => {
+          if (!open) {
+            setRenameDialog({
+              open: false,
+              type: "folder",
+              id: "",
+              currentName: "",
+            });
+            setNewName("");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              Rename {renameDialog.type === "folder" ? "Folder" : "Board"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                {renameDialog.type === "folder" ? "Folder" : "Board"} Name
+              </label>
+              <Input
+                id="name"
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                placeholder={`Enter ${renameDialog.type} name`}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    handleRenameSubmit();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRenameDialog({
+                  open: false,
+                  type: "folder",
+                  id: "",
+                  currentName: "",
+                });
+                setNewName("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRenameSubmit}
+              disabled={
+                isRenaming ||
+                !newName.trim() ||
+                newName.trim() === renameDialog.currentName
+              }
+            >
+              {isRenaming ? "Renaming..." : "Rename"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
