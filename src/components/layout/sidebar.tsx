@@ -14,6 +14,14 @@ import {
   updateBoard,
   deleteBoard,
 } from "@/app/actions/folders";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -33,6 +41,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useFolders } from "@/hooks/useFolders";
 
@@ -65,12 +74,23 @@ export function Sidebar() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
 
-  // Inline editing states
-  const [editingItem, setEditingItem] = useState<{
+  // Dialog states
+  const [renameDialog, setRenameDialog] = useState<{
+    open: boolean;
+    type: "folder" | "board";
+    id: string;
+    currentName: string;
+  }>({ open: false, type: "folder", id: "", currentName: "" });
+  const [newName, setNewName] = useState("");
+  const [isRenaming, setIsRenaming] = useState(false);
+
+  const [deleteDialog, setDeleteDialog] = useState<{
+    open: boolean;
     type: "folder" | "board";
     id: string;
     name: string;
-  } | null>(null);
+  }>({ open: false, type: "folder", id: "", name: "" });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Set client-side flag after hydration
   useEffect(() => {
@@ -136,36 +156,26 @@ export function Sidebar() {
   const handleRenameFolder = (folderId: string) => {
     const folder = folders.find(f => f.id === folderId);
     if (folder) {
-      setEditingItem({
+      setRenameDialog({
+        open: true,
         type: "folder",
         id: folderId,
-        name: folder.name,
+        currentName: folder.name,
       });
+      setNewName(folder.name);
     }
   };
 
-  const handleDeleteFolder = async (folderId: string) => {
+  const handleDeleteFolder = (folderId: string) => {
     const folder = folders.find(f => f.id === folderId);
     if (!folder) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${folder.name}"? This will also delete all boards inside this folder. This action cannot be undone.`
-    );
-
-    if (confirmed) {
-      try {
-        const result = await deleteFolder(folderId);
-        if (result.success) {
-          toast.success("Folder deleted successfully");
-          await loadFolders();
-        } else {
-          toast.error(result.error || "Failed to delete folder");
-        }
-      } catch (error) {
-        console.error("Error deleting folder:", error);
-        toast.error("Failed to delete folder");
-      }
-    }
+    setDeleteDialog({
+      open: true,
+      type: "folder",
+      id: folderId,
+      name: folder.name,
+    });
   };
 
   const handleRenameBoard = (boardId: string) => {
@@ -180,15 +190,17 @@ export function Sidebar() {
     }
 
     if (boardName) {
-      setEditingItem({
+      setRenameDialog({
+        open: true,
         type: "board",
         id: boardId,
-        name: boardName,
+        currentName: boardName,
       });
+      setNewName(boardName);
     }
   };
 
-  const handleDeleteBoard = async (boardId: string) => {
+  const handleDeleteBoard = (boardId: string) => {
     // Find the board name
     let boardName = "";
     for (const folder of folders) {
@@ -201,39 +213,54 @@ export function Sidebar() {
 
     if (!boardName) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${boardName}"? This action cannot be undone.`
-    );
+    setDeleteDialog({
+      open: true,
+      type: "board",
+      id: boardId,
+      name: boardName,
+    });
+  };
 
-    if (confirmed) {
-      try {
-        const result = await deleteBoard(boardId);
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      if (deleteDialog.type === "folder") {
+        const result = await deleteFolder(deleteDialog.id);
+        if (result.success) {
+          toast.success("Folder deleted successfully");
+          await loadFolders();
+        } else {
+          toast.error(result.error || "Failed to delete folder");
+        }
+      } else {
+        const result = await deleteBoard(deleteDialog.id);
         if (result.success) {
           toast.success("Board deleted successfully");
           await loadFolders();
         } else {
           toast.error(result.error || "Failed to delete board");
         }
-      } catch (error) {
-        console.error("Error deleting board:", error);
-        toast.error("Failed to delete board");
       }
+    } catch (error) {
+      console.error("Error deleting:", error);
+      toast.error(`Failed to delete ${deleteDialog.type}`);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialog({ open: false, type: "folder", id: "", name: "" });
     }
   };
 
-  const handleRenameSubmit = async (newName: string) => {
-    if (
-      !editingItem ||
-      !newName.trim() ||
-      newName.trim() === editingItem.name
-    ) {
-      setEditingItem(null);
+  const handleRenameSubmit = async () => {
+    if (!newName.trim() || newName.trim() === renameDialog.currentName) {
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setNewName("");
       return;
     }
 
+    setIsRenaming(true);
     try {
-      if (editingItem.type === "folder") {
-        const result = await updateFolder(editingItem.id, {
+      if (renameDialog.type === "folder") {
+        const result = await updateFolder(renameDialog.id, {
           name: newName.trim(),
         });
         if (result.success) {
@@ -243,7 +270,7 @@ export function Sidebar() {
           toast.error(result.error || "Failed to rename folder");
         }
       } else {
-        const result = await updateBoard(editingItem.id, {
+        const result = await updateBoard(renameDialog.id, {
           name: newName.trim(),
         });
         if (result.success) {
@@ -255,9 +282,11 @@ export function Sidebar() {
       }
     } catch (error) {
       console.error("Error renaming:", error);
-      toast.error(`Failed to rename ${editingItem.type}`);
+      toast.error(`Failed to rename ${renameDialog.type}`);
     } finally {
-      setEditingItem(null);
+      setIsRenaming(false);
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setNewName("");
     }
   };
 
@@ -341,56 +370,7 @@ export function Sidebar() {
                       className="flex items-center flex-1 text-left"
                     >
                       <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
-                      <span
-                        className={`flex-1 truncate ${editingItem?.type === "folder" && editingItem.id === folder.id ? "bg-blue-50 px-1 py-0.5 rounded outline-none" : ""}`}
-                        contentEditable={
-                          editingItem?.type === "folder" &&
-                          editingItem.id === folder.id
-                        }
-                        suppressContentEditableWarning={true}
-                        onKeyDown={e => {
-                          if (
-                            editingItem?.type === "folder" &&
-                            editingItem.id === folder.id
-                          ) {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              const text = e.currentTarget.textContent || "";
-                              handleRenameSubmit(text);
-                            } else if (e.key === "Escape") {
-                              e.preventDefault();
-                              setEditingItem(null);
-                              e.currentTarget.textContent = folder.name;
-                            }
-                          }
-                        }}
-                        onBlur={e => {
-                          if (
-                            editingItem?.type === "folder" &&
-                            editingItem.id === folder.id
-                          ) {
-                            const text = e.currentTarget.textContent || "";
-                            handleRenameSubmit(text);
-                          }
-                        }}
-                        ref={el => {
-                          if (
-                            editingItem?.type === "folder" &&
-                            editingItem.id === folder.id &&
-                            el
-                          ) {
-                            el.focus();
-                            // Select all text
-                            const range = document.createRange();
-                            range.selectNodeContents(el);
-                            const selection = window.getSelection();
-                            selection?.removeAllRanges();
-                            selection?.addRange(range);
-                          }
-                        }}
-                      >
-                        {folder.name}
-                      </span>
+                      <span className="flex-1 truncate">{folder.name}</span>
                       {isClient && (
                         <span className="ml-3 relative">
                           {/* Default chevron icons */}
@@ -454,57 +434,15 @@ export function Sidebar() {
                               isBoardActive ? "active" : ""
                             }`}
                           >
-                            {editingItem?.type === "board" &&
-                            editingItem.id === board.id ? (
-                              <div className="flex items-center flex-1">
-                                <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
-                                <span
-                                  className="flex-1 truncate bg-blue-50 px-1 py-0.5 rounded outline-none"
-                                  contentEditable={true}
-                                  suppressContentEditableWarning={true}
-                                  onKeyDown={e => {
-                                    if (e.key === "Enter") {
-                                      e.preventDefault();
-                                      const text =
-                                        e.currentTarget.textContent || "";
-                                      handleRenameSubmit(text);
-                                    } else if (e.key === "Escape") {
-                                      e.preventDefault();
-                                      setEditingItem(null);
-                                      e.currentTarget.textContent = board.name;
-                                    }
-                                  }}
-                                  onBlur={e => {
-                                    const text =
-                                      e.currentTarget.textContent || "";
-                                    handleRenameSubmit(text);
-                                  }}
-                                  ref={el => {
-                                    if (el) {
-                                      el.focus();
-                                      // Select all text
-                                      const range = document.createRange();
-                                      range.selectNodeContents(el);
-                                      const selection = window.getSelection();
-                                      selection?.removeAllRanges();
-                                      selection?.addRange(range);
-                                    }
-                                  }}
-                                >
-                                  {board.name}
-                                </span>
-                              </div>
-                            ) : (
-                              <Link
-                                href={`/boards/${board.id}`}
-                                className="flex items-center flex-1"
-                              >
-                                <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
-                                <span className="flex-1 truncate">
-                                  {board.name}
-                                </span>
-                              </Link>
-                            )}
+                            <Link
+                              href={`/boards/${board.id}`}
+                              className="flex items-center flex-1"
+                            >
+                              <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
+                              <span className="flex-1 truncate">
+                                {board.name}
+                              </span>
+                            </Link>
                             {isClient && (
                               <span className="ml-3 relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 <DropdownMenu>
@@ -592,6 +530,132 @@ export function Sidebar() {
           </div>
         </div>
       </div>
+
+      {/* Rename Dialog */}
+      <Dialog
+        open={renameDialog.open}
+        onOpenChange={open => {
+          if (!open) {
+            setRenameDialog({
+              open: false,
+              type: "folder",
+              id: "",
+              currentName: "",
+            });
+            setNewName("");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              Rename {renameDialog.type === "folder" ? "Folder" : "Board"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                {renameDialog.type === "folder" ? "Folder" : "Board"} Name
+              </label>
+              <Input
+                id="name"
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                placeholder={`Enter ${renameDialog.type} name`}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    handleRenameSubmit();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRenameDialog({
+                  open: false,
+                  type: "folder",
+                  id: "",
+                  currentName: "",
+                });
+                setNewName("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRenameSubmit}
+              disabled={
+                isRenaming ||
+                !newName.trim() ||
+                newName.trim() === renameDialog.currentName
+              }
+            >
+              {isRenaming ? "Renaming..." : "Rename"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onOpenChange={open => {
+          if (!open) {
+            setDeleteDialog({ open: false, type: "folder", id: "", name: "" });
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">
+              Delete {deleteDialog.type === "folder" ? "Folder" : "Board"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">
+                &quot;{deleteDialog.name}&quot;
+              </span>
+              ?
+            </p>
+            {deleteDialog.type === "folder" && (
+              <p className="text-sm text-red-600 mb-4">
+                ⚠️ This will also delete all boards inside this folder.
+              </p>
+            )}
+            <p className="text-sm text-gray-500">
+              This action cannot be undone.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialog({
+                  open: false,
+                  type: "folder",
+                  id: "",
+                  name: "",
+                });
+              }}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
