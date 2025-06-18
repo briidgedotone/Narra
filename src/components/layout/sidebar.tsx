@@ -372,7 +372,7 @@ export function Sidebar() {
                       <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
                       <span className="flex-1 truncate">{folder.name}</span>
                       {isClient && (
-                        <span className="ml-3 relative">
+                        <span className="ml-3 relative w-4 h-4 flex items-center justify-center">
                           {/* Default chevron icons */}
                           <span className="group-hover:opacity-0 transition-opacity duration-200">
                             {isExpanded ? (
