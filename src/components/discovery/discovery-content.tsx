@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { VideoTranscript } from "@/types/content";
+import { SavePostModal } from "@/components/shared/save-post-modal";
 
 interface DiscoveryContentProps {
   userId: string;
@@ -115,7 +116,9 @@ interface InstagramPostData {
 }
 
 export function DiscoveryContent({ userId }: DiscoveryContentProps) {
-  // userId will be used for saving posts and following profiles when API is integrated
+  // Note: userId prop is passed from server component but not used directly here
+  // Authentication is handled by server actions (savePostToBoard, etc.)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
@@ -368,13 +371,28 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     }
   };
 
-  const handleSavePost = async (postId: string) => {
-    try {
-      // Mock API call - replace with actual save functionality
-      console.log("Saving post:", postId, "for user:", userId);
-    } catch (error) {
-      console.error("Failed to save post:", error);
-    }
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [postToSave, setPostToSave] = useState<any>(null);
+
+  const handleSavePost = (post: Post) => {
+    // Transform post data for the modal
+    setPostToSave({
+      id: post.id,
+      platformPostId: post.id, // Use the same ID for now
+      platform: post.platform,
+      embedUrl: post.embedUrl,
+      caption: post.caption,
+      thumbnail: post.thumbnail,
+      metrics: post.metrics,
+      datePosted: post.datePosted,
+      handle: searchResults?.handle || "",
+      displayName: searchResults?.displayName,
+      bio: searchResults?.bio,
+      followers: searchResults?.followers,
+      avatarUrl: searchResults?.avatarUrl,
+      verified: searchResults?.verified,
+    });
+    setShowSaveModal(true);
   };
 
   const handlePostClick = (post: Post) => {
@@ -634,7 +652,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                         variant="secondary"
                         onClick={e => {
                           e.stopPropagation();
-                          handleSavePost(post.id);
+                          handleSavePost(post);
                         }}
                       >
                         <Bookmark className="h-4 w-4" />
@@ -911,7 +929,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
                         <div className="flex gap-3 pt-4 border-t">
                           <Button
                             className="flex-1"
-                            onClick={() => handleSavePost(selectedPost.id)}
+                            onClick={() => handleSavePost(selectedPost)}
                           >
                             <Bookmark className="w-4 h-4 mr-2" />
                             Save to Board
@@ -1010,6 +1028,18 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Save Post Modal */}
+      {postToSave && (
+        <SavePostModal
+          isOpen={showSaveModal}
+          onClose={() => {
+            setShowSaveModal(false);
+            setPostToSave(null);
+          }}
+          post={postToSave}
+        />
+      )}
     </div>
   );
 }

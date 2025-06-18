@@ -18,6 +18,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { useFolders } from "@/hooks/useFolders";
 
 const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -25,10 +27,11 @@ const mainNavigation = [
   { name: "Saved Posts", href: "/saved", icon: Bookmark },
   { name: "Following", href: "/following", icon: Users },
   {
-    name: "Create Board",
-    href: "/boards/create",
-    icon: PlusCircle,
+    name: "Create Folder",
+    href: "#",
+    icon: Folder,
     special: true,
+    onClick: true,
   },
 ];
 
@@ -36,47 +39,14 @@ const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-// Types for sidebar data
-interface SidebarBoard {
-  id: number;
-  name: string;
-  href: string;
-}
-
-interface SidebarFolder {
-  id: number;
-  name: string;
-  boards: SidebarBoard[];
-}
-
-// Mock data for folders and boards - replace with real data later
-const mockFolders: SidebarFolder[] = [
-  {
-    id: 1,
-    name: "Marketing Ideas",
-    boards: [
-      { id: 1, name: "Social Media", href: "/boards/1" },
-      { id: 2, name: "Email Campaigns", href: "/boards/2" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Design Inspiration",
-    boards: [
-      { id: 3, name: "UI/UX", href: "/boards/3" },
-      { id: 4, name: "Branding", href: "/boards/4" },
-    ],
-  },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
+  const { folders, isLoading, createNewBoard, createNewFolder } = useFolders();
 
   // Initialize expanded folders from localStorage
-  const [expandedFolders, setExpandedFolders] = useState<number[]>([]);
-  const [folders, setFolders] = useState<SidebarFolder[]>(mockFolders);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   // Set client-side flag after hydration
@@ -86,12 +56,11 @@ export function Sidebar() {
     // Load from localStorage only on client
     const savedExpanded = localStorage.getItem("narra-expanded-folders");
     if (savedExpanded) {
-      setExpandedFolders(JSON.parse(savedExpanded));
-    }
-
-    const savedFolders = localStorage.getItem("narra-folders");
-    if (savedFolders) {
-      setFolders(JSON.parse(savedFolders));
+      try {
+        setExpandedFolders(JSON.parse(savedExpanded));
+      } catch {
+        // Ignore invalid JSON
+      }
     }
   }, []);
 
@@ -105,28 +74,7 @@ export function Sidebar() {
     }
   }, [expandedFolders, isClient]);
 
-  // Persist folders to localStorage
-  useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("narra-folders", JSON.stringify(folders));
-    }
-  }, [folders, isClient]);
-
-  // Listen for storage events to update sidebar when board names change
-  useEffect(() => {
-    if (!isClient) return;
-
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "narra-folders" && e.newValue) {
-        setFolders(JSON.parse(e.newValue));
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [isClient]);
-
-  const toggleFolder = (folderId: number) => {
+  const toggleFolder = (folderId: string) => {
     setExpandedFolders(prev =>
       prev.includes(folderId)
         ? prev.filter(id => id !== folderId)
@@ -134,31 +82,29 @@ export function Sidebar() {
     );
   };
 
-  const createNewBoard = (folderId: number, event: React.MouseEvent) => {
+  const handleCreateNewBoard = async (folderId: string, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent folder toggle when clicking plus
 
-    const newBoardId = Date.now(); // Simple ID generation
-    const newBoard: SidebarBoard = {
-      id: newBoardId,
-      name: "Untitled Board",
-      href: `/boards/${newBoardId}`,
-    };
+    const newBoard = await createNewBoard(folderId);
+    if (newBoard) {
+      // Expand the folder if it's not already expanded
+      if (!expandedFolders.includes(folderId)) {
+        setExpandedFolders(prev => [...prev, folderId]);
+      }
 
-    setFolders((prev: SidebarFolder[]) =>
-      prev.map((folder: SidebarFolder) =>
-        folder.id === folderId
-          ? { ...folder, boards: [...folder.boards, newBoard] }
-          : folder
-      )
-    );
-
-    // Expand the folder if it's not already expanded
-    if (!expandedFolders.includes(folderId)) {
-      setExpandedFolders(prev => [...prev, folderId]);
+      // Navigate to the new board
+      router.push(`/boards/${newBoard.id}`);
     }
+  };
 
-    // Navigate to the new board
-    router.push(newBoard.href);
+  const handleCreateNewFolder = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    
+    const newFolder = await createNewFolder();
+    if (newFolder) {
+      // Expand the new folder
+      setExpandedFolders(prev => [...prev, newFolder.id]);
+    }
   };
 
   return (
@@ -176,7 +122,24 @@ export function Sidebar() {
         {mainNavigation.map(item => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
-          const isCreateBoard = item.special;
+          const isCreateFolder = item.special;
+
+          if (item.onClick) {
+            return (
+              <button
+                key={item.name}
+                onClick={handleCreateNewFolder}
+                className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium w-full text-left`}
+                style={isCreateFolder && !isActive ? { color: "#2463EB" } : {}}
+              >
+                <Icon
+                  className="mr-2 h-5 w-5 flex-shrink-0"
+                  style={isCreateFolder && !isActive ? { color: "#2463EB" } : {}}
+                />
+                <span className="text-sm py-2">{item.name}</span>
+              </button>
+            );
+          }
 
           return (
             <Link
@@ -185,12 +148,8 @@ export function Sidebar() {
               className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
                 isActive ? "active" : ""
               }`}
-              style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
             >
-              <Icon
-                className="mr-2 h-5 w-5 flex-shrink-0"
-                style={isCreateBoard && !isActive ? { color: "#2463EB" } : {}}
-              />
+              <Icon className="mr-2 h-5 w-5 flex-shrink-0" />
               <span className="text-sm py-2">{item.name}</span>
             </Link>
           );
@@ -205,62 +164,72 @@ export function Sidebar() {
           </h3>
         </div>
         <div className="space-y-1 flex-1 overflow-y-auto">
-          {folders.map((folder: SidebarFolder) => {
-            const isExpanded = expandedFolders.includes(folder.id);
+          {isLoading ? (
+            <div className="px-2 py-4 text-center">
+              <LoadingSpinner />
+            </div>
+          ) : folders.length === 0 ? (
+            <div className="px-2 py-4 text-center text-sm text-[var(--sidebar-text-secondary)]">
+              No folders yet
+            </div>
+          ) : (
+            folders.map(folder => {
+              const isExpanded = expandedFolders.includes(folder.id);
 
-            return (
-              <div key={folder.id}>
-                {/* Folder Header */}
-                <div className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors">
-                  <button
-                    onClick={() => toggleFolder(folder.id)}
-                    className="flex items-center flex-1 text-left"
-                  >
-                    <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
-                    <span className="flex-1 truncate">{folder.name}</span>
-                    {isClient && (
-                      <span className="ml-2">
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </span>
-                    )}
-                  </button>
-                  <button
-                    onClick={e => createNewBoard(folder.id, e)}
-                    className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
-                    title="Create new board"
-                  >
-                    <PlusCircle className="h-4 w-4 flex-shrink-0" />
-                  </button>
-                </div>
-
-                {/* Boards List */}
-                {isExpanded && (
-                  <div className="ml-6 mt-1 space-y-1">
-                    {folder.boards.map((board: SidebarBoard) => {
-                      const isBoardActive = pathname === board.href;
-
-                      return (
-                        <Link
-                          key={board.id}
-                          href={board.href}
-                          className={`sidebar-nav-item flex items-center px-2 py-1 rounded-md text-sm ${
-                            isBoardActive ? "active" : ""
-                          }`}
-                        >
-                          <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
-                          <span className="truncate">{board.name}</span>
-                        </Link>
-                      );
-                    })}
+              return (
+                <div key={folder.id}>
+                  {/* Folder Header */}
+                  <div className="w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors">
+                    <button
+                      onClick={() => toggleFolder(folder.id)}
+                      className="flex items-center flex-1 text-left"
+                    >
+                      <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
+                      <span className="flex-1 truncate">{folder.name}</span>
+                      {isClient && (
+                        <span className="ml-2">
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={e => handleCreateNewBoard(folder.id, e)}
+                      className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                      title="Create new board"
+                    >
+                      <PlusCircle className="h-4 w-4 flex-shrink-0" />
+                    </button>
                   </div>
-                )}
-              </div>
-            );
-          })}
+
+                  {/* Boards List */}
+                  {isExpanded && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      {folder.boards?.map(board => {
+                        const isBoardActive = pathname === `/boards/${board.id}`;
+
+                        return (
+                          <Link
+                            key={board.id}
+                            href={`/boards/${board.id}`}
+                            className={`sidebar-nav-item flex items-center px-2 py-1 rounded-md text-sm ${
+                              isBoardActive ? "active" : ""
+                            }`}
+                          >
+                            <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
+                            <span className="truncate">{board.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

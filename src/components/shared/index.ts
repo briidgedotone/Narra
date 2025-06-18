@@ -11,6 +11,7 @@ export { QuickActions } from "./quick-actions";
 export { CreateFolderModal } from "./create-folder-modal";
 export { DashboardContent } from "./dashboard-content";
 export { BoardHeader } from "./board-header";
+export { SavePostModal } from "./save-post-modal";
 export {
   DashboardSettingsModal,
   useDashboardSettings,

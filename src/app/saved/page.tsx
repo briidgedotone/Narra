@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { DashboardLayout } from "@/components/layout";
+import { SavedPostsContent } from "@/components/saved/saved-posts-content";
 
 export default async function SavedPostsPage() {
   const { userId } = await auth();
@@ -22,12 +23,7 @@ export default async function SavedPostsPage() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg border p-8">
-          <div className="text-center text-muted-foreground">
-            <h3 className="text-lg font-medium mb-2">Your Saved Posts</h3>
-            <p>All saved posts from TikTok and Instagram will appear here.</p>
-          </div>
-        </div>
+        <SavedPostsContent userId={userId} />
       </div>
     </DashboardLayout>
   );

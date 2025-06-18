@@ -124,6 +124,18 @@ export class DatabaseService {
     return data;
   }
 
+  async getPostByPlatformId(platformPostId: string, platform: "tiktok" | "instagram") {
+    const { data, error } = await this.client
+      .from("posts")
+      .select("*, profiles(*)")
+      .eq("platform_post_id", platformPostId)
+      .eq("platform", platform)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found
+    return data;
+  }
+
   // Folders
   async createFolder(
     folderData: Database["public"]["Tables"]["folders"]["Insert"]
@@ -147,6 +159,31 @@ export class DatabaseService {
 
     if (error) throw error;
     return data;
+  }
+
+  async updateFolder(
+    folderId: string,
+    updates: Database["public"]["Tables"]["folders"]["Update"]
+  ) {
+    const { data, error } = await this.client
+      .from("folders")
+      .update(updates)
+      .eq("id", folderId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async deleteFolder(folderId: string) {
+    const { error } = await this.client
+      .from("folders")
+      .delete()
+      .eq("id", folderId);
+
+    if (error) throw error;
+    return true;
   }
 
   // Boards
@@ -184,6 +221,31 @@ export class DatabaseService {
 
     if (error) throw error;
     return data;
+  }
+
+  async updateBoard(
+    boardId: string,
+    updates: Database["public"]["Tables"]["boards"]["Update"]
+  ) {
+    const { data, error } = await this.client
+      .from("boards")
+      .update(updates)
+      .eq("id", boardId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async deleteBoard(boardId: string) {
+    const { error } = await this.client
+      .from("boards")
+      .delete()
+      .eq("id", boardId);
+
+    if (error) throw error;
+    return true;
   }
 
   // Board Posts
