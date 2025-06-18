@@ -2,8 +2,11 @@
 
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 
+import { SavePostModal } from "@/components/shared/save-post-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +34,6 @@ import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { VideoTranscript } from "@/types/content";
-import { SavePostModal } from "@/components/shared/save-post-modal";
 
 interface DiscoveryContentProps {
   userId: string;
@@ -115,10 +117,33 @@ interface InstagramPostData {
   taken_at_timestamp: number;
 }
 
-export function DiscoveryContent({ userId }: DiscoveryContentProps) {
+interface SavePostData {
+  id: string;
+  platformPostId: string;
+  platform: "instagram" | "tiktok";
+  embedUrl: string;
+  caption?: string;
+  thumbnail: string;
+  metrics: {
+    views?: number;
+    likes: number;
+    comments: number;
+    shares?: number;
+  };
+  datePosted: string;
+  handle: string;
+  displayName?: string;
+  bio?: string;
+  followers?: number;
+  avatarUrl?: string;
+  verified?: boolean;
+}
+
+export function DiscoveryContent({}: DiscoveryContentProps) {
   // Note: userId prop is passed from server component but not used directly here
   // Authentication is handled by server actions (savePostToBoard, etc.)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const searchParams = useSearchParams();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
@@ -137,6 +162,25 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
   const [transcript, setTranscript] = useState<VideoTranscript | null>(null);
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
+
+  // Handle URL parameters (from following page navigation)
+  useEffect(() => {
+    const handleParam = searchParams.get("handle");
+    const platformParam = searchParams.get("platform") as
+      | "tiktok"
+      | "instagram"
+      | null;
+
+    if (handleParam) {
+      setSearchQuery(handleParam);
+      if (
+        platformParam &&
+        (platformParam === "tiktok" || platformParam === "instagram")
+      ) {
+        setSelectedPlatform(platformParam);
+      }
+    }
+  }, [searchParams]);
 
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
@@ -274,6 +318,39 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     }
   }, [searchResults, loadPosts]);
 
+  // Check follow status when search results change
+  useEffect(() => {
+    if (searchResults) {
+      const checkFollowStatus = async () => {
+        try {
+          const { checkFollowStatus: checkStatus } = await import(
+            "@/app/actions/discovery"
+          );
+          const result = await checkStatus(
+            searchResults.handle,
+            searchResults.platform
+          );
+
+          if (result.success) {
+            setSearchResults(prev =>
+              prev
+                ? {
+                    ...prev,
+                    isFollowing: result.data,
+                  }
+                : null
+            );
+          }
+        } catch (error) {
+          console.error("Failed to check follow status:", error);
+        }
+      };
+
+      checkFollowStatus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResults?.handle, searchResults?.platform]);
+
   const loadTranscript = useCallback(async (videoUrl: string) => {
     if (!videoUrl) return;
 
@@ -357,25 +434,81 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
     [selectedPlatform]
   );
 
+  // Auto-search when coming from following page
+  useEffect(() => {
+    const handleParam = searchParams.get("handle");
+    if (
+      handleParam &&
+      searchQuery === handleParam &&
+      !searchResults &&
+      !isSearching
+    ) {
+      // Only trigger search if we have the handle in query but no results yet
+      handleSearch(handleParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, searchQuery, isSearching, handleSearch]);
+
   const handleFollowProfile = async () => {
     if (!searchResults) return;
 
     try {
-      // Mock API call - replace with actual follow functionality
-      setSearchResults({
-        ...searchResults,
-        isFollowing: !searchResults.isFollowing,
-      });
+      const { createAndFollowProfile, unfollowProfileByHandle } = await import(
+        "@/app/actions/discovery"
+      );
+
+      if (searchResults.isFollowing) {
+        // Unfollow
+        const result = await unfollowProfileByHandle(
+          searchResults.handle,
+          searchResults.platform
+        );
+        if (result.success) {
+          setSearchResults({
+            ...searchResults,
+            isFollowing: false,
+          });
+          toast.success(`Unfollowed @${searchResults.handle}`);
+        } else {
+          console.error("Failed to unfollow:", result.error);
+          toast.error("Failed to unfollow creator");
+        }
+      } else {
+        // Follow - create profile if needed and follow
+        const result = await createAndFollowProfile({
+          handle: searchResults.handle,
+          platform: searchResults.platform,
+          displayName: searchResults.displayName,
+          bio: searchResults.bio,
+          followers: searchResults.followers,
+          following: searchResults.following,
+          posts: searchResults.posts,
+          avatarUrl: searchResults.avatarUrl,
+          verified: searchResults.verified,
+        });
+
+        if (result.success) {
+          setSearchResults({
+            ...searchResults,
+            isFollowing: true,
+          });
+          toast.success(`Now following @${searchResults.handle}!`);
+        } else {
+          console.error("Failed to follow:", result.error);
+          toast.error("Failed to follow creator");
+        }
+      }
     } catch (error) {
       console.error("Failed to follow/unfollow:", error);
     }
   };
 
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [postToSave, setPostToSave] = useState<any>(null);
+  const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
   const handleSavePost = (post: Post) => {
     // Transform post data for the modal
+
     setPostToSave({
       id: post.id,
       platformPostId: post.id, // Use the same ID for now
@@ -391,7 +524,7 @@ export function DiscoveryContent({ userId }: DiscoveryContentProps) {
       followers: searchResults?.followers,
       avatarUrl: searchResults?.avatarUrl,
       verified: searchResults?.verified,
-    });
+    } as SavePostData);
     setShowSaveModal(true);
   };
 

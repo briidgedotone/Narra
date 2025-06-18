@@ -71,6 +71,21 @@ export class DatabaseService {
     return data;
   }
 
+  async updateProfile(
+    profileId: string,
+    updates: Database["public"]["Tables"]["profiles"]["Update"]
+  ) {
+    const { data, error } = await this.client
+      .from("profiles")
+      .update(updates)
+      .eq("id", profileId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async searchProfiles(query: string, platform?: "tiktok" | "instagram") {
     let queryBuilder = this.client
       .from("profiles")
@@ -328,12 +343,19 @@ export class DatabaseService {
   async getFollowedProfiles(userId: string) {
     const { data, error } = await this.client
       .from("follows")
-      .select("profiles(*)")
+      .select("created_at, profiles(*)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data?.map(item => item.profiles).filter(Boolean);
+    return data
+      ?.map(item => ({
+        ...item.profiles,
+        // Add follow metadata
+        created_at: item.created_at, // when user followed this profile
+        last_updated: item.profiles?.last_updated || item.profiles?.created_at, // when profile data was last fetched
+      }))
+      .filter(Boolean);
   }
 
   async isFollowing(userId: string, profileId: string) {
@@ -449,7 +471,9 @@ export class DatabaseService {
       // Get recent saved posts
       const userFolders = await this.getFoldersByUser(userId);
       const userBoardIds =
-        userFolders?.flatMap(f => f.boards?.map((b: any) => b.id) || []) || [];
+        userFolders?.flatMap(
+          f => f.boards?.map((b: { id: string }) => b.id) || []
+        ) || [];
 
       if (userBoardIds.length > 0) {
         const { data: recentSaves } = await this.client
