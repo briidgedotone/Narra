@@ -8,6 +8,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
   Home,
   Search,
   Bookmark,
@@ -111,6 +118,26 @@ export function Sidebar() {
     }
   };
 
+  const handleRenameFolder = (folderId: string) => {
+    // TODO: Implement rename folder functionality
+    console.log("Rename folder:", folderId);
+  };
+
+  const handleDeleteFolder = (folderId: string) => {
+    // TODO: Implement delete folder functionality
+    console.log("Delete folder:", folderId);
+  };
+
+  const handleRenameBoard = (boardId: string) => {
+    // TODO: Implement rename board functionality
+    console.log("Rename board:", boardId);
+  };
+
+  const handleDeleteBoard = (boardId: string) => {
+    // TODO: Implement delete board functionality
+    console.log("Delete board:", boardId);
+  };
+
   return (
     <div className="sidebar-narra h-full flex flex-col">
       {/* Brand Header */}
@@ -203,8 +230,31 @@ export function Sidebar() {
                             )}
                           </span>
                           {/* Three dots icon on hover */}
-                          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                                  onClick={e => e.stopPropagation()}
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem
+                                  onClick={() => handleRenameFolder(folder.id)}
+                                >
+                                  Rename Folder
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => handleDeleteFolder(folder.id)}
+                                  className="text-red-600 focus:text-red-600"
+                                >
+                                  Delete Folder
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </span>
                         </span>
                       )}
@@ -243,7 +293,37 @@ export function Sidebar() {
                             </Link>
                             {isClient && (
                               <span className="ml-3 relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <MoreHorizontal className="h-4 w-4" />
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <button
+                                      className="p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                                      onClick={e => e.stopPropagation()}
+                                    >
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="end"
+                                    className="w-48"
+                                  >
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleRenameBoard(board.id)
+                                      }
+                                    >
+                                      Rename Board
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleDeleteBoard(board.id)
+                                      }
+                                      className="text-red-600 focus:text-red-600"
+                                    >
+                                      Delete Board
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </span>
                             )}
                           </div>
