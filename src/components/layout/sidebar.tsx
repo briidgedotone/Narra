@@ -14,14 +14,6 @@ import {
   updateBoard,
   deleteBoard,
 } from "@/app/actions/folders";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,7 +33,6 @@ import {
   ChevronDown,
   ChevronUp,
 } from "@/components/ui/icons";
-import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useFolders } from "@/hooks/useFolders";
 
@@ -74,15 +65,12 @@ export function Sidebar() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
 
-  // Dialog states
-  const [renameDialog, setRenameDialog] = useState<{
-    open: boolean;
+  // Inline editing states
+  const [editingItem, setEditingItem] = useState<{
     type: "folder" | "board";
     id: string;
-    currentName: string;
-  }>({ open: false, type: "folder", id: "", currentName: "" });
-  const [newName, setNewName] = useState("");
-  const [isRenaming, setIsRenaming] = useState(false);
+    name: string;
+  } | null>(null);
 
   // Set client-side flag after hydration
   useEffect(() => {
@@ -148,13 +136,11 @@ export function Sidebar() {
   const handleRenameFolder = (folderId: string) => {
     const folder = folders.find(f => f.id === folderId);
     if (folder) {
-      setRenameDialog({
-        open: true,
+      setEditingItem({
         type: "folder",
         id: folderId,
-        currentName: folder.name,
+        name: folder.name,
       });
-      setNewName(folder.name);
     }
   };
 
@@ -194,13 +180,11 @@ export function Sidebar() {
     }
 
     if (boardName) {
-      setRenameDialog({
-        open: true,
+      setEditingItem({
         type: "board",
         id: boardId,
-        currentName: boardName,
+        name: boardName,
       });
-      setNewName(boardName);
     }
   };
 
@@ -237,17 +221,19 @@ export function Sidebar() {
     }
   };
 
-  const handleRenameSubmit = async () => {
-    if (!newName.trim() || newName.trim() === renameDialog.currentName) {
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
-      setNewName("");
+  const handleRenameSubmit = async (newName: string) => {
+    if (
+      !editingItem ||
+      !newName.trim() ||
+      newName.trim() === editingItem.name
+    ) {
+      setEditingItem(null);
       return;
     }
 
-    setIsRenaming(true);
     try {
-      if (renameDialog.type === "folder") {
-        const result = await updateFolder(renameDialog.id, {
+      if (editingItem.type === "folder") {
+        const result = await updateFolder(editingItem.id, {
           name: newName.trim(),
         });
         if (result.success) {
@@ -257,7 +243,7 @@ export function Sidebar() {
           toast.error(result.error || "Failed to rename folder");
         }
       } else {
-        const result = await updateBoard(renameDialog.id, {
+        const result = await updateBoard(editingItem.id, {
           name: newName.trim(),
         });
         if (result.success) {
@@ -269,11 +255,9 @@ export function Sidebar() {
       }
     } catch (error) {
       console.error("Error renaming:", error);
-      toast.error(`Failed to rename ${renameDialog.type}`);
+      toast.error(`Failed to rename ${editingItem.type}`);
     } finally {
-      setIsRenaming(false);
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
-      setNewName("");
+      setEditingItem(null);
     }
   };
 
@@ -357,7 +341,56 @@ export function Sidebar() {
                       className="flex items-center flex-1 text-left"
                     >
                       <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
-                      <span className="flex-1 truncate">{folder.name}</span>
+                      <span
+                        className={`flex-1 truncate ${editingItem?.type === "folder" && editingItem.id === folder.id ? "bg-blue-50 px-1 py-0.5 rounded outline-none" : ""}`}
+                        contentEditable={
+                          editingItem?.type === "folder" &&
+                          editingItem.id === folder.id
+                        }
+                        suppressContentEditableWarning={true}
+                        onKeyDown={e => {
+                          if (
+                            editingItem?.type === "folder" &&
+                            editingItem.id === folder.id
+                          ) {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              const text = e.currentTarget.textContent || "";
+                              handleRenameSubmit(text);
+                            } else if (e.key === "Escape") {
+                              e.preventDefault();
+                              setEditingItem(null);
+                              e.currentTarget.textContent = folder.name;
+                            }
+                          }
+                        }}
+                        onBlur={e => {
+                          if (
+                            editingItem?.type === "folder" &&
+                            editingItem.id === folder.id
+                          ) {
+                            const text = e.currentTarget.textContent || "";
+                            handleRenameSubmit(text);
+                          }
+                        }}
+                        ref={el => {
+                          if (
+                            editingItem?.type === "folder" &&
+                            editingItem.id === folder.id &&
+                            el
+                          ) {
+                            el.focus();
+                            // Select all text
+                            const range = document.createRange();
+                            range.selectNodeContents(el);
+                            const selection = window.getSelection();
+                            selection?.removeAllRanges();
+                            selection?.addRange(range);
+                          }
+                        }}
+                      >
+                        {folder.name}
+                      </span>
                       {isClient && (
                         <span className="ml-3 relative">
                           {/* Default chevron icons */}
@@ -421,15 +454,57 @@ export function Sidebar() {
                               isBoardActive ? "active" : ""
                             }`}
                           >
-                            <Link
-                              href={`/boards/${board.id}`}
-                              className="flex items-center flex-1"
-                            >
-                              <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
-                              <span className="flex-1 truncate">
-                                {board.name}
-                              </span>
-                            </Link>
+                            {editingItem?.type === "board" &&
+                            editingItem.id === board.id ? (
+                              <div className="flex items-center flex-1">
+                                <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
+                                <span
+                                  className="flex-1 truncate bg-blue-50 px-1 py-0.5 rounded outline-none"
+                                  contentEditable={true}
+                                  suppressContentEditableWarning={true}
+                                  onKeyDown={e => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      const text =
+                                        e.currentTarget.textContent || "";
+                                      handleRenameSubmit(text);
+                                    } else if (e.key === "Escape") {
+                                      e.preventDefault();
+                                      setEditingItem(null);
+                                      e.currentTarget.textContent = board.name;
+                                    }
+                                  }}
+                                  onBlur={e => {
+                                    const text =
+                                      e.currentTarget.textContent || "";
+                                    handleRenameSubmit(text);
+                                  }}
+                                  ref={el => {
+                                    if (el) {
+                                      el.focus();
+                                      // Select all text
+                                      const range = document.createRange();
+                                      range.selectNodeContents(el);
+                                      const selection = window.getSelection();
+                                      selection?.removeAllRanges();
+                                      selection?.addRange(range);
+                                    }
+                                  }}
+                                >
+                                  {board.name}
+                                </span>
+                              </div>
+                            ) : (
+                              <Link
+                                href={`/boards/${board.id}`}
+                                className="flex items-center flex-1"
+                              >
+                                <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
+                                <span className="flex-1 truncate">
+                                  {board.name}
+                                </span>
+                              </Link>
+                            )}
                             {isClient && (
                               <span className="ml-3 relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 <DropdownMenu>
@@ -517,74 +592,6 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-
-      {/* Rename Dialog */}
-      <Dialog
-        open={renameDialog.open}
-        onOpenChange={open => {
-          if (!open) {
-            setRenameDialog({
-              open: false,
-              type: "folder",
-              id: "",
-              currentName: "",
-            });
-            setNewName("");
-          }
-        }}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              Rename {renameDialog.type === "folder" ? "Folder" : "Board"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
-                {renameDialog.type === "folder" ? "Folder" : "Board"} Name
-              </label>
-              <Input
-                id="name"
-                value={newName}
-                onChange={e => setNewName(e.target.value)}
-                placeholder={`Enter ${renameDialog.type} name`}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    handleRenameSubmit();
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setRenameDialog({
-                  open: false,
-                  type: "folder",
-                  id: "",
-                  currentName: "",
-                });
-                setNewName("");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleRenameSubmit}
-              disabled={
-                isRenaming ||
-                !newName.trim() ||
-                newName.trim() === renameDialog.currentName
-              }
-            >
-              {isRenaming ? "Renaming..." : "Rename"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
