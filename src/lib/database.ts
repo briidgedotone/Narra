@@ -124,7 +124,10 @@ export class DatabaseService {
     return data;
   }
 
-  async getPostByPlatformId(platformPostId: string, platform: "tiktok" | "instagram") {
+  async getPostByPlatformId(
+    platformPostId: string,
+    platform: "tiktok" | "instagram"
+  ) {
     const { data, error } = await this.client
       .from("posts")
       .select("*, profiles(*)")
@@ -153,12 +156,28 @@ export class DatabaseService {
   async getFoldersByUser(userId: string) {
     const { data, error } = await this.client
       .from("folders")
-      .select("*, boards(*)")
+      .select(
+        `
+        *, 
+        boards(
+          *, 
+          board_posts(count)
+        )
+      `
+      )
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data;
+
+    // Transform data to include post counts
+    return data?.map(folder => ({
+      ...folder,
+      boards: folder.boards?.map(board => ({
+        ...board,
+        post_count: board.board_posts?.[0]?.count || 0,
+      })),
+    }));
   }
 
   async updateFolder(

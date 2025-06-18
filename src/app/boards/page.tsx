@@ -215,13 +215,17 @@ export default function BoardsPage() {
                         id: board.id,
                         name: board.name,
                         description: board.description,
-                        postCount: 0, // TODO: Get actual post count
-                        lastUpdated: board.updated_at,
-                        isShared: board.is_shared,
+                        postCount: board.post_count || 0,
+                        updatedAt: new Date(board.updated_at),
+                        isPublic: board.is_shared || false,
                         publicId: board.public_id,
+                        createdAt: new Date(board.created_at),
                         folderName:
                           "folderName" in board ? board.folderName : undefined,
                       }}
+                      onView={board =>
+                        (window.location.href = `/boards/${board.id}`)
+                      }
                     />
                   ))}
                 </div>
