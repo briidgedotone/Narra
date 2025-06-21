@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { scrapeCreatorsApi } from "@/lib/api";
+import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -62,9 +62,31 @@ export async function GET(request: Request) {
           rawApiData: apiData, // For debugging
         });
       } else {
+        // Instagram profile parsing
+        const user = apiData.user;
+
+        const profile = {
+          id: user.id,
+          handle: user.username,
+          displayName: user.full_name || user.username,
+          platform: "instagram",
+          followers: user.edge_followed_by?.count || 0,
+          following: user.edge_follow?.count || 0,
+          posts: user.edge_owner_to_timeline_media?.count || 0,
+          bio: user.biography || "",
+          avatarUrl:
+            user.profile_pic_url_hd ||
+            user.profile_pic_url ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`,
+          verified: user.is_verified || false,
+        };
+
         return NextResponse.json({
-          success: false,
-          error: "Instagram not implemented yet",
+          success: true,
+          data: profile,
+          cached: result.cached || false,
+          duration: `${duration}ms`,
+          rawApiData: apiData, // For debugging
         });
       }
     } else {
