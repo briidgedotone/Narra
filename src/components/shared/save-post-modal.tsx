@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
+import { getUserFoldersWithBoards, createBoard, createFolder } from "@/app/actions/folders";
+import { savePostToBoard } from "@/app/actions/posts";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,13 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Folder, PlusCircle } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { Folder, PlusCircle } from "@/components/ui/icons";
-import { getUserFoldersWithBoards, createBoard, createFolder } from "@/app/actions/folders";
-import { savePostToBoard } from "@/app/actions/posts";
+import { Select } from "@/components/ui/select";
 
 interface SavePostModalProps {
   isOpen: boolean;

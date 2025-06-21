@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
+import { getAllUserSavedPosts } from "@/app/actions/posts";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Heart,
   MessageCircle,
@@ -15,9 +14,9 @@ import {
   Grid,
   List,
 } from "@/components/ui/icons";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
-import { getAllUserSavedPosts } from "@/app/actions/posts";
 
 interface SavedPostsContentProps {
   userId: string;
@@ -48,6 +47,7 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
   // Note: userId prop is passed from server component but not used directly here
   // Authentication is handled by server actions (getAllUserSavedPosts, etc.)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

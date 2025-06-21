@@ -11,14 +11,17 @@ export default function TestInstagramPage() {
   const [profileResult, setProfileResult] = useState<unknown>(null);
   const [postsResult, setPostsResult] = useState<unknown>(null);
   const [discoveryResult, setDiscoveryResult] = useState<unknown>(null);
+  const [apiKeyStatus, setApiKeyStatus] = useState<unknown>(null);
   const [loading, setLoading] = useState<{
     profile: boolean;
     posts: boolean;
     discovery: boolean;
+    apiKey: boolean;
   }>({
     profile: false,
     posts: false,
     discovery: false,
+    apiKey: false,
   });
 
   const testInstagramProfile = async () => {
@@ -72,6 +75,21 @@ export default function TestInstagramPage() {
     }
   };
 
+  const testApiKey = async () => {
+    setLoading(prev => ({ ...prev, apiKey: true }));
+    try {
+      const response = await fetch("/api/test-api-key");
+      const result = await response.json();
+      setApiKeyStatus(result);
+    } catch (error) {
+      setApiKeyStatus({
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setLoading(prev => ({ ...prev, apiKey: false }));
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="text-center space-y-4">
@@ -96,9 +114,16 @@ export default function TestInstagramPage() {
                 className="w-full"
               />
             </div>
-            <div className="grid grid-cols-1 gap-2">
-              <Button
-                onClick={testInstagramProfile}
+                        <div className="grid grid-cols-1 gap-2">
+              <Button 
+                onClick={testApiKey} 
+                disabled={loading.apiKey}
+                variant="secondary"
+              >
+                {loading.apiKey ? "Checking..." : "Check API Key"}
+              </Button>
+              <Button 
+                onClick={testInstagramProfile} 
                 disabled={loading.profile}
                 variant="outline"
               >
@@ -125,7 +150,25 @@ export default function TestInstagramPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* API Key Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle>API Key Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {apiKeyStatus ? (
+              <pre className="text-xs overflow-auto max-h-96 bg-muted p-3 rounded">
+                {JSON.stringify(apiKeyStatus, null, 2)}
+              </pre>
+            ) : (
+              <p className="text-muted-foreground">
+                Click &quot;Check API Key&quot; to verify setup
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Profile Test Results */}
         <Card>
           <CardHeader>

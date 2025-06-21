@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   CreditCard,
   Calendar,
@@ -18,6 +17,7 @@ import {
   Check,
   X,
 } from "@/components/ui/icons";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatCurrency } from "@/lib/utils/format";
 
 interface SubscriptionBillingProps {
