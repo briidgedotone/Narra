@@ -867,15 +867,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                 }
                 onClick={() => setSelectedPlatform("instagram")}
                 className={cn(
-                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center opacity-50",
+                  "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
                   selectedPlatform === "instagram"
                     ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg"
                     : "border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
                 )}
-                disabled
               >
                 <InstagramIcon className="w-7 h-7" />
-                Instagram (Soon)
+                Instagram ✨
               </Button>
             </div>
           </div>
