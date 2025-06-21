@@ -1,13 +1,34 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { DashboardLayout } from "@/components/layout";
+import { SettingsContent } from "@/components/settings/settings-content";
+import { syncUserToDatabase } from "@/lib/auth/sync";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Get user data and sync to database
+  let userData = null;
+  try {
+    const clerkUser = await currentUser();
+    if (clerkUser) {
+      await syncUserToDatabase(clerkUser);
+      userData = {
+        id: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress || "",
+        firstName: clerkUser.firstName || "",
+        lastName: clerkUser.lastName || "",
+        imageUrl: clerkUser.imageUrl || "",
+        createdAt: clerkUser.createdAt,
+      };
+    }
+  } catch (error) {
+    console.error("Error syncing user to database:", error);
   }
 
   return (
@@ -22,15 +43,7 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg border p-8">
-          <div className="text-center text-muted-foreground">
-            <h3 className="text-lg font-medium mb-2">Account Settings</h3>
-            <p>
-              Profile settings, subscription management, and preferences will be
-              available here.
-            </p>
-          </div>
-        </div>
+        <SettingsContent userId={userId} userData={userData} />
       </div>
     </DashboardLayout>
   );

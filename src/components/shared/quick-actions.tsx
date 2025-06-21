@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, FolderPlus, BookOpen, Users } from "@/components/ui/icons";
+import { Search, PlusCircle, BookOpen, Users } from "@/components/ui/icons";
 
 import { CreateFolderModal } from "./create-folder-modal";
 
@@ -40,7 +40,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
       id: "create-folder",
       label: "Create Folder",
       description: "Organize your content",
-      icon: FolderPlus,
+      icon: PlusCircle,
       action: handleCreateFolder,
     },
     {
@@ -80,7 +80,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
                   >
                     <Button
                       variant="outline"
-                      className="h-auto p-4 flex flex-col items-center space-y-2 w-full"
+                      className="h-auto p-4 flex flex-col items-center space-y-2 w-full cursor-pointer"
                     >
                       <Icon className="h-6 w-6" />
                       <div className="text-center">
@@ -99,7 +99,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
                 <Button
                   key={action.id}
                   variant="outline"
-                  className="h-auto p-4 flex flex-col items-center space-y-2"
+                  className="h-auto p-4 flex flex-col items-center space-y-2 cursor-pointer"
                   onClick={action.action}
                 >
                   <Icon className="h-6 w-6" />

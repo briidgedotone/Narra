@@ -36,7 +36,8 @@ import {
   Users,
   Settings,
   Clipboard,
-  Folder,
+  FolderClosed,
+  FolderOpen,
   PlusCircle,
   ChevronDown,
   ChevronUp,
@@ -53,7 +54,7 @@ const mainNavigation = [
   {
     name: "Create Folder",
     href: "#",
-    icon: Folder,
+    icon: PlusCircle,
     special: true,
     onClick: true,
   },
@@ -80,7 +81,8 @@ export function Sidebar() {
     type: "folder" | "board";
     id: string;
     currentName: string;
-  }>({ open: false, type: "folder", id: "", currentName: "" });
+    isCreating: boolean;
+  }>({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
   const [newName, setNewName] = useState("");
   const [isRenaming, setIsRenaming] = useState(false);
 
@@ -138,8 +140,15 @@ export function Sidebar() {
         setExpandedFolders(prev => [...prev, folderId]);
       }
 
-      // Navigate to the new board
-      router.push(`/boards/${newBoard.id}`);
+      // Immediately open rename dialog for the new board
+      setRenameDialog({
+        open: true,
+        type: "board",
+        id: newBoard.id,
+        currentName: newBoard.name,
+        isCreating: true,
+      });
+      setNewName(newBoard.name);
     }
   };
 
@@ -150,6 +159,16 @@ export function Sidebar() {
     if (newFolder) {
       // Expand the new folder
       setExpandedFolders(prev => [...prev, newFolder.id]);
+      
+      // Immediately open rename dialog for the new folder
+      setRenameDialog({
+        open: true,
+        type: "folder",
+        id: newFolder.id,
+        currentName: newFolder.name,
+        isCreating: true,
+      });
+      setNewName(newFolder.name);
     }
   };
 
@@ -161,6 +180,7 @@ export function Sidebar() {
         type: "folder",
         id: folderId,
         currentName: folder.name,
+        isCreating: false,
       });
       setNewName(folder.name);
     }
@@ -195,6 +215,7 @@ export function Sidebar() {
         type: "board",
         id: boardId,
         currentName: boardName,
+        isCreating: false,
       });
       setNewName(boardName);
     }
@@ -252,12 +273,14 @@ export function Sidebar() {
 
   const handleRenameSubmit = async () => {
     if (!newName.trim() || newName.trim() === renameDialog.currentName) {
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
       setNewName("");
       return;
     }
 
     setIsRenaming(true);
+    const isNewlyCreated = renameDialog.currentName.startsWith("Untitled Board") || renameDialog.currentName.startsWith("New Folder");
+    
     try {
       if (renameDialog.type === "folder") {
         const result = await updateFolder(renameDialog.id, {
@@ -276,6 +299,11 @@ export function Sidebar() {
         if (result.success) {
           toast.success("Board renamed successfully");
           await loadFolders();
+          
+          // Navigate to board if it was newly created
+          if (isNewlyCreated) {
+            router.push(`/boards/${renameDialog.id}`);
+          }
         } else {
           toast.error(result.error || "Failed to rename board");
         }
@@ -285,7 +313,7 @@ export function Sidebar() {
       toast.error(`Failed to rename ${renameDialog.type}`);
     } finally {
       setIsRenaming(false);
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "" });
+      setRenameDialog({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
       setNewName("");
     }
   };
@@ -312,7 +340,7 @@ export function Sidebar() {
               <button
                 key={item.name}
                 onClick={handleCreateNewFolder}
-                className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium w-full text-left`}
+                className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium w-full text-left cursor-pointer`}
                 style={isCreateFolder && !isActive ? { color: "#2463EB" } : {}}
               >
                 <Icon
@@ -369,7 +397,11 @@ export function Sidebar() {
                       onClick={() => toggleFolder(folder.id)}
                       className="flex items-center flex-1 text-left"
                     >
-                      <Folder className="mr-2 h-5 w-5 flex-shrink-0" />
+                      {isExpanded ? (
+                        <FolderOpen className="mr-2 h-5 w-5 flex-shrink-0" />
+                      ) : (
+                        <FolderClosed className="mr-2 h-5 w-5 flex-shrink-0" />
+                      )}
                       <span className="flex-1 truncate">{folder.name}</span>
                       {isClient && (
                         <span className="ml-3 relative w-4 h-4 flex items-center justify-center">
@@ -413,7 +445,7 @@ export function Sidebar() {
                     </button>
                     <button
                       onClick={e => handleCreateNewBoard(folder.id, e)}
-                      className="ml-1 p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors"
+                      className="ml-1 p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors cursor-pointer"
                       title="Create new board"
                     >
                       <PlusCircle className="h-4 w-4 flex-shrink-0" />
@@ -541,6 +573,7 @@ export function Sidebar() {
               type: "folder",
               id: "",
               currentName: "",
+              isCreating: false,
             });
             setNewName("");
           }
@@ -549,7 +582,10 @@ export function Sidebar() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              Rename {renameDialog.type === "folder" ? "Folder" : "Board"}
+              {renameDialog.isCreating 
+                ? `Create New ${renameDialog.type === "folder" ? "Folder" : "Board"}`
+                : `Rename ${renameDialog.type === "folder" ? "Folder" : "Board"}`
+              }
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -579,6 +615,7 @@ export function Sidebar() {
                   type: "folder",
                   id: "",
                   currentName: "",
+                  isCreating: false,
                 });
                 setNewName("");
               }}
@@ -593,7 +630,10 @@ export function Sidebar() {
                 newName.trim() === renameDialog.currentName
               }
             >
-              {isRenaming ? "Renaming..." : "Rename"}
+              {isRenaming 
+                ? (renameDialog.isCreating ? "Creating..." : "Renaming...")
+                : (renameDialog.isCreating ? "Create" : "Rename")
+              }
             </Button>
           </DialogFooter>
         </DialogContent>

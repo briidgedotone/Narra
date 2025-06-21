@@ -103,11 +103,11 @@ export default function BoardsPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleCreateFolder}>
+            <Button variant="outline" onClick={handleCreateFolder} className="cursor-pointer">
               <PlusCircle className="w-4 h-4 mr-2" />
               Create Folder
             </Button>
-            <Button onClick={handleCreateBoard}>
+            <Button onClick={handleCreateBoard} className="cursor-pointer">
               <PlusCircle className="w-4 h-4 mr-2" />
               Create Board
             </Button>
