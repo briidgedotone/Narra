@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
+import { scrapeCreatorsApi } from "@/lib/api";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -20,8 +20,6 @@ export async function GET(request: Request) {
     // Clean the handle
     const cleanHandle = handle.replace(/[@\s]/g, "");
 
-    console.log(`[Discovery API] Searching for ${platform} profile: ${cleanHandle}`);
-
     let result;
     if (platform === "tiktok") {
       result = await scrapeCreatorsApi.tiktok.getProfile(cleanHandle);
@@ -31,36 +29,29 @@ export async function GET(request: Request) {
 
     const duration = Date.now() - startTime;
 
-    console.log(`[Discovery API] API call completed in ${duration}ms`, {
-      success: result.success,
-      hasData: !!result.data,
-      error: result.error,
-      cached: result.cached
-    });
-
     if (result.success && result.data) {
       // Transform for Discovery page format
-      const apiData = result.data as Record<string, unknown>;
+      const apiData = result.data as any;
 
       if (platform === "tiktok") {
-        const user = apiData.user as Record<string, unknown>;
-        const stats = (apiData.stats || apiData.statsV2) as Record<string, unknown>;
+        const user = apiData.user;
+        const stats = apiData.stats || apiData.statsV2;
 
         const profile = {
-          id: (user.id as string) || (user.uniqueId as string),
-          handle: user.uniqueId as string,
-          displayName: (user.nickname as string) || (user.uniqueId as string),
-          platform: "tiktok" as const,
-          followers: parseInt((stats.followerCount as string) || "0") || 0,
-          following: parseInt((stats.followingCount as string) || "0") || 0,
-          posts: parseInt((stats.videoCount as string) || "0") || 0,
-          bio: (user.signature as string) || "",
+          id: user.id || user.uniqueId,
+          handle: user.uniqueId,
+          displayName: user.nickname || user.uniqueId,
+          platform: "tiktok",
+          followers: parseInt(stats.followerCount) || 0,
+          following: parseInt(stats.followingCount) || 0,
+          posts: parseInt(stats.videoCount) || 0,
+          bio: user.signature || "",
           avatarUrl:
-            (user.avatarLarger as string) ||
-            (user.avatarMedium as string) ||
-            (user.avatarThumb as string) ||
-            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uniqueId as string}`,
-          verified: (user.verified as boolean) || false,
+            user.avatarLarger ||
+            user.avatarMedium ||
+            user.avatarThumb ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uniqueId}`,
+          verified: user.verified || false,
         };
 
         return NextResponse.json({
@@ -71,64 +62,30 @@ export async function GET(request: Request) {
           rawApiData: apiData, // For debugging
         });
       } else {
-        // Instagram profile parsing with better error handling
-        console.log(`[Discovery API] Instagram API response structure:`, {
-          hasUser: !!apiData.user,
-          dataKeys: Object.keys(apiData),
-          userKeys: apiData.user ? Object.keys(apiData.user) : null
-        });
-
-        if (!apiData.user) {
-          console.error(`[Discovery API] No user data in Instagram response:`, apiData);
-          return NextResponse.json({
-            success: false,
-            error: "Invalid Instagram profile response - no user data found",
-            duration: `${duration}ms`,
-            debug: {
-              apiData: apiData,
-              message: "API returned success but no user object found"
-            }
-          });
-        }
-
-        const user = apiData.user as Record<string, unknown>;
-
-        // Validate required fields
-        if (!user.username) {
-          console.error(`[Discovery API] Instagram user missing username:`, user);
-          return NextResponse.json({
-            success: false,
-            error: "Invalid Instagram profile - missing username",
-            duration: `${duration}ms`,
-            debug: {
-              userFields: Object.keys(user),
-              message: "User object exists but missing required fields"
-            }
-          });
-        }
+        // Instagram profile handling
+        console.log("Instagram API raw data keys:", Object.keys(apiData));
+        console.log(
+          "Instagram API raw data sample:",
+          JSON.stringify(apiData, null, 2).substring(0, 1000)
+        );
 
         const profile = {
-          id: (user.id as string) || (user.username as string),
-          handle: user.username as string,
-          displayName: (user.full_name as string) || (user.username as string),
-          platform: "instagram" as const,
-          followers: ((user.edge_followed_by as Record<string, unknown>)?.count as number) || 0,
-          following: ((user.edge_follow as Record<string, unknown>)?.count as number) || 0,
-          posts: ((user.edge_owner_to_timeline_media as Record<string, unknown>)?.count as number) || 0,
-          bio: (user.biography as string) || "",
+          id: apiData.id || apiData.username,
+          handle: apiData.username,
+          displayName: apiData.full_name || apiData.username,
+          platform: "instagram",
+          followers: parseInt(apiData.edge_followed_by?.count) || 0,
+          following: parseInt(apiData.edge_follow?.count) || 0,
+          posts: parseInt(apiData.edge_owner_to_timeline_media?.count) || 0,
+          bio: apiData.biography || "",
           avatarUrl:
-            (user.profile_pic_url_hd as string) ||
-            (user.profile_pic_url as string) ||
-            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username as string}`,
-          verified: (user.is_verified as boolean) || false,
+            apiData.profile_pic_url_hd ||
+            apiData.profile_pic_url ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${apiData.username}`,
+          verified: apiData.is_verified || false,
         };
 
-        console.log(`[Discovery API] Successfully parsed Instagram profile:`, {
-          handle: profile.handle,
-          displayName: profile.displayName,
-          followers: profile.followers,
-          verified: profile.verified
-        });
+        console.log("Transformed profile:", profile);
 
         return NextResponse.json({
           success: true,
@@ -139,41 +96,17 @@ export async function GET(request: Request) {
         });
       }
     } else {
-      console.error(`[Discovery API] API call failed:`, {
-        success: result.success,
-        error: result.error,
-        platform,
-        handle: cleanHandle
-      });
-
       return NextResponse.json({
         success: false,
         error: result.error || "Profile not found",
         duration: `${duration}ms`,
-        debug: {
-          platform,
-          handle: cleanHandle,
-          apiResult: result
-        }
       });
     }
   } catch (error) {
-    console.error(`[Discovery API] Exception occurred:`, error);
-    
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
-        debug: {
-          message: "Exception thrown during API processing",
-          error: error instanceof Error ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-          } : error,
-          platform,
-          handle
-        }
       },
       { status: 500 }
     );

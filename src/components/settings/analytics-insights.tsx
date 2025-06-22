@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +41,7 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
   const [isLoading, setIsLoading] = useState(true);
   // const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
 
-  const loadUserStats = useCallback(async () => {
+  const loadUserStats = async () => {
     setIsLoading(true);
     try {
       const db = new DatabaseService();
@@ -53,12 +53,13 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
         totalBoards: userStats?.total_boards || 0,
         totalFolders: userStats?.total_folders || 0,
         followedProfiles: userStats?.followed_profiles || 0,
-        recentActivity: recentActivity?.map(activity => ({
-          id: activity.id,
-          type: activity.type,
-          description: activity.description,
-          timestamp: activity.timestamp,
-        })) || [],
+        recentActivity:
+          recentActivity?.map(activity => ({
+            id: activity.id,
+            type: activity.type,
+            description: activity.description,
+            timestamp: activity.timestamp,
+          })) || [],
       });
     } catch (error) {
       console.error("Error loading user stats:", error);
@@ -73,7 +74,7 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  };
 
   useEffect(() => {
     loadUserStats();
@@ -132,7 +133,9 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto mb-2">
                 <Bookmark className="w-6 h-6 text-primary" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(stats?.totalSavedPosts || 0)}</div>
+              <div className="text-2xl font-bold">
+                {formatNumber(stats?.totalSavedPosts || 0)}
+              </div>
               <div className="text-sm text-muted-foreground">Saved Posts</div>
             </div>
 
@@ -140,7 +143,9 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 mx-auto mb-2">
                 <BarChart3 className="w-6 h-6 text-blue-500" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(stats?.totalBoards || 0)}</div>
+              <div className="text-2xl font-bold">
+                {formatNumber(stats?.totalBoards || 0)}
+              </div>
               <div className="text-sm text-muted-foreground">Boards</div>
             </div>
 
@@ -148,7 +153,9 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 mx-auto mb-2">
                 <Users className="w-6 h-6 text-green-500" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(stats?.followedProfiles || 0)}</div>
+              <div className="text-2xl font-bold">
+                {formatNumber(stats?.followedProfiles || 0)}
+              </div>
               <div className="text-sm text-muted-foreground">Following</div>
             </div>
 
@@ -156,7 +163,9 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/10 mx-auto mb-2">
                 <TrendingUp className="w-6 h-6 text-purple-500" />
               </div>
-              <div className="text-2xl font-bold">{formatNumber(stats?.totalFolders || 0)}</div>
+              <div className="text-2xl font-bold">
+                {formatNumber(stats?.totalFolders || 0)}
+              </div>
               <div className="text-sm text-muted-foreground">Folders</div>
             </div>
           </div>
@@ -170,11 +179,15 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {mockEngagementData.map((platform) => (
+            {mockEngagementData.map(platform => (
               <div key={platform.platform} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Badge variant={platform.platform === "TikTok" ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        platform.platform === "TikTok" ? "default" : "secondary"
+                      }
+                    >
                       {platform.platform}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
@@ -182,7 +195,7 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Heart className="w-4 h-4 text-red-500" />
@@ -242,8 +255,11 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
         <CardContent>
           {stats?.recentActivity && stats.recentActivity.length > 0 ? (
             <div className="space-y-3">
-              {stats.recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+              {stats.recentActivity.map(activity => (
+                <div
+                  key={activity.id}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                   <div className="flex-1">
                     <div className="font-medium">{activity.description}</div>
@@ -259,7 +275,9 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
             <div className="text-center py-8 text-muted-foreground">
               <Clock className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>No recent activity to display</p>
-              <p className="text-sm">Start saving posts to see your activity here</p>
+              <p className="text-sm">
+                Start saving posts to see your activity here
+              </p>
             </div>
           )}
         </CardContent>
@@ -278,7 +296,7 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
             <p className="text-sm text-muted-foreground">
               Download your data for backup or analysis purposes.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 border rounded-lg">
                 <h4 className="font-medium mb-2">Saved Posts</h4>
@@ -289,7 +307,7 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
                   Download CSV
                 </button>
               </div>
-              
+
               <div className="p-4 border rounded-lg">
                 <h4 className="font-medium mb-2">Boards & Folders</h4>
                 <p className="text-sm text-muted-foreground mb-3">
@@ -305,4 +323,4 @@ export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
       </Card>
     </div>
   );
-} 
+}

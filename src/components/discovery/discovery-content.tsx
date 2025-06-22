@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
+import { proxyInstagramImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
 
 interface DiscoveryContentProps {
@@ -209,12 +210,19 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           videosArray = result.data.aweme_list;
         } else if (result.data.videos) {
           videosArray = result.data.videos;
+        } else if (result.data.items) {
+          // Instagram API returns posts in items array
+          videosArray = result.data.items;
         } else if (result.data.data) {
           videosArray = result.data.data;
         } else if (!Array.isArray(result.data)) {
           // If data is not an array, log the structure and set empty array
           console.log("API response structure:", result.data);
           console.log("Response keys:", Object.keys(result.data));
+          console.log(
+            "Full response sample:",
+            JSON.stringify(result.data, null, 2).substring(0, 2000)
+          );
           videosArray = [];
         }
 
@@ -265,30 +273,67 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   };
                 } else {
                   // Transform Instagram post data
-                  const instagramItem = item as InstagramPostData;
-                  return {
-                    id: instagramItem.id || `instagram-${index}`,
-                    embedUrl:
-                      instagramItem.video_url ||
-                      instagramItem.display_url ||
-                      "",
-                    caption:
-                      instagramItem.edge_media_to_caption?.edges?.[0]?.node
-                        ?.text || "No caption available",
-                    thumbnail:
-                      instagramItem.display_url ||
+                  const instagramItem = item as any; // Use any for now since API structure may vary
+
+                  // Handle different possible Instagram API response structures
+                  const postId =
+                    instagramItem.id ||
+                    instagramItem.pk ||
+                    `instagram-${index}`;
+                  const caption =
+                    instagramItem.caption?.text ||
+                    instagramItem.edge_media_to_caption?.edges?.[0]?.node
+                      ?.text ||
+                    "No caption available";
+
+                  // Handle different image/video URL structures
+                  const mediaUrl =
+                    instagramItem.video_url ||
+                    instagramItem.display_url ||
+                    instagramItem.image_versions2?.candidates?.[0]?.url ||
+                    instagramItem.carousel_media?.[0]?.image_versions2
+                      ?.candidates?.[0]?.url ||
+                    "";
+
+                  const thumbnailUrl = proxyInstagramImage(
+                    instagramItem.display_url ||
                       instagramItem.thumbnail_src ||
-                      "",
+                      instagramItem.image_versions2?.candidates?.[0]?.url ||
+                      mediaUrl ||
+                      ""
+                  );
+
+                  // Handle different metrics structures
+                  const likes =
+                    instagramItem.like_count ||
+                    instagramItem.edge_media_preview_like?.count ||
+                    0;
+                  const comments =
+                    instagramItem.comment_count ||
+                    instagramItem.edge_media_to_comment?.count ||
+                    0;
+                  const views =
+                    instagramItem.view_count ||
+                    instagramItem.video_view_count ||
+                    instagramItem.play_count;
+
+                  // Handle timestamp
+                  const timestamp =
+                    instagramItem.taken_at ||
+                    instagramItem.taken_at_timestamp ||
+                    Date.now() / 1000;
+
+                  return {
+                    id: postId,
+                    embedUrl: mediaUrl,
+                    caption: caption,
+                    thumbnail: thumbnailUrl,
                     metrics: {
-                      likes: instagramItem.edge_media_preview_like?.count || 0,
-                      comments: instagramItem.edge_media_to_comment?.count || 0,
-                      ...(instagramItem.video_view_count !== undefined && {
-                        views: instagramItem.video_view_count,
-                      }),
+                      likes: likes,
+                      comments: comments,
+                      ...(views !== undefined && { views: views }),
                     },
-                    datePosted: new Date(
-                      instagramItem.taken_at_timestamp * 1000
-                    ).toISOString(),
+                    datePosted: new Date(timestamp * 1000).toISOString(),
                     platform: "instagram" as const,
                   };
                 }
@@ -595,15 +640,18 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       {/* Profile Results */}
       {searchResults && (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-lg">
           <div className="p-6">
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Profile Avatar */}
               <div className="flex-shrink-0">
                 <div className="relative">
                   <Image
-                    src={searchResults.avatarUrl}
-                    alt={searchResults.displayName}
+                    src={proxyInstagramImage(searchResults.avatarUrl)}
+                    alt={
+                      searchResults.displayName ||
+                      `${searchResults.platform} profile picture`
+                    }
                     width={80}
                     height={80}
                     className="w-20 h-20 rounded-full object-cover"
@@ -712,19 +760,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           {isLoadingPosts ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
-                >
-                  <Skeleton className="aspect-[3/4] w-full" />
-                  <div className="p-4 space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
-                    <div className="flex justify-between">
-                      <Skeleton className="h-4 w-16" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                  </div>
+                <div key={i} className="space-y-2">
+                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-2/3" />
                 </div>
               ))}
             </div>
@@ -741,7 +780,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   key={post.id}
                   onClick={() => handlePostClick(post)}
                   className={cn(
-                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
+                    "group bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-all hover:border-gray-300",
                     viewMode === "list" && "flex flex-row"
                   )}
                 >
@@ -883,12 +922,37 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       {/* Loading state during search */}
       {isSearching && (
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <EmptyState
-            title="Searching for Creator..."
-            description="We're fetching the latest content and profile information."
-            icons={[Search]}
-          />
+        <div className="space-y-6">
+          {/* Profile Skeleton - Simple */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex items-start gap-4">
+              <Skeleton className="w-16 h-16 rounded-full flex-shrink-0" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-5 w-48" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-full" />
+                <div className="flex gap-6 pt-2">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Posts Grid Skeleton - Simple */}
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-32" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-2/3" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

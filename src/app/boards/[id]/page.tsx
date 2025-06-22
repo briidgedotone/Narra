@@ -424,7 +424,7 @@ export default function BoardPage({ params }: BoardPageProps) {
                       src={
                         post.profiles.avatar_url || "/placeholder-avatar.jpg"
                       }
-                      alt={post.profiles.handle}
+                      alt={post.profiles.handle || "Profile picture"}
                       width={20}
                       height={20}
                       className="rounded-full"

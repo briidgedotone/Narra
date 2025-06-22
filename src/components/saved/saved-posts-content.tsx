@@ -43,11 +43,10 @@ interface SavedPost {
   };
 }
 
-export function SavedPostsContent({ userId }: SavedPostsContentProps) {
+export function SavedPostsContent({}: SavedPostsContentProps) {
   // Note: userId prop is passed from server component but not used directly here
   // Authentication is handled by server actions (getAllUserSavedPosts, etc.)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   
+
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +83,7 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
             <Skeleton className="h-8 w-8" />
           </div>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="space-y-2">
@@ -172,15 +171,17 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                
+
                 {/* Platform Badge */}
                 <div className="absolute top-2 left-2">
-                  <span className={cn(
-                    "px-2 py-1 rounded-full text-xs font-medium",
-                    post.platform === "tiktok" 
-                      ? "bg-black/80 text-white" 
-                      : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                  )}>
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded-full text-xs font-medium",
+                      post.platform === "tiktok"
+                        ? "bg-black/80 text-white"
+                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                    )}
+                  >
                     {post.platform === "tiktok" ? "TikTok" : "Instagram"}
                   </span>
                 </div>
@@ -205,7 +206,7 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
                 <div className="flex items-center gap-2">
                   <Image
                     src={post.profiles.avatar_url || "/placeholder-avatar.jpg"}
-                    alt={post.profiles.handle}
+                    alt={post.profiles.handle || "Profile picture"}
                     width={20}
                     height={20}
                     className="rounded-full"
@@ -219,11 +220,11 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
                     </div>
                   )}
                 </div>
-                
+
                 <p className="text-xs text-muted-foreground line-clamp-2">
                   {post.caption || "No caption"}
                 </p>
-                
+
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
                   <span>{formatDate(post.date_posted)}</span>
@@ -256,7 +257,7 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
                 <div className="flex items-center gap-2">
                   <Image
                     src={post.profiles.avatar_url || "/placeholder-avatar.jpg"}
-                    alt={post.profiles.handle}
+                    alt={post.profiles.handle || "Profile picture"}
                     width={24}
                     height={24}
                     className="rounded-full"
@@ -267,20 +268,22 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
                       <span className="text-white text-xs">✓</span>
                     </div>
                   )}
-                  <span className={cn(
-                    "px-2 py-0.5 rounded-full text-xs font-medium",
-                    post.platform === "tiktok" 
-                      ? "bg-black text-white" 
-                      : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                  )}>
+                  <span
+                    className={cn(
+                      "px-2 py-0.5 rounded-full text-xs font-medium",
+                      post.platform === "tiktok"
+                        ? "bg-black text-white"
+                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                    )}
+                  >
                     {post.platform === "tiktok" ? "TikTok" : "Instagram"}
                   </span>
                 </div>
-                
+
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {post.caption || "No caption"}
                 </p>
-                
+
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Heart className="w-4 h-4" />
@@ -309,4 +312,4 @@ export function SavedPostsContent({ userId }: SavedPostsContentProps) {
       )}
     </div>
   );
-} 
+}
