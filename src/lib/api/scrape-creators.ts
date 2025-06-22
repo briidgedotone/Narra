@@ -76,7 +76,7 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getProfileVideos(handle: string, count: number = 20) {
+    async getProfileVideos(handle: string, count: number = 50) {
       const cacheKey = cacheKeys.tiktokVideos(handle, count);
       return await makeRequest(
         `/v3/tiktok/profile/videos?handle=${handle}&count=${count}`,
@@ -106,7 +106,7 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getPosts(handle: string, count: number = 20) {
+    async getPosts(handle: string, count: number = 50) {
       const cacheKey = cacheKeys.instagramPosts(handle, count);
       return await makeRequest(
         `/v2/instagram/user/posts?handle=${handle}&count=${count}`,

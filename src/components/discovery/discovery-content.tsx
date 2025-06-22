@@ -196,7 +196,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=12`
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=50`
       );
       const result = await response.json();
 
