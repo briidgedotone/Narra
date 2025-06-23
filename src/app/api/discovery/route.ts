@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { scrapeCreatorsApi, transformers } from "@/lib/api";
+import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
+import { transformers } from "@/lib/transformers";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -17,78 +18,72 @@ export async function GET(request: Request) {
   try {
     const startTime = Date.now();
 
-    // Clean the handle
+    // Clean the handle - remove @ and whitespace
     const cleanHandle = handle.replace(/[@\s]/g, "");
 
     let result;
     if (platform === "tiktok") {
       result = await scrapeCreatorsApi.tiktok.getProfile(cleanHandle);
-    } else {
+    } else if (platform === "instagram") {
       result = await scrapeCreatorsApi.instagram.getProfile(cleanHandle, true); // Use trim for faster response
+    } else {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid platform. Use 'tiktok' or 'instagram'",
+        },
+        { status: 400 }
+      );
     }
 
     const duration = Date.now() - startTime;
 
     if (result.success && result.data) {
-      // Transform for Discovery page format
-      const apiData = result.data as any;
+      let profile;
 
       if (platform === "tiktok") {
-        const user = apiData.user;
-        const stats = apiData.stats || apiData.statsV2;
+        // Use transformer for TikTok
+        const transformedProfile = transformers.tiktok.profileToAppFormat(
+          result.data
+        );
 
-        const profile = {
-          id: user.id || user.uniqueId,
-          handle: user.uniqueId,
-          displayName: user.nickname || user.uniqueId,
+        if (!transformedProfile) {
+          return NextResponse.json({
+            success: false,
+            error: "Failed to transform TikTok profile data",
+            duration: `${duration}ms`,
+          });
+        }
+
+        profile = {
+          id: transformedProfile.handle,
+          handle: transformedProfile.handle,
+          displayName: transformedProfile.displayName,
           platform: "tiktok",
-          followers: parseInt(stats.followerCount) || 0,
-          following: parseInt(stats.followingCount) || 0,
-          posts: parseInt(stats.videoCount) || 0,
-          bio: user.signature || "",
+          followers: transformedProfile.followers,
+          following: transformedProfile.following,
+          posts: transformedProfile.posts,
+          bio: transformedProfile.bio,
           avatarUrl:
-            user.avatarLarger ||
-            user.avatarMedium ||
-            user.avatarThumb ||
-            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uniqueId}`,
-          verified: user.verified || false,
+            transformedProfile.avatarUrl ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${transformedProfile.handle}`,
+          verified: transformedProfile.verified,
         };
-
-        return NextResponse.json({
-          success: true,
-          data: profile,
-          cached: result.cached || false,
-          duration: `${duration}ms`,
-        });
       } else {
-        // Instagram profile handling - Fixed to use correct data structure
-        console.log("Instagram API response structure:", {
-          hasData: !!apiData.data,
-          hasUser: !!apiData.data?.user,
-          userKeys: apiData.data?.user
-            ? Object.keys(apiData.data.user).slice(0, 10)
-            : [],
-        });
-
-        // Use our transformer function for consistent data extraction
-        const transformedProfile =
-          transformers.instagram.profileToAppFormat(apiData);
+        // Use transformer for Instagram
+        const transformedProfile = transformers.instagram.profileToAppFormat(
+          result.data
+        );
 
         if (!transformedProfile) {
           return NextResponse.json({
             success: false,
             error: "Failed to transform Instagram profile data",
             duration: `${duration}ms`,
-            debug: {
-              hasData: !!apiData.data,
-              hasUser: !!apiData.data?.user,
-              rawStructure: Object.keys(apiData).slice(0, 5),
-            },
           });
         }
 
-        // Convert to Discovery page format
-        const profile = {
+        profile = {
           id: transformedProfile.handle,
           handle: transformedProfile.handle,
           displayName: transformedProfile.displayName,
@@ -106,21 +101,14 @@ export async function GET(request: Request) {
           category: transformedProfile.category,
           externalUrl: transformedProfile.externalUrl,
         };
-
-        console.log("Successfully transformed Instagram profile:", {
-          handle: profile.handle,
-          followers: profile.followers,
-          posts: profile.posts,
-          verified: profile.verified,
-        });
-
-        return NextResponse.json({
-          success: true,
-          data: profile,
-          cached: result.cached || false,
-          duration: `${duration}ms`,
-        });
       }
+
+      return NextResponse.json({
+        success: true,
+        data: profile,
+        cached: result.cached || false,
+        duration: `${duration}ms`,
+      });
     } else {
       return NextResponse.json({
         success: false,

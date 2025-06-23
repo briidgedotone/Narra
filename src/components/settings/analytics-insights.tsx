@@ -39,7 +39,7 @@ interface UserStats {
 export function AnalyticsInsights({ userId }: AnalyticsInsightsProps) {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
+  // const [timeRange] = useState<"7d" | "30d" | "90d">("30d"); // Will be used for future filtering
 
   const loadUserStats = async () => {
     setIsLoading(true);

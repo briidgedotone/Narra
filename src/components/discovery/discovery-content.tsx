@@ -196,7 +196,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=50`
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=12`
       );
       const result = await response.json();
 
@@ -204,26 +204,44 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         // Handle different possible response structures
         let videosArray = result.data;
 
-        // Check if data is nested (common in API responses)
-        if (result.data.aweme_list) {
+        // Use our transformer functions for consistent data processing
+        if (platform === "tiktok") {
           // TikTok API returns videos in aweme_list
-          videosArray = result.data.aweme_list;
-        } else if (result.data.videos) {
-          videosArray = result.data.videos;
-        } else if (result.data.items) {
-          // Instagram API returns posts in items array
-          videosArray = result.data.items;
-        } else if (result.data.data) {
-          videosArray = result.data.data;
-        } else if (!Array.isArray(result.data)) {
-          // If data is not an array, log the structure and set empty array
-          console.log("API response structure:", result.data);
-          console.log("Response keys:", Object.keys(result.data));
-          console.log(
-            "Full response sample:",
-            JSON.stringify(result.data, null, 2).substring(0, 2000)
+          if (result.data.aweme_list) {
+            videosArray = result.data.aweme_list;
+          } else if (result.data.videos) {
+            videosArray = result.data.videos;
+          } else if (result.data.data) {
+            videosArray = result.data.data;
+          } else if (!Array.isArray(result.data)) {
+            console.log("TikTok API response structure:", result.data);
+            videosArray = [];
+          }
+        } else {
+          // Instagram API returns posts in items array - use our client-safe transformer
+          const { transformers } = await import("@/lib/transformers");
+          const transformedPosts = transformers.instagram.postsToAppFormat(
+            result.data,
+            handle
           );
-          videosArray = [];
+
+          // Convert to our Post interface format
+          const realPosts: Post[] = transformedPosts.map(post => ({
+            id: post.id,
+            embedUrl: post.embedUrl,
+            caption: post.caption || "",
+            thumbnail: post.thumbnail,
+            metrics: {
+              likes: post.metrics.likes,
+              comments: post.metrics.comments,
+              views: post.metrics.views,
+            },
+            datePosted: post.datePosted,
+            platform: "instagram" as const,
+          }));
+
+          setPosts(realPosts);
+          return; // Exit early since we've already processed Instagram posts
         }
 
         // Transform the API response to our Post interface
@@ -449,7 +467,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         // Clean the handle - remove @ and whitespace
         const cleanHandle = query.replace(/[@\s]/g, "");
 
-        // Call our API route instead of direct API client
+        // Call our discovery API (using test endpoint for now)
         const response = await fetch(
           `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
         );
@@ -640,7 +658,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       {/* Profile Results */}
       {searchResults && (
-        <div className="bg-white border border-gray-200 rounded-lg">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
           <div className="p-6">
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Profile Avatar */}
@@ -759,11 +777,27 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           {/* Posts Grid */}
           {isLoadingPosts ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-3 w-2/3" />
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-pulse"
+                >
+                  <Skeleton className="aspect-[3/4] w-full" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-1">
+                        <Skeleton className="h-3 w-3" />
+                        <Skeleton className="h-3 w-8" />
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Skeleton className="h-3 w-3" />
+                        <Skeleton className="h-3 w-8" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-3 w-20" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -780,7 +814,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   key={post.id}
                   onClick={() => handlePostClick(post)}
                   className={cn(
-                    "group bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-all hover:border-gray-300",
+                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
                     viewMode === "list" && "flex flex-row"
                   )}
                 >
@@ -793,7 +827,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     {/* Video that plays on hover */}
                     <video
                       src={post.embedUrl}
-                      poster={post.thumbnail}
+                      poster={proxyInstagramImage(post.thumbnail)}
                       className="w-full h-full object-cover"
                       muted
                       playsInline
@@ -807,7 +841,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       onError={e => {
                         // Fallback to image if video fails
                         const img = document.createElement("img");
-                        img.src = post.thumbnail;
+                        img.src = proxyInstagramImage(post.thumbnail);
                         img.className = "w-full h-full object-cover";
                         img.alt = "Post thumbnail";
                         if (e.currentTarget.parentNode) {
@@ -923,32 +957,89 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       {/* Loading state during search */}
       {isSearching && (
         <div className="space-y-6">
-          {/* Profile Skeleton - Simple */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <div className="flex items-start gap-4">
-              <Skeleton className="w-16 h-16 rounded-full flex-shrink-0" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-5 w-48" />
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-4 w-full" />
-                <div className="flex gap-6 pt-2">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-16" />
+          {/* Profile Skeleton */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div className="p-6">
+              <div className="flex flex-col sm:flex-row gap-6">
+                {/* Profile Avatar Skeleton */}
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <Skeleton className="w-20 h-20 rounded-full" />
+                  </div>
+                </div>
+
+                {/* Profile Info Skeleton */}
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Skeleton className="h-6 w-48" />
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </div>
+                    <Skeleton className="h-4 w-32 mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+
+                  {/* Stats Skeleton */}
+                  <div className="flex gap-6">
+                    <div className="text-center">
+                      <Skeleton className="h-5 w-12 mb-1" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                    <div className="text-center">
+                      <Skeleton className="h-5 w-12 mb-1" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                    <div className="text-center">
+                      <Skeleton className="h-5 w-12 mb-1" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </div>
+
+                  {/* Actions Skeleton */}
+                  <div className="flex gap-3">
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-9" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Posts Grid Skeleton - Simple */}
+          {/* Posts Section Skeleton */}
           <div className="space-y-4">
-            <Skeleton className="h-6 w-32" />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Posts Header Skeleton */}
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-6 w-32" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-8 w-8" />
+                <Skeleton className="h-8 w-8" />
+              </div>
+            </div>
+
+            {/* Posts Grid Skeleton */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-3 w-2/3" />
+                <div
+                  key={i}
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                >
+                  <Skeleton className="aspect-[3/4] w-full" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-1">
+                        <Skeleton className="h-3 w-3" />
+                        <Skeleton className="h-3 w-8" />
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Skeleton className="h-3 w-3" />
+                        <Skeleton className="h-3 w-8" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-3 w-20" />
+                  </div>
                 </div>
               ))}
             </div>

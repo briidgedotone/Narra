@@ -63,7 +63,9 @@ const PLAN_FEATURES = {
 };
 
 export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(
+    null
+  );
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -85,7 +87,9 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
           features: PLAN_FEATURES.growth,
         },
         status: "active",
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        currentPeriodEnd: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         cancelAtPeriodEnd: false,
       });
 
@@ -133,7 +137,9 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
     setIsUpdating(true);
     try {
       // TODO: Implement subscription cancellation
-      toast.success("Subscription will be cancelled at the end of the current period");
+      toast.success(
+        "Subscription will be cancelled at the end of the current period"
+      );
       if (subscription) {
         setSubscription({
           ...subscription,
@@ -204,10 +210,17 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold">{subscription.plan.name}</h3>
-                    <Badge 
-                      variant={subscription.status === "active" ? "default" : 
-                              subscription.status === "cancelled" ? "destructive" : "secondary"}
+                    <h3 className="text-xl font-semibold">
+                      {subscription.plan.name}
+                    </h3>
+                    <Badge
+                      variant={
+                        subscription.status === "active"
+                          ? "default"
+                          : subscription.status === "cancelled"
+                            ? "destructive"
+                            : "secondary"
+                      }
                     >
                       {subscription.status}
                     </Badge>
@@ -221,9 +234,13 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     {subscription.cancelAtPeriodEnd ? (
-                      <span>Expires on {formatDate(subscription.currentPeriodEnd)}</span>
+                      <span>
+                        Expires on {formatDate(subscription.currentPeriodEnd)}
+                      </span>
                     ) : (
-                      <span>Renews on {formatDate(subscription.currentPeriodEnd)}</span>
+                      <span>
+                        Renews on {formatDate(subscription.currentPeriodEnd)}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -237,7 +254,7 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                     <ExternalLink className="w-4 h-4 mr-1" />
                     Manage Subscription
                   </Button>
-                  
+
                   {subscription.cancelAtPeriodEnd ? (
                     <Button
                       variant="outline"
@@ -265,10 +282,13 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                   <div className="flex items-start gap-3">
                     <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
                     <div className="text-sm">
-                      <div className="font-medium text-destructive mb-1">Subscription Cancelled</div>
+                      <div className="font-medium text-destructive mb-1">
+                        Subscription Cancelled
+                      </div>
                       <div className="text-muted-foreground">
-                        Your subscription will end on {formatDate(subscription.currentPeriodEnd)}. 
-                        You&apos;ll continue to have access until then.
+                        Your subscription will end on{" "}
+                        {formatDate(subscription.currentPeriodEnd)}. You&apos;ll
+                        continue to have access until then.
                       </div>
                     </div>
                   </div>
@@ -280,7 +300,10 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                 <h4 className="font-medium">Plan Features</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {subscription.plan.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 text-sm"
+                    >
                       <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                       <span>{feature}</span>
                     </div>
@@ -291,7 +314,9 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
           ) : (
             <div className="text-center py-8">
               <Crown className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-medium mb-2">No Active Subscription</h3>
+              <h3 className="text-lg font-medium mb-2">
+                No Active Subscription
+              </h3>
               <p className="text-muted-foreground mb-4">
                 Choose a plan to unlock premium features
               </p>
@@ -320,17 +345,23 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                   <CreditCard className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="font-medium">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242</div>
-                  <div className="text-sm text-muted-foreground">Expires 12/25</div>
+                  <div className="font-medium">
+                    &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
+                    &bull;&bull;&bull;&bull; 4242
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Expires 12/25
+                  </div>
                 </div>
               </div>
               <Button variant="outline" size="sm">
                 Update
               </Button>
             </div>
-            
+
             <div className="text-sm text-muted-foreground">
-              Payment methods are managed through Stripe. Click &quot;Manage Subscription&quot; above to update your payment details.
+              Payment methods are managed through Stripe. Click &ldquo;Manage
+              Subscription&rdquo; above to update your payment details.
             </div>
           </div>
         </CardContent>
@@ -347,8 +378,11 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
         <CardContent>
           {billingHistory.length > 0 ? (
             <div className="space-y-4">
-              {billingHistory.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg">
+              {billingHistory.map(invoice => (
+                <div
+                  key={invoice.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center gap-4">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100">
                       <Check className="w-5 h-5 text-green-600" />
@@ -360,10 +394,12 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <div className="font-medium">{formatCurrency(invoice.amount)}</div>
+                      <div className="font-medium">
+                        {formatCurrency(invoice.amount)}
+                      </div>
                       <Badge variant="secondary" className="text-xs">
                         {invoice.status}
                       </Badge>
@@ -398,10 +434,14 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
             <div className="border rounded-lg p-6">
               <div className="text-center mb-6">
                 <h3 className="text-lg font-semibold mb-2">Inspiration Plan</h3>
-                <div className="text-2xl font-bold">$9<span className="text-sm font-normal">/month</span></div>
-                <p className="text-sm text-muted-foreground mt-2">Perfect for getting started</p>
+                <div className="text-2xl font-bold">
+                  $9<span className="text-sm font-normal">/month</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Perfect for getting started
+                </p>
               </div>
-              
+
               <div className="space-y-3 mb-6">
                 {PLAN_FEATURES.inspiration.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
@@ -423,13 +463,17 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
                   Most Popular
                 </Badge>
               </div>
-              
+
               <div className="text-center mb-6">
                 <h3 className="text-lg font-semibold mb-2">Growth Plan</h3>
-                <div className="text-2xl font-bold">$19<span className="text-sm font-normal">/month</span></div>
-                <p className="text-sm text-muted-foreground mt-2">For serious content creators</p>
+                <div className="text-2xl font-bold">
+                  $19<span className="text-sm font-normal">/month</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  For serious content creators
+                </p>
               </div>
-              
+
               <div className="space-y-3 mb-6">
                 {PLAN_FEATURES.growth.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
@@ -449,4 +493,4 @@ export function SubscriptionBilling({ userId }: SubscriptionBillingProps) {
       </Card>
     </div>
   );
-} 
+}

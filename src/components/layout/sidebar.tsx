@@ -36,6 +36,7 @@ import {
   Users,
   Settings,
   Clipboard,
+  // Folder, // Not currently used
   FolderClosed,
   FolderOpen,
   PlusCircle,
@@ -82,7 +83,13 @@ export function Sidebar() {
     id: string;
     currentName: string;
     isCreating: boolean;
-  }>({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
+  }>({
+    open: false,
+    type: "folder",
+    id: "",
+    currentName: "",
+    isCreating: false,
+  });
   const [newName, setNewName] = useState("");
   const [isRenaming, setIsRenaming] = useState(false);
 
@@ -159,7 +166,7 @@ export function Sidebar() {
     if (newFolder) {
       // Expand the new folder
       setExpandedFolders(prev => [...prev, newFolder.id]);
-      
+
       // Immediately open rename dialog for the new folder
       setRenameDialog({
         open: true,
@@ -273,14 +280,22 @@ export function Sidebar() {
 
   const handleRenameSubmit = async () => {
     if (!newName.trim() || newName.trim() === renameDialog.currentName) {
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
+      setRenameDialog({
+        open: false,
+        type: "folder",
+        id: "",
+        currentName: "",
+        isCreating: false,
+      });
       setNewName("");
       return;
     }
 
     setIsRenaming(true);
-    const isNewlyCreated = renameDialog.currentName.startsWith("Untitled Board") || renameDialog.currentName.startsWith("New Folder");
-    
+    const isNewlyCreated =
+      renameDialog.currentName.startsWith("Untitled Board") ||
+      renameDialog.currentName.startsWith("New Folder");
+
     try {
       if (renameDialog.type === "folder") {
         const result = await updateFolder(renameDialog.id, {
@@ -299,7 +314,7 @@ export function Sidebar() {
         if (result.success) {
           toast.success("Board renamed successfully");
           await loadFolders();
-          
+
           // Navigate to board if it was newly created
           if (isNewlyCreated) {
             router.push(`/boards/${renameDialog.id}`);
@@ -313,7 +328,13 @@ export function Sidebar() {
       toast.error(`Failed to rename ${renameDialog.type}`);
     } finally {
       setIsRenaming(false);
-      setRenameDialog({ open: false, type: "folder", id: "", currentName: "", isCreating: false });
+      setRenameDialog({
+        open: false,
+        type: "folder",
+        id: "",
+        currentName: "",
+        isCreating: false,
+      });
       setNewName("");
     }
   };
@@ -582,10 +603,9 @@ export function Sidebar() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {renameDialog.isCreating 
+              {renameDialog.isCreating
                 ? `Create New ${renameDialog.type === "folder" ? "Folder" : "Board"}`
-                : `Rename ${renameDialog.type === "folder" ? "Folder" : "Board"}`
-              }
+                : `Rename ${renameDialog.type === "folder" ? "Folder" : "Board"}`}
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -630,10 +650,13 @@ export function Sidebar() {
                 newName.trim() === renameDialog.currentName
               }
             >
-              {isRenaming 
-                ? (renameDialog.isCreating ? "Creating..." : "Renaming...")
-                : (renameDialog.isCreating ? "Create" : "Rename")
-              }
+              {isRenaming
+                ? renameDialog.isCreating
+                  ? "Creating..."
+                  : "Renaming..."
+                : renameDialog.isCreating
+                  ? "Create"
+                  : "Rename"}
             </Button>
           </DialogFooter>
         </DialogContent>
