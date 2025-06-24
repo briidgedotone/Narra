@@ -1053,7 +1053,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 e.stopPropagation();
                                 handlePostCarouselPrev(post.id);
                               }}
-                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
                             >
                               <ChevronLeft className="w-4 h-4" />
                             </button>
@@ -1070,7 +1070,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   post.carouselMedia!.length
                                 );
                               }}
-                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
                             >
                               <ChevronRight className="w-4 h-4" />
                             </button>
