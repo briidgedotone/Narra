@@ -7,6 +7,7 @@ import React, {
   useEffect,
   ReactNode,
   useCallback,
+  useRef,
 } from "react";
 import { toast } from "sonner";
 
@@ -47,33 +48,61 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+
+  // Use refs to avoid dependency issues in useCallback
+  const lastFetchTimeRef = useRef<number>(0);
+  const foldersRef = useRef<Folder[]>([]);
 
   // Cache duration: 30 seconds to prevent excessive API calls
   const CACHE_DURATION = 30 * 1000;
 
+  // Keep refs in sync with state
+  useEffect(() => {
+    foldersRef.current = folders;
+  }, [folders]);
+
   const loadFolders = useCallback(
     async (forceRefresh: boolean = false) => {
       const now = Date.now();
+      const timeSinceLastFetch = now - lastFetchTimeRef.current;
+
+      console.log("🔍 loadFolders called:", {
+        forceRefresh,
+        foldersCount: foldersRef.current.length,
+        timeSinceLastFetch: `${timeSinceLastFetch}ms`,
+        cacheThreshold: `${CACHE_DURATION}ms`,
+        shouldSkip:
+          !forceRefresh &&
+          foldersRef.current.length > 0 &&
+          timeSinceLastFetch < CACHE_DURATION,
+      });
 
       // Skip if data is fresh and not forcing refresh
       if (
         !forceRefresh &&
-        folders.length > 0 &&
-        now - lastFetchTime < CACHE_DURATION
+        foldersRef.current.length > 0 &&
+        timeSinceLastFetch < CACHE_DURATION
       ) {
+        console.log("⏭️ Skipping folders load (cache still fresh)");
         return;
       }
 
+      console.log("📡 Loading folders from API...");
       setIsLoading(true);
       setError(null);
       try {
         const result = await getUserFoldersWithBoards();
         if (result.success && result.data) {
           setFolders(result.data);
-          setLastFetchTime(now);
+          lastFetchTimeRef.current = now;
+          console.log(
+            "✅ Folders loaded successfully:",
+            result.data.length,
+            "folders"
+          );
         } else {
           setError(result.error || "Failed to load folders");
+          console.error("❌ Failed to load folders:", result.error);
         }
       } catch (err) {
         console.error("Failed to load folders:", err);
@@ -82,7 +111,7 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
         setIsLoading(false);
       }
     },
-    [folders.length, lastFetchTime]
+    [CACHE_DURATION]
   );
 
   const refreshFolders = useCallback(async () => {
@@ -93,7 +122,7 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
     async (folderId: string, baseName: string = "Untitled Board") => {
       try {
         // Generate a unique board name by checking existing names in the folder
-        const folder = folders.find(f => f.id === folderId);
+        const folder = foldersRef.current.find(f => f.id === folderId);
         const existingBoardNames = folder?.boards?.map(b => b.name) || [];
 
         let boardName = baseName;
@@ -126,7 +155,7 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
         return null;
       }
     },
-    [folders, refreshFolders]
+    [refreshFolders]
   );
 
   const createNewFolder = useCallback(
@@ -136,7 +165,7 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
         let folderName = baseName;
         let counter = 1;
 
-        while (folders.some(folder => folder.name === folderName)) {
+        while (foldersRef.current.some(folder => folder.name === folderName)) {
           folderName = `${baseName} ${counter}`;
           counter++;
         }
@@ -162,7 +191,7 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
         return null;
       }
     },
-    [folders, refreshFolders]
+    [refreshFolders]
   );
 
   // Initial load
