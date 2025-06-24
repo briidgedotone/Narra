@@ -174,37 +174,60 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getPosts(handle: string, count: number = 20) {
-      // Instagram posts are included in the profile response
-      // So we'll get the profile and extract posts from it
-      const cacheKey = cacheKeys.instagramPosts(handle, count);
-      const profileResponse = await makeRequest<InstagramProfileResponse>(
-        `/v1/instagram/profile?handle=${handle}`,
-        cacheKey,
-        cacheTTL.posts
-      );
+    async getPosts(handle: string, count: number = 20, nextMaxId?: string) {
+      // Use the dedicated posts endpoint that supports pagination
+      const cacheKey = nextMaxId
+        ? `instagram:posts:${handle}:${count}:${nextMaxId}`
+        : cacheKeys.instagramPosts(handle, count);
+      let endpoint = `/v2/instagram/user/posts?handle=${handle}`;
 
-      // Transform the profile response to extract posts
-      if (profileResponse.success && profileResponse.data) {
-        const user = (profileResponse.data as any)?.data?.user;
-        if (user?.edge_owner_to_timeline_media?.edges) {
-          // Create a posts-like response structure
-          const posts = user.edge_owner_to_timeline_media.edges
-            .slice(0, count)
-            .map((edge: any) => edge.node);
-
-          return {
-            success: true,
-            data: {
-              items: posts,
-            },
-            cached: profileResponse.cached,
-            status: profileResponse.status,
-          };
-        }
+      // Add pagination if nextMaxId is provided
+      if (nextMaxId) {
+        endpoint += `&next_max_id=${nextMaxId}`;
       }
 
-      return profileResponse;
+      // Add trim parameter for cleaner response
+      endpoint += `&trim=true`;
+
+      const response = await makeRequest(endpoint, cacheKey, cacheTTL.posts);
+
+      // If the v2 endpoint fails, fallback to profile extraction
+      if (!response.success) {
+        console.log(
+          "v2 posts endpoint failed, falling back to profile extraction"
+        );
+        const profileResponse = await makeRequest<InstagramProfileResponse>(
+          `/v1/instagram/profile?handle=${handle}`,
+          cacheKey,
+          cacheTTL.posts
+        );
+
+        // Transform the profile response to extract posts
+        if (profileResponse.success && profileResponse.data) {
+          const user = (profileResponse.data as any)?.data?.user;
+          if (user?.edge_owner_to_timeline_media?.edges) {
+            // Create a posts-like response structure
+            const posts = user.edge_owner_to_timeline_media.edges
+              .slice(0, count)
+              .map((edge: any) => edge.node);
+
+            return {
+              success: true,
+              data: {
+                items: posts,
+                num_results: posts.length,
+                more_available: false,
+                next_max_id: null,
+              },
+              cached: profileResponse.cached,
+              status: profileResponse.status,
+            };
+          }
+        }
+        return profileResponse;
+      }
+
+      return response;
     },
   },
 };
@@ -261,7 +284,7 @@ export const transformers = {
       }
 
       return items.map((post: any, index: number) => {
-        // Handle different post structures (API vs Profile-embedded)
+        // Handle different post structures (API vs Profile posts)
         const isProfilePost = post.shortcode && post.display_url; // Profile posts have these fields
 
         // Extract caption from the complex structure

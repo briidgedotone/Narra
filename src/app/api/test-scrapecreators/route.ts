@@ -87,9 +87,11 @@ export async function GET(request: NextRequest) {
       case "instagram-posts":
         const igPostsHandle = searchParams.get("handle") || "sydneythomas";
         const postsCount = parseInt(searchParams.get("count") || "5");
+        const nextMaxId = searchParams.get("next_max_id");
         result = await scrapeCreatorsApi.instagram.getPosts(
           igPostsHandle,
-          postsCount
+          postsCount,
+          nextMaxId || undefined
         );
         break;
 

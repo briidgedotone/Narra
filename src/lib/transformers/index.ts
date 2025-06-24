@@ -26,19 +26,19 @@ export const transformers = {
       };
     },
 
-    // Transform Instagram posts to our application format - FIXED
+    // Transform Instagram posts to our application format - UPDATED for v2 API
     postsToAppFormat(apiResponse: any, profileHandle: string) {
-      // Handle both posts API response and profile-extracted posts
+      // Handle multiple possible response structures
       let items = [];
 
       if (apiResponse?.items) {
-        // Direct items response from our getPosts method
+        // v2 API direct items response
         items = apiResponse.items;
       } else if (apiResponse?.data?.items) {
-        // Direct posts API response
+        // v2 API nested items response
         items = apiResponse.data.items;
       } else if (apiResponse?.data?.user?.edge_owner_to_timeline_media?.edges) {
-        // Profile response with embedded posts
+        // Profile response with embedded posts (fallback)
         items = apiResponse.data.user.edge_owner_to_timeline_media.edges.map(
           (edge: any) => edge.node
         );
@@ -52,25 +52,40 @@ export const transformers = {
       }
 
       return items.map((post: any, index: number) => {
-        // Handle different post structures (API vs Profile-embedded)
+        // Determine post structure type
+        const isV2ApiPost = post.pk && post.code; // v2 API posts have pk and code fields
         const isProfilePost = post.shortcode && post.display_url; // Profile posts have these fields
 
         // Extract caption from the complex structure
-        const caption =
-          post.caption?.text ||
-          post.edge_media_to_caption?.edges?.[0]?.node?.text ||
-          "";
+        let caption = "";
+        if (post.caption?.text) {
+          caption = post.caption.text;
+        } else if (post.edge_media_to_caption?.edges?.[0]?.node?.text) {
+          caption = post.edge_media_to_caption.edges[0].node.text;
+        }
 
-        // Handle media URLs - different structures for API vs Profile posts
+        // Handle media URLs based on post structure
         let mediaUrl, embedUrl, thumbnail;
 
-        if (isProfilePost) {
+        if (isV2ApiPost) {
+          // v2 API post structure
+          mediaUrl =
+            post.video_versions?.[0]?.url ||
+            post.image_versions2?.candidates?.[0]?.url ||
+            post.display_uri ||
+            "";
+          embedUrl = `https://www.instagram.com/p/${post.code}/`;
+          thumbnail =
+            post.image_versions2?.candidates?.[0]?.url ||
+            post.display_uri ||
+            "";
+        } else if (isProfilePost) {
           // Profile-embedded post structure
           mediaUrl = post.video_url || post.display_url || "";
           embedUrl = `https://www.instagram.com/p/${post.shortcode}/`;
           thumbnail = post.display_url || post.thumbnail_src || "";
         } else {
-          // Direct API post structure
+          // Generic fallback structure
           mediaUrl =
             post.video_url ||
             post.image_versions2?.candidates?.[0]?.url ||
@@ -78,23 +93,40 @@ export const transformers = {
             "";
           embedUrl = post.code
             ? `https://www.instagram.com/p/${post.code}/`
-            : mediaUrl;
+            : post.shortcode
+              ? `https://www.instagram.com/p/${post.shortcode}/`
+              : mediaUrl;
           thumbnail =
-            post.image_versions2?.candidates?.[1]?.url || // Second candidate is usually smaller
+            post.image_versions2?.candidates?.[1]?.url ||
             post.image_versions2?.candidates?.[0]?.url ||
             post.display_url ||
             mediaUrl;
         }
 
-        // Handle metrics - different field names
-        const likes = post.like_count || post.edge_liked_by?.count || 0;
-        const comments =
-          post.comment_count || post.edge_media_to_comment?.count || 0;
-        const views = post.view_count || post.video_view_count || undefined;
+        // Handle metrics with proper field mapping
+        let likes, comments, views;
+
+        if (isV2ApiPost) {
+          likes = post.like_count || 0;
+          comments = post.comment_count || 0;
+          views = post.play_count || post.view_count || undefined;
+        } else {
+          likes = post.like_count || post.edge_liked_by?.count || 0;
+          comments =
+            post.comment_count || post.edge_media_to_comment?.count || 0;
+          views = post.view_count || post.video_view_count || undefined;
+        }
 
         // Handle timestamp
         const timestamp =
           post.taken_at || post.taken_at_timestamp || Date.now() / 1000;
+
+        // Determine if it's a video
+        const isVideo =
+          post.media_type === 2 ||
+          post.is_video ||
+          !!post.video_url ||
+          !!post.video_versions?.length;
 
         return {
           id: post.pk || post.id || `instagram-${index}`,
@@ -109,10 +141,12 @@ export const transformers = {
             views: views,
           },
           datePosted: new Date(timestamp * 1000).toISOString(),
-          isVideo: post.media_type === 2 || post.is_video || !!post.video_url,
-          videoUrl: post.video_url,
+          isVideo: isVideo,
+          videoUrl: post.video_versions?.[0]?.url || post.video_url,
           displayUrl:
-            post.display_url || post.image_versions2?.candidates?.[0]?.url,
+            post.display_uri ||
+            post.display_url ||
+            post.image_versions2?.candidates?.[0]?.url,
           shortcode: post.code || post.shortcode,
           dimensions:
             post.original_width && post.original_height

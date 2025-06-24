@@ -27,6 +27,7 @@ import {
   UserPlus,
   Search,
   FileQuestion,
+  ChevronDown,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -150,6 +151,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(false);
+  const [nextMaxId, setNextMaxId] = useState<string | null>(null);
+  const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -196,7 +200,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=12`
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=50`
       );
       const result = await response.json();
 
@@ -224,6 +228,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             result.data,
             handle
           );
+
+          // Set pagination metadata for Instagram
+          setHasMorePosts(result.data.more_available || false);
+          setNextMaxId(result.data.next_max_id || null);
 
           // Convert to our Post interface format
           const realPosts: Post[] = transformedPosts.map(post => ({
@@ -373,6 +381,60 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       setIsLoadingPosts(false);
     }
   }, [searchResults]);
+
+  const loadMorePosts = useCallback(async () => {
+    if (!searchResults || !hasMorePosts || !nextMaxId || isLoadingMorePosts)
+      return;
+
+    setIsLoadingMorePosts(true);
+    try {
+      const handle = searchResults.handle;
+      const platform = searchResults.platform;
+
+      if (platform === "instagram") {
+        // Call Instagram API with pagination
+        const response = await fetch(
+          `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=50&next_max_id=${nextMaxId}`
+        );
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const { transformers } = await import("@/lib/transformers");
+          const transformedPosts = transformers.instagram.postsToAppFormat(
+            result.data,
+            handle
+          );
+
+          // Update pagination metadata
+          setHasMorePosts(result.data.more_available || false);
+          setNextMaxId(result.data.next_max_id || null);
+
+          // Convert to our Post interface format and append to existing posts
+          const newPosts: Post[] = transformedPosts.map(post => ({
+            id: post.id,
+            embedUrl: post.embedUrl,
+            caption: post.caption || "",
+            thumbnail: post.thumbnail,
+            metrics: {
+              views: post.metrics.views,
+              likes: post.metrics.likes,
+              comments: post.metrics.comments,
+              shares: post.metrics.shares,
+            },
+            datePosted: post.datePosted,
+            platform: post.platform,
+          }));
+
+          // Append new posts to existing posts
+          setPosts(prevPosts => [...prevPosts, ...newPosts]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load more posts:", error);
+    } finally {
+      setIsLoadingMorePosts(false);
+    }
+  }, [searchResults, hasMorePosts, nextMaxId, isLoadingMorePosts]);
 
   // Auto-load posts when search results change
   useEffect(() => {
@@ -901,6 +963,33 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               ))}
             </div>
           )}
+
+          {/* Load More Button for Instagram */}
+          {!isLoadingPosts &&
+            searchResults?.platform === "instagram" &&
+            hasMorePosts && (
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={loadMorePosts}
+                  disabled={isLoadingMorePosts}
+                  variant="outline"
+                  size="lg"
+                  className="px-8"
+                >
+                  {isLoadingMorePosts ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
+                      Loading More Posts...
+                    </>
+                  ) : (
+                    <>
+                      Load More Posts
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
         </div>
       )}
 
