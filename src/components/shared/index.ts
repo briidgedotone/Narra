@@ -17,3 +17,4 @@ export {
   useDashboardSettings,
 } from "./dashboard-settings";
 export { BoardsSkeleton } from "./boards-skeleton";
+export { BoardContentSkeleton } from "./board-content-skeleton";

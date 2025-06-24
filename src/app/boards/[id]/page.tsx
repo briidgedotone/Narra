@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { getBoardById, updateBoard } from "@/app/actions/folders";
 import { getPostsInBoard, removePostFromBoard } from "@/app/actions/posts";
 import { DashboardLayout } from "@/components/layout";
+import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,7 +24,7 @@ import {
   MessageCircle,
   Trash2,
 } from "@/components/ui/icons";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 
@@ -230,9 +231,7 @@ export default function BoardPage({ params }: BoardPageProps) {
   if (isLoadingBoard) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner />
-        </div>
+        <BoardContentSkeleton />
       </DashboardLayout>
     );
   }
@@ -345,8 +344,14 @@ export default function BoardPage({ params }: BoardPageProps) {
 
         {/* Section 3: Posts Grid */}
         {isLoadingPosts ? (
-          <div className="flex items-center justify-center py-12">
-            <LoadingSpinner />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+              </div>
+            ))}
           </div>
         ) : filteredPosts.length === 0 ? (
           <EmptyState
