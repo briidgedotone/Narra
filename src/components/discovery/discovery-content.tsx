@@ -888,7 +888,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   >
                     {/* Video that plays on hover */}
                     <video
-                      src={post.embedUrl}
+                      src={
+                        post.platform === "instagram"
+                          ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
+                          : post.embedUrl
+                      }
                       poster={proxyInstagramImage(post.thumbnail)}
                       className="w-full h-full object-cover"
                       muted
@@ -1172,8 +1176,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                 <div className="space-y-4">
                   <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden">
                     <video
-                      src={selectedPost.embedUrl}
-                      poster={selectedPost.thumbnail}
+                      src={
+                        selectedPost.platform === "instagram"
+                          ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
+                          : selectedPost.embedUrl
+                      }
+                      poster={
+                        selectedPost.platform === "instagram"
+                          ? proxyInstagramImage(selectedPost.thumbnail)
+                          : selectedPost.thumbnail
+                      }
                       className="w-full h-full object-cover"
                       autoPlay
                       loop
@@ -1183,7 +1195,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       onError={e => {
                         // Fallback to image if video fails
                         const img = document.createElement("img");
-                        img.src = selectedPost.thumbnail;
+                        img.src =
+                          selectedPost.platform === "instagram"
+                            ? proxyInstagramImage(selectedPost.thumbnail)
+                            : selectedPost.thumbnail;
                         img.className = "w-full h-full object-cover";
                         img.alt = "Post thumbnail";
                         if (e.currentTarget.parentNode) {

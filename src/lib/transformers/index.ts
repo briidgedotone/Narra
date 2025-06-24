@@ -65,42 +65,36 @@ export const transformers = {
         }
 
         // Handle media URLs based on post structure
-        let mediaUrl, embedUrl, thumbnail;
+        let embedUrl, thumbnail;
 
         if (isV2ApiPost) {
-          // v2 API post structure
-          mediaUrl =
-            post.video_versions?.[0]?.url ||
-            post.image_versions2?.candidates?.[0]?.url ||
-            post.display_uri ||
-            "";
-          embedUrl = `https://www.instagram.com/p/${post.code}/`;
-          thumbnail =
-            post.image_versions2?.candidates?.[0]?.url ||
-            post.display_uri ||
-            "";
+          // v2 API post structure - use direct video URLs for better modal playback
+          const videoUrl = post.video_versions?.[0]?.url;
+          const imageUrl =
+            post.image_versions2?.candidates?.[0]?.url || post.display_uri;
+
+          // For Instagram videos, use direct video URL as embedUrl for modal playback
+          embedUrl =
+            videoUrl || imageUrl || `https://www.instagram.com/p/${post.code}/`;
+          thumbnail = imageUrl || post.display_uri || "";
         } else if (isProfilePost) {
           // Profile-embedded post structure
-          mediaUrl = post.video_url || post.display_url || "";
           embedUrl = `https://www.instagram.com/p/${post.shortcode}/`;
           thumbnail = post.display_url || post.thumbnail_src || "";
         } else {
-          // Generic fallback structure
-          mediaUrl =
-            post.video_url ||
-            post.image_versions2?.candidates?.[0]?.url ||
-            post.display_url ||
-            "";
-          embedUrl = post.code
-            ? `https://www.instagram.com/p/${post.code}/`
-            : post.shortcode
-              ? `https://www.instagram.com/p/${post.shortcode}/`
-              : mediaUrl;
+          // v2 API post structure - use direct video URLs
+          const videoUrl = post.video_versions?.[0]?.url || post.video_url;
+          const imageUrl =
+            post.image_versions2?.candidates?.[0]?.url || post.display_url;
+
+          // For Instagram videos, use direct video URL as embedUrl for modal playback
+          embedUrl =
+            videoUrl || imageUrl || `https://www.instagram.com/p/${post.code}/`;
           thumbnail =
             post.image_versions2?.candidates?.[1]?.url ||
             post.image_versions2?.candidates?.[0]?.url ||
             post.display_url ||
-            mediaUrl;
+            imageUrl;
         }
 
         // Handle metrics with proper field mapping
