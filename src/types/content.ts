@@ -6,6 +6,7 @@ export interface Board {
   name: string;
   description?: string;
   folderId?: string;
+  folderName?: string;
   postCount: number;
   coverImage?: string;
   isPublic: boolean;

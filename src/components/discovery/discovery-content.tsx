@@ -28,6 +28,8 @@ import {
   Search,
   FileQuestion,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -179,6 +181,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+  const [postCarouselIndices, setPostCarouselIndices] = useState<
+    Record<string, number>
+  >({});
 
   // Handle URL parameters (from following page navigation)
   useEffect(() => {
@@ -710,6 +715,24 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     }
   };
 
+  const handlePostCarouselNext = (postId: string, maxIndex: number) => {
+    setPostCarouselIndices(prev => ({
+      ...prev,
+      [postId]: Math.min((prev[postId] || 0) + 1, maxIndex - 1),
+    }));
+  };
+
+  const handlePostCarouselPrev = (postId: string) => {
+    setPostCarouselIndices(prev => ({
+      ...prev,
+      [postId]: Math.max((prev[postId] || 0) - 1, 0),
+    }));
+  };
+
+  const getPostCarouselIndex = (postId: string) => {
+    return postCarouselIndices[postId] || 0;
+  };
+
   return (
     <div className="  space-y-6">
       {/* Header */}
@@ -918,39 +941,144 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       viewMode === "grid" ? "aspect-[3/4]" : "w-48 aspect-[3/4]"
                     )}
                   >
-                    {/* Video that plays on hover */}
-                    <video
-                      src={
-                        post.platform === "instagram"
-                          ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
-                          : post.embedUrl
-                      }
-                      poster={proxyInstagramImage(post.thumbnail)}
-                      className="w-full h-full object-cover"
-                      muted
-                      playsInline
-                      onMouseEnter={e => {
-                        e.currentTarget.play();
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.pause();
-                        e.currentTarget.currentTime = 0;
-                      }}
-                      onError={e => {
-                        // Fallback to image if video fails
-                        const img = document.createElement("img");
-                        img.src = proxyInstagramImage(post.thumbnail);
-                        img.className = "w-full h-full object-cover";
-                        img.alt = "Post thumbnail";
-                        if (e.currentTarget.parentNode) {
-                          e.currentTarget.parentNode.replaceChild(
-                            img,
-                            e.currentTarget
-                          );
-                        }
-                      }}
-                    />
-                    {/* Carousel Indicator */}
+                    {/* Display current carousel media or single media */}
+                    <div className="relative w-full h-full overflow-hidden">
+                      {post.isCarousel &&
+                      post.carouselMedia &&
+                      post.carouselMedia.length > 0 ? (
+                        // Carousel Media Display with Sliding Animation
+                        <div
+                          className="flex w-full h-full transition-transform duration-300 ease-in-out"
+                          style={{
+                            transform: `translateX(-${getPostCarouselIndex(post.id) * 100}%)`,
+                          }}
+                        >
+                          {post.carouselMedia.map((media, index) => (
+                            <div
+                              key={media.id || index}
+                              className="w-full h-full flex-shrink-0"
+                            >
+                              {media.isVideo ? (
+                                <video
+                                  src={`/api/proxy-image?url=${encodeURIComponent(media.url)}`}
+                                  poster={proxyInstagramImage(media.thumbnail)}
+                                  className="w-full h-full object-cover"
+                                  muted
+                                  playsInline
+                                  onMouseEnter={e => {
+                                    e.currentTarget.play();
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.pause();
+                                    e.currentTarget.currentTime = 0;
+                                  }}
+                                  onError={e => {
+                                    // Fallback to image if video fails
+                                    const img = document.createElement("img");
+                                    img.src = proxyInstagramImage(
+                                      media.thumbnail
+                                    );
+                                    img.className =
+                                      "w-full h-full object-cover";
+                                    img.alt = "Post media";
+                                    if (e.currentTarget.parentNode) {
+                                      e.currentTarget.parentNode.replaceChild(
+                                        img,
+                                        e.currentTarget
+                                      );
+                                    }
+                                  }}
+                                />
+                              ) : (
+                                <img
+                                  src={proxyInstagramImage(media.url)}
+                                  alt="Post media"
+                                  className="w-full h-full object-cover"
+                                  onError={e => {
+                                    e.currentTarget.src =
+                                      "/placeholder-post.jpg";
+                                  }}
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        // Single Media Display (existing logic)
+                        <div className="w-full h-full">
+                          <video
+                            src={
+                              post.platform === "instagram"
+                                ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
+                                : post.embedUrl
+                            }
+                            poster={proxyInstagramImage(post.thumbnail)}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            onMouseEnter={e => {
+                              e.currentTarget.play();
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.pause();
+                              e.currentTarget.currentTime = 0;
+                            }}
+                            onError={e => {
+                              // Fallback to image if video fails
+                              const img = document.createElement("img");
+                              img.src = proxyInstagramImage(post.thumbnail);
+                              img.className = "w-full h-full object-cover";
+                              img.alt = "Post thumbnail";
+                              if (e.currentTarget.parentNode) {
+                                e.currentTarget.parentNode.replaceChild(
+                                  img,
+                                  e.currentTarget
+                                );
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Carousel Navigation Arrows */}
+                    {post.isCarousel &&
+                      post.carouselMedia &&
+                      post.carouselMedia.length > 1 && (
+                        <>
+                          {/* Previous Arrow */}
+                          {getPostCarouselIndex(post.id) > 0 && (
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                handlePostCarouselPrev(post.id);
+                              }}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                          )}
+
+                          {/* Next Arrow */}
+                          {getPostCarouselIndex(post.id) <
+                            post.carouselMedia.length - 1 && (
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                handlePostCarouselNext(
+                                  post.id,
+                                  post.carouselMedia!.length
+                                );
+                              }}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                            >
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                    {/* Carousel Indicator Dots */}
                     {post.isCarousel &&
                       post.carouselCount &&
                       post.carouselCount > 1 && (
@@ -961,13 +1089,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             <div
                               key={index}
                               className={`w-1.5 h-1.5 rounded-full ${
-                                index === 0 ? "bg-white" : "bg-white/50"
+                                index === getPostCarouselIndex(post.id)
+                                  ? "bg-white"
+                                  : "bg-white/50"
                               }`}
                             />
                           ))}
                         </div>
                       )}
 
+                    {/* Save Button */}
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         size="sm"

@@ -39,9 +39,9 @@ export async function GET(request: NextRequest) {
 
     // Transform the response to match our interface
     const transcriptData = {
-      id: result.data?.id || "unknown",
-      url: result.data?.url || videoUrl,
-      transcript: result.data?.transcript || "",
+      id: (result.data as any)?.id || "unknown",
+      url: (result.data as any)?.url || videoUrl,
+      transcript: (result.data as any)?.transcript || "",
       cached: result.cached || false,
     };
 

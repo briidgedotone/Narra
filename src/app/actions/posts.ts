@@ -7,17 +7,36 @@ import { DatabaseService } from "@/lib/database";
 
 const db = new DatabaseService();
 
-export async function savePostToBoard(postData: unknown, boardId: string) {
+interface SavePostData {
+  handle: string;
+  platform: "instagram" | "tiktok";
+  displayName?: string;
+  bio?: string;
+  followers?: number;
+  avatarUrl?: string;
+  verified?: boolean;
+  platformPostId: string;
+  embedUrl: string;
+  caption?: string;
+  thumbnail: string;
+  metrics?: Record<string, any>;
+  datePosted: string;
+}
+
+export async function savePostToBoard(postData: SavePostData, boardId: string) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     // First, ensure the profile exists
-    let profile = await db.getProfileByHandle(postData.handle, postData.platform);
-    
+    let profile = await db.getProfileByHandle(
+      postData.handle,
+      postData.platform
+    );
+
     if (!profile) {
       // Create profile if it doesn't exist
       profile = await db.createProfile({
@@ -32,8 +51,11 @@ export async function savePostToBoard(postData: unknown, boardId: string) {
     }
 
     // Check if post already exists
-    let post = await db.getPostByPlatformId(postData.platformPostId, postData.platform);
-    
+    let post = await db.getPostByPlatformId(
+      postData.platformPostId,
+      postData.platform
+    );
+
     if (!post) {
       // Create post if it doesn't exist
       post = await db.createPost({
@@ -50,12 +72,12 @@ export async function savePostToBoard(postData: unknown, boardId: string) {
 
     // Add post to board (this will handle duplicates via unique constraint)
     await db.addPostToBoard(boardId, post.id);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
     revalidatePath(`/boards/${boardId}`);
     revalidatePath("/saved");
-    
+
     return { success: true, data: { post, boardId } };
   } catch (error) {
     console.error("Failed to save post to board:", error);
@@ -63,7 +85,12 @@ export async function savePostToBoard(postData: unknown, boardId: string) {
     if (error instanceof Error && error.message?.includes("duplicate")) {
       return { success: false, error: "Post already saved to this board" };
     }
-    if (typeof error === 'object' && error !== null && 'code' in error && error.code === "23505") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "23505"
+    ) {
       return { success: false, error: "Post already saved to this board" };
     }
     return { success: false, error: "Failed to save post" };
@@ -72,19 +99,19 @@ export async function savePostToBoard(postData: unknown, boardId: string) {
 
 export async function removePostFromBoard(postId: string, boardId: string) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     await db.removePostFromBoard(boardId, postId);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
     revalidatePath(`/boards/${boardId}`);
     revalidatePath("/saved");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Failed to remove post from board:", error);
@@ -94,7 +121,7 @@ export async function removePostFromBoard(postId: string, boardId: string) {
 
 export async function getPostsInBoard(boardId: string, limit = 20, offset = 0) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -110,7 +137,7 @@ export async function getPostsInBoard(boardId: string, limit = 20, offset = 0) {
 
 export async function getAllUserSavedPosts(limit = 50, offset = 0) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -118,8 +145,10 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
   try {
     // Get all user's folders with boards
     const folders = await db.getFoldersByUser(userId);
-    const boardIds = folders?.flatMap(f => f.boards?.map((b: { id: string }) => b.id) || []) || [];
-    
+    const boardIds =
+      folders?.flatMap(f => f.boards?.map((b: { id: string }) => b.id) || []) ||
+      [];
+
     if (boardIds.length === 0) {
       return { success: true, data: [] };
     }
@@ -132,13 +161,17 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Remove duplicates and sort by date
-    const uniquePosts = allPosts.filter((post, index, self) => 
-      index === self.findIndex(p => p.id === post.id)
+    const uniquePosts = allPosts.filter(
+      (post: any, index: number, self: any[]) =>
+        index === self.findIndex((p: any) => p.id === post.id)
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
-      .sort((a, b) => new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime())
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
+      )
       .slice(offset, offset + limit);
 
     return { success: true, data: sortedPosts };
@@ -146,4 +179,4 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     console.error("Failed to get user saved posts:", error);
     return { success: false, error: "Failed to load saved posts" };
   }
-} 
+}

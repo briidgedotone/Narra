@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
                 recentPosts:
                   user.edge_owner_to_timeline_media?.edges
                     ?.slice(0, 3)
-                    .map(edge => ({
+                    .map((edge: any) => ({
                       id: edge.node.id,
                       shortcode: edge.node.shortcode,
                       isVideo: edge.node.is_video,
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
           transformHandle,
           5
         );
-        let postsData = [];
+        let postsData: any[] = [];
 
         if (postsResult.success && postsResult.data) {
           postsData = transformers.instagram.postsToAppFormat(

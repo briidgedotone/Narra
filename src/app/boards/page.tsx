@@ -21,7 +21,7 @@ import { useFolders } from "@/hooks/useFolders";
 
 export default function BoardsPage() {
   const { userId } = useAuth();
-  const { folders, loading, createNewBoard, createNewFolder } = useFolders();
+  const { folders, isLoading, createNewBoard, createNewFolder } = useFolders();
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set()
   );
@@ -50,7 +50,7 @@ export default function BoardsPage() {
   const handleCreateBoard = async () => {
     if (selectedFolder) {
       await createNewBoard(selectedFolder);
-    } else if (folders.length > 0) {
+    } else if (folders.length > 0 && folders[0]) {
       // Use first folder if none selected
       await createNewBoard(folders[0].id);
     } else {
@@ -81,7 +81,7 @@ export default function BoardsPage() {
     ? folders.find(f => f.id === selectedFolder)?.boards || []
     : allBoards;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[400px]">
@@ -103,7 +103,11 @@ export default function BoardsPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleCreateFolder} className="cursor-pointer">
+            <Button
+              variant="outline"
+              onClick={handleCreateFolder}
+              className="cursor-pointer"
+            >
               <PlusCircle className="w-4 h-4 mr-2" />
               Create Folder
             </Button>
@@ -214,14 +218,14 @@ export default function BoardsPage() {
                       board={{
                         id: board.id,
                         name: board.name,
-                        description: board.description,
-                        postCount: board.post_count || 0,
-                        updatedAt: new Date(board.updated_at),
-                        isPublic: board.is_shared || false,
-                        publicId: board.public_id,
-                        createdAt: new Date(board.created_at),
-                        folderName:
-                          "folderName" in board ? board.folderName : undefined,
+                        description: "", // Default empty description
+                        postCount: 0, // Default post count
+                        updatedAt: new Date(), // Default to current date
+                        isPublic: false, // Default to private
+                        createdAt: new Date(), // Default to current date
+                        ...("folderName" in board && board.folderName
+                          ? { folderName: board.folderName as string }
+                          : {}),
                       }}
                       onView={board =>
                         (window.location.href = `/boards/${board.id}`)

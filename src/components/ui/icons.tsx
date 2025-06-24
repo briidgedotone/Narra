@@ -12,6 +12,8 @@ import {
   CheckmarkCircle01Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
   EyeIcon,
   EyeIcon as EyeOffIcon, // Using same icon for now
   FolderShared01Icon,
@@ -60,6 +62,8 @@ export const X = Cancel01Icon;
 export const Check = CheckmarkCircle01Icon;
 export const ChevronDown = ArrowDown01Icon;
 export const ChevronUp = ArrowUp01Icon;
+export const ChevronLeft = ArrowLeft01Icon;
+export const ChevronRight = ArrowRight01Icon;
 export const Eye = EyeIcon;
 export const EyeOff = EyeOffIcon;
 export const Share2 = FolderShared01Icon;
