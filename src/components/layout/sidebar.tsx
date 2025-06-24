@@ -414,9 +414,9 @@ export function Sidebar() {
                 <div key={folder.id}>
                   {/* Folder Header */}
                   <div className="group w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors">
-                    <button
+                    <div
                       onClick={() => toggleFolder(folder.id)}
-                      className="flex items-center flex-1 text-left"
+                      className="flex items-center flex-1 text-left cursor-pointer"
                     >
                       {isExpanded ? (
                         <FolderOpen className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -463,7 +463,7 @@ export function Sidebar() {
                           </span>
                         </span>
                       )}
-                    </button>
+                    </div>
                     <button
                       onClick={e => handleCreateNewBoard(folder.id, e)}
                       className="ml-1 p-1 rounded hover:bg-[var(--sidebar-active-bg)] transition-colors cursor-pointer"

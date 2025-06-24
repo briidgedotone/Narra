@@ -30,7 +30,13 @@ const nextConfig: NextConfig = {
       // Add domains for social media platforms when integrating with ScrapeCreators
       {
         protocol: "https",
-        hostname: "scontent.cdninstagram.com",
+        hostname: "*.cdninstagram.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.fbcdn.net",
         port: "",
         pathname: "/**",
       },
