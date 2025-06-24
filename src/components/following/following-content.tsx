@@ -19,6 +19,8 @@ import {
 import { LoadingSpinner } from "@/components/ui/loading";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 
+import { FollowingSkeleton } from "./following-skeleton";
+
 interface FollowedProfile {
   id: string;
   handle: string;
@@ -80,14 +82,7 @@ export function FollowingContent({
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner />
-        <span className="ml-2 text-muted-foreground">
-          Loading followed creators...
-        </span>
-      </div>
-    );
+    return <FollowingSkeleton />;
   }
 
   if (profiles.length === 0) {

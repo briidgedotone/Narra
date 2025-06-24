@@ -16,3 +16,4 @@ export {
   DashboardSettingsModal,
   useDashboardSettings,
 } from "./dashboard-settings";
+export { BoardsSkeleton } from "./boards-skeleton";

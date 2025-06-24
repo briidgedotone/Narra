@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 import { DashboardLayout } from "@/components/layout";
 import { BoardCard } from "@/components/shared/board-card";
-import { BoardCardSkeleton } from "@/components/shared/board-card-skeleton";
+import { BoardsSkeleton } from "@/components/shared/boards-skeleton";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -17,7 +17,6 @@ import {
   ChevronRight,
   ChevronDown,
 } from "@/components/ui/icons";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useFolders } from "@/hooks/useFolders";
 
 export default function BoardsPage() {
@@ -85,35 +84,7 @@ export default function BoardsPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          {/* Header Skeleton */}
-          <div className="flex items-center justify-between">
-            <div>
-              <Skeleton className="h-8 w-48 mb-2" />
-              <Skeleton className="h-4 w-64" />
-            </div>
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-36" />
-              <Skeleton className="h-10 w-36" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Sidebar Skeleton */}
-            <div className="lg:col-span-1">
-              <Skeleton className="h-64 w-full" />
-            </div>
-
-            {/* Main Content Skeleton */}
-            <div className="lg:col-span-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <BoardCardSkeleton key={i} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <BoardsSkeleton />
       </DashboardLayout>
     );
   }
