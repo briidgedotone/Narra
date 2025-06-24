@@ -44,8 +44,9 @@ import {
   ChevronUp,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading";
 import { useFolders } from "@/hooks/useFolders";
+
+import { SidebarSkeleton } from "./sidebar-skeleton";
 
 const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -399,9 +400,7 @@ export function Sidebar() {
         </div>
         <div className="space-y-1 flex-1 overflow-y-auto">
           {isLoading ? (
-            <div className="px-2 py-4 text-center">
-              <LoadingSpinner />
-            </div>
+            <SidebarSkeleton />
           ) : folders.length === 0 ? (
             <div className="px-2 py-4 text-center text-sm text-[var(--sidebar-text-secondary)]">
               No folders yet
