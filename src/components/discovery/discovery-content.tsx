@@ -954,12 +954,17 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     {post.isCarousel &&
                       post.carouselCount &&
                       post.carouselCount > 1 && (
-                        <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-white rounded-full" />
-                            <div className="w-2 h-2 bg-white/50 rounded-full" />
-                            <span className="ml-1">{post.carouselCount}</span>
-                          </div>
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                          {Array.from({
+                            length: Math.min(post.carouselCount, 5),
+                          }).map((_, index) => (
+                            <div
+                              key={index}
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                index === 0 ? "bg-white" : "bg-white/50"
+                              }`}
+                            />
+                          ))}
                         </div>
                       )}
 
@@ -1348,16 +1353,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       />
                     )}
                   </div>
-
-                  {/* Carousel Info */}
-                  {selectedPost.isCarousel &&
-                    selectedPost.carouselMedia &&
-                    selectedPost.carouselMedia.length > 1 && (
-                      <div className="text-center text-sm text-muted-foreground">
-                        {currentCarouselIndex + 1} of{" "}
-                        {selectedPost.carouselMedia.length}
-                      </div>
-                    )}
                 </div>
 
                 {/* Right: Tabbed Content */}
