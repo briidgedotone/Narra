@@ -70,8 +70,13 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
-  const { folders, isLoading, createNewBoard, createNewFolder, loadFolders } =
-    useFolders();
+  const {
+    folders,
+    isLoading,
+    createNewBoard,
+    createNewFolder,
+    refreshFolders,
+  } = useFolders();
 
   // Initialize expanded folders from localStorage
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
@@ -257,7 +262,7 @@ export function Sidebar() {
         const result = await deleteFolder(deleteDialog.id);
         if (result.success) {
           toast.success("Folder deleted successfully");
-          await loadFolders();
+          await refreshFolders();
         } else {
           toast.error(result.error || "Failed to delete folder");
         }
@@ -265,7 +270,7 @@ export function Sidebar() {
         const result = await deleteBoard(deleteDialog.id);
         if (result.success) {
           toast.success("Board deleted successfully");
-          await loadFolders();
+          await refreshFolders();
         } else {
           toast.error(result.error || "Failed to delete board");
         }
@@ -304,7 +309,7 @@ export function Sidebar() {
         });
         if (result.success) {
           toast.success("Folder renamed successfully");
-          await loadFolders();
+          await refreshFolders();
         } else {
           toast.error(result.error || "Failed to rename folder");
         }
@@ -314,7 +319,7 @@ export function Sidebar() {
         });
         if (result.success) {
           toast.success("Board renamed successfully");
-          await loadFolders();
+          await refreshFolders();
 
           // Navigate to board if it was newly created
           if (isNewlyCreated) {
