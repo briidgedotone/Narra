@@ -2,7 +2,7 @@
 
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -158,6 +158,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   // Note: userId prop is passed from server component but not used directly here
   // Authentication is handled by server actions (savePostToBoard, etc.)
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -549,6 +550,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         // Clean the handle - remove @ and whitespace
         const cleanHandle = query.replace(/[@\s]/g, "");
 
+        // Update URL with search parameters
+        router.push(
+          `/discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`,
+          { scroll: false }
+        );
+
         // Call our discovery API (using test endpoint for now)
         const response = await fetch(
           `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
@@ -576,7 +583,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         setIsSearching(false);
       }
     },
-    [selectedPlatform]
+    [selectedPlatform, router]
   );
 
   // Auto-search when coming from following page
