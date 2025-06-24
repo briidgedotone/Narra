@@ -65,9 +65,37 @@ export const transformers = {
         }
 
         // Handle media URLs based on post structure
-        let embedUrl, thumbnail;
+        let embedUrl,
+          thumbnail,
+          carouselMedia = [];
 
-        if (isV2ApiPost) {
+        // Check if this is a carousel post (multiple images/videos)
+        const isCarousel =
+          post.media_type === 8 && post.carousel_media?.length > 0;
+
+        if (isCarousel) {
+          // Handle carousel posts with multiple media items
+          carouselMedia = post.carousel_media.map(
+            (item: any, itemIndex: number) => {
+              const itemVideoUrl = item.video_versions?.[0]?.url;
+              const itemImageUrl = item.image_versions2?.candidates?.[0]?.url;
+
+              return {
+                id: item.pk || `carousel-${itemIndex}`,
+                type: item.media_type === 2 ? "video" : "image",
+                url: itemVideoUrl || itemImageUrl || "",
+                thumbnail: itemImageUrl || "",
+                isVideo: item.media_type === 2 || !!item.video_versions?.length,
+              };
+            }
+          );
+
+          // Use first carousel item for main display
+          const firstItem = carouselMedia[0];
+          embedUrl =
+            firstItem?.url || `https://www.instagram.com/p/${post.code}/`;
+          thumbnail = firstItem?.thumbnail || "";
+        } else if (isV2ApiPost) {
           // v2 API post structure - use direct video URLs for better modal playback
           const videoUrl = post.video_versions?.[0]?.url;
           const imageUrl =
@@ -115,12 +143,13 @@ export const transformers = {
         const timestamp =
           post.taken_at || post.taken_at_timestamp || Date.now() / 1000;
 
-        // Determine if it's a video
-        const isVideo =
-          post.media_type === 2 ||
-          post.is_video ||
-          !!post.video_url ||
-          !!post.video_versions?.length;
+        // Determine if it's a video (for carousel, check if first item is video)
+        const isVideo = isCarousel
+          ? carouselMedia[0]?.isVideo || false
+          : post.media_type === 2 ||
+            post.is_video ||
+            !!post.video_url ||
+            !!post.video_versions?.length;
 
         return {
           id: post.pk || post.id || `instagram-${index}`,
@@ -136,6 +165,9 @@ export const transformers = {
           },
           datePosted: new Date(timestamp * 1000).toISOString(),
           isVideo: isVideo,
+          isCarousel: isCarousel,
+          carouselMedia: carouselMedia,
+          carouselCount: isCarousel ? carouselMedia.length : 0,
           videoUrl: post.video_versions?.[0]?.url || post.video_url,
           displayUrl:
             post.display_uri ||
