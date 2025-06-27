@@ -1,56 +1,63 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users } from "@/components/ui/icons";
+import { supabase } from "@/lib/supabase";
 
-// Mock data for overview
-const mockStats = {
-  totalUsers: "5,234",
-  activeUsers: "3,147",
-  totalCollections: "847",
-  totalPosts: "24,556",
-};
+// Function to fetch real admin stats
+async function getAdminStats() {
+  try {
+    // Get total users count
+    const { count: totalUsers } = await supabase
+      .from("users")
+      .select("*", { count: "exact", head: true });
 
-const mockRecentActivity = [
-  {
-    id: "1",
-    type: "user_signup",
-    description: "New user registered: Sarah Chen",
-    time: "5 minutes ago",
-  },
-  {
-    id: "2",
-    type: "collection_created",
-    description: "New collection created: Marketing Trends 2024",
-    time: "15 minutes ago",
-  },
-  {
-    id: "3",
-    type: "post_saved",
-    description: "25 posts added to 'Social Media Strategy' collection",
-    time: "1 hour ago",
-  },
-  {
-    id: "4",
-    type: "user_upgrade",
-    description: "User upgraded to Growth plan: Alex Johnson",
-    time: "2 hours ago",
-  },
-  {
-    id: "5",
-    type: "collection_shared",
-    description: "Collection 'Content Ideas' shared with team",
-    time: "3 hours ago",
-  },
-];
+    // Get active users (users with activity in last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-export function OverviewTab() {
+    const { count: activeUsers } = await supabase
+      .from("users")
+      .select("*", { count: "exact", head: true })
+      .gte("last_sign_in_at", thirtyDaysAgo.toISOString());
+
+    // Get total boards count (collections)
+    const { count: totalCollections } = await supabase
+      .from("boards")
+      .select("*", { count: "exact", head: true });
+
+    // Get total posts count
+    const { count: totalPosts } = await supabase
+      .from("posts")
+      .select("*", { count: "exact", head: true });
+
+    return {
+      totalUsers: totalUsers || 0,
+      activeUsers: activeUsers || 0,
+      totalCollections: totalCollections || 0,
+      totalPosts: totalPosts || 0,
+    };
+  } catch (error) {
+    console.error("Error fetching admin stats:", error);
+    return {
+      totalUsers: 0,
+      activeUsers: 0,
+      totalCollections: 0,
+      totalPosts: 0,
+    };
+  }
+}
+
+// Format number with commas
+function formatNumber(num: number): string {
+  return num.toLocaleString();
+}
+
+export async function OverviewTab() {
+  const stats = await getAdminStats();
+  const activeUserPercentage =
+    stats.totalUsers > 0
+      ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)
+      : "0.0";
+
   return (
     <div className="space-y-6">
       {/* Quick Stats */}
@@ -62,10 +69,10 @@ export function OverviewTab() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockStats.totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              +2.5% from last month
-            </p>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalUsers)}
+            </div>
+            <p className="text-xs text-muted-foreground">Registered users</p>
           </CardContent>
         </Card>
 
@@ -76,9 +83,11 @@ export function OverviewTab() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockStats.activeUsers}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.activeUsers)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              60.1% of total users
+              {activeUserPercentage}% of total users
             </p>
           </CardContent>
         </Card>
@@ -93,11 +102,9 @@ export function OverviewTab() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {mockStats.totalCollections}
+              {formatNumber(stats.totalCollections)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              +12.3% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">Created boards</p>
           </CardContent>
         </Card>
 
@@ -108,66 +115,13 @@ export function OverviewTab() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockStats.totalPosts}</div>
-            <p className="text-xs text-muted-foreground">
-              +5.7% from last month
-            </p>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalPosts)}
+            </div>
+            <p className="text-xs text-muted-foreground">Saved posts</p>
           </CardContent>
         </Card>
       </div>
-
-      {/* Recent Activity */}
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>
-            Latest actions and events across the platform
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {mockRecentActivity.map(activity => (
-              <div
-                key={activity.id}
-                className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
-              >
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {activity.description}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {activity.time}
-                  </p>
-                </div>
-                <Badge variant="outline" className="shadow-none">
-                  {activity.type}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>
-            Common administrative tasks and actions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex gap-4">
-          <Button variant="outline" className="shadow-none">
-            Export Analytics
-          </Button>
-          <Button variant="outline" className="shadow-none">
-            Manage Users
-          </Button>
-          <Button variant="outline" className="shadow-none">
-            System Settings
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }

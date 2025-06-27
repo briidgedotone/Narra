@@ -34,7 +34,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
 
       if (result.success && result.data) {
         // Transform the data to match our interface
-        const transformedProfiles = result.data.map(profile => ({
+        const transformedProfiles = result.data.map((profile: any) => ({
           id: profile.id,
           handle: profile.handle,
           platform: profile.platform,

@@ -10,7 +10,7 @@ const db = new DatabaseService();
 
 export async function getUserFoldersWithBoards() {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -28,7 +28,7 @@ export async function createFolder(
   folderData: Database["public"]["Tables"]["folders"]["Insert"]
 ) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -38,10 +38,10 @@ export async function createFolder(
       ...folderData,
       user_id: userId,
     });
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
-    
+
     return { success: true, data: folder };
   } catch (error) {
     console.error("Failed to create folder:", error);
@@ -54,17 +54,17 @@ export async function updateFolder(
   updates: Database["public"]["Tables"]["folders"]["Update"]
 ) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     const folder = await db.updateFolder(folderId, updates);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
-    
+
     return { success: true, data: folder };
   } catch (error) {
     console.error("Failed to update folder:", error);
@@ -74,17 +74,17 @@ export async function updateFolder(
 
 export async function deleteFolder(folderId: string) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     await db.deleteFolder(folderId);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Failed to delete folder:", error);
@@ -96,18 +96,18 @@ export async function createBoard(
   boardData: Database["public"]["Tables"]["boards"]["Insert"]
 ) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     const board = await db.createBoard(boardData);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
     revalidatePath(`/boards/${board.id}`);
-    
+
     return { success: true, data: board };
   } catch (error) {
     console.error("Failed to create board:", error);
@@ -120,18 +120,18 @@ export async function updateBoard(
   updates: Database["public"]["Tables"]["boards"]["Update"]
 ) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     const board = await db.updateBoard(boardId, updates);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
     revalidatePath(`/boards/${boardId}`);
-    
+
     return { success: true, data: board };
   } catch (error) {
     console.error("Failed to update board:", error);
@@ -141,17 +141,17 @@ export async function updateBoard(
 
 export async function deleteBoard(boardId: string) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   try {
     await db.deleteBoard(boardId);
-    
+
     revalidatePath("/dashboard");
     revalidatePath("/boards");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Failed to delete board:", error);
@@ -161,7 +161,7 @@ export async function deleteBoard(boardId: string) {
 
 export async function getBoardById(boardId: string) {
   const { userId } = await auth();
-  
+
   if (!userId) {
     throw new Error("Unauthorized");
   }
@@ -173,4 +173,23 @@ export async function getBoardById(boardId: string) {
     console.error("Failed to get board:", error);
     return { success: false, error: "Board not found" };
   }
-} 
+}
+
+export async function enableBoardSharing(boardId: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const board = await db.updateBoard(boardId, { is_shared: true });
+
+    revalidatePath(`/boards/${boardId}`);
+
+    return { success: true, data: { public_id: board.public_id } };
+  } catch (error) {
+    console.error("Failed to enable board sharing:", error);
+    return { success: false, error: "Failed to enable sharing" };
+  }
+}

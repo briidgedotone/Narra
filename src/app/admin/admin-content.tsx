@@ -1,10 +1,8 @@
-"use client";
-
 import { OverviewTab } from "@/components/admin/overview-tab";
 import { UsersTab } from "@/components/admin/users-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function AdminContent() {
+export async function AdminContent() {
   return (
     <div className="flex-1 space-y-4">
       <div className="flex items-center justify-between space-y-2">

@@ -35,6 +35,7 @@ import {
   Bookmark,
   Users,
   Settings,
+  Shield,
   Clipboard,
   // Folder, // Not currently used
   FolderClosed,
@@ -44,6 +45,7 @@ import {
   ChevronUp,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
+import { useAdmin } from "@/hooks/useAdmin";
 import { useFolders } from "@/hooks/useFolders";
 
 import { SidebarSkeleton } from "./sidebar-skeleton";
@@ -62,6 +64,8 @@ const mainNavigation = [
   },
 ];
 
+const adminNavigation = [{ name: "Admin", href: "/admin", icon: Shield }];
+
 const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -70,6 +74,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
+  const { isAdmin } = useAdmin();
   const {
     folders,
     isLoading,
@@ -549,6 +554,29 @@ export function Sidebar() {
 
       {/* Bottom Section */}
       <div className="px-3 pb-3 space-y-3">
+        {/* Admin Navigation */}
+        {isAdmin && (
+          <nav className="space-y-1 border-t border-[var(--sidebar-border-color)] pt-3">
+            {adminNavigation.map(item => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
+                    isActive ? "active" : ""
+                  }`}
+                >
+                  <Icon className="mr-2 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm py-2">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
+
         {/* Settings Navigation */}
         <nav className="space-y-1">
           {bottomNavigation.map(item => {
