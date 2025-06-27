@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { enableBoardSharing } from "@/app/actions/folders";
 import { Button } from "@/components/ui/button";
 import { Link, Menu } from "@/components/ui/icons";
 
@@ -17,9 +18,19 @@ export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
   const handleCopyLink = async () => {
     try {
       setIsLoading(true);
-      const url = `${window.location.origin}/boards/${boardId}`;
-      await navigator.clipboard.writeText(url);
-      toast.success("Board link copied to clipboard!");
+
+      // Enable sharing and get public_id
+      const result = await enableBoardSharing(boardId);
+
+      if (!result.success) {
+        toast.error(result.error || "Failed to enable sharing");
+        return;
+      }
+
+      // Copy public URL to clipboard
+      const publicUrl = `${window.location.origin}/shared/${result.data.public_id}`;
+      await navigator.clipboard.writeText(publicUrl);
+      toast.success("Public board link copied to clipboard!");
     } catch {
       toast.error("Failed to copy link");
     } finally {
