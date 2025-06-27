@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users } from "@/components/ui/icons";
+import { Users, PlusCircle } from "@/components/ui/icons";
 import { supabase } from "@/lib/supabase";
 
 // Function to fetch real admin stats
@@ -57,6 +57,30 @@ export async function OverviewTab() {
     stats.totalUsers > 0
       ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)
       : "0.0";
+
+  // Empty state collections for admin
+  const emptyCollections = [
+    {
+      title: "Featured Collection 1",
+      description: "Select a board to feature as your first collection",
+      backgroundColor: "#FDA02C",
+    },
+    {
+      title: "Featured Collection 2",
+      description: "Select a board to feature as your second collection",
+      backgroundColor: "#E87BD1",
+    },
+    {
+      title: "Featured Collection 3",
+      description: "Select a board to feature as your third collection",
+      backgroundColor: "#EE97DB",
+    },
+    {
+      title: "Featured Collection 4",
+      description: "Select a board to feature as your fourth collection",
+      backgroundColor: "#B078F9",
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -121,6 +145,46 @@ export async function OverviewTab() {
             <p className="text-xs text-muted-foreground">Saved posts</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Featured Collections */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Featured Collections</h2>
+        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
+          {emptyCollections.map((collection, index) => (
+            <div
+              key={index}
+              className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden cursor-pointer hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex h-full">
+                <div
+                  className="w-[120px] h-[120px] flex-shrink-0 rounded-md flex items-center justify-center"
+                  style={{ backgroundColor: collection.backgroundColor }}
+                >
+                  <PlusCircle className="h-8 w-8 text-white" />
+                </div>
+                <div className="pl-4 flex-1 flex flex-col justify-start py-2">
+                  <h3 className="text-sm font-semibold mb-2">
+                    {collection.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                    {collection.description}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
+                      <span className="text-white text-xs font-semibold">
+                        +
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Click to select board
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
