@@ -126,13 +126,8 @@ export async function updateBoard(
   }
 
   try {
-    const board = await db.updateBoard(boardId, updates);
-
-    revalidatePath("/dashboard");
-    revalidatePath("/boards");
-    revalidatePath(`/boards/${boardId}`);
-
-    return { success: true, data: board };
+    const result = await db.updateBoard(boardId, updates);
+    return { success: true, data: result };
   } catch (error) {
     console.error("Failed to update board:", error);
     return { success: false, error: "Failed to update board" };
@@ -176,20 +171,31 @@ export async function getBoardById(boardId: string) {
 }
 
 export async function enableBoardSharing(boardId: string) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
   try {
-    const board = await db.updateBoard(boardId, { is_shared: true });
-
-    revalidatePath(`/boards/${boardId}`);
-
-    return { success: true, data: { public_id: board.public_id } };
+    const result = await db.enableBoardSharing(boardId);
+    return { success: true, data: result };
   } catch (error) {
     console.error("Failed to enable board sharing:", error);
-    return { success: false, error: "Failed to enable sharing" };
+    return { success: false, error: "Failed to enable board sharing" };
+  }
+}
+
+export async function getPublicBoard(publicId: string) {
+  try {
+    const board = await db.getBoardByPublicId(publicId);
+    if (!board || !board.is_shared) {
+      return { success: false, error: "Board not found" };
+    }
+    return {
+      success: true,
+      data: {
+        ...board,
+        // Remove posts from the board data since they'll be fetched separately
+        board_posts: undefined,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to get public board:", error);
+    return { success: false, error: "Board not found" };
   }
 }

@@ -248,12 +248,32 @@ export class DatabaseService {
   async getBoardByPublicId(publicId: string) {
     const { data, error } = await this.client
       .from("boards")
-      .select("*, folders(*)")
+      .select(
+        `
+        *,
+        folders(*),
+        board_posts!inner(
+          posts!inner(
+            *,
+            profiles(*)
+          )
+        )
+      `
+      )
       .eq("public_id", publicId)
       .eq("is_shared", true)
       .single();
 
     if (error) throw error;
+
+    // Transform the data to match the expected format
+    if (data) {
+      return {
+        ...data,
+        posts: data.board_posts?.map(bp => bp.posts).filter(Boolean) || [],
+      };
+    }
+
     return data;
   }
 
@@ -266,6 +286,18 @@ export class DatabaseService {
       .update(updates)
       .eq("id", boardId)
       .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async enableBoardSharing(boardId: string) {
+    const { data, error } = await this.client
+      .from("boards")
+      .update({ is_shared: true })
+      .eq("id", boardId)
+      .select("public_id")
       .single();
 
     if (error) throw error;

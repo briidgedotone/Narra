@@ -19,7 +19,12 @@ interface SavePostData {
   embedUrl: string;
   caption?: string;
   thumbnail: string;
-  metrics?: Record<string, any>;
+  metrics?: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
   datePosted: string;
 }
 
@@ -162,14 +167,13 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
 
     // Remove duplicates and sort by date
     const uniquePosts = allPosts.filter(
-      (post: any, index: number, self: any[]) =>
-        index === self.findIndex((p: any) => p.id === post.id)
+      (post, index, self) => index === self.findIndex(p => p.id === post.id)
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
       .sort(
-        (a: any, b: any) =>
+        (a, b) =>
           new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
       )
       .slice(offset, offset + limit);
@@ -178,5 +182,19 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
   } catch (error) {
     console.error("Failed to get user saved posts:", error);
     return { success: false, error: "Failed to load saved posts" };
+  }
+}
+
+export async function getPublicBoardPosts(publicId: string) {
+  try {
+    const board = await db.getBoardByPublicId(publicId);
+    if (!board || !board.is_shared) {
+      return { success: false, error: "Board not found" };
+    }
+    // The posts are already included in the board data from getBoardByPublicId
+    return { success: true, data: board.posts || [] };
+  } catch (error) {
+    console.error("Failed to get posts in board:", error);
+    return { success: false, error: "Failed to load posts" };
   }
 }
