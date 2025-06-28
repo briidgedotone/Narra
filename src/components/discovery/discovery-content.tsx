@@ -3,11 +3,10 @@
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 
 import { SavePostModal } from "@/components/shared/save-post-modal";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,8 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
-  Grid,
-  List,
   ExternalLink,
   Heart,
   MessageCircle,
@@ -30,8 +27,17 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from "@/components/ui/icons";
+import { TikTok, Instagram } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
@@ -168,8 +174,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOption, setSortOption] = useState("most-recent");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<
@@ -240,25 +245,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             console.log("TikTok API response structure:", result.data);
             videosArray = [];
           }
-
-          // Update pagination metadata for TikTok
-          setHasMorePosts(result.data.has_more || false);
-          // Extract any known cursor field names
-          const rawCursor =
-            result.data.cursor ??
-            result.data.max_cursor ??
-            result.data.next_cursor ??
-            (result.data.data
-              ? (result.data.data.cursor ??
-                result.data.data.max_cursor ??
-                result.data.data.next_cursor)
-              : undefined);
-
-          setNextCursor(
-            rawCursor !== undefined && rawCursor !== null
-              ? rawCursor.toString()
-              : null
-          );
         } else {
           // Instagram API returns posts in items array - use our client-safe transformer
           const { transformers } = await import("@/lib/transformers");
@@ -287,16 +273,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             platform: post.platform,
           }));
 
-          setPosts(prevPosts => {
-            const existingIds = new Set(prevPosts.map(p => p.id));
-            const dedup = newPosts.filter(p => !existingIds.has(p.id));
-            return [...prevPosts, ...dedup];
-          });
-
-          // If no truly new posts were added, stop further pagination
-          if (newPosts.length === 0) {
-            setHasMorePosts(false);
-          }
+          setPosts(prevPosts => [...prevPosts, ...newPosts]);
           return; // Exit early since we've already processed Instagram posts
         }
 
@@ -431,7 +408,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   }, [searchResults]);
 
   const loadMorePosts = useCallback(async () => {
-    if (!searchResults || !hasMorePosts || isLoadingMorePosts) return;
+    if (!searchResults || !hasMorePosts || !nextMaxId || isLoadingMorePosts)
+      return;
 
     setIsLoadingMorePosts(true);
     try {
@@ -439,10 +417,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const platform = searchResults.platform;
 
       if (platform === "instagram") {
-        if (!nextMaxId) {
-          setIsLoadingMorePosts(false);
-          return;
-        }
         // Call Instagram API with pagination
         const response = await fetch(
           `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=50&next_max_id=${nextMaxId}`
@@ -477,103 +451,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           }));
 
           // Append new posts to existing posts
-          setPosts(prevPosts => {
-            const existingIds = new Set(prevPosts.map(p => p.id));
-            const dedup = newPosts.filter(p => !existingIds.has(p.id));
-            return [...prevPosts, ...dedup];
-          });
-        }
-      }
-
-      // TikTok pagination
-      if (platform === "tiktok" && nextCursor) {
-        const response = await fetch(
-          `/api/test-scrapecreators?test=tiktok-videos&handle=${encodeURIComponent(handle)}&count=50&max_cursor=${nextCursor}`
-        );
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          // Update pagination metadata
-          setHasMorePosts(result.data.has_more || false);
-          // Extract any known cursor field names
-          const rawCursor =
-            result.data.cursor ??
-            result.data.max_cursor ??
-            result.data.next_cursor ??
-            (result.data.data
-              ? (result.data.data.cursor ??
-                result.data.data.max_cursor ??
-                result.data.data.next_cursor)
-              : undefined);
-
-          setNextCursor(
-            rawCursor !== undefined && rawCursor !== null
-              ? rawCursor.toString()
-              : null
-          );
-
-          // Handle different possible structures for TikTok videos
-          let videosArray = result.data;
-          if (result.data.aweme_list) {
-            videosArray = result.data.aweme_list;
-          } else if (result.data.videos) {
-            videosArray = result.data.videos;
-          } else if (result.data.data) {
-            videosArray = result.data.data;
-          } else if (!Array.isArray(result.data)) {
-            videosArray = [];
-          }
-
-          const mappedPosts: Post[] = Array.isArray(videosArray)
-            ? videosArray.map((item: TikTokVideoData, index: number) => {
-                // Transform TikTok video data
-                const originCover =
-                  item.video?.origin_cover?.url_list?.[0] || "";
-                const dynamicCover =
-                  item.video?.dynamic_cover?.url_list?.[0] || "";
-                let thumbnailUrl = dynamicCover || originCover;
-                if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
-                  thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
-                }
-
-                return {
-                  id: item.aweme_id || `tiktok-${index}-${Date.now()}`,
-                  embedUrl:
-                    item.video?.play_addr?.url_list?.[0] ||
-                    item.video?.download_addr?.url_list?.[0] ||
-                    "",
-                  caption: item.desc || "No caption available",
-                  thumbnail: thumbnailUrl,
-                  metrics: {
-                    views: item.statistics?.play_count || 0,
-                    likes: item.statistics?.digg_count || 0,
-                    comments: item.statistics?.comment_count || 0,
-                    shares: item.statistics?.share_count || 0,
-                  },
-                  datePosted: new Date(item.create_time * 1000).toISOString(),
-                  platform: "tiktok",
-                  tiktokUrl: `https://www.tiktok.com/@${handle}/video/${item.aweme_id}`,
-                };
-              })
-            : [];
-
-          setPosts(prevPosts => {
-            const existingIds = new Set(prevPosts.map(p => p.id));
-            const dedup = mappedPosts.filter(p => !existingIds.has(p.id));
-
-            // If dedup is empty, no new posts
-            if (dedup.length === 0) {
-              setHasMorePosts(false);
-              return prevPosts;
-            }
-
-            return [...prevPosts, ...dedup];
-          });
-
-          // If API itself signals no more pages
-          if (!result.data.has_more) {
-            setHasMorePosts(false);
-          }
+          setPosts(prevPosts => [...prevPosts, ...newPosts]);
         }
       }
     } catch (error) {
@@ -581,7 +459,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     } finally {
       setIsLoadingMorePosts(false);
     }
-  }, [searchResults, hasMorePosts, nextMaxId, nextCursor, isLoadingMorePosts]);
+  }, [searchResults, hasMorePosts, nextMaxId, isLoadingMorePosts]);
 
   // Auto-load posts when search results change
   useEffect(() => {
@@ -671,9 +549,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       setPosts([]);
       setSearchError(null);
       setHasSearched(true);
-      setNextMaxId(null);
-      setNextCursor(null);
-      setHasMorePosts(false);
 
       try {
         // Clean the handle - remove @ and whitespace
@@ -872,6 +747,29 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     return postCarouselIndices[postId] || 0;
   };
 
+  const sortedPosts = useMemo(() => {
+    const postsToSort = [...posts];
+    switch (sortOption) {
+      case "most-viewed":
+        return postsToSort.sort(
+          (a, b) => (b.metrics.views ?? 0) - (a.metrics.views ?? 0)
+        );
+      case "most-liked":
+        return postsToSort.sort((a, b) => b.metrics.likes - a.metrics.likes);
+      case "most-commented":
+        return postsToSort.sort(
+          (a, b) => b.metrics.comments - a.metrics.comments
+        );
+      case "most-recent":
+      default:
+        // Assuming datePosted is a string that can be parsed into a Date
+        return postsToSort.sort(
+          (a, b) =>
+            new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()
+        );
+    }
+  }, [posts, sortOption]);
+
   return (
     <div className="  space-y-6">
       {/* Header */}
@@ -903,7 +801,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               <Button
                 onClick={() => handleSearch(searchQuery)}
                 size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-3 text-xs"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-3 text-xs bg-[#2463EB] hover:bg-[#2463EB]/90"
               >
                 Search
               </Button>
@@ -935,13 +833,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     }}
                     unoptimized
                   />
-                  {searchResults.verified && (
-                    <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1">
-                      <div className="w-3 h-3 bg-white rounded-full flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -949,14 +840,19 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               <div className="flex-1 space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-xl font-semibold">
-                      {searchResults.displayName}
-                    </h2>
-                    <Badge variant="secondary" className="capitalize">
-                      {searchResults.platform}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-semibold">
+                        {searchResults.displayName}
+                      </h2>
+                      {searchResults.platform === "tiktok" && (
+                        <TikTok className="h-6 w-6 text-black" />
+                      )}
+                      {searchResults.platform === "instagram" && (
+                        <Instagram className="h-6 w-6" />
+                      )}
+                    </div>
                   </div>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm text-gray-500">
                     @{searchResults.handle}
                   </p>
                   <p className="text-sm mt-2">{searchResults.bio}</p>
@@ -985,17 +881,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3">
+                <div className="mt-4 flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleFollowProfile}
-                    variant={searchResults.isFollowing ? "outline" : "default"}
-                    className="flex items-center gap-2"
+                    disabled={searchResults.isFollowing}
+                    className="w-full sm:w-auto bg-[#2463EB] hover:bg-[#2463EB]/90"
                   >
-                    <UserPlus className="h-4 w-4" />
-                    {searchResults.isFollowing ? "Following" : "Follow"}
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <ExternalLink className="h-4 w-4" />
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Follow
                   </Button>
                 </div>
               </div>
@@ -1005,28 +898,26 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       )}
 
       {/* Posts Section */}
-      {searchResults && (
+      {posts.length > 0 && (
         <div className="space-y-4">
-          {/* Posts Header */}
+          {/* Posts Header & Filters */}
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">
               Recent Posts ({posts.length})
             </h3>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
+
+            <div className="flex items-center gap-4">
+              <Select value={sortOption} onValueChange={setSortOption}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="most-recent">Most Recent</SelectItem>
+                  <SelectItem value="most-viewed">Most Viewed</SelectItem>
+                  <SelectItem value="most-liked">Most Liked</SelectItem>
+                  <SelectItem value="most-commented">Most Commented</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -1059,27 +950,17 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             </div>
           ) : (
             <div
-              className={cn(
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                  : "space-y-4"
-              )}
+              className={`grid ${"grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"} gap-4`}
             >
-              {posts.map(post => (
+              {sortedPosts.map((post, index) => (
                 <div
-                  key={post.id}
+                  key={`${post.id}-${index}`}
                   onClick={() => handlePostClick(post)}
                   className={cn(
-                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
-                    viewMode === "list" && "flex flex-row"
+                    "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
                   )}
                 >
-                  <div
-                    className={cn(
-                      "relative",
-                      viewMode === "grid" ? "aspect-[3/4]" : "w-48 aspect-[3/4]"
-                    )}
-                  >
+                  <div className={cn("relative")}>
                     {/* Display current carousel media or single media */}
                     <div className="relative w-full h-full overflow-hidden">
                       {post.isCarousel &&
@@ -1252,35 +1133,30 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     </div>
                   </div>
 
-                  <div
-                    className={cn(
-                      "p-4 space-y-3",
-                      viewMode === "list" && "flex-1"
-                    )}
-                  >
+                  <div className={cn("p-4 space-y-3")}>
                     <p className="text-sm line-clamp-2">{post.caption}</p>
 
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
+                    <div className="flex items-center gap-4 mt-3">
+                      <div className="flex items-center gap-1.5">
+                        <Heart className="h-4 w-4 text-red-500" />
+                        <span className="font-medium text-sm">
                           {formatNumber(post.metrics.likes)}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MessageCircle className="h-3 w-3" />
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <MessageCircle className="h-4 w-4 text-blue-500" />
+                        <span className="font-medium text-sm">
                           {formatNumber(post.metrics.comments)}
-                        </div>
-                        {post.metrics.views && (
-                          <div className="flex items-center gap-1">
-                            <div className="h-3 w-3 rounded-full bg-current opacity-60" />
+                        </span>
+                      </div>
+                      {post.metrics.views && (
+                        <div className="flex items-center gap-1.5">
+                          <Eye className="h-4 w-4 text-green-500" />
+                          <span className="font-medium text-sm">
                             {formatNumber(post.metrics.views)}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {formatDate(post.datePosted)}
-                      </div>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1288,30 +1164,32 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             </div>
           )}
 
-          {/* Load More Button */}
-          {!isLoadingPosts && hasMorePosts && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={loadMorePosts}
-                disabled={isLoadingMorePosts}
-                variant="outline"
-                size="lg"
-                className="px-8"
-              >
-                {isLoadingMorePosts ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
-                    Loading More Posts...
-                  </>
-                ) : (
-                  <>
-                    Load More Posts
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
+          {/* Load More Button for Instagram */}
+          {!isLoadingPosts &&
+            searchResults?.platform === "instagram" &&
+            hasMorePosts && (
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={loadMorePosts}
+                  disabled={isLoadingMorePosts}
+                  variant="outline"
+                  size="lg"
+                  className="px-8"
+                >
+                  {isLoadingMorePosts ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
+                      Loading More Posts...
+                    </>
+                  ) : (
+                    <>
+                      Load More Posts
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
         </div>
       )}
 

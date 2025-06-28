@@ -25,11 +25,11 @@ import {
   TikTok,
   Instagram,
   TimeQuarter,
-  Calendar03,
   Heart,
   MessageCircle,
   Trash2,
   Share,
+  Eye,
 } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -516,20 +516,6 @@ export function BoardPageContent({
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-
-                  {/* Post Metrics Overlay */}
-                  <div className="absolute bottom-2 left-2 right-2 text-white text-xs space-y-1">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-3 h-3" />
-                        <span>{formatNumber(post.metrics.likes)}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="w-3 h-3" />
-                        <span>{formatNumber(post.metrics.comments)}</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Post Info */}
@@ -568,9 +554,28 @@ export function BoardPageContent({
                     {post.caption || "No caption"}
                   </p>
 
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar03 className="w-3 h-3" />
-                    <span>{formatDate(post.date_posted)}</span>
+                  {/* Post Metrics */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <Heart className="w-4 h-4 text-red-500" />
+                      <span className="font-medium text-sm">
+                        {formatNumber(post.metrics.likes)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <MessageCircle className="w-4 h-4 text-blue-500" />
+                      <span className="font-medium text-sm">
+                        {formatNumber(post.metrics.comments)}
+                      </span>
+                    </div>
+                    {post.metrics.views && (
+                      <div className="flex items-center gap-1.5">
+                        <Eye className="w-4 h-4 text-green-500" />
+                        <span className="font-medium text-sm">
+                          {formatNumber(post.metrics.views)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

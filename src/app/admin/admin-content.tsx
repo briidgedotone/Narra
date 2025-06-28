@@ -3,6 +3,9 @@ import { UsersTab } from "@/components/admin/users-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export async function AdminContent() {
+  // Simulate a network delay to show the skeleton
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
   return (
     <div className="flex-1 space-y-4 pb-20">
       <div className="flex items-center justify-between space-y-2">
