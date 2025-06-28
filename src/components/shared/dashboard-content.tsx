@@ -126,20 +126,39 @@ export function DashboardContent({}: DashboardContentProps) {
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-280px)] space-y-8">
+        {/* Header Section Skeleton */}
         <div className="text-center space-y-3">
-          <h1 className="text-3xl font-semibold text-foreground">
-            Welcome to Use Narra
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Loading featured collections...
-          </p>
+          <div className="h-9 w-80 bg-muted rounded-md animate-pulse mx-auto" />
+          <div className="h-6 w-96 bg-muted/60 rounded-md animate-pulse mx-auto" />
         </div>
+
+        {/* Collections Grid Skeleton */}
         <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
           {[1, 2, 3, 4].map(i => (
             <div
               key={i}
-              className="w-[280px] h-[200px] bg-muted rounded-lg animate-pulse"
-            />
+              className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl"
+            >
+              <div className="flex h-full">
+                {/* Image placeholder */}
+                <div className="w-[120px] h-[120px] flex-shrink-0 rounded-md bg-muted animate-pulse" />
+
+                {/* Content placeholder */}
+                <div className="pl-4 flex-1 flex flex-col justify-start py-2 space-y-3">
+                  {/* Title skeleton */}
+                  <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+
+                  {/* Description skeleton - 2 lines */}
+                  <div className="space-y-2">
+                    <div className="h-3 w-full bg-muted/60 rounded animate-pulse" />
+                    <div className="h-3 w-4/5 bg-muted/60 rounded animate-pulse" />
+                  </div>
+
+                  {/* Bottom spacer to push content up like real card */}
+                  <div className="flex-1" />
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
