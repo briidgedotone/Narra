@@ -251,25 +251,23 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format
-          const realPosts: Post[] = transformedPosts.map(post => ({
+          // Convert to our Post interface format and append to existing posts
+          const newPosts: Post[] = transformedPosts.map((post: any) => ({
             id: post.id,
             embedUrl: post.embedUrl,
             caption: post.caption || "",
             thumbnail: post.thumbnail,
             metrics: {
-              likes: post.metrics.likes,
-              comments: post.metrics.comments,
-              views: post.metrics.views,
+              views: post.metrics?.views || 0,
+              likes: post.metrics?.likes || 0,
+              comments: post.metrics?.comments || 0,
+              shares: post.metrics?.shares || 0,
             },
             datePosted: post.datePosted,
-            platform: "instagram" as const,
-            isCarousel: post.isCarousel || false,
-            carouselMedia: post.carouselMedia || [],
-            carouselCount: post.carouselCount || 0,
+            platform: post.platform,
           }));
 
-          setPosts(realPosts);
+          setPosts(prevPosts => [...prevPosts, ...newPosts]);
           return; // Exit early since we've already processed Instagram posts
         }
 
@@ -431,16 +429,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setNextMaxId(result.data.next_max_id || null);
 
           // Convert to our Post interface format and append to existing posts
-          const newPosts: Post[] = transformedPosts.map(post => ({
+          const newPosts: Post[] = transformedPosts.map((post: any) => ({
             id: post.id,
             embedUrl: post.embedUrl,
             caption: post.caption || "",
             thumbnail: post.thumbnail,
             metrics: {
-              views: post.metrics.views,
-              likes: post.metrics.likes,
-              comments: post.metrics.comments,
-              shares: post.metrics.shares,
+              views: post.metrics?.views || 0,
+              likes: post.metrics?.likes || 0,
+              comments: post.metrics?.comments || 0,
+              shares: post.metrics?.shares || 0,
             },
             datePosted: post.datePosted,
             platform: post.platform,
@@ -659,16 +657,19 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
   const handleSavePost = (post: Post) => {
-    // Transform post data for the modal
-
     setPostToSave({
       id: post.id,
-      platformPostId: post.id, // Use the same ID for now
+      platformPostId: post.id,
       platform: post.platform,
       embedUrl: post.embedUrl,
       caption: post.caption,
       thumbnail: post.thumbnail,
-      metrics: post.metrics,
+      metrics: {
+        views: post.metrics?.views || 0,
+        likes: post.metrics?.likes || 0,
+        comments: post.metrics?.comments || 0,
+        shares: post.metrics?.shares || 0,
+      },
       datePosted: post.datePosted,
       handle: searchResults?.handle || "",
       displayName: searchResults?.displayName,

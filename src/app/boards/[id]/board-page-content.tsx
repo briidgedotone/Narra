@@ -5,8 +5,16 @@ import { redirect } from "next/navigation";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 
-import { getBoardById, updateBoard } from "@/app/actions/folders";
-import { getPostsInBoard, removePostFromBoard } from "@/app/actions/posts";
+import {
+  getBoardById,
+  getPublicBoard,
+  updateBoard,
+} from "@/app/actions/folders";
+import {
+  getPostsInBoard,
+  getPublicBoardPosts,
+  removePostFromBoard,
+} from "@/app/actions/posts";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
@@ -37,6 +45,7 @@ declare global {
 
 interface BoardPageContentProps {
   boardId: string;
+  isSharedView?: boolean;
 }
 
 interface BoardData {
@@ -84,7 +93,10 @@ interface VideoTranscript {
   }>;
 }
 
-export function BoardPageContent({ boardId }: BoardPageContentProps) {
+export function BoardPageContent({
+  boardId,
+  isSharedView = false,
+}: BoardPageContentProps) {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoadingBoard, setIsLoadingBoard] = useState(true);
@@ -105,12 +117,14 @@ export function BoardPageContent({ boardId }: BoardPageContentProps) {
   const loadBoardData = useCallback(async () => {
     setIsLoadingBoard(true);
     try {
-      const result = await getBoardById(boardId);
+      const result = isSharedView
+        ? await getPublicBoard(boardId)
+        : await getBoardById(boardId);
       if (result.success && result.data) {
         setBoard(result.data);
       } else {
         toast.error("Board not found");
-        redirect("/dashboard");
+        redirect("/");
       }
     } catch (error) {
       console.error("Failed to load board:", error);
@@ -118,14 +132,15 @@ export function BoardPageContent({ boardId }: BoardPageContentProps) {
     } finally {
       setIsLoadingBoard(false);
     }
-  }, [boardId]);
+  }, [boardId, isSharedView]);
 
   const loadBoardPosts = useCallback(async () => {
     setIsLoadingPosts(true);
     try {
-      const result = await getPostsInBoard(boardId, 50, 0);
+      const result = isSharedView
+        ? await getPublicBoardPosts(boardId)
+        : await getPostsInBoard(boardId, 50, 0);
       if (result.success && result.data) {
-        // The data structure should be an array of post objects with nested profiles
         setPosts(result.data as unknown as SavedPost[]);
       } else {
         setPosts([]);
@@ -136,7 +151,7 @@ export function BoardPageContent({ boardId }: BoardPageContentProps) {
     } finally {
       setIsLoadingPosts(false);
     }
-  }, [boardId]);
+  }, [boardId, isSharedView]);
 
   useEffect(() => {
     loadBoardData();

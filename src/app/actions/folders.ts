@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
+import { isAdmin } from "@/lib/auth/server";
 import { DatabaseService } from "@/lib/database";
 import type { Database } from "@/types/database";
 
@@ -197,5 +198,76 @@ export async function getPublicBoard(publicId: string) {
   } catch (error) {
     console.error("Failed to get public board:", error);
     return { success: false, error: "Board not found" };
+  }
+}
+
+export async function getAdminBoards() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // Check if user is admin
+  const isAdminUser = await isAdmin();
+  if (!isAdminUser) {
+    throw new Error("Admin access required");
+  }
+
+  try {
+    const boards = await db.getBoardsByUser(userId);
+    return { success: true, data: boards };
+  } catch (error) {
+    console.error("Failed to get admin boards:", error);
+    return { success: false, error: "Failed to load boards" };
+  }
+}
+
+export async function getFeaturedBoards() {
+  try {
+    const featuredBoards = await db.getFeaturedBoards();
+    return { success: true, data: featuredBoards };
+  } catch (error) {
+    console.error("Failed to get featured boards:", error);
+    return { success: false, error: "Failed to load featured boards" };
+  }
+}
+
+export async function setFeaturedBoard(
+  boardId: string,
+  displayOrder: number,
+  coverImageUrl: string,
+  title?: string,
+  description?: string
+) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // Check if user is admin
+  const isAdminUser = await isAdmin();
+  if (!isAdminUser) {
+    throw new Error("Admin access required");
+  }
+
+  try {
+    // First, remove any existing featured board at this position
+    await db.deleteFeaturedBoard(displayOrder);
+
+    // Then insert the new featured board
+    const data = await db.createFeaturedBoard({
+      board_id: boardId,
+      display_order: displayOrder,
+      cover_image_url: coverImageUrl,
+      title,
+      description,
+    });
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("Failed to set featured board:", error);
+    return { success: false, error: "Failed to set featured board" };
   }
 }

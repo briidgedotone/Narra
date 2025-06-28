@@ -14,6 +14,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/test-scrapecreators",
   "/api/test-cache",
   "/api/test-discovery",
+  "/shared/(.*)", // Allow public access to shared board routes
 ]);
 
 // Define admin-only routes

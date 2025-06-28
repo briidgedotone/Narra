@@ -159,7 +159,7 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Get all posts from user's boards
-    const allPosts = [];
+    const allPosts: any[] = [];
     for (const boardId of boardIds) {
       const posts = await db.getPostsInBoard(boardId, 999, 0); // Get all posts
       allPosts.push(...(posts || []));
@@ -167,13 +167,14 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
 
     // Remove duplicates and sort by date
     const uniquePosts = allPosts.filter(
-      (post, index, self) => index === self.findIndex(p => p.id === post.id)
+      (post: any, index: number, self: any[]) =>
+        index === self.findIndex((p: any) => p.id === post.id)
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
       .sort(
-        (a, b) =>
+        (a: any, b: any) =>
           new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
       )
       .slice(offset, offset + limit);

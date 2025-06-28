@@ -1,6 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+import { getFeaturedBoards } from "@/app/actions/folders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, PlusCircle } from "@/components/ui/icons";
 import { supabase } from "@/lib/supabase";
+
+import { BoardSelectionModal } from "./board-selection-modal";
 
 // Function to fetch real admin stats
 async function getAdminStats() {
@@ -51,8 +58,33 @@ function formatNumber(num: number): string {
   return num.toLocaleString();
 }
 
-export async function OverviewTab() {
-  const stats = await getAdminStats();
+export function OverviewTab() {
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalCollections: 0,
+    totalPosts: 0,
+  });
+  const [featuredBoards, setFeaturedBoards] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState<number>(1);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    // Load stats
+    const statsData = await getAdminStats();
+    setStats(statsData);
+
+    // Load featured boards
+    const result = await getFeaturedBoards();
+    if (result.success && result.data) {
+      setFeaturedBoards(result.data);
+    }
+  };
+
   const activeUserPercentage =
     stats.totalUsers > 0
       ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)
@@ -64,23 +96,36 @@ export async function OverviewTab() {
       title: "Featured Collection 1",
       description: "Select a board to feature as your first collection",
       backgroundColor: "#FDA02C",
+      position: 1,
     },
     {
       title: "Featured Collection 2",
       description: "Select a board to feature as your second collection",
       backgroundColor: "#E87BD1",
+      position: 2,
     },
     {
       title: "Featured Collection 3",
       description: "Select a board to feature as your third collection",
       backgroundColor: "#EE97DB",
+      position: 3,
     },
     {
       title: "Featured Collection 4",
       description: "Select a board to feature as your fourth collection",
       backgroundColor: "#B078F9",
+      position: 4,
     },
   ];
+
+  const handleCollectionClick = (position: number) => {
+    setSelectedPosition(position);
+    setModalOpen(true);
+  };
+
+  const handleModalSuccess = () => {
+    loadData(); // Reload data after successful save
+  };
 
   return (
     <div className="space-y-6">
@@ -151,41 +196,68 @@ export async function OverviewTab() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Featured Collections</h2>
         <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-          {emptyCollections.map((collection, index) => (
-            <div
-              key={index}
-              className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden cursor-pointer hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex h-full">
-                <div
-                  className="w-[120px] h-[120px] flex-shrink-0 rounded-md flex items-center justify-center"
-                  style={{ backgroundColor: collection.backgroundColor }}
-                >
-                  <PlusCircle className="h-8 w-8 text-white" />
-                </div>
-                <div className="pl-4 flex-1 flex flex-col justify-start py-2">
-                  <h3 className="text-sm font-semibold mb-2">
-                    {collection.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                    {collection.description}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
-                      <span className="text-white text-xs font-semibold">
-                        +
+          {emptyCollections.map((collection, index) => {
+            // Check if this position has a featured board
+            const featuredBoard = featuredBoards.find(
+              fb => fb.display_order === collection.position
+            );
+
+            return (
+              <div
+                key={index}
+                onClick={() => handleCollectionClick(collection.position)}
+                className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden cursor-pointer hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex h-full">
+                  <div
+                    className="w-[120px] h-[120px] flex-shrink-0 rounded-md flex items-center justify-center"
+                    style={{
+                      backgroundColor: collection.backgroundColor,
+                      backgroundImage: featuredBoard?.cover_image_url
+                        ? `url(${featuredBoard.cover_image_url})`
+                        : "none",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
+                    {!featuredBoard?.cover_image_url && (
+                      <PlusCircle className="h-8 w-8 text-white" />
+                    )}
+                  </div>
+                  <div className="pl-4 flex-1 flex flex-col justify-start py-2">
+                    <h3 className="text-sm font-semibold mb-2">
+                      {featuredBoard?.title || collection.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                      {featuredBoard?.description || collection.description}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
+                        <span className="text-white text-xs font-semibold">
+                          {featuredBoard ? "✓" : "+"}
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {featuredBoard
+                          ? "Click to change"
+                          : "Click to select board"}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      Click to select board
-                    </span>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
+
+      {/* Board Selection Modal */}
+      <BoardSelectionModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        displayOrder={selectedPosition}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }

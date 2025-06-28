@@ -606,6 +606,73 @@ export class DatabaseService {
       return [];
     }
   }
+
+  async getBoardsByUser(userId: string) {
+    const { data, error } = await this.client
+      .from("boards")
+      .select(
+        `
+        *,
+        folders(name),
+        board_posts(
+          posts(*)
+        )
+      `
+      )
+      .eq("folders.user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    // Transform the data to include post count
+    return (
+      data?.map(board => ({
+        ...board,
+        postCount: board.board_posts?.length || 0,
+      })) || []
+    );
+  }
+
+  async getFeaturedBoards() {
+    const { data, error } = await this.client
+      .from("featured_boards")
+      .select(
+        `
+        *,
+        boards(
+          *,
+          folders(name)
+        )
+      `
+      )
+      .order("display_order", { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async deleteFeaturedBoard(displayOrder: number) {
+    const { error } = await this.client
+      .from("featured_boards")
+      .delete()
+      .eq("display_order", displayOrder);
+
+    if (error) throw error;
+    return true;
+  }
+
+  async createFeaturedBoard(
+    featuredBoardData: Database["public"]["Tables"]["featured_boards"]["Insert"]
+  ) {
+    const { data, error } = await this.client
+      .from("featured_boards")
+      .insert(featuredBoardData)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
 }
 
 // Export singleton instance

@@ -19,19 +19,18 @@ export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
     try {
       setIsLoading(true);
 
-      // Enable sharing and get public_id
+      // Enable sharing and get public ID
       const result = await enableBoardSharing(boardId);
-
       if (!result.success) {
-        toast.error(result.error || "Failed to enable sharing");
-        return;
+        throw new Error(result.error);
       }
 
-      // Copy public URL to clipboard
-      const publicUrl = `${window.location.origin}/shared/${result.data.public_id}`;
-      await navigator.clipboard.writeText(publicUrl);
-      toast.success("Public board link copied to clipboard!");
-    } catch {
+      // Copy the public URL
+      const url = `${window.location.origin}/shared/${result.data.public_id}`;
+      await navigator.clipboard.writeText(url);
+      toast.success("Board link copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy link:", error);
       toast.error("Failed to copy link");
     } finally {
       setIsLoading(false);
