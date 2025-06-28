@@ -365,7 +365,7 @@ export function BoardPageContent({
   return (
     <>
       <BoardHeader boardName={board.name} boardId={boardId} />
-      <div className="px-[76px] py-[56px] space-y-8">
+      <div className="space-y-8">
         {/* Section 1: Board Title and Description */}
         <div className="space-y-4">
           <div>
