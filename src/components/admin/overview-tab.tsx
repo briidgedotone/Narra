@@ -464,6 +464,15 @@ export function OverviewTab() {
                       </div>
                     )}
 
+                  {/* Featured Label */}
+                  {featuredBoard && (
+                    <div className="absolute top-2 left-2 z-10">
+                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 py-1 rounded-full shadow-sm border border-gray-200">
+                        Featured
+                      </span>
+                    </div>
+                  )}
+
                   {/* Clean Actions Overlay */}
                   {featuredBoard &&
                     updatingPosition !== collection.position && (
