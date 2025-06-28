@@ -6,7 +6,7 @@ export function proxyInstagramImage(imageUrl: string): string {
 
   // Only proxy Instagram CDN images
   if (imageUrl.includes("cdninstagram.com") || imageUrl.includes("fbcdn.net")) {
-    return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+    return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}&platform=instagram`;
   }
 
   return imageUrl;
@@ -15,10 +15,21 @@ export function proxyInstagramImage(imageUrl: string): string {
 /**
  * Proxy any external image through our API
  */
-export function proxyImage(imageUrl: string): string {
+export function proxyImage(
+  imageUrl: string,
+  platform?: "tiktok" | "instagram"
+): string {
   if (!imageUrl || imageUrl.startsWith("/") || imageUrl.startsWith("data:")) {
     return imageUrl;
   }
 
-  return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+  const params = new URLSearchParams({
+    url: imageUrl,
+  });
+
+  if (platform) {
+    params.append("platform", platform);
+  }
+
+  return `/api/proxy-image?${params.toString()}`;
 }

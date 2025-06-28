@@ -30,6 +30,9 @@ import {
   Trash2,
   Share,
   Eye,
+  ChevronLeft,
+  ChevronRight,
+  Folder,
 } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -64,23 +67,35 @@ interface BoardData {
 
 interface SavedPost {
   id: string;
-  embed_url: string;
+  embedUrl: string;
   caption: string;
-  thumbnail_url: string;
-  platform: "tiktok" | "instagram";
+  thumbnail: string;
   metrics: {
     views?: number;
     likes: number;
     comments: number;
     shares?: number;
   };
-  date_posted: string;
-  profiles: {
+  datePosted: string;
+  platform: "instagram" | "tiktok";
+  profile: {
     handle: string;
-    display_name: string;
-    avatar_url: string;
+    displayName: string;
+    avatarUrl: string;
     verified: boolean;
   };
+  isVideo?: boolean;
+  isCarousel?: boolean;
+  carouselMedia?: CarouselMediaItem[];
+  carouselCount?: number;
+}
+
+interface CarouselMediaItem {
+  id: string;
+  type: "image" | "video";
+  url: string;
+  thumbnail: string;
+  isVideo: boolean;
 }
 
 // Add interface for transcript
@@ -113,6 +128,29 @@ export function BoardPageContent({
   const [transcript, setTranscript] = useState<VideoTranscript | null>(null);
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
+
+  // Add carousel state and handlers
+  const [postCarouselStates, setPostCarouselStates] = useState<
+    Record<string, number>
+  >({});
+
+  const getPostCarouselIndex = (postId: string) => {
+    return postCarouselStates[postId] || 0;
+  };
+
+  const handlePostCarouselNext = (postId: string, maxIndex: number) => {
+    setPostCarouselStates(prev => ({
+      ...prev,
+      [postId]: Math.min((prev[postId] || 0) + 1, maxIndex - 1),
+    }));
+  };
+
+  const handlePostCarouselPrev = (postId: string) => {
+    setPostCarouselStates(prev => ({
+      ...prev,
+      [postId]: Math.max((prev[postId] || 0) - 1, 0),
+    }));
+  };
 
   const loadBoardData = useCallback(async () => {
     setIsLoadingBoard(true);
@@ -269,7 +307,7 @@ export function BoardPageContent({
 
     try {
       // Create TikTok URL from handle and post data
-      const tiktokUrl = `https://www.tiktok.com/@${post.profiles.handle}/video/${post.id}`;
+      const tiktokUrl = `https://www.tiktok.com/@${post.profile.handle}/video/${post.id}`;
 
       const response = await fetch("/api/test-transcript", {
         method: "POST",
@@ -326,20 +364,6 @@ export function BoardPageContent({
 
     return url;
   };
-
-  // Filter posts based on active filter
-  const filteredPosts = posts.filter(post => {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "tiktok") return post.platform === "tiktok";
-    if (activeFilter === "instagram") return post.platform === "instagram";
-    if (activeFilter === "recent") {
-      const postDate = new Date(post.date_posted);
-      const daysSincePost =
-        (Date.now() - postDate.getTime()) / (1000 * 60 * 60 * 24);
-      return daysSincePost <= 7; // Last 7 days
-    }
-    return true;
-  });
 
   if (isLoadingBoard) {
     return <BoardContentSkeleton />;
@@ -459,118 +483,213 @@ export function BoardPageContent({
               </div>
             ))}
           </div>
-        ) : filteredPosts.length === 0 ? (
-          <EmptyState
-            icons={[Clipboard]}
-            title="No posts in this board yet"
-            description="Start adding posts to this board by saving content from the Discovery page."
-            action={{
-              label: "Discover Content",
-              onClick: () => (window.location.href = "/discovery"),
-            }}
-          />
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredPosts.map(post => (
+        ) : posts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {posts.map((post, index) => (
               <div
-                key={post.id}
-                className="group bg-card rounded-lg border overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
+                key={`${post.id}-${index}`}
                 onClick={() => handlePostClick(post)}
+                className={cn(
+                  "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
+                )}
               >
-                {/* Post Thumbnail */}
-                <div className="relative aspect-[3/4] bg-muted">
-                  <Image
-                    src={proxyImage(post.thumbnail_url, post.platform)}
-                    alt={post.caption || "Post"}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-
-                  {/* Platform Badge */}
-                  <div className="absolute top-2 left-2">
-                    <span
-                      className={cn(
-                        "px-2 py-1 rounded-full text-xs font-medium",
-                        post.platform === "tiktok"
-                          ? "bg-black/80 text-white"
-                          : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                      )}
-                    >
-                      {post.platform === "tiktok" ? "TikTok" : "Instagram"}
-                    </span>
-                  </div>
-
-                  {/* Remove Button */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={e => {
-                        e.stopPropagation(); // Prevent triggering post click
-                        handleRemovePost(post.id);
-                      }}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Post Info */}
-                <div className="p-3 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={
-                        post.profiles.avatar_url
-                          ? proxyImage(
-                              post.profiles.avatar_url,
-                              post.platform,
-                              true
-                            )
-                          : "/placeholder-avatar.jpg"
-                      }
-                      alt={post.profiles.handle || "Profile picture"}
-                      width={20}
-                      height={20}
-                      className="rounded-full"
-                      onError={e => {
-                        // Fallback to placeholder if avatar fails to load
-                        e.currentTarget.src = "/placeholder-avatar.jpg";
-                      }}
-                    />
-                    <span className="text-sm font-medium truncate">
-                      @{post.profiles.handle}
-                    </span>
-                    {post.profiles.verified && (
-                      <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs">✓</span>
+                <div className={cn("relative aspect-[4/5]")}>
+                  {/* Display current carousel media or single media */}
+                  <div className="relative w-full h-full overflow-hidden">
+                    {post.isCarousel &&
+                    post.carouselMedia &&
+                    post.carouselMedia.length > 0 ? (
+                      // Carousel Media Display with Sliding Animation
+                      <div
+                        className="flex w-full h-full transition-transform duration-300 ease-in-out"
+                        style={{
+                          transform: `translateX(-${getPostCarouselIndex(post.id) * 100}%)`,
+                        }}
+                      >
+                        {post.carouselMedia.map((media, index) => (
+                          <div
+                            key={media.id || index}
+                            className="w-full h-full flex-shrink-0"
+                          >
+                            {media.isVideo ? (
+                              <video
+                                src={proxyImage(media.url, post.platform)}
+                                poster={proxyImage(
+                                  media.thumbnail,
+                                  post.platform
+                                )}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                muted
+                                playsInline
+                                onMouseEnter={e => {
+                                  e.currentTarget.play();
+                                }}
+                                onMouseLeave={e => {
+                                  e.currentTarget.pause();
+                                  e.currentTarget.currentTime = 0;
+                                }}
+                                onError={e => {
+                                  // Fallback to image if video fails
+                                  const img = document.createElement("img");
+                                  img.src = proxyImage(
+                                    media.thumbnail,
+                                    post.platform
+                                  );
+                                  img.className = "w-full h-full object-cover";
+                                  img.alt = "Post media";
+                                  if (e.currentTarget.parentNode) {
+                                    e.currentTarget.parentNode.replaceChild(
+                                      img,
+                                      e.currentTarget
+                                    );
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={proxyImage(media.url, post.platform)}
+                                alt="Post media"
+                                className="absolute inset-0 w-full h-full object-cover"
+                                onError={e => {
+                                  e.currentTarget.src = "/placeholder-post.jpg";
+                                }}
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      // Single Media Display
+                      <div className="w-full h-full">
+                        <video
+                          src={
+                            post.platform === "instagram"
+                              ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
+                              : post.embedUrl
+                          }
+                          poster={proxyImage(post.thumbnail, post.platform)}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          muted
+                          playsInline
+                          onMouseEnter={e => {
+                            e.currentTarget.play();
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.pause();
+                            e.currentTarget.currentTime = 0;
+                          }}
+                          onError={e => {
+                            // Fallback to image if video fails
+                            const img = document.createElement("img");
+                            img.src = proxyImage(post.thumbnail, post.platform);
+                            img.className = "w-full h-full object-cover";
+                            img.alt = "Post thumbnail";
+                            if (e.currentTarget.parentNode) {
+                              e.currentTarget.parentNode.replaceChild(
+                                img,
+                                e.currentTarget
+                              );
+                            }
+                          }}
+                        />
                       </div>
                     )}
                   </div>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2">
-                    {post.caption || "No caption"}
-                  </p>
+                  {/* Carousel Navigation Arrows */}
+                  {post.isCarousel &&
+                    post.carouselMedia &&
+                    post.carouselMedia.length > 1 && (
+                      <>
+                        {/* Previous Arrow */}
+                        {getPostCarouselIndex(post.id) > 0 && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              handlePostCarouselPrev(post.id);
+                            }}
+                            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                        )}
 
-                  {/* Post Metrics */}
-                  <div className="flex items-center gap-4">
+                        {/* Next Arrow */}
+                        {getPostCarouselIndex(post.id) <
+                          post.carouselMedia.length - 1 && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              handlePostCarouselNext(
+                                post.id,
+                                post.carouselMedia!.length
+                              );
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        )}
+                      </>
+                    )}
+
+                  {/* Carousel Indicator Dots */}
+                  {post.isCarousel &&
+                    post.carouselCount &&
+                    post.carouselCount > 1 && (
+                      <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                        {Array.from({
+                          length: Math.min(post.carouselCount, 5),
+                        }).map((_, index) => (
+                          <div
+                            key={index}
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              index === getPostCarouselIndex(post.id)
+                                ? "bg-white"
+                                : "bg-white/50"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                  {/* Remove Button */}
+                  {!isSharedView && (
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleRemovePost(post.id);
+                        }}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <div className={cn("p-4 space-y-3")}>
+                  <p className="text-sm line-clamp-2">{post.caption}</p>
+
+                  <div className="flex items-center gap-4 mt-3">
                     <div className="flex items-center gap-1.5">
-                      <Heart className="w-4 h-4 text-red-500" />
+                      <Heart className="h-4 w-4 text-red-500" />
                       <span className="font-medium text-sm">
                         {formatNumber(post.metrics.likes)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <MessageCircle className="w-4 h-4 text-blue-500" />
+                      <MessageCircle className="h-4 w-4 text-blue-500" />
                       <span className="font-medium text-sm">
                         {formatNumber(post.metrics.comments)}
                       </span>
                     </div>
-                    {post.metrics.views && (
+                    {post.isVideo && post.metrics.views && (
                       <div className="flex items-center gap-1.5">
-                        <Eye className="w-4 h-4 text-green-500" />
+                        <Eye className="h-4 w-4 text-green-500" />
                         <span className="font-medium text-sm">
                           {formatNumber(post.metrics.views)}
                         </span>
@@ -581,6 +700,12 @@ export function BoardPageContent({
               </div>
             ))}
           </div>
+        ) : (
+          <EmptyState
+            icons={[Folder]}
+            title="No posts yet"
+            description="Save some posts to this board to get started."
+          />
         )}
       </div>
 
@@ -628,11 +753,11 @@ export function BoardPageContent({
                 <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden">
                   <video
                     src={proxyImage(
-                      selectedPost.embed_url,
+                      selectedPost.embedUrl,
                       selectedPost.platform
                     )}
                     poster={proxyImage(
-                      selectedPost.thumbnail_url,
+                      selectedPost.thumbnail,
                       selectedPost.platform
                     )}
                     className="w-full h-full object-cover"
@@ -645,7 +770,7 @@ export function BoardPageContent({
                       // Fallback to image if video fails
                       const img = document.createElement("img");
                       img.src = proxyImage(
-                        selectedPost.thumbnail_url,
+                        selectedPost.thumbnail,
                         selectedPost.platform
                       );
                       img.className = "w-full h-full object-cover";
@@ -697,15 +822,15 @@ export function BoardPageContent({
                       <div className="flex items-center gap-3">
                         <Image
                           src={
-                            selectedPost.profiles.avatar_url
+                            selectedPost.profile.avatarUrl
                               ? proxyImage(
-                                  selectedPost.profiles.avatar_url,
+                                  selectedPost.profile.avatarUrl,
                                   selectedPost.platform,
                                   true
                                 )
                               : "/placeholder-avatar.jpg"
                           }
-                          alt={selectedPost.profiles.handle}
+                          alt={selectedPost.profile.handle}
                           width={40}
                           height={40}
                           className="rounded-full"
@@ -717,16 +842,16 @@ export function BoardPageContent({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">
-                              @{selectedPost.profiles.handle}
+                              @{selectedPost.profile.handle}
                             </span>
-                            {selectedPost.profiles.verified && (
+                            {selectedPost.profile.verified && (
                               <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
                                 <span className="text-white text-xs">✓</span>
                               </div>
                             )}
                           </div>
                           <p className="text-sm text-gray-500">
-                            {selectedPost.profiles.display_name}
+                            {selectedPost.profile.displayName}
                           </p>
                         </div>
                       </div>
@@ -782,7 +907,7 @@ export function BoardPageContent({
                       <div>
                         <h3 className="font-semibold mb-2">Posted</h3>
                         <p className="text-sm text-muted-foreground">
-                          {formatDate(selectedPost.date_posted)}
+                          {formatDate(selectedPost.datePosted)}
                         </p>
                       </div>
                     </>

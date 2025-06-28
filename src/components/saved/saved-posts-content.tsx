@@ -9,14 +9,17 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {
   Heart,
   MessageCircle,
-  ExternalLink,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
   Grid,
   List,
-  Eye,
+  Folder,
 } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
+import { proxyInstagramImage } from "@/lib/utils/image-proxy";
 
 interface SavedPostsContentProps {
   userId: string;
@@ -24,33 +27,45 @@ interface SavedPostsContentProps {
 
 interface SavedPost {
   id: string;
-  embed_url: string;
+  embedUrl: string;
   caption: string;
-  thumbnail_url: string;
-  platform: "tiktok" | "instagram";
+  thumbnail: string;
   metrics: {
     views?: number;
     likes: number;
     comments: number;
     shares?: number;
   };
-  date_posted: string;
-  profiles: {
+  datePosted: string;
+  platform: "instagram" | "tiktok";
+  profile: {
     handle: string;
-    display_name: string;
-    avatar_url: string;
+    displayName: string;
+    avatarUrl: string;
     verified: boolean;
   };
+  isVideo?: boolean;
+  isCarousel?: boolean;
+  carouselMedia?: CarouselMediaItem[];
+  carouselCount?: number;
+}
+
+interface CarouselMediaItem {
+  id: string;
+  type: "image" | "video";
+  url: string;
+  thumbnail: string;
+  isVideo: boolean;
 }
 
 export function SavedPostsContent({}: SavedPostsContentProps) {
-  // Note: userId prop is passed from server component but not used directly here
-  // Authentication is handled by server actions (getAllUserSavedPosts, etc.)
-
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [postCarouselStates, setPostCarouselStates] = useState<
+    Record<string, number>
+  >({});
 
   useEffect(() => {
     loadSavedPosts();
@@ -74,6 +89,24 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     }
   };
 
+  const getPostCarouselIndex = (postId: string) => {
+    return postCarouselStates[postId] || 0;
+  };
+
+  const handlePostCarouselNext = (postId: string, maxIndex: number) => {
+    setPostCarouselStates(prev => ({
+      ...prev,
+      [postId]: Math.min((prev[postId] || 0) + 1, maxIndex - 1),
+    }));
+  };
+
+  const handlePostCarouselPrev = (postId: string) => {
+    setPostCarouselStates(prev => ({
+      ...prev,
+      [postId]: Math.max((prev[postId] || 0) - 1, 0),
+    }));
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -84,12 +117,28 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <Skeleton className="aspect-[3/4] w-full rounded-lg" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-3 w-2/3" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-pulse"
+            >
+              <Skeleton className="aspect-[4/5] w-full" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1">
+                    <Skeleton className="h-3 w-3" />
+                    <Skeleton className="h-3 w-8" />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Skeleton className="h-3 w-3" />
+                    <Skeleton className="h-3 w-8" />
+                  </div>
+                </div>
+                <Skeleton className="h-3 w-20" />
+              </div>
             </div>
           ))}
         </div>
@@ -114,7 +163,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   if (posts.length === 0) {
     return (
       <EmptyState
-        icons={[Grid]}
+        icons={[Folder]}
         title="No saved posts yet"
         description="Posts you save to boards will appear here. Start by discovering content and saving posts to your boards."
         action={{
@@ -154,79 +203,188 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
       {/* Posts Grid */}
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {posts.map(post => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {posts.map((post, index) => (
             <div
-              key={post.id}
-              className="group bg-card rounded-lg border overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+              key={`${post.id}-${index}`}
+              className={cn(
+                "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
+              )}
             >
-              {/* Post Thumbnail */}
-              <div className="relative aspect-[3/4] bg-muted">
-                <Image
-                  src={post.thumbnail_url}
-                  alt={post.caption || "Post"}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-
-                {/* Platform Badge */}
-                <div className="absolute top-2 left-2">
-                  <span
-                    className={cn(
-                      "px-2 py-1 rounded-full text-xs font-medium",
-                      post.platform === "tiktok"
-                        ? "bg-black/80 text-white"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                    )}
-                  >
-                    {post.platform === "tiktok" ? "TikTok" : "Instagram"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Post Info */}
-              <div className="p-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={post.profiles.avatar_url || "/placeholder-avatar.jpg"}
-                    alt={post.profiles.handle || "Profile picture"}
-                    width={20}
-                    height={20}
-                    className="rounded-full"
-                  />
-                  <span className="text-sm font-medium truncate">
-                    @{post.profiles.handle}
-                  </span>
-                  {post.profiles.verified && (
-                    <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs">✓</span>
+              <div className={cn("relative aspect-[4/5]")}>
+                {/* Display current carousel media or single media */}
+                <div className="relative w-full h-full overflow-hidden">
+                  {post.isCarousel &&
+                  post.carouselMedia &&
+                  post.carouselMedia.length > 0 ? (
+                    // Carousel Media Display with Sliding Animation
+                    <div
+                      className="flex w-full h-full transition-transform duration-300 ease-in-out"
+                      style={{
+                        transform: `translateX(-${getPostCarouselIndex(post.id) * 100}%)`,
+                      }}
+                    >
+                      {post.carouselMedia.map((media, index) => (
+                        <div
+                          key={media.id || index}
+                          className="w-full h-full flex-shrink-0"
+                        >
+                          {media.isVideo ? (
+                            <video
+                              src={proxyInstagramImage(media.url)}
+                              poster={proxyInstagramImage(media.thumbnail)}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              muted
+                              playsInline
+                              onMouseEnter={e => {
+                                e.currentTarget.play();
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.pause();
+                                e.currentTarget.currentTime = 0;
+                              }}
+                              onError={e => {
+                                // Fallback to image if video fails
+                                const img = document.createElement("img");
+                                img.src = proxyInstagramImage(media.thumbnail);
+                                img.className = "w-full h-full object-cover";
+                                img.alt = "Post media";
+                                if (e.currentTarget.parentNode) {
+                                  e.currentTarget.parentNode.replaceChild(
+                                    img,
+                                    e.currentTarget
+                                  );
+                                }
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={proxyInstagramImage(media.url)}
+                              alt="Post media"
+                              className="absolute inset-0 w-full h-full object-cover"
+                              onError={e => {
+                                e.currentTarget.src = "/placeholder-post.jpg";
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Single Media Display
+                    <div className="w-full h-full">
+                      <video
+                        src={
+                          post.platform === "instagram"
+                            ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
+                            : post.embedUrl
+                        }
+                        poster={proxyInstagramImage(post.thumbnail)}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        muted
+                        playsInline
+                        onMouseEnter={e => {
+                          e.currentTarget.play();
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.pause();
+                          e.currentTarget.currentTime = 0;
+                        }}
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src = proxyInstagramImage(post.thumbnail);
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
+                            );
+                          }
+                        }}
+                      />
                     </div>
                   )}
                 </div>
 
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  {post.caption || "No caption"}
-                </p>
+                {/* Carousel Navigation Arrows */}
+                {post.isCarousel &&
+                  post.carouselMedia &&
+                  post.carouselMedia.length > 1 && (
+                    <>
+                      {/* Previous Arrow */}
+                      {getPostCarouselIndex(post.id) > 0 && (
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handlePostCarouselPrev(post.id);
+                          }}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                      )}
 
-                {/* Post Metrics */}
-                <div className="flex items-center gap-4">
+                      {/* Next Arrow */}
+                      {getPostCarouselIndex(post.id) <
+                        post.carouselMedia.length - 1 && (
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handlePostCarouselNext(
+                              post.id,
+                              post.carouselMedia!.length
+                            );
+                          }}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                {/* Carousel Indicator Dots */}
+                {post.isCarousel &&
+                  post.carouselCount &&
+                  post.carouselCount > 1 && (
+                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                      {Array.from({
+                        length: Math.min(post.carouselCount, 5),
+                      }).map((_, index) => (
+                        <div
+                          key={index}
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            index === getPostCarouselIndex(post.id)
+                              ? "bg-white"
+                              : "bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+              </div>
+
+              <div className={cn("p-4 space-y-3")}>
+                <p className="text-sm line-clamp-2">{post.caption}</p>
+
+                <div className="flex items-center gap-4 mt-3">
                   <div className="flex items-center gap-1.5">
-                    <Heart className="w-4 h-4 text-red-500" />
+                    <Heart className="h-4 w-4 text-red-500" />
                     <span className="font-medium text-sm">
                       {formatNumber(post.metrics.likes)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <MessageCircle className="w-4 h-4 text-blue-500" />
+                    <MessageCircle className="h-4 w-4 text-blue-500" />
                     <span className="font-medium text-sm">
                       {formatNumber(post.metrics.comments)}
                     </span>
                   </div>
-                  {post.metrics.views && (
+                  {post.isVideo && post.metrics.views && (
                     <div className="flex items-center gap-1.5">
-                      <Eye className="w-4 h-4 text-green-500" />
+                      <Eye className="h-4 w-4 text-green-500" />
                       <span className="font-medium text-sm">
                         {formatNumber(post.metrics.views)}
                       </span>
@@ -248,75 +406,61 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
               {/* Thumbnail */}
               <div className="relative w-16 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                  src={post.thumbnail_url}
-                  alt={post.caption || "Post"}
+                  src={proxyInstagramImage(post.thumbnail)}
+                  alt={post.caption}
                   fill
                   className="object-cover"
-                  sizes="64px"
+                  unoptimized
                 />
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
                   <Image
-                    src={post.profiles.avatar_url || "/placeholder-avatar.jpg"}
-                    alt={post.profiles.handle || "Profile picture"}
-                    width={24}
-                    height={24}
+                    src={proxyInstagramImage(post.profile.avatarUrl)}
+                    alt={post.profile.handle}
+                    width={20}
+                    height={20}
                     className="rounded-full"
+                    unoptimized
                   />
-                  <span className="font-medium">@{post.profiles.handle}</span>
-                  {post.profiles.verified && (
-                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">
+                    @{post.profile.handle}
+                  </span>
+                  {post.profile.verified && (
+                    <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs">✓</span>
                     </div>
                   )}
-                  <span
-                    className={cn(
-                      "px-2 py-0.5 rounded-full text-xs font-medium",
-                      post.platform === "tiktok"
-                        ? "bg-black text-white"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                    )}
-                  >
-                    {post.platform === "tiktok" ? "TikTok" : "Instagram"}
-                  </span>
                 </div>
 
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {post.caption || "No caption"}
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                  {post.caption}
                 </p>
 
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
                     <Heart className="w-4 h-4 text-red-500" />
-                    <span className="font-medium text-sm">
+                    <span className="text-sm font-medium">
                       {formatNumber(post.metrics.likes)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <MessageCircle className="w-4 h-4 text-blue-500" />
-                    <span className="font-medium text-sm">
+                    <span className="text-sm font-medium">
                       {formatNumber(post.metrics.comments)}
                     </span>
                   </div>
-                  {post.metrics.views && (
+                  {post.isVideo && post.metrics.views && (
                     <div className="flex items-center gap-1.5">
                       <Eye className="w-4 h-4 text-green-500" />
-                      <span className="font-medium text-sm">
+                      <span className="text-sm font-medium">
                         {formatNumber(post.metrics.views)}
                       </span>
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">
-                  <ExternalLink className="w-4 h-4" />
-                </Button>
               </div>
             </div>
           ))}

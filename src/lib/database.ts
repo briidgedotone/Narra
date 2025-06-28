@@ -341,13 +341,72 @@ export class DatabaseService {
   async getPostsInBoard(boardId: string, limit = 20, offset = 0) {
     const { data, error } = await this.client
       .from("board_posts")
-      .select("posts(*, profiles(*))")
+      .select(
+        `
+        added_at,
+        posts (
+          id,
+          platform,
+          platform_post_id,
+          embed_url,
+          caption,
+          transcript,
+          thumbnail_url,
+          metrics,
+          date_posted,
+          profiles (
+            id,
+            handle,
+            platform,
+            display_name,
+            bio,
+            followers_count,
+            avatar_url,
+            verified
+          )
+        )
+      `
+      )
       .eq("board_id", boardId)
       .order("added_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) throw error;
-    return data?.map(item => item.posts).filter(Boolean);
+
+    // Transform the nested data structure
+    return data
+      ?.map(item => {
+        const post = item.posts;
+        const profile = post?.profiles;
+
+        if (!post) return null;
+
+        return {
+          id: post.id,
+          platform: post.platform,
+          platformPostId: post.platform_post_id,
+          embedUrl: post.embed_url,
+          caption: post.caption,
+          transcript: post.transcript,
+          thumbnail: post.thumbnail_url,
+          metrics: post.metrics,
+          datePosted: post.date_posted,
+          profile: profile
+            ? {
+                id: profile.id,
+                handle: profile.handle,
+                platform: profile.platform,
+                displayName: profile.display_name,
+                bio: profile.bio,
+                followers: profile.followers_count,
+                avatarUrl: profile.avatar_url,
+                verified: profile.verified,
+              }
+            : null,
+          addedAt: item.added_at,
+        };
+      })
+      .filter(Boolean);
   }
 
   // Follows
@@ -688,6 +747,86 @@ export class DatabaseService {
 
     if (error) throw error;
     return data;
+  }
+
+  async getAllUserSavedPosts(limit = 50, offset = 0) {
+    // Get all user's boards
+    const { data: boardPosts, error } = await this.client
+      .from("board_posts")
+      .select(
+        `
+        added_at,
+        posts (
+          id,
+          platform,
+          platform_post_id,
+          embed_url,
+          caption,
+          transcript,
+          thumbnail_url,
+          metrics,
+          date_posted,
+          profiles (
+            id,
+            handle,
+            platform,
+            display_name,
+            bio,
+            followers_count,
+            avatar_url,
+            verified
+          )
+        )
+      `
+      )
+      .order("added_at", { ascending: false });
+
+    if (error) throw error;
+
+    // Transform and deduplicate posts
+    const uniquePosts = new Map();
+    boardPosts?.forEach(item => {
+      const post = item.posts;
+      const profile = post?.profiles;
+
+      if (!post) return;
+
+      // Only add if not already in map
+      if (!uniquePosts.has(post.id)) {
+        uniquePosts.set(post.id, {
+          id: post.id,
+          platform: post.platform,
+          platformPostId: post.platform_post_id,
+          embedUrl: post.embed_url,
+          caption: post.caption,
+          transcript: post.transcript,
+          thumbnail: post.thumbnail_url,
+          metrics: post.metrics,
+          datePosted: post.date_posted,
+          profile: profile
+            ? {
+                id: profile.id,
+                handle: profile.handle,
+                platform: profile.platform,
+                displayName: profile.display_name,
+                bio: profile.bio,
+                followers: profile.followers_count,
+                avatarUrl: profile.avatar_url,
+                verified: profile.verified,
+              }
+            : null,
+          addedAt: item.added_at,
+        });
+      }
+    });
+
+    // Convert map to array, sort by datePosted, and apply pagination
+    return Array.from(uniquePosts.values())
+      .sort(
+        (a, b) =>
+          new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()
+      )
+      .slice(offset, offset + limit);
   }
 }
 

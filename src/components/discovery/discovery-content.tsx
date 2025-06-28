@@ -42,7 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
-import { proxyInstagramImage } from "@/lib/utils/image-proxy";
+import { proxyInstagramImage, proxyImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
 
 interface DiscoveryContentProps {
@@ -85,6 +85,7 @@ interface Post {
   datePosted: string;
   platform: "instagram" | "tiktok";
   tiktokUrl?: string;
+  isVideo?: boolean;
   isCarousel?: boolean;
   carouselMedia?: CarouselMediaItem[];
   carouselCount?: number;
@@ -215,6 +216,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     if (!searchResults) return;
 
     setIsLoadingPosts(true);
+    // Clear existing posts when loading new ones
+    setPosts([]);
     try {
       // Get the handle from search results
       const handle = searchResults.handle;
@@ -257,7 +260,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format and append to existing posts
+          // Convert to our Post interface format
           const newPosts: Post[] = transformedPosts.map((post: any) => ({
             id: post.id,
             embedUrl: post.embedUrl,
@@ -273,7 +276,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             platform: post.platform,
           }));
 
-          setPosts(prevPosts => [...prevPosts, ...newPosts]);
+          // Set the posts directly since we cleared the array at the start
+          setPosts(newPosts);
           return; // Exit early since we've already processed Instagram posts
         }
 
@@ -819,7 +823,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               <div className="flex-shrink-0">
                 <div className="relative">
                   <Image
-                    src={proxyInstagramImage(searchResults.avatarUrl)}
+                    src={proxyImage(
+                      searchResults.avatarUrl,
+                      searchResults.platform
+                    )}
                     alt={
                       searchResults.displayName ||
                       `${searchResults.platform} profile picture`
@@ -949,9 +956,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               ))}
             </div>
           ) : (
-            <div
-              className={`grid ${"grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"} gap-4`}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {sortedPosts.map((post, index) => (
                 <div
                   key={`${post.id}-${index}`}
@@ -960,7 +965,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
                   )}
                 >
-                  <div className={cn("relative")}>
+                  <div className={cn("relative aspect-[4/5]")}>
                     {/* Display current carousel media or single media */}
                     <div className="relative w-full h-full overflow-hidden">
                       {post.isCarousel &&
@@ -980,9 +985,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             >
                               {media.isVideo ? (
                                 <video
-                                  src={`/api/proxy-image?url=${encodeURIComponent(media.url)}`}
-                                  poster={proxyInstagramImage(media.thumbnail)}
-                                  className="w-full h-full object-cover"
+                                  src={proxyImage(media.url, post.platform)}
+                                  poster={proxyImage(
+                                    media.thumbnail,
+                                    post.platform
+                                  )}
+                                  className="absolute inset-0 w-full h-full object-cover"
                                   muted
                                   playsInline
                                   onMouseEnter={e => {
@@ -995,8 +1003,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   onError={e => {
                                     // Fallback to image if video fails
                                     const img = document.createElement("img");
-                                    img.src = proxyInstagramImage(
-                                      media.thumbnail
+                                    img.src = proxyImage(
+                                      media.thumbnail,
+                                      post.platform
                                     );
                                     img.className =
                                       "w-full h-full object-cover";
@@ -1013,7 +1022,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 <img
                                   src={proxyInstagramImage(media.url)}
                                   alt="Post media"
-                                  className="w-full h-full object-cover"
+                                  className="absolute inset-0 w-full h-full object-cover"
                                   onError={e => {
                                     e.currentTarget.src =
                                       "/placeholder-post.jpg";
@@ -1033,7 +1042,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 : post.embedUrl
                             }
                             poster={proxyInstagramImage(post.thumbnail)}
-                            className="w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover"
                             muted
                             playsInline
                             onMouseEnter={e => {
@@ -1149,7 +1158,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           {formatNumber(post.metrics.comments)}
                         </span>
                       </div>
-                      {post.metrics.views && (
+                      {post.isVideo && post.metrics.views && (
                         <div className="flex items-center gap-1.5">
                           <Eye className="h-4 w-4 text-green-500" />
                           <span className="font-medium text-sm">
