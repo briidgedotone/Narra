@@ -40,16 +40,18 @@ export function CollectionCard({
           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
             {description}
           </p>
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-4 h-4 rounded-full ${authorBadgeColor} flex items-center justify-center`}
-            >
-              <span className="text-white text-xs font-semibold">
-                {authorInitial}
-              </span>
+          {username && (
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-4 h-4 rounded-full ${authorBadgeColor} flex items-center justify-center`}
+              >
+                <span className="text-white text-xs font-semibold">
+                  {authorInitial}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">{username}</span>
             </div>
-            <span className="text-xs text-muted-foreground">{username}</span>
-          </div>
+          )}
         </div>
       </div>
     </div>

@@ -30,6 +30,7 @@ interface FeaturedBoard {
   boards: {
     id: string;
     name: string;
+    description: string | null;
     folders: {
       name: string;
     } | null;
@@ -101,24 +102,17 @@ export function DashboardContent({}: DashboardContentProps) {
   const featuredCollections: Collection[] = featuredBoards.map(
     (board, index) => {
       const boardData = board.boards;
-      const folderName = boardData?.folders?.name || "Unknown Folder";
 
       // Default colors for featured boards
       const colors = ["#FDA02C", "#E87BD1", "#EE97DB", "#B078F9"];
-      const badgeColors = [
-        "bg-orange-500",
-        "bg-black",
-        "bg-purple-500",
-        "bg-blue-500",
-      ];
 
       return {
         title: boardData?.name || `Featured Collection ${board.display_order}`,
-        description: `Curated content from ${folderName}`,
-        username: folderName,
-        authorInitial: folderName.charAt(0).toUpperCase(),
-        authorBadgeColor:
-          badgeColors[index % badgeColors.length] || "bg-gray-500",
+        description:
+          boardData?.description || "A curated collection of inspiring content",
+        username: "", // Remove username for featured boards
+        authorInitial: "", // Remove profile initial for featured boards
+        authorBadgeColor: "", // Remove badge color for featured boards
         backgroundColor: colors[index % colors.length] || "#94A3B8",
         boardId: board.board_id, // Add board ID for navigation
         coverImageUrl: board.cover_image_url || undefined, // Add cover image URL
