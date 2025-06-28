@@ -146,7 +146,10 @@ export function OverviewTab() {
   };
 
   const handleSelectBoard = async (board: Board, position: number) => {
+    // Close dropdown immediately for better UX
+    setOpenDropdown(null);
     setUpdatingPosition(position);
+
     try {
       // Generate a better cover image URL using a placeholder service with the board name
       const coverImageUrl = `https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=${encodeURIComponent(board.name)}`;
@@ -161,7 +164,6 @@ export function OverviewTab() {
 
       if (result.success) {
         await loadFeaturedBoards();
-        setOpenDropdown(null);
         // You could add a toast notification here for success
         console.log(
           `Successfully set "${board.name}" as Featured Collection ${position}`
@@ -572,13 +574,11 @@ export function OverviewTab() {
                 {/* Dropdown */}
                 {openDropdown === collection.position && (
                   <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                    {loading || updatingPosition !== null ? (
+                    {loading ? (
                       <div className="p-4 text-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                         <p className="text-sm text-gray-500 mt-2">
-                          {updatingPosition !== null
-                            ? "Updating collection..."
-                            : "Loading boards..."}
+                          Loading boards...
                         </p>
                       </div>
                     ) : (
@@ -598,10 +598,7 @@ export function OverviewTab() {
                               <div
                                 key={board.id}
                                 onClick={() => {
-                                  if (
-                                    !isAlreadyFeatured &&
-                                    updatingPosition === null
-                                  ) {
+                                  if (!isAlreadyFeatured) {
                                     handleSelectBoard(
                                       board,
                                       collection.position
