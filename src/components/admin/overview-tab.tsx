@@ -235,6 +235,69 @@ export function OverviewTab() {
     }
   };
 
+  const handleRemoveImage = async (position: number) => {
+    // Find the featured board for this position
+    const featuredBoard = featuredBoards.find(
+      fb => fb.display_order === position
+    );
+    if (!featuredBoard) return;
+
+    setUpdatingPosition(position);
+
+    try {
+      // Update the featured board to remove the image (set cover_image_url to null)
+      const result = await setFeaturedBoard(
+        featuredBoard.board_id,
+        position,
+        null, // Remove the image
+        featuredBoard.boards?.name,
+        `Featured collection from ${featuredBoard.boards?.folders?.name || "Unknown folder"}`
+      );
+
+      if (result.success) {
+        await loadFeaturedBoards();
+        console.log(
+          `Successfully removed image from Featured Collection ${position}`
+        );
+      } else {
+        console.error("Failed to remove featured board image:", result.error);
+      }
+    } catch (error) {
+      console.error("Failed to remove image:", error);
+    } finally {
+      setUpdatingPosition(null);
+    }
+  };
+
+  const handleRemoveFromFeatured = async (position: number) => {
+    // Find the featured board for this position
+    const featuredBoard = featuredBoards.find(
+      fb => fb.display_order === position
+    );
+    if (!featuredBoard) return;
+
+    setUpdatingPosition(position);
+
+    try {
+      // Delete the featured board entry using the deleteFeaturedBoard action
+      const { deleteFeaturedBoard } = await import("@/app/actions/folders");
+      const result = await deleteFeaturedBoard(position);
+
+      if (result.success) {
+        await loadFeaturedBoards();
+        console.log(
+          `Successfully removed board from Featured Collection ${position}`
+        );
+      } else {
+        console.error("Failed to remove featured board:", result.error);
+      }
+    } catch (error) {
+      console.error("Failed to remove from featured:", error);
+    } finally {
+      setUpdatingPosition(null);
+    }
+  };
+
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + "M";
@@ -396,7 +459,7 @@ export function OverviewTab() {
                       </div>
                     )}
 
-                  {/* Success indicator and upload button for featured boards */}
+                  {/* Success indicator and action buttons for featured boards */}
                   {featuredBoard &&
                     updatingPosition !== collection.position && (
                       <>
@@ -418,8 +481,9 @@ export function OverviewTab() {
                           </div>
                         </div>
 
-                        {/* Upload Image Button */}
-                        <div className="absolute bottom-2 right-2">
+                        {/* Action Buttons */}
+                        <div className="absolute bottom-2 right-2 flex gap-1">
+                          {/* Upload/Change Image Button */}
                           <input
                             type="file"
                             accept="image/*"
@@ -432,6 +496,11 @@ export function OverviewTab() {
                           <label
                             htmlFor={`upload-${collection.position}`}
                             className="cursor-pointer bg-white/90 hover:bg-white text-gray-700 px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                            title={
+                              featuredBoard.cover_image_url
+                                ? "Change image"
+                                : "Upload image"
+                            }
                           >
                             <svg
                               className="w-3 h-3"
@@ -446,8 +515,58 @@ export function OverviewTab() {
                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
                             </svg>
-                            Upload
+                            {featuredBoard.cover_image_url
+                              ? "Change"
+                              : "Upload"}
                           </label>
+
+                          {/* Remove Image Button (only show if image exists) */}
+                          {featuredBoard.cover_image_url && (
+                            <button
+                              onClick={() =>
+                                handleRemoveImage(collection.position)
+                              }
+                              className="bg-red-500/90 hover:bg-red-500 text-white px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                              title="Remove image"
+                            >
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          )}
+
+                          {/* Remove from Featured Button */}
+                          <button
+                            onClick={() =>
+                              handleRemoveFromFeatured(collection.position)
+                            }
+                            className="bg-gray-500/90 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                            title="Remove from featured"
+                          >
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
                         </div>
                       </>
                     )}

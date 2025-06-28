@@ -236,7 +236,7 @@ export async function getFeaturedBoards() {
 export async function setFeaturedBoard(
   boardId: string,
   displayOrder: number,
-  coverImageUrl: string,
+  coverImageUrl: string | null,
   title?: string,
   description?: string
 ) {
@@ -284,5 +284,27 @@ export async function setFeaturedBoard(
   } catch (error) {
     console.error("Failed to set featured board:", error);
     return { success: false, error: "Failed to set featured board" };
+  }
+}
+
+export async function deleteFeaturedBoard(displayOrder: number) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // Check if user is admin
+  const isAdminUser = await isAdmin();
+  if (!isAdminUser) {
+    throw new Error("Admin access required");
+  }
+
+  try {
+    await db.deleteFeaturedBoard(displayOrder);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete featured board:", error);
+    return { success: false, error: "Failed to delete featured board" };
   }
 }
