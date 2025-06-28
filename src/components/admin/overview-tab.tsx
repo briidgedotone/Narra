@@ -459,15 +459,33 @@ export function OverviewTab() {
                       </div>
                     )}
 
-                  {/* Featured Board Overlay */}
+                  {/* Clean Actions Overlay */}
                   {featuredBoard &&
                     updatingPosition !== collection.position && (
-                      <div className="absolute inset-0 bg-black/5 opacity-0 hover:opacity-100 transition-all duration-300 rounded-lg group">
-                        {/* Success Badge */}
-                        <div className="absolute top-3 left-3">
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+                      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-200 rounded-lg">
+                        {/* Action Buttons Group - Top Right */}
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          {/* Upload/Change Image */}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={e =>
+                              handleImageUpload(e, collection.position)
+                            }
+                            className="hidden"
+                            id={`upload-${collection.position}`}
+                          />
+                          <label
+                            htmlFor={`upload-${collection.position}`}
+                            className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer hover:bg-white shadow-sm transition-colors"
+                            title={
+                              featuredBoard.cover_image_url
+                                ? "Change image"
+                                : "Upload image"
+                            }
+                          >
                             <svg
-                              className="w-3 h-3 text-white"
+                              className="w-4 h-4 text-gray-700"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -476,87 +494,22 @@ export function OverviewTab() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={2}
-                                d="M5 13l4 4L19 7"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
                             </svg>
-                          </div>
-                        </div>
+                          </label>
 
-                        {/* Action Menu */}
-                        <div className="absolute top-3 right-3">
-                          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-1 flex gap-1">
-                            {/* Upload/Change Image */}
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={e =>
-                                handleImageUpload(e, collection.position)
-                              }
-                              className="hidden"
-                              id={`upload-${collection.position}`}
-                            />
-                            <label
-                              htmlFor={`upload-${collection.position}`}
-                              className="cursor-pointer p-2 hover:bg-gray-50 rounded transition-colors group/btn"
-                              title={
-                                featuredBoard.cover_image_url
-                                  ? "Change image"
-                                  : "Upload image"
-                              }
-                            >
-                              <svg
-                                className="w-4 h-4 text-gray-600 group-hover/btn:text-blue-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                            </label>
-
-                            {/* Remove Image (only if image exists) */}
-                            {featuredBoard.cover_image_url && (
-                              <button
-                                onClick={() =>
-                                  handleRemoveImage(collection.position)
-                                }
-                                className="p-2 hover:bg-red-50 rounded transition-colors group/btn"
-                                title="Remove image"
-                              >
-                                <svg
-                                  className="w-4 h-4 text-gray-600 group-hover/btn:text-red-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </button>
-                            )}
-
-                            {/* Divider */}
-                            <div className="w-px bg-gray-200 mx-1"></div>
-
-                            {/* Remove from Featured */}
+                          {/* Remove Image (only if image exists) */}
+                          {featuredBoard.cover_image_url && (
                             <button
                               onClick={() =>
-                                handleRemoveFromFeatured(collection.position)
+                                handleRemoveImage(collection.position)
                               }
-                              className="p-2 hover:bg-red-50 rounded transition-colors group/btn"
-                              title="Remove from featured"
+                              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-50 shadow-sm transition-colors"
+                              title="Remove image"
                             >
                               <svg
-                                className="w-4 h-4 text-gray-600 group-hover/btn:text-red-600"
+                                className="w-4 h-4 text-gray-700 hover:text-red-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -565,11 +518,34 @@ export function OverviewTab() {
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                               </svg>
                             </button>
-                          </div>
+                          )}
+
+                          {/* Remove from Featured */}
+                          <button
+                            onClick={() =>
+                              handleRemoveFromFeatured(collection.position)
+                            }
+                            className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-50 shadow-sm transition-colors"
+                            title="Remove from featured"
+                          >
+                            <svg
+                              className="w-4 h-4 text-gray-700 hover:text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     )}
