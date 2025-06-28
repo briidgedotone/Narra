@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user is admin
     const isAdminUser = await isAdmin();
+    console.log("Admin check result:", isAdminUser, "for user:", userId);
     if (!isAdminUser) {
       return NextResponse.json(
         { error: "Admin access required" },
@@ -60,7 +61,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Failed to upload image" },
+      {
+        error: "Failed to upload image",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

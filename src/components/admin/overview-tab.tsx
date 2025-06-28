@@ -204,7 +204,10 @@ export function OverviewTab() {
       });
 
       if (!uploadResponse.ok) {
-        throw new Error("Failed to upload image");
+        const errorData = await uploadResponse.json();
+        throw new Error(
+          errorData.details || errorData.error || "Failed to upload image"
+        );
       }
 
       const { imageUrl } = await uploadResponse.json();
