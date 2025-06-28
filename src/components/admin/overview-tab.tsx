@@ -76,11 +76,18 @@ export function OverviewTab() {
       title?: string;
       description?: string;
       cover_image_url?: string;
+      board_id: string;
+      boards?: {
+        id: string;
+        name: string;
+        folders?: { name: string };
+      };
     }>
   >([]);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [boards, setBoards] = useState<Board[]>([]);
   const [loading, setLoading] = useState(false);
+  const [updatingPosition, setUpdatingPosition] = useState<number | null>(null);
 
   useEffect(() => {
     loadStats();
@@ -107,6 +114,9 @@ export function OverviewTab() {
       return () =>
         document.removeEventListener("mousedown", handleClickOutside);
     }
+
+    // Return undefined explicitly for the case when openDropdown is null
+    return undefined;
   }, [openDropdown]);
 
   const loadStats = async () => {
@@ -136,27 +146,33 @@ export function OverviewTab() {
   };
 
   const handleSelectBoard = async (board: Board, position: number) => {
-    setLoading(true);
+    setUpdatingPosition(position);
     try {
-      // Use a placeholder cover image URL for now
-      const coverImageUrl = "https://via.placeholder.com/400x300";
+      // Generate a better cover image URL using a placeholder service with the board name
+      const coverImageUrl = `https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=${encodeURIComponent(board.name)}`;
 
       const result = await setFeaturedBoard(
         board.id,
         position,
         coverImageUrl,
         board.name,
-        `Featured collection from ${board.folders?.name || "Unknown folder"}`
+        `Featured collection from ${board.folders?.name || "Unknown folder"} with ${board.postCount} posts`
       );
 
       if (result.success) {
         await loadFeaturedBoards();
         setOpenDropdown(null);
+        // You could add a toast notification here for success
+        console.log(
+          `Successfully set "${board.name}" as Featured Collection ${position}`
+        );
+      } else {
+        console.error("Failed to set featured board:", result.error);
       }
     } catch (error) {
       console.error("Failed to set featured board:", error);
     } finally {
-      setLoading(false);
+      setUpdatingPosition(null);
     }
   };
 
@@ -297,16 +313,51 @@ export function OverviewTab() {
                     backgroundPosition: "center",
                   }}
                 >
-                  {!featuredBoard && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div
-                        className="w-16 h-16 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-                      >
-                        <PlusCircle className="w-8 h-8 text-white" />
+                  {/* Loading overlay for this specific position */}
+                  {updatingPosition === collection.position && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+                      <div className="text-center text-white">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent mx-auto mb-2"></div>
+                        <p className="text-sm">Updating...</p>
                       </div>
                     </div>
                   )}
+
+                  {!featuredBoard &&
+                    updatingPosition !== collection.position && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div
+                          className="w-16 h-16 rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: "rgba(255, 255, 255, 0.2)",
+                          }}
+                        >
+                          <PlusCircle className="w-8 h-8 text-white" />
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Success indicator for featured boards */}
+                  {featuredBoard &&
+                    updatingPosition !== collection.position && (
+                      <div className="absolute top-2 right-2">
+                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                 </div>
                 <div className="mt-3">
                   <h3 className="font-medium text-sm">
@@ -316,20 +367,24 @@ export function OverviewTab() {
                     {featuredBoard?.description || collection.description}
                   </p>
                   <span className="text-xs text-muted-foreground">
-                    {featuredBoard
-                      ? "Click to change"
-                      : "Click to select board"}
+                    {updatingPosition === collection.position
+                      ? "Updating..."
+                      : featuredBoard
+                        ? "Click to change"
+                        : "Click to select board"}
                   </span>
                 </div>
 
                 {/* Dropdown */}
                 {openDropdown === collection.position && (
                   <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                    {loading ? (
+                    {loading || updatingPosition !== null ? (
                       <div className="p-4 text-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                         <p className="text-sm text-gray-500 mt-2">
-                          Loading boards...
+                          {updatingPosition !== null
+                            ? "Updating collection..."
+                            : "Loading boards..."}
                         </p>
                       </div>
                     ) : (
@@ -339,27 +394,53 @@ export function OverviewTab() {
                             No boards found
                           </p>
                         ) : (
-                          boards.map(board => (
-                            <div
-                              key={board.id}
-                              onClick={() =>
-                                handleSelectBoard(board, collection.position)
-                              }
-                              className="p-3 hover:bg-gray-50 cursor-pointer rounded border-b border-gray-100 last:border-b-0"
-                            >
-                              <div className="flex justify-between items-start">
-                                <div>
-                                  <h4 className="font-medium text-sm">
-                                    {board.name}
-                                  </h4>
-                                  <p className="text-xs text-gray-500">
-                                    {board.folders?.name || "No folder"} •{" "}
-                                    {board.postCount} posts
-                                  </p>
+                          boards.map(board => {
+                            // Check if this board is already featured
+                            const isAlreadyFeatured = featuredBoards.some(
+                              fb => fb.board_id === board.id
+                            );
+
+                            return (
+                              <div
+                                key={board.id}
+                                onClick={() => {
+                                  if (
+                                    !isAlreadyFeatured &&
+                                    updatingPosition === null
+                                  ) {
+                                    handleSelectBoard(
+                                      board,
+                                      collection.position
+                                    );
+                                  }
+                                }}
+                                className={`p-3 cursor-pointer rounded border-b border-gray-100 last:border-b-0 ${
+                                  isAlreadyFeatured
+                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                    : "hover:bg-gray-50"
+                                }`}
+                              >
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <h4 className="font-medium text-sm">
+                                      {board.name}
+                                    </h4>
+                                    <p className="text-xs text-gray-500">
+                                      {board.folders?.name || "No folder"} •{" "}
+                                      {board.postCount} posts
+                                    </p>
+                                  </div>
+                                  {isAlreadyFeatured && (
+                                    <div className="ml-2">
+                                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">
+                                        Featured
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-                            </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
                     )}
