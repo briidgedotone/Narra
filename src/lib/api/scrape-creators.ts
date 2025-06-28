@@ -143,13 +143,19 @@ export const scrapeCreatorsApi = {
       );
     },
 
-    async getProfileVideos(handle: string, count: number = 20) {
-      const cacheKey = cacheKeys.tiktokVideos(handle, count);
-      return await makeRequest(
-        `/v3/tiktok/profile/videos?handle=${handle}&count=${count}`,
-        cacheKey,
-        cacheTTL.posts
-      );
+    async getProfileVideos(
+      handle: string,
+      count: number = 20,
+      cursor?: string
+    ) {
+      const cacheKey = cursor
+        ? `tiktok:videos:${handle}:${count}:${cursor}`
+        : cacheKeys.tiktokVideos(handle, count);
+      let endpoint = `/v3/tiktok/profile/videos?handle=${handle}&count=${count}`;
+      if (cursor) {
+        endpoint += `&cursor=${cursor}&max_cursor=${cursor}`;
+      }
+      return await makeRequest(endpoint, cacheKey, cacheTTL.posts);
     },
 
     async getVideoTranscript(videoUrl: string, language: string = "en") {

@@ -168,6 +168,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -239,6 +240,25 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             console.log("TikTok API response structure:", result.data);
             videosArray = [];
           }
+
+          // Update pagination metadata for TikTok
+          setHasMorePosts(result.data.has_more || false);
+          // Extract any known cursor field names
+          const rawCursor =
+            result.data.cursor ??
+            result.data.max_cursor ??
+            result.data.next_cursor ??
+            (result.data.data
+              ? (result.data.data.cursor ??
+                result.data.data.max_cursor ??
+                result.data.data.next_cursor)
+              : undefined);
+
+          setNextCursor(
+            rawCursor !== undefined && rawCursor !== null
+              ? rawCursor.toString()
+              : null
+          );
         } else {
           // Instagram API returns posts in items array - use our client-safe transformer
           const { transformers } = await import("@/lib/transformers");
@@ -267,7 +287,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             platform: post.platform,
           }));
 
-          setPosts(prevPosts => [...prevPosts, ...newPosts]);
+          setPosts(prevPosts => {
+            const existingIds = new Set(prevPosts.map(p => p.id));
+            const dedup = newPosts.filter(p => !existingIds.has(p.id));
+            return [...prevPosts, ...dedup];
+          });
+
+          // If no truly new posts were added, stop further pagination
+          if (newPosts.length === 0) {
+            setHasMorePosts(false);
+          }
           return; // Exit early since we've already processed Instagram posts
         }
 
@@ -402,8 +431,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   }, [searchResults]);
 
   const loadMorePosts = useCallback(async () => {
-    if (!searchResults || !hasMorePosts || !nextMaxId || isLoadingMorePosts)
-      return;
+    if (!searchResults || !hasMorePosts || isLoadingMorePosts) return;
 
     setIsLoadingMorePosts(true);
     try {
@@ -411,6 +439,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const platform = searchResults.platform;
 
       if (platform === "instagram") {
+        if (!nextMaxId) {
+          setIsLoadingMorePosts(false);
+          return;
+        }
         // Call Instagram API with pagination
         const response = await fetch(
           `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=50&next_max_id=${nextMaxId}`
@@ -445,7 +477,103 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           }));
 
           // Append new posts to existing posts
-          setPosts(prevPosts => [...prevPosts, ...newPosts]);
+          setPosts(prevPosts => {
+            const existingIds = new Set(prevPosts.map(p => p.id));
+            const dedup = newPosts.filter(p => !existingIds.has(p.id));
+            return [...prevPosts, ...dedup];
+          });
+        }
+      }
+
+      // TikTok pagination
+      if (platform === "tiktok" && nextCursor) {
+        const response = await fetch(
+          `/api/test-scrapecreators?test=tiktok-videos&handle=${encodeURIComponent(handle)}&count=50&max_cursor=${nextCursor}`
+        );
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Update pagination metadata
+          setHasMorePosts(result.data.has_more || false);
+          // Extract any known cursor field names
+          const rawCursor =
+            result.data.cursor ??
+            result.data.max_cursor ??
+            result.data.next_cursor ??
+            (result.data.data
+              ? (result.data.data.cursor ??
+                result.data.data.max_cursor ??
+                result.data.data.next_cursor)
+              : undefined);
+
+          setNextCursor(
+            rawCursor !== undefined && rawCursor !== null
+              ? rawCursor.toString()
+              : null
+          );
+
+          // Handle different possible structures for TikTok videos
+          let videosArray = result.data;
+          if (result.data.aweme_list) {
+            videosArray = result.data.aweme_list;
+          } else if (result.data.videos) {
+            videosArray = result.data.videos;
+          } else if (result.data.data) {
+            videosArray = result.data.data;
+          } else if (!Array.isArray(result.data)) {
+            videosArray = [];
+          }
+
+          const mappedPosts: Post[] = Array.isArray(videosArray)
+            ? videosArray.map((item: TikTokVideoData, index: number) => {
+                // Transform TikTok video data
+                const originCover =
+                  item.video?.origin_cover?.url_list?.[0] || "";
+                const dynamicCover =
+                  item.video?.dynamic_cover?.url_list?.[0] || "";
+                let thumbnailUrl = dynamicCover || originCover;
+                if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                  thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                }
+
+                return {
+                  id: item.aweme_id || `tiktok-${index}-${Date.now()}`,
+                  embedUrl:
+                    item.video?.play_addr?.url_list?.[0] ||
+                    item.video?.download_addr?.url_list?.[0] ||
+                    "",
+                  caption: item.desc || "No caption available",
+                  thumbnail: thumbnailUrl,
+                  metrics: {
+                    views: item.statistics?.play_count || 0,
+                    likes: item.statistics?.digg_count || 0,
+                    comments: item.statistics?.comment_count || 0,
+                    shares: item.statistics?.share_count || 0,
+                  },
+                  datePosted: new Date(item.create_time * 1000).toISOString(),
+                  platform: "tiktok",
+                  tiktokUrl: `https://www.tiktok.com/@${handle}/video/${item.aweme_id}`,
+                };
+              })
+            : [];
+
+          setPosts(prevPosts => {
+            const existingIds = new Set(prevPosts.map(p => p.id));
+            const dedup = mappedPosts.filter(p => !existingIds.has(p.id));
+
+            // If dedup is empty, no new posts
+            if (dedup.length === 0) {
+              setHasMorePosts(false);
+              return prevPosts;
+            }
+
+            return [...prevPosts, ...dedup];
+          });
+
+          // If API itself signals no more pages
+          if (!result.data.has_more) {
+            setHasMorePosts(false);
+          }
         }
       }
     } catch (error) {
@@ -453,7 +581,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     } finally {
       setIsLoadingMorePosts(false);
     }
-  }, [searchResults, hasMorePosts, nextMaxId, isLoadingMorePosts]);
+  }, [searchResults, hasMorePosts, nextMaxId, nextCursor, isLoadingMorePosts]);
 
   // Auto-load posts when search results change
   useEffect(() => {
@@ -543,6 +671,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       setPosts([]);
       setSearchError(null);
       setHasSearched(true);
+      setNextMaxId(null);
+      setNextCursor(null);
+      setHasMorePosts(false);
 
       try {
         // Clean the handle - remove @ and whitespace
@@ -1157,32 +1288,30 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             </div>
           )}
 
-          {/* Load More Button for Instagram */}
-          {!isLoadingPosts &&
-            searchResults?.platform === "instagram" &&
-            hasMorePosts && (
-              <div className="flex justify-center mt-6">
-                <Button
-                  onClick={loadMorePosts}
-                  disabled={isLoadingMorePosts}
-                  variant="outline"
-                  size="lg"
-                  className="px-8"
-                >
-                  {isLoadingMorePosts ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
-                      Loading More Posts...
-                    </>
-                  ) : (
-                    <>
-                      Load More Posts
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
+          {/* Load More Button */}
+          {!isLoadingPosts && hasMorePosts && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={loadMorePosts}
+                disabled={isLoadingMorePosts}
+                variant="outline"
+                size="lg"
+                className="px-8"
+              >
+                {isLoadingMorePosts ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
+                    Loading More Posts...
+                  </>
+                ) : (
+                  <>
+                    Load More Posts
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

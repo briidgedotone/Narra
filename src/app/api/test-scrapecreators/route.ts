@@ -22,9 +22,14 @@ export async function GET(request: NextRequest) {
       case "tiktok-videos":
         const tiktokHandle = searchParams.get("handle") || "iamsydneythomas";
         const videoCount = parseInt(searchParams.get("count") || "5");
+        const cursorParam =
+          searchParams.get("cursor") ||
+          searchParams.get("max_cursor") ||
+          undefined;
         result = await scrapeCreatorsApi.tiktok.getProfileVideos(
           tiktokHandle,
-          videoCount
+          videoCount,
+          cursorParam
         );
         break;
 
