@@ -783,7 +783,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       {/* Profile Results */}
       {searchResults && (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="rounded-lg">
           <div>
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Profile Avatar */}
