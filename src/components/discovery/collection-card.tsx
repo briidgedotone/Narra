@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+
 interface CollectionCardProps {
   title: string;
   description: string;
@@ -5,6 +9,7 @@ interface CollectionCardProps {
   authorInitial: string;
   authorBadgeColor: string;
   backgroundColor: string;
+  boardId?: string; // Optional board ID for navigation
 }
 
 export function CollectionCard({
@@ -14,9 +19,10 @@ export function CollectionCard({
   authorInitial,
   authorBadgeColor,
   backgroundColor,
+  boardId,
 }: CollectionCardProps) {
-  return (
-    <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden">
+  const cardContent = (
+    <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden hover:bg-[#F0F0F0] transition-colors">
       <div className="flex h-full">
         <div
           className={`w-[120px] h-[120px] flex-shrink-0 rounded-md`}
@@ -41,4 +47,16 @@ export function CollectionCard({
       </div>
     </div>
   );
+
+  // If boardId is provided, make it clickable and navigate to the board
+  if (boardId) {
+    return (
+      <Link href={`/boards/${boardId}`} className="block">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  // Otherwise, return the static card
+  return cardContent;
 }
