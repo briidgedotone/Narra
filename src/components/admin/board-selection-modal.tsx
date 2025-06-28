@@ -12,7 +12,7 @@ interface Board {
   name: string;
   description?: string;
   postCount: number;
-  folders: { name: string };
+  folders?: { name: string } | null;
   created_at: string;
 }
 
@@ -39,6 +39,11 @@ export function BoardSelectionModal({
   useEffect(() => {
     if (isOpen) {
       loadBoards();
+      // Reset form when modal opens
+      setSelectedBoard(null);
+      setCustomTitle("");
+      setCustomDescription("");
+      setCoverImageUrl("");
     }
   }, [isOpen]);
 
@@ -54,12 +59,6 @@ export function BoardSelectionModal({
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleBoardSelect = (board: Board) => {
-    setSelectedBoard(board);
-    setCustomTitle(board.name);
-    setCustomDescription(board.description || "");
   };
 
   const handleSave = async () => {
@@ -114,24 +113,28 @@ export function BoardSelectionModal({
                 {boards.map(board => (
                   <div
                     key={board.id}
-                    onClick={() => handleBoardSelect(board)}
-                    className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => setSelectedBoard(board)}
+                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                      selectedBoard?.id === board.id
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium">{board.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {board.folders.name}
+                        <h3 className="font-medium">{board.name}</h3>
+                        <p className="text-sm text-gray-500">
+                          Folder: {board.folders?.name || "No folder"}
                         </p>
-                        {board.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {board.description}
-                          </p>
-                        )}
+                        <p className="text-xs text-gray-400">
+                          {board.postCount} posts
+                        </p>
                       </div>
-                      <span className="text-sm text-muted-foreground">
-                        {board.postCount} posts
-                      </span>
+                      {selectedBoard?.id === board.id && (
+                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full" />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -154,7 +157,8 @@ export function BoardSelectionModal({
             <div className="p-4 bg-gray-50 rounded-lg">
               <h4 className="font-medium">{selectedBoard.name}</h4>
               <p className="text-sm text-muted-foreground">
-                {selectedBoard.folders.name} • {selectedBoard.postCount} posts
+                {selectedBoard.folders?.name || "No folder"} •{" "}
+                {selectedBoard.postCount} posts
               </p>
             </div>
 

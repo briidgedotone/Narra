@@ -613,7 +613,7 @@ export class DatabaseService {
       .select(
         `
         *,
-        folders(name),
+        folders!inner(name, user_id),
         board_posts(
           posts(*)
         )
@@ -624,11 +624,12 @@ export class DatabaseService {
 
     if (error) throw error;
 
-    // Transform the data to include post count
+    // Transform the data to include post count and handle null folders
     return (
       data?.map(board => ({
         ...board,
         postCount: board.board_posts?.length || 0,
+        folders: board.folders || { name: "Unknown Folder" },
       })) || []
     );
   }

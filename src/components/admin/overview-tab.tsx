@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-import { getFeaturedBoards } from "@/app/actions/folders";
+import {
+  getFeaturedBoards,
+  getAdminBoards,
+  setFeaturedBoard,
+} from "@/app/actions/folders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, PlusCircle } from "@/components/ui/icons";
 import { supabase } from "@/lib/supabase";
-
-import { BoardSelectionModal } from "./board-selection-modal";
 
 // Function to fetch real admin stats
 async function getAdminStats() {
@@ -53,9 +55,11 @@ async function getAdminStats() {
   }
 }
 
-// Format number with commas
-function formatNumber(num: number): string {
-  return num.toLocaleString();
+interface Board {
+  id: string;
+  name: string;
+  postCount: number;
+  folders?: { name: string } | null;
 }
 
 export function OverviewTab() {
@@ -65,24 +69,89 @@ export function OverviewTab() {
     totalCollections: 0,
     totalPosts: 0,
   });
-  const [featuredBoards, setFeaturedBoards] = useState<any[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState<number>(1);
+  const [featuredBoards, setFeaturedBoards] = useState<
+    Array<{
+      id: string;
+      display_order: number;
+      title?: string;
+      description?: string;
+      cover_image_url?: string;
+    }>
+  >([]);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [boards, setBoards] = useState<Board[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadData();
+    loadStats();
+    loadFeaturedBoards();
   }, []);
 
-  const loadData = async () => {
-    // Load stats
-    const statsData = await getAdminStats();
-    setStats(statsData);
-
-    // Load featured boards
-    const result = await getFeaturedBoards();
-    if (result.success && result.data) {
-      setFeaturedBoards(result.data);
+  useEffect(() => {
+    if (openDropdown !== null) {
+      loadAdminBoards();
     }
+  }, [openDropdown]);
+
+  const loadStats = async () => {
+    const adminStats = await getAdminStats();
+    setStats(adminStats);
+  };
+
+  const loadFeaturedBoards = async () => {
+    const result = await getFeaturedBoards();
+    if (result.success) {
+      setFeaturedBoards(result.data || []);
+    }
+  };
+
+  const loadAdminBoards = async () => {
+    setLoading(true);
+    try {
+      const result = await getAdminBoards();
+      if (result.success) {
+        setBoards(result.data || []);
+      }
+    } catch (error) {
+      console.error("Failed to load boards:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectBoard = async (board: Board, position: number) => {
+    setLoading(true);
+    try {
+      // Use a placeholder cover image URL for now
+      const coverImageUrl = "https://via.placeholder.com/400x300";
+
+      const result = await setFeaturedBoard(
+        board.id,
+        position,
+        coverImageUrl,
+        board.name,
+        `Featured collection from ${board.folders?.name || "Unknown folder"}`
+      );
+
+      if (result.success) {
+        await loadFeaturedBoards();
+        setOpenDropdown(null);
+      }
+    } catch (error) {
+      console.error("Failed to set featured board:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + "K";
+    }
+    return num.toString();
   };
 
   const activeUserPercentage =
@@ -93,45 +162,35 @@ export function OverviewTab() {
   // Empty state collections for admin
   const emptyCollections = [
     {
+      position: 1,
       title: "Featured Collection 1",
       description: "Select a board to feature as your first collection",
-      backgroundColor: "#FDA02C",
-      position: 1,
+      backgroundColor: "#FF6B6B",
     },
     {
+      position: 2,
       title: "Featured Collection 2",
       description: "Select a board to feature as your second collection",
-      backgroundColor: "#E87BD1",
-      position: 2,
+      backgroundColor: "#4ECDC4",
     },
     {
+      position: 3,
       title: "Featured Collection 3",
       description: "Select a board to feature as your third collection",
-      backgroundColor: "#EE97DB",
-      position: 3,
+      backgroundColor: "#45B7D1",
     },
     {
+      position: 4,
       title: "Featured Collection 4",
       description: "Select a board to feature as your fourth collection",
-      backgroundColor: "#B078F9",
-      position: 4,
+      backgroundColor: "#96CEB4",
     },
   ];
 
-  const handleCollectionClick = (position: number) => {
-    setSelectedPosition(position);
-    setModalOpen(true);
-  };
-
-  const handleModalSuccess = () => {
-    loadData(); // Reload data after successful save
-  };
-
   return (
     <div className="space-y-6">
-      {/* Quick Stats */}
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Total Users */}
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -145,7 +204,6 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        {/* Active Users */}
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
@@ -161,7 +219,6 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        {/* Total Collections */}
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -177,7 +234,6 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        {/* Total Posts */}
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
@@ -193,71 +249,108 @@ export function OverviewTab() {
       </div>
 
       {/* Featured Collections */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Featured Collections</h2>
-        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-          {emptyCollections.map((collection, index) => {
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Featured Collections</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {emptyCollections.map(collection => {
             // Check if this position has a featured board
             const featuredBoard = featuredBoards.find(
               fb => fb.display_order === collection.position
             );
 
             return (
-              <div
-                key={index}
-                onClick={() => handleCollectionClick(collection.position)}
-                className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden cursor-pointer hover:bg-gray-100 transition-colors"
-              >
-                <div className="flex h-full">
-                  <div
-                    className="w-[120px] h-[120px] flex-shrink-0 rounded-md flex items-center justify-center"
-                    style={{
-                      backgroundColor: collection.backgroundColor,
-                      backgroundImage: featuredBoard?.cover_image_url
-                        ? `url(${featuredBoard.cover_image_url})`
-                        : "none",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
-                    {!featuredBoard?.cover_image_url && (
-                      <PlusCircle className="h-8 w-8 text-white" />
+              <div key={collection.position} className="relative">
+                <div
+                  className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity relative"
+                  onClick={() =>
+                    setOpenDropdown(
+                      openDropdown === collection.position
+                        ? null
+                        : collection.position
+                    )
+                  }
+                  style={{
+                    backgroundColor: collection.backgroundColor,
+                    backgroundImage: featuredBoard?.cover_image_url
+                      ? `url(${featuredBoard.cover_image_url})`
+                      : "none",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  {!featuredBoard && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div
+                        className="w-16 h-16 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                      >
+                        <PlusCircle className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3">
+                  <h3 className="font-medium text-sm">
+                    {featuredBoard?.title || collection.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {featuredBoard?.description || collection.description}
+                  </p>
+                  <span className="text-xs text-muted-foreground">
+                    {featuredBoard
+                      ? "Click to change"
+                      : "Click to select board"}
+                  </span>
+                </div>
+
+                {/* Dropdown */}
+                {openDropdown === collection.position && (
+                  <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                    {loading ? (
+                      <div className="p-4 text-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Loading boards...
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-2">
+                        {boards.length === 0 ? (
+                          <p className="text-sm text-gray-500 p-2">
+                            No boards found
+                          </p>
+                        ) : (
+                          boards.map(board => (
+                            <div
+                              key={board.id}
+                              onClick={() =>
+                                handleSelectBoard(board, collection.position)
+                              }
+                              className="p-3 hover:bg-gray-50 cursor-pointer rounded border-b border-gray-100 last:border-b-0"
+                            >
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium text-sm">
+                                    {board.name}
+                                  </h4>
+                                  <p className="text-xs text-gray-500">
+                                    {board.folders?.name || "No folder"} •{" "}
+                                    {board.postCount} posts
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
                     )}
                   </div>
-                  <div className="pl-4 flex-1 flex flex-col justify-start py-2">
-                    <h3 className="text-sm font-semibold mb-2">
-                      {featuredBoard?.title || collection.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                      {featuredBoard?.description || collection.description}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
-                        <span className="text-white text-xs font-semibold">
-                          {featuredBoard ? "✓" : "+"}
-                        </span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        {featuredBoard
-                          ? "Click to change"
-                          : "Click to select board"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             );
           })}
         </div>
       </div>
-
-      {/* Board Selection Modal */}
-      <BoardSelectionModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        displayOrder={selectedPosition}
-        onSuccess={handleModalSuccess}
-      />
     </div>
   );
 }
