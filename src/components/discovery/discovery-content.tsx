@@ -784,7 +784,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       {/* Profile Results */}
       {searchResults && (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="p-6">
+          <div>
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Profile Avatar */}
               <div className="flex-shrink-0">
@@ -1241,7 +1241,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         <div className="space-y-6">
           {/* Profile Skeleton */}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div className="p-6">
+            <div>
               <div className="flex flex-col sm:flex-row gap-6">
                 {/* Profile Avatar Skeleton */}
                 <div className="flex-shrink-0">

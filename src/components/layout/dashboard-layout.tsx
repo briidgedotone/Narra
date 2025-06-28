@@ -73,7 +73,7 @@ export function DashboardLayout({ children, header }: DashboardLayoutProps) {
             {/* Page Content */}
             <main className="flex-1">
               {header}
-              <div className={header ? "min-h-screen" : "min-h-screen"}>
+              <div className={header ? "min-h-screen p-6" : "min-h-screen p-6"}>
                 {children}
               </div>
             </main>

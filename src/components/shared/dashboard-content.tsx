@@ -125,7 +125,7 @@ export function DashboardContent({}: DashboardContentProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-280px)] space-y-8">
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] space-y-8">
         {/* Header Section Skeleton */}
         <div className="text-center space-y-3">
           <div className="h-9 w-80 bg-muted rounded-md animate-pulse mx-auto" />
@@ -166,7 +166,7 @@ export function DashboardContent({}: DashboardContentProps) {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-[calc(100vh-280px)] space-y-8">
+    <div className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] space-y-8">
       {/* Header Section */}
       <div className="text-center space-y-3">
         <h1 className="text-3xl font-semibold text-foreground">
