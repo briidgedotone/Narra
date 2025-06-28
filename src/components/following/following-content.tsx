@@ -88,17 +88,13 @@ export function FollowingContent({
   if (profiles.length === 0) {
     return (
       <EmptyState
-        icon={<Users className="h-12 w-12 text-muted-foreground" />}
+        icons={[Users]}
         title="No Followed Creators"
         description="You haven't followed any creators yet. Discover and follow creators to see them here."
-        action={
-          <Link href="/discovery">
-            <Button>
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Discover Creators
-            </Button>
-          </Link>
-        }
+        action={{
+          label: "Discover Creators",
+          onClick: () => router.push("/discovery"),
+        }}
       />
     );
   }

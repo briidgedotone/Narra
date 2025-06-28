@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Settings, Eye, EyeOff } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Dashboard settings type
 export interface DashboardSettings {
@@ -108,11 +114,15 @@ export function DashboardSettingsModal({
                   viewMode: value as "comfortable" | "compact",
                 })
               }
-              options={[
-                { value: "comfortable", label: "Comfortable" },
-                { value: "compact", label: "Compact" },
-              ]}
-            />
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="comfortable">Comfortable</SelectItem>
+                <SelectItem value="compact">Compact</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Theme */}
@@ -125,12 +135,16 @@ export function DashboardSettingsModal({
                   theme: value as "light" | "dark" | "system",
                 })
               }
-              options={[
-                { value: "light", label: "Light" },
-                { value: "dark", label: "Dark" },
-                { value: "system", label: "System" },
-              ]}
-            />
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Visibility Settings */}

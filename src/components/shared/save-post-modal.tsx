@@ -15,7 +15,13 @@ import { Folder, PlusCircle } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useFolders } from "@/hooks/useFolders";
 
 interface SavePostModalProps {
@@ -62,7 +68,7 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
       folders[0]?.boards &&
       folders[0].boards.length > 0
     ) {
-      setSelectedBoardId(folders[0].boards[0].id);
+      setSelectedBoardId(folders[0].boards?.[0]?.id || "");
     }
   }, [isOpen, folders]);
 
@@ -189,12 +195,18 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
                   <Select
                     value={selectedBoardId}
                     onValueChange={setSelectedBoardId}
-                    options={allBoards.map(board => ({
-                      value: board.id,
-                      label: `${board.name} (in ${board.folderName})`,
-                    }))}
-                    placeholder="Choose a board..."
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a board..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allBoards.map(board => (
+                        <SelectItem key={board.id} value={board.id}>
+                          {board.name} (in {board.folderName})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
 
                 {/* Action Buttons */}
@@ -234,12 +246,18 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
                 <Select
                   value={selectedFolderId}
                   onValueChange={setSelectedFolderId}
-                  options={folders.map(folder => ({
-                    value: folder.id,
-                    label: folder.name,
-                  }))}
-                  placeholder="Select folder..."
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select folder..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {folders.map(folder => (
+                      <SelectItem key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"

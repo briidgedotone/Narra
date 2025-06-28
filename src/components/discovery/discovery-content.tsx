@@ -1402,19 +1402,19 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                         ) : (
                           <img
                             key={
-                              selectedPost.carouselMedia[currentCarouselIndex]
-                                .id
+                              selectedPost.carouselMedia?.[currentCarouselIndex]
+                                ?.id || currentCarouselIndex
                             }
                             src={
                               selectedPost.platform === "instagram"
                                 ? proxyInstagramImage(
-                                    selectedPost.carouselMedia[
+                                    selectedPost.carouselMedia?.[
                                       currentCarouselIndex
-                                    ].url
+                                    ]?.url || ""
                                   )
-                                : selectedPost.carouselMedia[
+                                : selectedPost.carouselMedia?.[
                                     currentCarouselIndex
-                                  ].url
+                                  ]?.url || ""
                             }
                             alt="Carousel item"
                             className="w-full h-full object-cover"

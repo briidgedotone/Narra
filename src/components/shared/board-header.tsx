@@ -26,6 +26,9 @@ export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
       }
 
       // Copy the public URL
+      if (!result.data?.public_id) {
+        throw new Error("No public ID returned");
+      }
       const url = `${window.location.origin}/shared/${result.data.public_id}`;
       await navigator.clipboard.writeText(url);
       toast.success("Board link copied to clipboard!");

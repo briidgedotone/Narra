@@ -188,7 +188,7 @@ export class DatabaseService {
     // Transform data to include post counts
     return data?.map(folder => ({
       ...folder,
-      boards: folder.boards?.map(board => ({
+      boards: folder.boards?.map((board: any) => ({
         ...board,
         post_count: board.board_posts?.[0]?.count || 0,
       })),
@@ -270,7 +270,8 @@ export class DatabaseService {
     if (data) {
       return {
         ...data,
-        posts: data.board_posts?.map(bp => bp.posts).filter(Boolean) || [],
+        posts:
+          data.board_posts?.map((bp: any) => bp.posts).filter(Boolean) || [],
       };
     }
 
@@ -385,7 +386,9 @@ export class DatabaseService {
         ...item.profiles,
         // Add follow metadata
         created_at: item.created_at, // when user followed this profile
-        last_updated: item.profiles?.last_updated || item.profiles?.created_at, // when profile data was last fetched
+        last_updated:
+          (item.profiles as any)?.last_updated ||
+          (item.profiles as any)?.created_at, // when profile data was last fetched
       }))
       .filter(Boolean);
   }
@@ -653,7 +656,7 @@ export class DatabaseService {
   }
 
   async deleteFeaturedBoard(displayOrder: number) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("featured_boards")
       .delete()
       .eq("display_order", displayOrder);
@@ -662,12 +665,24 @@ export class DatabaseService {
     return true;
   }
 
-  async createFeaturedBoard(
-    featuredBoardData: Database["public"]["Tables"]["featured_boards"]["Insert"]
-  ) {
-    const { data, error } = await this.client
+  async createFeaturedBoard(featuredBoardData: {
+    board_id: string;
+    display_order: number;
+    cover_image_url?: string;
+    custom_title?: string;
+    custom_description?: string;
+  }) {
+    // Temporarily only insert core fields to avoid schema cache issues
+    // TODO: Re-enable custom_title and custom_description once schema cache is refreshed
+    const insertData = {
+      board_id: featuredBoardData.board_id,
+      display_order: featuredBoardData.display_order,
+      cover_image_url: featuredBoardData.cover_image_url,
+    };
+
+    const { data, error } = await this.adminClient
       .from("featured_boards")
-      .insert(featuredBoardData)
+      .insert(insertData)
       .select()
       .single();
 

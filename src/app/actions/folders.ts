@@ -257,13 +257,28 @@ export async function setFeaturedBoard(
     await db.deleteFeaturedBoard(displayOrder);
 
     // Then insert the new featured board
-    const data = await db.createFeaturedBoard({
+    const featuredBoardData: {
+      board_id: string;
+      display_order: number;
+      cover_image_url?: string;
+      custom_title?: string;
+      custom_description?: string;
+    } = {
       board_id: boardId,
       display_order: displayOrder,
-      cover_image_url: coverImageUrl,
-      title,
-      description,
-    });
+    };
+
+    if (coverImageUrl) {
+      featuredBoardData.cover_image_url = coverImageUrl;
+    }
+    if (title) {
+      featuredBoardData.custom_title = title;
+    }
+    if (description) {
+      featuredBoardData.custom_description = description;
+    }
+
+    const data = await db.createFeaturedBoard(featuredBoardData);
 
     return { success: true, data };
   } catch (error) {

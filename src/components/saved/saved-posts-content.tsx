@@ -114,14 +114,13 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   if (posts.length === 0) {
     return (
       <EmptyState
-        icon={<Grid className="w-12 h-12" />}
+        icons={[Grid]}
         title="No saved posts yet"
         description="Posts you save to boards will appear here. Start by discovering content and saving posts to your boards."
-        action={
-          <Button asChild>
-            <a href="/discovery">Discover Content</a>
-          </Button>
-        }
+        action={{
+          label: "Discover Content",
+          onClick: () => (window.location.href = "/discovery"),
+        }}
       />
     );
   }

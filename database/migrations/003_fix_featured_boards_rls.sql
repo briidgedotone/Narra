@@ -19,7 +19,7 @@ CREATE POLICY "featured_boards_insert_policy" ON featured_boards
     FOR INSERT WITH CHECK (
         EXISTS (
             SELECT 1 FROM users 
-            WHERE users.id = auth.uid() 
+            WHERE users.id = auth.uid()::text 
             AND users.role = 'admin'
         )
     );
@@ -29,13 +29,13 @@ CREATE POLICY "featured_boards_update_policy" ON featured_boards
     FOR UPDATE USING (
         EXISTS (
             SELECT 1 FROM users 
-            WHERE users.id = auth.uid() 
+            WHERE users.id = auth.uid()::text 
             AND users.role = 'admin'
         )
     ) WITH CHECK (
         EXISTS (
             SELECT 1 FROM users 
-            WHERE users.id = auth.uid() 
+            WHERE users.id = auth.uid()::text 
             AND users.role = 'admin'
         )
     );
@@ -45,7 +45,7 @@ CREATE POLICY "featured_boards_delete_policy" ON featured_boards
     FOR DELETE USING (
         EXISTS (
             SELECT 1 FROM users 
-            WHERE users.id = auth.uid() 
+            WHERE users.id = auth.uid()::text 
             AND users.role = 'admin'
         )
     );
