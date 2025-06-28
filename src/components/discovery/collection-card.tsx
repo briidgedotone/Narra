@@ -9,7 +9,8 @@ interface CollectionCardProps {
   authorInitial: string;
   authorBadgeColor: string;
   backgroundColor: string;
-  boardId?: string; // Optional board ID for navigation
+  boardId?: string | undefined; // Optional board ID for navigation
+  coverImageUrl?: string | undefined; // Optional cover image URL
 }
 
 export function CollectionCard({
@@ -20,13 +21,19 @@ export function CollectionCard({
   authorBadgeColor,
   backgroundColor,
   boardId,
+  coverImageUrl,
 }: CollectionCardProps) {
   const cardContent = (
     <div className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl overflow-hidden hover:bg-[#F0F0F0] transition-colors">
       <div className="flex h-full">
         <div
-          className={`w-[120px] h-[120px] flex-shrink-0 rounded-md`}
-          style={{ backgroundColor }}
+          className={`w-[120px] h-[120px] flex-shrink-0 rounded-md overflow-hidden`}
+          style={{
+            backgroundColor: coverImageUrl ? "transparent" : backgroundColor,
+            backgroundImage: coverImageUrl ? `url(${coverImageUrl})` : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         ></div>
         <div className="pl-4 flex-1 flex flex-col justify-start py-2">
           <h3 className="text-sm font-semibold mb-2">{title}</h3>

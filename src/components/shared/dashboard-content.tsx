@@ -9,6 +9,17 @@ interface DashboardContentProps {
   userId: string;
 }
 
+interface Collection {
+  title: string;
+  description: string;
+  username: string;
+  authorInitial: string;
+  authorBadgeColor: string;
+  backgroundColor: string;
+  boardId?: string | undefined;
+  coverImageUrl?: string | undefined;
+}
+
 interface FeaturedBoard {
   id: string;
   board_id: string;
@@ -47,7 +58,7 @@ export function DashboardContent({}: DashboardContentProps) {
   }, []);
 
   // Fallback collections if no featured boards are set
-  const fallbackCollections = [
+  const fallbackCollections: Collection[] = [
     {
       title: "The MrBeast Collection",
       description:
@@ -87,33 +98,36 @@ export function DashboardContent({}: DashboardContentProps) {
   ];
 
   // Convert featured boards to collection format
-  const collections =
-    featuredBoards.length > 0
-      ? featuredBoards.map((board, index) => {
-          const boardData = board.boards;
-          const folderName = boardData?.folders?.name || "Unknown Folder";
+  const featuredCollections: Collection[] = featuredBoards.map(
+    (board, index) => {
+      const boardData = board.boards;
+      const folderName = boardData?.folders?.name || "Unknown Folder";
 
-          // Default colors for featured boards
-          const colors = ["#FDA02C", "#E87BD1", "#EE97DB", "#B078F9"];
-          const badgeColors = [
-            "bg-orange-500",
-            "bg-black",
-            "bg-purple-500",
-            "bg-blue-500",
-          ];
+      // Default colors for featured boards
+      const colors = ["#FDA02C", "#E87BD1", "#EE97DB", "#B078F9"];
+      const badgeColors = [
+        "bg-orange-500",
+        "bg-black",
+        "bg-purple-500",
+        "bg-blue-500",
+      ];
 
-          return {
-            title:
-              boardData?.name || `Featured Collection ${board.display_order}`,
-            description: `Curated content from ${folderName}`,
-            username: folderName,
-            authorInitial: folderName.charAt(0).toUpperCase(),
-            authorBadgeColor: badgeColors[index % badgeColors.length],
-            backgroundColor: colors[index % colors.length],
-            boardId: board.board_id, // Add board ID for navigation
-          };
-        })
-      : fallbackCollections;
+      return {
+        title: boardData?.name || `Featured Collection ${board.display_order}`,
+        description: `Curated content from ${folderName}`,
+        username: folderName,
+        authorInitial: folderName.charAt(0).toUpperCase(),
+        authorBadgeColor:
+          badgeColors[index % badgeColors.length] || "bg-gray-500",
+        backgroundColor: colors[index % colors.length] || "#94A3B8",
+        boardId: board.board_id, // Add board ID for navigation
+        coverImageUrl: board.cover_image_url || undefined, // Add cover image URL
+      };
+    }
+  );
+
+  const collections: Collection[] =
+    featuredBoards.length > 0 ? featuredCollections : fallbackCollections;
 
   if (loading) {
     return (
@@ -154,26 +168,26 @@ export function DashboardContent({}: DashboardContentProps) {
 
       {/* Collections */}
       <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
-        {collections.map((collection, index) => (
-          <CollectionCard
-            key={
-              featuredBoards.length > 0
-                ? `featured-${index}`
-                : `fallback-${index}`
-            }
-            title={collection.title}
-            description={collection.description}
-            username={collection.username}
-            authorInitial={collection.authorInitial}
-            authorBadgeColor={collection.authorBadgeColor}
-            backgroundColor={collection.backgroundColor}
-            boardId={
-              featuredBoards.length > 0
-                ? (collection as any).boardId
-                : undefined
-            } // Pass board ID if available
-          />
-        ))}
+        {collections.map((collection, index) => {
+          const isFeatured = featuredBoards.length > 0;
+          const featuredCollection = isFeatured
+            ? featuredCollections[index]
+            : null;
+
+          return (
+            <CollectionCard
+              key={isFeatured ? `featured-${index}` : `fallback-${index}`}
+              title={collection.title}
+              description={collection.description}
+              username={collection.username}
+              authorInitial={collection.authorInitial}
+              authorBadgeColor={collection.authorBadgeColor}
+              backgroundColor={collection.backgroundColor}
+              boardId={featuredCollection?.boardId}
+              coverImageUrl={featuredCollection?.coverImageUrl}
+            />
+          );
+        })}
       </div>
 
       {/* Admin Notice */}
