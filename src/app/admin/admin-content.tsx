@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export async function AdminContent() {
   return (
-    <div className="flex-1 space-y-4">
+    <div className="flex-1 space-y-4 p-6 pb-20">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-base font-semibold text-[#171717]">
           Admin Dashboard

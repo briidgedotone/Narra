@@ -93,6 +93,22 @@ export function OverviewTab() {
     }
   }, [openDropdown]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (openDropdown !== null && !target.closest(".dropdown-container")) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [openDropdown]);
+
   const loadStats = async () => {
     const adminStats = await getAdminStats();
     setStats(adminStats);
@@ -259,7 +275,10 @@ export function OverviewTab() {
             );
 
             return (
-              <div key={collection.position} className="relative">
+              <div
+                key={collection.position}
+                className="relative dropdown-container"
+              >
                 <div
                   className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity relative"
                   onClick={() =>
@@ -305,7 +324,7 @@ export function OverviewTab() {
 
                 {/* Dropdown */}
                 {openDropdown === collection.position && (
-                  <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                     {loading ? (
                       <div className="p-4 text-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>

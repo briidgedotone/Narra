@@ -71,9 +71,11 @@ export function DashboardLayout({ children, header }: DashboardLayoutProps) {
             </div>
 
             {/* Page Content */}
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1">
               {header}
-              <div className={header ? "" : "p-6"}>{children}</div>
+              <div className={header ? "min-h-screen" : "min-h-screen"}>
+                {children}
+              </div>
             </main>
           </div>
         </div>
