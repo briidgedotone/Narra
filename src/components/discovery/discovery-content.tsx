@@ -1411,9 +1411,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             className="w-full h-full object-cover"
                             autoPlay
                             loop
-                            muted
+                            muted={selectedPost.platform === "instagram"}
                             playsInline
-                            controls
+                            controls={selectedPost.platform === "instagram"}
                           />
                         ) : (
                           <img
@@ -1486,9 +1486,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                         className="w-full h-full object-cover"
                         autoPlay
                         loop
-                        muted
+                        muted={selectedPost.platform === "instagram"}
                         playsInline
-                        controls
+                        controls={selectedPost.platform === "instagram"}
                         onError={e => {
                           // Fallback to image if video fails
                           const img = document.createElement("img");
