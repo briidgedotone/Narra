@@ -8,9 +8,9 @@ interface RawPost {
   platform: string;
   platform_post_id: string;
   embed_url: string;
-  caption?: string;
-  transcript?: string;
-  thumbnail_url?: string;
+  caption?: string | null;
+  transcript?: string | null;
+  thumbnail_url?: string | null;
   metrics: {
     views?: number;
     likes?: number;
@@ -26,10 +26,10 @@ interface RawProfile {
   id: string;
   handle: string;
   platform: string;
-  display_name?: string;
-  bio?: string;
+  display_name?: string | null;
+  bio?: string | null;
   followers_count?: number;
-  avatar_url?: string;
+  avatar_url?: string | null;
   verified?: boolean;
 }
 
@@ -39,9 +39,9 @@ export function transformPost(rawPost: RawPost): Post {
     platform: rawPost.platform as "tiktok" | "instagram",
     platform_post_id: rawPost.platform_post_id,
     embed_url: rawPost.embed_url,
-    caption: rawPost.caption,
-    transcript: rawPost.transcript,
-    thumbnail_url: rawPost.thumbnail_url,
+    caption: rawPost.caption || undefined,
+    transcript: rawPost.transcript || undefined,
+    thumbnail_url: rawPost.thumbnail_url || undefined,
     metrics: rawPost.metrics,
     date_posted: rawPost.date_posted,
     profile_id: rawPost.profile?.id || "",
@@ -55,10 +55,10 @@ export function transformProfile(rawProfile: RawProfile): Profile {
     id: rawProfile.id,
     handle: rawProfile.handle,
     platform: rawProfile.platform as "tiktok" | "instagram",
-    display_name: rawProfile.display_name,
-    bio: rawProfile.bio,
+    display_name: rawProfile.display_name || undefined,
+    bio: rawProfile.bio || undefined,
     followers_count: rawProfile.followers_count,
-    avatar_url: rawProfile.avatar_url,
+    avatar_url: rawProfile.avatar_url || undefined,
     verified: rawProfile.verified,
     created_at: new Date().toISOString(),
     last_updated: new Date().toISOString(),

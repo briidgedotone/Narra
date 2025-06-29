@@ -37,6 +37,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate } from "@/lib/utils/format";
+import { OptimizedImage } from "@/components/ui/image";
 
 // Add timeout declarations at the top of the file
 declare global {
@@ -580,13 +581,12 @@ export function BoardPageContent({
                                 }}
                               />
                             ) : (
-                              <img
+                              <OptimizedImage
                                 src={proxyImage(media.url, post.platform)}
                                 alt="Post media"
                                 className="absolute inset-0 w-full h-full object-cover"
-                                onError={e => {
-                                  e.currentTarget.src = "/placeholder-post.jpg";
-                                }}
+                                fill
+                                unoptimized
                               />
                             )}
                           </div>
@@ -636,13 +636,12 @@ export function BoardPageContent({
                             }}
                           />
                         ) : (
-                          <img
-                            src={proxyImage(post.thumbnail, post.platform)}
-                            alt="Post thumbnail"
-                            className="absolute inset-0 w-full h-full object-cover"
-                            onError={e => {
-                              e.currentTarget.src = "/placeholder-post.jpg";
-                            }}
+                          <OptimizedImage
+                            src={post.thumbnail}
+                            alt={post.caption || "Post thumbnail"}
+                            className="w-full h-full object-cover"
+                            fill
+                            unoptimized
                           />
                         )}
                       </div>
