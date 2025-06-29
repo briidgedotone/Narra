@@ -50,6 +50,7 @@ import {
   Calendar03Icon,
   LaptopVideoIcon,
   SecurityIcon,
+  PlayIcon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -99,6 +100,7 @@ export const Heart = FavouriteIcon;
 export const MessageCircle = MessageMultiple01Icon;
 export const Share = Share01Icon;
 export const UserPlus = UserAdd01Icon;
+export const Play = PlayIcon;
 
 // EmptyState component icons - using existing icons as alternatives
 export const FileText = AiBookIcon; // Using book icon as alternative to file text
