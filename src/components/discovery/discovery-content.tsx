@@ -936,7 +936,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   key={i}
                   className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-pulse"
                 >
-                  <Skeleton className="aspect-[3/4] w-full" />
+                  <Skeleton className="aspect-[9/16] w-full" />
                   <div className="p-4 space-y-3">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />
@@ -965,7 +965,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
                   )}
                 >
-                  <div className={cn("relative aspect-[4/5]")}>
+                  <div className={cn("relative aspect-[9/16]")}>
                     {/* Display current carousel media or single media */}
                     <div className="relative w-full h-full overflow-hidden">
                       {post.isCarousel &&
@@ -1322,7 +1322,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   key={i}
                   className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
                 >
-                  <Skeleton className="aspect-[3/4] w-full" />
+                  <Skeleton className="aspect-[9/16] w-full" />
                   <div className="p-4 space-y-3">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />

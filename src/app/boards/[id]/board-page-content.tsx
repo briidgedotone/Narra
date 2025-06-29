@@ -477,7 +477,7 @@ export function BoardPageContent({
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="space-y-2">
-                <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                <Skeleton className="aspect-[9/16] w-full rounded-lg" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-3 w-2/3" />
               </div>
@@ -493,7 +493,7 @@ export function BoardPageContent({
                   "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
                 )}
               >
-                <div className={cn("relative aspect-[4/5]")}>
+                <div className={cn("relative aspect-[9/16]")}>
                   {/* Display current carousel media or single media */}
                   <div className="relative w-full h-full overflow-hidden">
                     {post.isCarousel &&
