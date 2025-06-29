@@ -792,6 +792,15 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   useEffect(() => {
     if (selectedPost) {
       setIsVideoPaused(false); // Reset pause state when a new post is opened
+
+      // Attempt to play the video programmatically
+      if (videoRef.current) {
+        videoRef.current.play().catch(error => {
+          console.error("Autoplay was prevented:", error);
+          // If autoplay is prevented, we'll show the play icon
+          setIsVideoPaused(true);
+        });
+      }
     }
   }, [selectedPost]);
 
@@ -1030,13 +1039,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   muted={post.platform === "instagram"}
                                   playsInline
                                   controls={post.platform === "instagram"}
-                                  onMouseEnter={e => {
-                                    e.currentTarget.play();
-                                  }}
-                                  onMouseLeave={e => {
-                                    e.currentTarget.pause();
-                                    e.currentTarget.currentTime = 0;
-                                  }}
                                   onError={e => {
                                     // Fallback to image if video fails
                                     const img = document.createElement("img");
@@ -1094,13 +1096,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             muted={post.platform === "instagram"}
                             playsInline
                             controls={post.platform === "instagram"}
-                            onMouseEnter={e => {
-                              e.currentTarget.play();
-                            }}
-                            onMouseLeave={e => {
-                              e.currentTarget.pause();
-                              e.currentTarget.currentTime = 0;
-                            }}
                             onError={e => {
                               // Fallback to image if video fails
                               const img = document.createElement("img");
@@ -1480,6 +1475,28 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               muted={selectedPost.platform === "instagram"}
                               playsInline
                               controls={selectedPost.platform === "instagram"}
+                              onError={e => {
+                                // Fallback to image if video fails
+                                const img = document.createElement("img");
+                                img.src =
+                                  selectedPost.platform === "instagram"
+                                    ? proxyInstagramImage(
+                                        selectedPost.carouselMedia[
+                                          currentCarouselIndex
+                                        ].thumbnail
+                                      )
+                                    : selectedPost.carouselMedia[
+                                        currentCarouselIndex
+                                      ].thumbnail;
+                                img.className = "w-full h-full object-cover";
+                                img.alt = "Post media";
+                                if (e.currentTarget.parentNode) {
+                                  e.currentTarget.parentNode.replaceChild(
+                                    img,
+                                    e.currentTarget
+                                  );
+                                }
+                              }}
                             />
                           ) : (
                             <img
@@ -1581,10 +1598,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           onError={e => {
                             // Fallback to image if video fails
                             const img = document.createElement("img");
-                            img.src =
-                              selectedPost.platform === "instagram"
-                                ? proxyInstagramImage(selectedPost.thumbnail)
-                                : selectedPost.thumbnail;
+                            img.src = proxyInstagramImage(
+                              selectedPost.thumbnail
+                            );
                             img.className = "w-full h-full object-cover";
                             img.alt = "Post thumbnail";
                             if (e.currentTarget.parentNode) {
