@@ -62,8 +62,8 @@ export const cacheKeys = {
 
 // Cache TTL constants (in seconds)
 export const cacheTTL = {
-  profile: 1800, // 30 minutes for profiles (increased from 5 minutes)
-  posts: 900, // 15 minutes for posts (increased from 3 minutes)
-  search: 600, // 10 minutes for search results (increased from 2 minutes)
-  transcript: 3600, // 1 hour for transcripts (unchanged)
+  profile: 300, // 5 minutes for profiles
+  posts: 180, // 3 minutes for posts
+  search: 120, // 2 minutes for search results
+  transcript: 3600, // 1 hour for transcripts (they rarely change)
 };
