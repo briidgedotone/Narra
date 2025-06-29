@@ -1,6 +1,70 @@
 // Data transformers for social media APIs
 // This file contains only transformation logic and can be used client-side
 
+import type { Post, Profile } from "@/types/database";
+
+interface RawPost {
+  id: string;
+  platform: string;
+  platform_post_id: string;
+  embed_url: string;
+  caption?: string;
+  transcript?: string;
+  thumbnail_url?: string;
+  metrics: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+    saves?: number;
+  };
+  date_posted: string;
+  profile?: RawProfile;
+}
+
+interface RawProfile {
+  id: string;
+  handle: string;
+  platform: string;
+  display_name?: string;
+  bio?: string;
+  followers_count?: number;
+  avatar_url?: string;
+  verified?: boolean;
+}
+
+export function transformPost(rawPost: RawPost): Post {
+  return {
+    id: rawPost.id,
+    platform: rawPost.platform as "tiktok" | "instagram",
+    platform_post_id: rawPost.platform_post_id,
+    embed_url: rawPost.embed_url,
+    caption: rawPost.caption,
+    transcript: rawPost.transcript,
+    thumbnail_url: rawPost.thumbnail_url,
+    metrics: rawPost.metrics,
+    date_posted: rawPost.date_posted,
+    profile_id: rawPost.profile?.id || "",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+}
+
+export function transformProfile(rawProfile: RawProfile): Profile {
+  return {
+    id: rawProfile.id,
+    handle: rawProfile.handle,
+    platform: rawProfile.platform as "tiktok" | "instagram",
+    display_name: rawProfile.display_name,
+    bio: rawProfile.bio,
+    followers_count: rawProfile.followers_count,
+    avatar_url: rawProfile.avatar_url,
+    verified: rawProfile.verified,
+    created_at: new Date().toISOString(),
+    last_updated: new Date().toISOString(),
+  };
+}
+
 export const transformers = {
   instagram: {
     // Transform Instagram profile data to our application format

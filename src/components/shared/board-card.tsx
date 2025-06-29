@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -113,10 +114,12 @@ export function BoardCard({
         <div className="flex items-center space-x-4 flex-1 min-w-0">
           <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center shrink-0">
             {board.coverImage ? (
-              <img
+              <Image
                 src={board.coverImage}
                 alt={board.name}
-                className="w-full h-full rounded-lg object-cover"
+                width={400}
+                height={300}
+                className="w-full h-full object-cover rounded-lg"
               />
             ) : (
               <Hash className="w-5 h-5 text-muted-foreground" />
@@ -182,10 +185,12 @@ export function BoardCard({
       {/* Cover Image */}
       <div className="relative aspect-[4/3] bg-muted">
         {board.coverImage ? (
-          <img
+          <Image
             src={board.coverImage}
             alt={board.name}
-            className="w-full h-full object-cover"
+            width={400}
+            height={300}
+            className="w-full h-full object-cover rounded-t-lg"
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
