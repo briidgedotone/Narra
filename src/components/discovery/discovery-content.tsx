@@ -3,7 +3,7 @@
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 
 import { SavePostModal } from "@/components/shared/save-post-modal";
@@ -28,7 +28,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  Play,
 } from "@/components/ui/icons";
 import { TikTok, Instagram } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
@@ -193,8 +192,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [postCarouselIndices, setPostCarouselIndices] = useState<
     Record<string, number>
   >({});
-  const [isVideoPaused, setIsVideoPaused] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Handle URL parameters (from following page navigation)
   useEffect(() => {
@@ -777,33 +774,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     }
   }, [posts, sortOption]);
 
-  const handleVideoClick = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setIsVideoPaused(false);
-      } else {
-        videoRef.current.pause();
-        setIsVideoPaused(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (selectedPost) {
-      setIsVideoPaused(false); // Reset pause state when a new post is opened
-
-      // Attempt to play the video programmatically
-      if (videoRef.current) {
-        videoRef.current.play().catch(error => {
-          console.error("Autoplay was prevented:", error);
-          // If autoplay is prevented, we'll show the play icon
-          setIsVideoPaused(true);
-        });
-      }
-    }
-  }, [selectedPost]);
-
   return (
     <div className="  space-y-6">
       {/* Header */}
@@ -1015,37 +985,28 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             >
                               {media.isVideo ? (
                                 <video
-                                  ref={videoRef}
-                                  key={media.id || index}
-                                  src={
-                                    post.platform === "instagram"
-                                      ? `/api/proxy-image?url=${encodeURIComponent(
-                                          media.url
-                                        )}`
-                                      : media.url
-                                  }
-                                  poster={
-                                    post.platform === "instagram"
-                                      ? proxyInstagramImage(media.thumbnail)
-                                      : media.thumbnail
-                                  }
-                                  className={cn(
-                                    "w-full h-full object-cover",
-                                    post.platform === "tiktok" &&
-                                      "cursor-pointer"
+                                  src={proxyImage(media.url, post.platform)}
+                                  poster={proxyImage(
+                                    media.thumbnail,
+                                    post.platform
                                   )}
-                                  autoPlay
-                                  loop
-                                  muted={post.platform === "instagram"}
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                  muted
                                   playsInline
-                                  controls={post.platform === "instagram"}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.play();
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.pause();
+                                    e.currentTarget.currentTime = 0;
+                                  }}
                                   onError={e => {
                                     // Fallback to image if video fails
                                     const img = document.createElement("img");
-                                    img.src =
-                                      post.platform === "instagram"
-                                        ? proxyInstagramImage(media.thumbnail)
-                                        : media.thumbnail;
+                                    img.src = proxyImage(
+                                      media.thumbnail,
+                                      post.platform
+                                    );
                                     img.className =
                                       "w-full h-full object-cover";
                                     img.alt = "Post media";
@@ -1059,12 +1020,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 />
                               ) : (
                                 <img
-                                  key={media.id || index}
-                                  src={
-                                    post.platform === "instagram"
-                                      ? proxyInstagramImage(media.url)
-                                      : media.url
-                                  }
+                                  src={proxyInstagramImage(media.url)}
                                   alt="Post media"
                                   className="absolute inset-0 w-full h-full object-cover"
                                   onError={e => {
@@ -1080,22 +1036,22 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                         // Single Media Display (existing logic)
                         <div className="w-full h-full">
                           <video
-                            ref={videoRef}
                             src={
                               post.platform === "instagram"
                                 ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
                                 : post.embedUrl
                             }
                             poster={proxyInstagramImage(post.thumbnail)}
-                            className={cn(
-                              "w-full h-full object-cover",
-                              post.platform === "tiktok" && "cursor-pointer"
-                            )}
-                            autoPlay
-                            loop
-                            muted={post.platform === "instagram"}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            muted
                             playsInline
-                            controls={post.platform === "instagram"}
+                            onMouseEnter={e => {
+                              e.currentTarget.play();
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.pause();
+                              e.currentTarget.currentTime = 0;
+                            }}
                             onError={e => {
                               // Fallback to image if video fails
                               const img = document.createElement("img");
@@ -1427,106 +1383,59 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     {selectedPost.isCarousel && selectedPost.carouselMedia ? (
                       // Carousel Media Display
                       <>
-                        <div
-                          className="relative w-full h-full"
-                          onClick={
-                            selectedPost.platform === "tiktok"
-                              ? handleVideoClick
-                              : undefined
-                          }
-                        >
-                          {selectedPost.carouselMedia[currentCarouselIndex]
-                            ?.isVideo ? (
-                            <video
-                              ref={videoRef}
-                              key={
-                                selectedPost.carouselMedia[currentCarouselIndex]
-                                  .id
-                              }
-                              src={
-                                selectedPost.platform === "instagram"
-                                  ? `/api/proxy-image?url=${encodeURIComponent(
-                                      selectedPost.carouselMedia[
-                                        currentCarouselIndex
-                                      ].url
-                                    )}`
-                                  : selectedPost.carouselMedia[
-                                      currentCarouselIndex
-                                    ].url
-                              }
-                              poster={
-                                selectedPost.platform === "instagram"
-                                  ? proxyInstagramImage(
-                                      selectedPost.carouselMedia[
-                                        currentCarouselIndex
-                                      ].thumbnail
-                                    )
-                                  : selectedPost.carouselMedia[
+                        {selectedPost.carouselMedia[currentCarouselIndex]
+                          ?.isVideo ? (
+                          <video
+                            key={
+                              selectedPost.carouselMedia[currentCarouselIndex]
+                                .id
+                            }
+                            src={
+                              selectedPost.platform === "instagram"
+                                ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.carouselMedia[currentCarouselIndex].url)}`
+                                : selectedPost.carouselMedia[
+                                    currentCarouselIndex
+                                  ].url
+                            }
+                            poster={
+                              selectedPost.platform === "instagram"
+                                ? proxyInstagramImage(
+                                    selectedPost.carouselMedia[
                                       currentCarouselIndex
                                     ].thumbnail
-                              }
-                              className={cn(
-                                "w-full h-full object-cover",
-                                selectedPost.platform === "tiktok" &&
-                                  "cursor-pointer"
-                              )}
-                              autoPlay
-                              loop
-                              muted={selectedPost.platform === "instagram"}
-                              playsInline
-                              controls={selectedPost.platform === "instagram"}
-                              onError={e => {
-                                // Fallback to image if video fails
-                                const img = document.createElement("img");
-                                img.src =
-                                  selectedPost.platform === "instagram"
-                                    ? proxyInstagramImage(
-                                        selectedPost.carouselMedia[
-                                          currentCarouselIndex
-                                        ].thumbnail
-                                      )
-                                    : selectedPost.carouselMedia[
-                                        currentCarouselIndex
-                                      ].thumbnail;
-                                img.className = "w-full h-full object-cover";
-                                img.alt = "Post media";
-                                if (e.currentTarget.parentNode) {
-                                  e.currentTarget.parentNode.replaceChild(
-                                    img,
-                                    e.currentTarget
-                                  );
-                                }
-                              }}
-                            />
-                          ) : (
-                            <img
-                              key={
-                                selectedPost.carouselMedia?.[
-                                  currentCarouselIndex
-                                ]?.id || currentCarouselIndex
-                              }
-                              src={
-                                selectedPost.platform === "instagram"
-                                  ? proxyInstagramImage(
-                                      selectedPost.carouselMedia?.[
-                                        currentCarouselIndex
-                                      ]?.url || ""
-                                    )
-                                  : selectedPost.carouselMedia?.[
+                                  )
+                                : selectedPost.carouselMedia[
+                                    currentCarouselIndex
+                                  ].thumbnail
+                            }
+                            className="w-full h-full object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            controls
+                          />
+                        ) : (
+                          <img
+                            key={
+                              selectedPost.carouselMedia?.[currentCarouselIndex]
+                                ?.id || currentCarouselIndex
+                            }
+                            src={
+                              selectedPost.platform === "instagram"
+                                ? proxyInstagramImage(
+                                    selectedPost.carouselMedia?.[
                                       currentCarouselIndex
                                     ]?.url || ""
-                              }
-                              alt="Carousel item"
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                          {selectedPost.platform === "tiktok" &&
-                            isVideoPaused && (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <Play className="w-16 h-16 text-white fill-white" />
-                              </div>
-                            )}
-                        </div>
+                                  )
+                                : selectedPost.carouselMedia?.[
+                                    currentCarouselIndex
+                                  ]?.url || ""
+                            }
+                            alt="Carousel item"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
 
                         {/* Carousel Navigation */}
                         {selectedPost.carouselMedia.length > 1 && (
@@ -1563,61 +1472,40 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       </>
                     ) : (
                       // Single Media Display
-                      <div
-                        className="relative w-full h-full"
-                        onClick={
-                          selectedPost.platform === "tiktok"
-                            ? handleVideoClick
-                            : undefined
+                      <video
+                        src={
+                          selectedPost.platform === "instagram"
+                            ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
+                            : selectedPost.embedUrl
                         }
-                      >
-                        <video
-                          ref={videoRef}
-                          src={
-                            selectedPost.platform === "instagram"
-                              ? `/api/proxy-image?url=${encodeURIComponent(
-                                  selectedPost.embedUrl
-                                )}`
-                              : selectedPost.embedUrl
-                          }
-                          poster={
+                        poster={
+                          selectedPost.platform === "instagram"
+                            ? proxyInstagramImage(selectedPost.thumbnail)
+                            : selectedPost.thumbnail
+                        }
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src =
                             selectedPost.platform === "instagram"
                               ? proxyInstagramImage(selectedPost.thumbnail)
-                              : selectedPost.thumbnail
-                          }
-                          className={cn(
-                            "w-full h-full object-cover",
-                            selectedPost.platform === "tiktok" &&
-                              "cursor-pointer"
-                          )}
-                          autoPlay
-                          loop
-                          muted={selectedPost.platform === "instagram"}
-                          playsInline
-                          controls={selectedPost.platform === "instagram"}
-                          onError={e => {
-                            // Fallback to image if video fails
-                            const img = document.createElement("img");
-                            img.src = proxyInstagramImage(
-                              selectedPost.thumbnail
+                              : selectedPost.thumbnail;
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
                             );
-                            img.className = "w-full h-full object-cover";
-                            img.alt = "Post thumbnail";
-                            if (e.currentTarget.parentNode) {
-                              e.currentTarget.parentNode.replaceChild(
-                                img,
-                                e.currentTarget
-                              );
-                            }
-                          }}
-                        />
-                        {selectedPost.platform === "tiktok" &&
-                          isVideoPaused && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Play className="w-16 h-16 text-white fill-white" />
-                            </div>
-                          )}
-                      </div>
+                          }
+                        }}
+                      />
                     )}
                   </div>
                 </div>

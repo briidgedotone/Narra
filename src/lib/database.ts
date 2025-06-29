@@ -271,7 +271,39 @@ export class DatabaseService {
       return {
         ...data,
         posts:
-          data.board_posts?.map((bp: any) => bp.posts).filter(Boolean) || [],
+          data.board_posts
+            ?.map((bp: any) => {
+              const post = bp.posts;
+              const profile = post?.profiles;
+
+              if (!post) return null;
+
+              return {
+                id: post.id,
+                platform: post.platform,
+                platformPostId: post.platform_post_id,
+                embedUrl: post.embed_url,
+                caption: post.caption,
+                transcript: post.transcript,
+                thumbnail: post.thumbnail_url,
+                metrics: post.metrics,
+                datePosted: post.date_posted,
+                profile: profile
+                  ? {
+                      id: profile.id,
+                      handle: profile.handle,
+                      platform: profile.platform,
+                      displayName: profile.display_name,
+                      bio: profile.bio,
+                      followers: profile.followers_count,
+                      avatarUrl: profile.avatar_url,
+                      verified: profile.verified,
+                    }
+                  : null,
+                addedAt: bp.added_at,
+              };
+            })
+            .filter(Boolean) || [],
       };
     }
 

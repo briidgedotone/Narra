@@ -348,46 +348,62 @@ export function BoardPageContent({
   };
 
   const proxyImage = (
-    url: string,
+    url: string | undefined,
     platform: "tiktok" | "instagram",
     isAvatar = false
   ) => {
+    // Return appropriate fallback for undefined URLs
     if (!url) {
       return isAvatar ? "/placeholder-avatar.jpg" : "/placeholder-post.jpg";
     }
-    if (url.startsWith("data:") || url.startsWith("blob:")) return url;
 
-    // Both TikTok and Instagram images need to be proxied
-    if (platform === "tiktok" || platform === "instagram") {
-      return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+    // Don't proxy local URLs or data URLs
+    if (
+      url.startsWith("/") ||
+      url.startsWith("data:") ||
+      url.startsWith("blob:")
+    ) {
+      return url;
     }
 
-    return url;
+    // For TikTok videos, don't proxy the URL (contains expiring signatures)
+    if (platform === "tiktok" && url.includes("video")) {
+      return url;
+    }
+
+    // For Instagram images and TikTok thumbnails, proxy through our API
+    return `/api/proxy-image?url=${encodeURIComponent(url)}&platform=${platform}`;
   };
 
   if (isLoadingBoard) {
-    return <BoardContentSkeleton />;
+    return (
+      <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
+        <BoardContentSkeleton />
+      </div>
+    );
   }
 
   if (!board) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <h3 className="text-lg font-medium mb-2">Board not found</h3>
-          <p className="text-muted-foreground mb-4">
-            The board you&apos;re looking for doesn&apos;t exist or you
-            don&apos;t have access to it.
-          </p>
-          <Button onClick={() => redirect("/dashboard")}>
-            Back to Dashboard
-          </Button>
+      <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <h3 className="text-lg font-medium mb-2">Board not found</h3>
+            <p className="text-muted-foreground mb-4">
+              The board you&apos;re looking for doesn&apos;t exist or you
+              don&apos;t have access to it.
+            </p>
+            <Button onClick={() => redirect("/dashboard")}>
+              Back to Dashboard
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
       <BoardHeader boardName={board.name} boardId={boardId} />
       <div className="space-y-8">
         {/* Section 1: Board Title and Description */}
@@ -399,7 +415,7 @@ export function BoardPageContent({
               </div>
               <input
                 type="text"
-                value={board.name}
+                value={board?.name}
                 onChange={handleNameChange}
                 className="text-2xl font-semibold text-foreground bg-transparent focus:outline-none"
                 placeholder="Board name..."
@@ -409,7 +425,7 @@ export function BoardPageContent({
               )}
             </div>
             <textarea
-              value={board.description || ""}
+              value={board?.description || ""}
               onChange={handleDescriptionChange}
               placeholder="Type the description for this board"
               className="text-muted-foreground text-base bg-transparent focus:outline-none resize-none w-full"
@@ -484,7 +500,14 @@ export function BoardPageContent({
             ))}
           </div>
         ) : posts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div
+            className={cn(
+              "grid gap-4",
+              isSharedView
+                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4"
+            )}
+          >
             {posts.map((post, index) => (
               <div
                 key={`${post.id}-${index}`}
@@ -561,37 +584,56 @@ export function BoardPageContent({
                     ) : (
                       // Single Media Display
                       <div className="w-full h-full">
-                        <video
-                          src={
-                            post.platform === "instagram"
-                              ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
-                              : post.embedUrl
-                          }
-                          poster={proxyImage(post.thumbnail, post.platform)}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          muted
-                          playsInline
-                          onMouseEnter={e => {
-                            e.currentTarget.play();
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.pause();
-                            e.currentTarget.currentTime = 0;
-                          }}
-                          onError={e => {
-                            // Fallback to image if video fails
-                            const img = document.createElement("img");
-                            img.src = proxyImage(post.thumbnail, post.platform);
-                            img.className = "w-full h-full object-cover";
-                            img.alt = "Post thumbnail";
-                            if (e.currentTarget.parentNode) {
-                              e.currentTarget.parentNode.replaceChild(
-                                img,
-                                e.currentTarget
-                              );
+                        {post.isVideo ? (
+                          <video
+                            src={
+                              post.platform === "tiktok"
+                                ? post.embedUrl
+                                : proxyImage(post.embedUrl, post.platform)
                             }
-                          }}
-                        />
+                            poster={proxyImage(post.thumbnail, post.platform)}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            muted
+                            playsInline
+                            onMouseEnter={e => {
+                              if (post.platform === "tiktok") {
+                                e.currentTarget.play().catch(() => {
+                                  // Handle autoplay failure silently
+                                });
+                              }
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.pause();
+                              e.currentTarget.currentTime = 0;
+                            }}
+                            onError={e => {
+                              // Fallback to thumbnail if video fails
+                              const img = document.createElement("img");
+                              img.src = proxyImage(
+                                post.thumbnail,
+                                post.platform
+                              );
+                              img.className =
+                                "absolute inset-0 w-full h-full object-cover";
+                              img.alt = "Post thumbnail";
+                              if (e.currentTarget.parentNode) {
+                                e.currentTarget.parentNode.replaceChild(
+                                  img,
+                                  e.currentTarget
+                                );
+                              }
+                            }}
+                          />
+                        ) : (
+                          <img
+                            src={proxyImage(post.thumbnail, post.platform)}
+                            alt="Post thumbnail"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            onError={e => {
+                              e.currentTarget.src = "/placeholder-post.jpg";
+                            }}
+                          />
+                        )}
                       </div>
                     )}
                   </div>
@@ -983,6 +1025,6 @@ export function BoardPageContent({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
