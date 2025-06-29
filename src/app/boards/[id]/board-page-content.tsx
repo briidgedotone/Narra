@@ -134,6 +134,11 @@ export function BoardPageContent({
     Record<string, number>
   >({});
 
+  // Add currentTranscriptPostId to track which post the transcript belongs to
+  const [currentTranscriptPostId, setCurrentTranscriptPostId] = useState<
+    string | null
+  >(null);
+
   const getPostCarouselIndex = (postId: string) => {
     return postCarouselStates[postId] || 0;
   };
@@ -282,18 +287,21 @@ export function BoardPageContent({
     setTranscript(null);
     setTranscriptError(null);
     setIsLoadingTranscript(false);
+    setCurrentTranscriptPostId(null);
   };
 
   const handleTabChange = (tab: "overview" | "transcript") => {
     setActiveTab(tab);
 
-    // Load transcript when transcript tab is opened and we don't have it yet
+    // Load transcript when transcript tab is opened and either:
+    // 1. We don't have a transcript for this post yet, or
+    // 2. The transcript we have is for a different post
     if (
       tab === "transcript" &&
       selectedPost &&
       selectedPost.platform === "tiktok" &&
-      !transcript &&
-      !isLoadingTranscript
+      !isLoadingTranscript &&
+      currentTranscriptPostId !== selectedPost.id
     ) {
       loadTranscript(selectedPost);
     }
@@ -324,12 +332,15 @@ export function BoardPageContent({
           text: result.data.transcript || "No transcript available",
           segments: result.data.segments || [],
         });
+        setCurrentTranscriptPostId(post.id);
       } else {
         setTranscriptError(result.error || "Failed to load transcript");
+        setCurrentTranscriptPostId(null);
       }
     } catch (error) {
       console.error("Error loading transcript:", error);
       setTranscriptError("Failed to load transcript");
+      setCurrentTranscriptPostId(null);
     } finally {
       setIsLoadingTranscript(false);
     }
