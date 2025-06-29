@@ -3,7 +3,7 @@
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 
 import { SavePostModal } from "@/components/shared/save-post-modal";
@@ -161,6 +161,23 @@ interface SavePostData {
   verified?: boolean;
 }
 
+// Add debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export function DiscoveryContent({}: DiscoveryContentProps) {
   // Note: userId prop is passed from server component but not used directly here
   // Authentication is handled by server actions (savePostToBoard, etc.)
@@ -193,6 +210,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     Record<string, number>
   >({});
 
+  // Debounce search query to reduce API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  // Prevent multiple simultaneous searches
+  const searchInProgress = useRef(false);
+
   // Handle URL parameters (from following page navigation)
   useEffect(() => {
     const handleParam = searchParams.get("handle");
@@ -223,11 +246,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const handle = searchResults.handle;
       const platform = searchResults.platform;
 
-      // Call our API to get real posts
+      // Call our API to get real posts (reduced count for faster loading)
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=50`
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=20`
       );
       const result = await response.json();
 
@@ -546,8 +569,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
   const handleSearch = useCallback(
     async (query: string) => {
-      if (!query.trim()) return;
+      if (!query.trim() || searchInProgress.current) return;
 
+      searchInProgress.current = true;
       setIsSearching(true);
       setSearchResults(null);
       setPosts([]);
@@ -564,20 +588,28 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           { scroll: false }
         );
 
-        // Call our discovery API (using test endpoint for now)
+        // Call our discovery API with posts included for faster loading
         const response = await fetch(
-          `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
+          `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}&includePosts=true`
         );
         const result = await response.json();
 
         if (result.success && result.data) {
           const profile: Profile = {
-            ...result.data,
+            ...result.data.profile,
             isFollowing: false,
           };
 
           setSearchResults(profile);
-          // Don't call loadPosts() here - let useEffect handle it when searchResults updates
+
+          // Set posts directly if available
+          if (result.data.posts && Array.isArray(result.data.posts)) {
+            setPosts(result.data.posts);
+            setIsLoadingPosts(false);
+          } else {
+            // Fallback to separate posts loading if not included
+            // Don't call loadPosts() here - let useEffect handle it when searchResults updates
+          }
         } else {
           setSearchError(
             result.error ||
@@ -589,10 +621,35 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         setSearchError("Search failed. Please try again.");
       } finally {
         setIsSearching(false);
+        searchInProgress.current = false;
       }
     },
     [selectedPlatform, router]
   );
+
+  // Auto-search when debounced query changes (for typing)
+  useEffect(() => {
+    if (
+      debouncedSearchQuery &&
+      debouncedSearchQuery.trim() &&
+      debouncedSearchQuery.length > 2
+    ) {
+      const cleanQuery = debouncedSearchQuery.replace(/[@\s]/g, "");
+      const currentHandle = searchParams.get("handle");
+
+      // Only search if:
+      // 1. Query is different from URL param
+      // 2. We don't already have results for this exact query
+      // 3. No search is currently in progress
+      if (
+        cleanQuery !== currentHandle &&
+        (!searchResults || searchResults.handle !== cleanQuery) &&
+        !searchInProgress.current
+      ) {
+        handleSearch(debouncedSearchQuery);
+      }
+    }
+  }, [debouncedSearchQuery]);
 
   // Auto-search when coming from following page
   useEffect(() => {
@@ -796,7 +853,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               onChange={e => setSearchQuery(e.target.value)}
               onKeyDown={e => {
                 if (e.key === "Enter") {
-                  handleSearch(searchQuery);
+                  // Prevent form submission, rely on debounced search
+                  e.preventDefault();
                 }
               }}
               className="pl-10 w-[600px] h-[36px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"

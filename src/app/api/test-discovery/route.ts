@@ -6,6 +6,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const handle = searchParams.get("handle");
   const platform = searchParams.get("platform") || "tiktok";
+  const includePosts = searchParams.get("includePosts") === "true";
 
   if (!handle) {
     return NextResponse.json(
@@ -20,18 +21,39 @@ export async function GET(request: Request) {
     // Clean the handle
     const cleanHandle = handle.replace(/[@\s]/g, "");
 
-    let result;
+    let profileResult;
+    let postsResult = null;
+
     if (platform === "tiktok") {
-      result = await scrapeCreatorsApi.tiktok.getProfile(cleanHandle);
+      profileResult = await scrapeCreatorsApi.tiktok.getProfile(cleanHandle);
+
+      // Fetch posts if requested
+      if (includePosts && profileResult.success) {
+        postsResult = await scrapeCreatorsApi.tiktok.getProfileVideos(
+          cleanHandle,
+          20
+        );
+      }
     } else {
-      result = await scrapeCreatorsApi.instagram.getProfile(cleanHandle, true); // Use trim for faster response
+      profileResult = await scrapeCreatorsApi.instagram.getProfile(
+        cleanHandle,
+        true
+      ); // Use trim for faster response
+
+      // Fetch posts if requested
+      if (includePosts && profileResult.success) {
+        postsResult = await scrapeCreatorsApi.instagram.getPosts(
+          cleanHandle,
+          20
+        );
+      }
     }
 
     const duration = Date.now() - startTime;
 
-    if (result.success && result.data) {
+    if (profileResult.success && profileResult.data) {
       // Transform for Discovery page format
-      const apiData = result.data as any;
+      const apiData = profileResult.data as any;
 
       if (platform === "tiktok") {
         const user = apiData.user;
@@ -54,23 +76,59 @@ export async function GET(request: Request) {
           verified: user.verified || false,
         };
 
+        // Process posts if included
+        let transformedPosts = null;
+        if (postsResult && postsResult.success && postsResult.data) {
+          const videosArray =
+            postsResult.data.aweme_list ||
+            postsResult.data.videos ||
+            postsResult.data.data ||
+            [];
+          transformedPosts = Array.isArray(videosArray)
+            ? videosArray.map((item: any, index: number) => {
+                const originCover =
+                  item.video?.origin_cover?.url_list?.[0] || "";
+                const dynamicCover =
+                  item.video?.dynamic_cover?.url_list?.[0] || "";
+                let thumbnailUrl = dynamicCover || originCover;
+
+                if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                  thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                }
+
+                return {
+                  id: item.aweme_id || `tiktok-${index}`,
+                  embedUrl:
+                    item.video?.play_addr?.url_list?.[0] ||
+                    item.video?.download_addr?.url_list?.[0] ||
+                    "",
+                  caption: item.desc || "No caption available",
+                  thumbnail: thumbnailUrl,
+                  metrics: {
+                    views: item.statistics?.play_count || 0,
+                    likes: item.statistics?.digg_count || 0,
+                    comments: item.statistics?.comment_count || 0,
+                    shares: item.statistics?.share_count || 0,
+                  },
+                  datePosted: new Date(item.create_time * 1000).toISOString(),
+                  platform: "tiktok" as const,
+                  tiktokUrl: `https://www.tiktok.com/@${cleanHandle}/video/${item.aweme_id}`,
+                };
+              })
+            : [];
+        }
+
         return NextResponse.json({
           success: true,
-          data: profile,
-          cached: result.cached || false,
+          data: {
+            profile,
+            posts: transformedPosts,
+          },
+          cached: profileResult.cached || false,
           duration: `${duration}ms`,
         });
       } else {
-        // Instagram profile handling - Fixed to use correct data structure
-        console.log("Instagram API response structure:", {
-          hasData: !!apiData.data,
-          hasUser: !!apiData.data?.user,
-          userKeys: apiData.data?.user
-            ? Object.keys(apiData.data.user).slice(0, 10)
-            : [],
-        });
-
-        // Use our transformer function for consistent data extraction
+        // Instagram profile handling
         const transformedProfile =
           transformers.instagram.profileToAppFormat(apiData);
 
@@ -79,11 +137,6 @@ export async function GET(request: Request) {
             success: false,
             error: "Failed to transform Instagram profile data",
             duration: `${duration}ms`,
-            debug: {
-              hasData: !!apiData.data,
-              hasUser: !!apiData.data?.user,
-              rawStructure: Object.keys(apiData).slice(0, 5),
-            },
           });
         }
 
@@ -107,24 +160,43 @@ export async function GET(request: Request) {
           externalUrl: transformedProfile.externalUrl,
         };
 
-        console.log("Successfully transformed Instagram profile:", {
-          handle: profile.handle,
-          followers: profile.followers,
-          posts: profile.posts,
-          verified: profile.verified,
-        });
+        // Process posts if included
+        let transformedPosts = null;
+        if (postsResult && postsResult.success && postsResult.data) {
+          const postsData = transformers.instagram.postsToAppFormat(
+            postsResult.data,
+            cleanHandle
+          );
+          transformedPosts = postsData.map((post: any) => ({
+            id: post.id,
+            embedUrl: post.embedUrl,
+            caption: post.caption || "",
+            thumbnail: post.thumbnail,
+            metrics: {
+              views: post.metrics?.views || 0,
+              likes: post.metrics?.likes || 0,
+              comments: post.metrics?.comments || 0,
+              shares: post.metrics?.shares || 0,
+            },
+            datePosted: post.datePosted,
+            platform: post.platform,
+          }));
+        }
 
         return NextResponse.json({
           success: true,
-          data: profile,
-          cached: result.cached || false,
+          data: {
+            profile,
+            posts: transformedPosts,
+          },
+          cached: profileResult.cached || false,
           duration: `${duration}ms`,
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        error: result.error || "Profile not found",
+        error: profileResult.error || "Profile not found",
         duration: `${duration}ms`,
       });
     }
