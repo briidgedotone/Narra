@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   TikTok,
   TimeQuarter,
 } from "@/components/ui/icons";
+import { PostImage, AvatarImage } from "@/components/ui/optimized-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber } from "@/lib/utils/format";
@@ -207,13 +207,12 @@ export const PostModal = React.memo<PostModalProps>(function PostModal({
                   title={`TikTok video by ${selectedPost.profile.displayName}`}
                 />
               ) : (
-                <Image
+                <PostImage
                   src={proxyImage(
                     selectedPost.thumbnail,
                     selectedPost.platform
                   )}
                   alt={selectedPost.caption || "Instagram post"}
-                  fill
                   className="object-contain"
                   onError={e => {
                     const target = e.target as HTMLImageElement;
@@ -301,20 +300,14 @@ export const PostModal = React.memo<PostModalProps>(function PostModal({
                   {/* Profile information */}
                   <section aria-labelledby="profile-info">
                     <div className="flex items-center gap-4">
-                      <Image
+                      <AvatarImage
                         src={proxyImage(
                           selectedPost.profile.avatarUrl,
                           selectedPost.platform,
                           true
                         )}
                         alt={`${selectedPost.profile.displayName} profile picture`}
-                        width={48}
-                        height={48}
-                        className="rounded-full object-cover"
-                        onError={e => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/placeholder-avatar.jpg";
-                        }}
+                        size={48}
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">

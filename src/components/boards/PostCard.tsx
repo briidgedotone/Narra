@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 
 import {
@@ -13,6 +12,7 @@ import {
   TimeQuarter,
   Trash2,
 } from "@/components/ui/icons";
+import { PostImage, AvatarImage } from "@/components/ui/optimized-image";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber } from "@/lib/utils/format";
 import { proxyImage } from "@/lib/utils/image-proxy";
@@ -137,10 +137,9 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           }
         }}
       >
-        <Image
+        <PostImage
           src={proxyImage(displayThumbnail, post.platform)}
           alt={post.caption || "Post thumbnail"}
-          fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           onError={e => {
             const target = e.target as HTMLImageElement;
@@ -216,16 +215,10 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div className="p-4">
         {/* Profile information */}
         <div className="flex items-center gap-3 mb-3">
-          <Image
+          <AvatarImage
             src={proxyImage(post.profile.avatarUrl, post.platform, true)}
             alt={`${post.profile.displayName} profile picture`}
-            width={32}
-            height={32}
-            className="rounded-full object-cover"
-            onError={e => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder-avatar.jpg";
-            }}
+            size={32}
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1">
