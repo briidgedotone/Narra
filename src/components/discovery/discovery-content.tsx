@@ -199,8 +199,6 @@ interface SavePostData {
 }
 
 export function DiscoveryContent({}: DiscoveryContentProps) {
-  // Note: userId prop is passed from server component but not used directly here
-  // Authentication is handled by server actions (savePostToBoard, etc.)
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -208,10 +206,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const {} = useCleanup();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
@@ -261,7 +258,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
 
-    setIsLoadingPosts(true);
+    setIsLoading(true);
     // Clear existing posts when loading new ones
     setPosts([]);
     try {
@@ -277,7 +274,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       if (cachedPosts) {
         console.log("Using cached posts for", handle);
         setPosts(cachedPosts);
-        setIsLoadingPosts(false);
+        setIsLoading(false);
         return;
       }
 
@@ -462,7 +459,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     } catch (error) {
       console.error("Failed to load posts:", error);
     } finally {
-      setIsLoadingPosts(false);
+      setIsLoading(false);
     }
   }, [searchResults]);
 
@@ -603,7 +600,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     async (query: string) => {
       if (!query.trim()) return;
 
-      setIsSearching(true);
+      setIsLoading(true);
       setSearchResults(null);
       setPosts([]);
       setSearchError(null);
@@ -625,7 +622,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             isFollowing: false,
           };
           setSearchResults(profile);
-          setIsSearching(false);
+          setIsLoading(false);
           return;
         }
 
@@ -662,7 +659,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         console.error("Search failed:", error);
         setSearchError("Search failed. Please try again.");
       } finally {
-        setIsSearching(false);
+        setIsLoading(false);
       }
     },
     [selectedPlatform, router]
@@ -675,13 +672,13 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       handleParam &&
       searchQuery === handleParam &&
       !searchResults &&
-      !isSearching
+      !isLoading
     ) {
       // Only trigger search if we have the handle in query but no results yet
       handleSearch(handleParam);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, searchQuery, isSearching, handleSearch]);
+  }, [searchParams, searchQuery, isLoading, handleSearch]);
 
   // Debounced search for better performance
   const debouncedSearch = useDebounce(handleSearch, 500);
@@ -994,7 +991,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       )}
 
       {/* Posts Section */}
-      {searchResults && (isLoadingPosts || posts.length > 0) && (
+      {searchResults && (isLoading || posts.length > 0) && (
         <div className="space-y-4">
           {/* Posts Header & Filters */}
           <div className="flex items-center justify-between">
@@ -1018,7 +1015,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           </div>
 
           {/* Posts Grid */}
-          {isLoadingPosts ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
@@ -1264,7 +1261,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           )}
 
           {/* Load More Button for Instagram */}
-          {!isLoadingPosts &&
+          {!isLoading &&
             searchResults?.platform === "instagram" &&
             hasMorePosts && (
               <div className="flex justify-center mt-6">
@@ -1293,7 +1290,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       )}
 
       {/* Empty state when no search */}
-      {!searchResults && !isSearching && !hasSearched && (
+      {!searchResults && !isLoading && !hasSearched && (
         <div className="flex justify-center items-center min-h-[60vh]">
           <div className="text-center space-y-8 max-w-2xl">
             {/* Platform Selection */}
@@ -1343,7 +1340,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       )}
 
       {/* Loading state during search */}
-      {isSearching && (
+      {isLoading && (
         <div className="space-y-6">
           {/* Profile Skeleton */}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -1436,7 +1433,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       )}
 
       {/* Error state when search fails or no results */}
-      {!searchResults && !isSearching && hasSearched && searchError && (
+      {!searchResults && !isLoading && hasSearched && searchError && (
         <div className="flex justify-center items-center min-h-[60vh]">
           <EmptyState
             title="No Results Found"

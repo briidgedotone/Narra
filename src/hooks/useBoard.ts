@@ -17,13 +17,11 @@ import type { BoardData, SavedPost } from "@/types/board";
 export function useBoard(boardId: string, isSharedView = false) {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [posts, setPosts] = useState<SavedPost[]>([]);
-  const [isLoadingBoard, setIsLoadingBoard] = useState(true);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const loadBoardData = useCallback(async () => {
-    setIsLoadingBoard(true);
     try {
       const result = isSharedView
         ? await getPublicBoard(boardId)
@@ -37,13 +35,10 @@ export function useBoard(boardId: string, isSharedView = false) {
     } catch (error) {
       console.error("Failed to load board:", error);
       toast.error("Failed to load board");
-    } finally {
-      setIsLoadingBoard(false);
     }
   }, [boardId, isSharedView]);
 
   const loadBoardPosts = useCallback(async () => {
-    setIsLoadingPosts(true);
     try {
       const result = isSharedView
         ? await getPublicBoardPosts(boardId)
@@ -56,8 +51,6 @@ export function useBoard(boardId: string, isSharedView = false) {
     } catch (error) {
       console.error("Failed to load board posts:", error);
       setPosts([]);
-    } finally {
-      setIsLoadingPosts(false);
     }
   }, [boardId, isSharedView]);
 
@@ -147,15 +140,21 @@ export function useBoard(boardId: string, isSharedView = false) {
   }, [board?.description]);
 
   useEffect(() => {
-    loadBoardData();
-    loadBoardPosts();
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([loadBoardData(), loadBoardPosts()]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
   }, [loadBoardData, loadBoardPosts]);
 
   return {
     board,
     posts,
-    isLoadingBoard,
-    isLoadingPosts,
+    isLoading,
     isUpdating,
     textareaRef,
     handleNameChange,

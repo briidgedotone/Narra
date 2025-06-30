@@ -6,7 +6,7 @@ import { getFeaturedBoards } from "@/app/actions/folders";
 import { CollectionCard } from "@/components/discovery/collection-card";
 
 interface DashboardContentProps {
-  userId: string;
+  initialFeaturedBoards: FeaturedBoard[];
 }
 
 interface Collection {
@@ -37,13 +37,18 @@ interface FeaturedBoard {
   } | null;
 }
 
-export function DashboardContent({}: DashboardContentProps) {
-  const [featuredBoards, setFeaturedBoards] = useState<FeaturedBoard[]>([]);
-  const [loading, setLoading] = useState(true);
+export function DashboardContent({
+  initialFeaturedBoards,
+}: DashboardContentProps) {
+  const [featuredBoards, setFeaturedBoards] = useState<FeaturedBoard[]>(
+    initialFeaturedBoards
+  );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadFeaturedBoards = async () => {
       try {
+        setLoading(true);
         const result = await getFeaturedBoards();
         if (result.success) {
           setFeaturedBoards(result.data || []);
@@ -55,8 +60,11 @@ export function DashboardContent({}: DashboardContentProps) {
       }
     };
 
-    loadFeaturedBoards();
-  }, []);
+    // Only fetch if we don't have initial data
+    if (initialFeaturedBoards.length === 0) {
+      loadFeaturedBoards();
+    }
+  }, [initialFeaturedBoards]);
 
   // Fallback collections if no featured boards are set
   const fallbackCollections: Collection[] = [

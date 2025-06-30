@@ -14,7 +14,6 @@ import {
   Instagram,
   TimeQuarter,
 } from "@/components/ui/icons";
-import { LoadingSpinner } from "@/components/ui/loading";
 import { useBoard } from "@/hooks/useBoard";
 import { useCarousel } from "@/hooks/useCarousel";
 import { usePostModal } from "@/hooks/usePostModal";
@@ -61,8 +60,7 @@ export function BoardPageContent({
   const {
     board,
     posts,
-    isLoadingBoard,
-    isLoadingPosts,
+    isLoading,
     isUpdating,
     textareaRef,
     handleNameChange,
@@ -155,7 +153,7 @@ export function BoardPageContent({
   );
 
   // Loading state
-  if (isLoadingBoard) {
+  if (isLoading) {
     return (
       <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
         <BoardContentSkeleton />
@@ -199,93 +197,74 @@ export function BoardPageContent({
               </div>
               <input
                 type="text"
-                value={board?.name}
+                value={board.name}
                 onChange={handleNameChange}
-                className="text-2xl font-semibold text-foreground bg-transparent focus:outline-none"
-                placeholder="Board name..."
-                aria-label="Board name"
-                disabled={isSharedView}
+                className={cn(
+                  "text-2xl font-semibold bg-transparent border-none focus:outline-none focus:ring-0 w-full",
+                  isUpdating && "opacity-50 cursor-wait"
+                )}
+                placeholder="Board Name"
+                disabled={isSharedView || isUpdating}
               />
-              {isUpdating && (
-                <div className="text-xs text-muted-foreground">Saving...</div>
-              )}
             </div>
-          </div>
-
-          <div>
             <textarea
               ref={textareaRef}
-              value={board?.description || ""}
+              value={board.description || ""}
               onChange={handleDescriptionChange}
-              className="w-full text-muted-foreground bg-transparent focus:outline-none resize-none min-h-[60px]"
-              placeholder="Add a description to help organize your board..."
-              aria-label="Board description"
-              disabled={isSharedView}
+              className={cn(
+                "w-full bg-transparent border-none focus:outline-none focus:ring-0 text-muted-foreground resize-none",
+                isUpdating && "opacity-50 cursor-wait"
+              )}
+              placeholder="Add a description..."
+              disabled={isSharedView || isUpdating}
             />
           </div>
         </section>
 
-        {/* Filter buttons section */}
-        <section className="flex flex-wrap gap-3" aria-label="Post filters">
+        {/* Filter buttons */}
+        <div className="flex flex-wrap gap-2">
           {filterButtons.map(({ key, icon: Icon, label, filter }) => (
             <Button
               key={key}
               variant={activeFilter === filter ? "default" : "outline"}
-              size="sm"
               onClick={() => handleFilterClick(filter)}
               className="flex items-center gap-2"
-              aria-pressed={activeFilter === filter}
             >
               <Icon className="w-4 h-4" />
               {label}
             </Button>
           ))}
-        </section>
+        </div>
 
-        {/* Posts grid section */}
-        <section aria-label="Board posts">
-          <PostGrid
-            posts={posts}
-            isLoading={isLoadingPosts}
-            activeFilter={activeFilter}
-            isSharedView={isSharedView}
-            onPostClick={handlePostClick}
-            onRemovePost={handleRemovePost}
-            getCarouselIndex={getPostCarouselIndex}
-            onCarouselNext={handlePostCarouselNext}
-            onCarouselPrev={handlePostCarouselPrev}
-          />
-        </section>
-
-        {/* Post detail modal - lazy loaded */}
-        {selectedPost && (
-          <Suspense
-            fallback={
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl p-8">
-                  <div className="flex flex-col items-center space-y-4">
-                    <LoadingSpinner className="h-8 w-8" />
-                    <p className="text-sm text-muted-foreground">
-                      Loading post details...
-                    </p>
-                  </div>
-                </div>
-              </div>
-            }
-          >
-            <PostModal
-              selectedPost={selectedPost}
-              activeTab={activeTab}
-              transcript={transcript}
-              isLoadingTranscript={isLoadingTranscript}
-              transcriptError={transcriptError}
-              onTabChange={handleTabChange}
-              onCopyTranscript={handleCopyTranscript}
-              onClose={closeModal}
-            />
-          </Suspense>
-        )}
+        {/* Posts grid */}
+        <PostGrid
+          posts={posts}
+          isLoading={false}
+          isSharedView={isSharedView}
+          activeFilter={activeFilter}
+          onPostClick={handlePostClick}
+          onRemovePost={isSharedView ? undefined : handleRemovePost}
+          getCarouselIndex={getPostCarouselIndex}
+          onCarouselNext={handlePostCarouselNext}
+          onCarouselPrev={handlePostCarouselPrev}
+        />
       </div>
+
+      {/* Post detail modal */}
+      {selectedPost && (
+        <Suspense>
+          <PostModal
+            post={selectedPost}
+            activeTab={activeTab}
+            transcript={transcript}
+            isLoadingTranscript={isLoadingTranscript}
+            transcriptError={transcriptError}
+            onTabChange={handleTabChange}
+            onCopyTranscript={handleCopyTranscript}
+            onClose={closeModal}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
