@@ -13,12 +13,7 @@ import React, {
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   ExternalLink,
@@ -1246,19 +1241,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           {formatNumber(post.metrics.comments)}
                         </span>
                       </div>
-                      {post.metrics.views && (
+                      {post.isVideo && post.metrics.views && (
                         <div className="flex items-center gap-1.5">
                           <Eye className="h-4 w-4 text-green-500" />
                           <span className="font-medium text-sm">
                             {formatNumber(post.metrics.views)}
-                          </span>
-                        </div>
-                      )}
-                      {post.metrics.shares && (
-                        <div className="flex items-center gap-1.5">
-                          <Share className="h-4 w-4 text-purple-500" />
-                          <span className="font-medium text-sm">
-                            {formatNumber(post.metrics.shares)}
                           </span>
                         </div>
                       )}
@@ -1465,13 +1452,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedPost && (
             <>
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  {selectedPost.platform === "tiktok" ? "TikTok" : "Instagram"}{" "}
-                  Post
-                </DialogTitle>
-              </DialogHeader>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left: Video/Image with Carousel Support */}
                 <div className="space-y-4">
@@ -1641,7 +1621,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       <>
                         {/* Caption */}
                         <div>
-                          <h3 className="font-semibold mb-2">Caption</h3>
+                          <h3 className="text-sm font-medium mb-2">Caption</h3>
                           <p className="text-sm text-muted-foreground leading-relaxed">
                             {selectedPost.caption}
                           </p>
@@ -1649,54 +1629,36 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
                         {/* Metrics */}
                         <div>
-                          <h3 className="font-semibold mb-3">Performance</h3>
-                          <div className="grid grid-cols-2 gap-4">
+                          <h3 className="text-sm font-medium mb-3">
+                            Performance
+                          </h3>
+                          <div className="flex items-center gap-3 flex-wrap">
                             {selectedPost.metrics.views && (
-                              <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 rounded-full bg-blue-500" />
-                                <div>
-                                  <div className="text-sm font-medium">
-                                    {formatNumber(selectedPost.metrics.views)}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    Views
-                                  </div>
-                                </div>
+                              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                                <Eye className="h-4 w-4 text-green-600" />
+                                <span className="font-semibold text-base text-green-800">
+                                  {formatNumber(selectedPost.metrics.views)}
+                                </span>
                               </div>
                             )}
-                            <div className="flex items-center gap-2">
-                              <Heart className="w-4 h-4 text-red-500" />
-                              <div>
-                                <div className="text-sm font-medium">
-                                  {formatNumber(selectedPost.metrics.likes)}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  Likes
-                                </div>
-                              </div>
+                            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                              <Heart className="h-4 w-4 text-red-600" />
+                              <span className="font-semibold text-base text-red-800">
+                                {formatNumber(selectedPost.metrics.likes)}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <MessageCircle className="w-4 h-4 text-blue-500" />
-                              <div>
-                                <div className="text-sm font-medium">
-                                  {formatNumber(selectedPost.metrics.comments)}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  Comments
-                                </div>
-                              </div>
+                            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                              <MessageCircle className="h-4 w-4 text-blue-600" />
+                              <span className="font-semibold text-base text-blue-800">
+                                {formatNumber(selectedPost.metrics.comments)}
+                              </span>
                             </div>
                             {selectedPost.metrics.shares && (
-                              <div className="flex items-center gap-2">
-                                <ExternalLink className="w-4 h-4 text-green-500" />
-                                <div>
-                                  <div className="text-sm font-medium">
-                                    {formatNumber(selectedPost.metrics.shares)}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    Shares
-                                  </div>
-                                </div>
+                              <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                                <Share className="h-4 w-4 text-purple-600" />
+                                <span className="font-semibold text-base text-purple-800">
+                                  {formatNumber(selectedPost.metrics.shares)}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -1704,7 +1666,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
                         {/* Post Date */}
                         <div>
-                          <h3 className="font-semibold mb-2">Posted</h3>
+                          <h3 className="text-sm font-medium mb-2">Posted</h3>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Calendar className="w-4 h-4" />
                             {formatDate(selectedPost.datePosted)}
@@ -1731,7 +1693,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     {activeTab === "transcript" && (
                       <div>
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-semibold">Transcript</h3>
+                          <h3 className="text-sm font-medium">Transcript</h3>
                           <Button
                             variant="outline"
                             size="sm"
