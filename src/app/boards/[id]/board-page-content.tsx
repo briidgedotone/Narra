@@ -65,6 +65,60 @@ export function BoardPageContent({
     handlePostCarouselPrev,
   } = useCarousel();
 
+  // Memoize filter counts to prevent recalculation on every render
+  const filterCounts = React.useMemo(() => {
+    const tiktokCount = posts.filter(p => p.platform === "tiktok").length;
+    const instagramCount = posts.filter(p => p.platform === "instagram").length;
+    const recentCount = posts.filter(p => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return new Date(p.datePosted) >= thirtyDaysAgo;
+    }).length;
+
+    return {
+      all: posts.length,
+      tiktok: tiktokCount,
+      instagram: instagramCount,
+      recent: recentCount,
+    };
+  }, [posts]);
+
+  // Memoize filter click handlers to prevent unnecessary re-renders
+  const handleFilterClick = React.useCallback((filter: string) => {
+    setActiveFilter(filter);
+  }, []);
+
+  // Memoize filter button props to prevent recreation
+  const filterButtons = React.useMemo(
+    () => [
+      {
+        key: "all",
+        icon: SearchList,
+        label: `All Posts (${filterCounts.all})`,
+        filter: "all",
+      },
+      {
+        key: "tiktok",
+        icon: TikTok,
+        label: `TikTok (${filterCounts.tiktok})`,
+        filter: "tiktok",
+      },
+      {
+        key: "instagram",
+        icon: Instagram,
+        label: `Instagram (${filterCounts.instagram})`,
+        filter: "instagram",
+      },
+      {
+        key: "recent",
+        icon: TimeQuarter,
+        label: `Recent (${filterCounts.recent})`,
+        filter: "recent",
+      },
+    ],
+    [filterCounts]
+  );
+
   if (isLoadingBoard) {
     return (
       <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
@@ -127,54 +181,21 @@ export function BoardPageContent({
         {/* Section 2: Horizontal Filters */}
         <div className="space-y-4">
           <div className="flex items-center gap-3 overflow-x-auto pb-2">
-            <button
-              onClick={() => setActiveFilter("all")}
-              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
-                activeFilter === "all"
-                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
-                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
-              }`}
-              style={{ fontSize: "14px" }}
-            >
-              <SearchList className="w-4 h-4" style={{ color: "#8F8F8F" }} />
-              All Posts ({posts.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter("tiktok")}
-              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
-                activeFilter === "tiktok"
-                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
-                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
-              }`}
-              style={{ fontSize: "14px" }}
-            >
-              <TikTok className="w-4 h-4" style={{ color: "#8F8F8F" }} />
-              TikTok ({posts.filter(p => p.platform === "tiktok").length})
-            </button>
-            <button
-              onClick={() => setActiveFilter("instagram")}
-              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
-                activeFilter === "instagram"
-                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
-                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
-              }`}
-              style={{ fontSize: "14px" }}
-            >
-              <Instagram className="w-4 h-4" style={{ color: "#8F8F8F" }} />
-              Instagram ({posts.filter(p => p.platform === "instagram").length})
-            </button>
-            <button
-              onClick={() => setActiveFilter("recent")}
-              className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
-                activeFilter === "recent"
-                  ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
-                  : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
-              }`}
-              style={{ fontSize: "14px" }}
-            >
-              <TimeQuarter className="w-4 h-4" style={{ color: "#8F8F8F" }} />
-              Recent
-            </button>
+            {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+              <button
+                key={key}
+                onClick={() => handleFilterClick(filter)}
+                className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
+                  activeFilter === filter
+                    ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
+                    : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
+                }`}
+                style={{ fontSize: "14px" }}
+              >
+                <Icon className="w-4 h-4" style={{ color: "#8F8F8F" }} />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 

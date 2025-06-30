@@ -28,7 +28,7 @@ interface PostModalProps {
   onClose: () => void;
 }
 
-export function PostModal({
+export const PostModal = React.memo<PostModalProps>(function PostModal({
   selectedPost,
   activeTab,
   transcript,
@@ -37,14 +37,104 @@ export function PostModal({
   onTabChange,
   onCopyTranscript,
   onClose,
-}: PostModalProps) {
+}) {
+  // Memoize event handlers
+  const handleOverviewClick = React.useCallback(() => {
+    onTabChange("overview");
+  }, [onTabChange]);
+
+  const handleTranscriptClick = React.useCallback(() => {
+    onTabChange("transcript");
+  }, [onTabChange]);
+
+  const handleBackdropClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
+  // Memoize platform icon
+  const platformIcon = React.useMemo(() => {
+    if (!selectedPost) return null;
+    return selectedPost.platform === "tiktok" ? (
+      <TikTok className="w-5 h-5 text-gray-600" />
+    ) : (
+      <Instagram className="w-5 h-5 text-gray-600" />
+    );
+  }, [selectedPost]);
+
+  // Memoize transcript content
+  const transcriptContent = React.useMemo(() => {
+    if (isLoadingTranscript) {
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-4 w-full" />
+          ))}
+        </div>
+      );
+    }
+
+    if (transcriptError) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-red-500 mb-2">Failed to load transcript</p>
+          <p className="text-gray-500 text-sm">{transcriptError}</p>
+        </div>
+      );
+    }
+
+    if (
+      !transcript ||
+      !transcript.segments ||
+      transcript.segments.length === 0
+    ) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-gray-500">
+            No transcript available for this video
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h4 className="font-medium text-gray-900">Video Transcript</h4>
+          <Button
+            onClick={onCopyTranscript}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <Clipboard className="w-4 h-4" />
+            Copy Transcript
+          </Button>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-4 max-h-80 overflow-y-auto">
+          <div className="space-y-2">
+            {transcript.segments.map((segment, index) => (
+              <p key={index} className="text-sm text-gray-700 leading-relaxed">
+                {segment.text}
+              </p>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }, [isLoadingTranscript, transcriptError, transcript, onCopyTranscript]);
+
   if (!selectedPost) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleBackdropClick}
       />
 
       <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
@@ -69,6 +159,7 @@ export function PostModal({
                   )}
                   alt={selectedPost.caption}
                   className="max-w-full max-h-full object-contain"
+                  loading="lazy"
                   onError={e => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/placeholder-post.jpg";
@@ -108,7 +199,7 @@ export function PostModal({
             {/* Tabs */}
             <div className="flex border-b border-gray-200">
               <button
-                onClick={() => onTabChange("overview")}
+                onClick={handleOverviewClick}
                 className={cn(
                   "flex-1 px-6 py-3 text-sm font-medium transition-colors",
                   activeTab === "overview"
@@ -120,7 +211,7 @@ export function PostModal({
               </button>
               {selectedPost.platform === "tiktok" && (
                 <button
-                  onClick={() => onTabChange("transcript")}
+                  onClick={handleTranscriptClick}
                   className={cn(
                     "flex-1 px-6 py-3 text-sm font-medium transition-colors",
                     activeTab === "transcript"
@@ -147,6 +238,7 @@ export function PostModal({
                       )}
                       alt={selectedPost.profile.displayName}
                       className="w-12 h-12 rounded-full object-cover"
+                      loading="lazy"
                       onError={e => {
                         const target = e.target as HTMLImageElement;
                         target.src = "/placeholder-avatar.jpg";
@@ -162,13 +254,7 @@ export function PostModal({
                             <span className="text-white text-xs">✓</span>
                           </div>
                         )}
-                        <div className="ml-2">
-                          {selectedPost.platform === "tiktok" ? (
-                            <TikTok className="w-5 h-5 text-gray-600" />
-                          ) : (
-                            <Instagram className="w-5 h-5 text-gray-600" />
-                          )}
-                        </div>
+                        <div className="ml-2">{platformIcon}</div>
                       </div>
                       <p className="text-gray-500">
                         @{selectedPost.profile.handle}
@@ -226,57 +312,13 @@ export function PostModal({
                   </div>
 
                   {/* Date */}
-                  <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
-                    <TimeQuarter className="w-5 h-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">
-                      Posted {formatDate(selectedPost.datePosted)}
-                    </span>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <TimeQuarter className="w-4 h-4" />
+                    <span>Posted {formatDate(selectedPost.datePosted)}</span>
                   </div>
                 </div>
               ) : (
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-medium text-gray-900">Transcript</h4>
-                    {transcript && (
-                      <Button
-                        onClick={onCopyTranscript}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2"
-                      >
-                        <Clipboard className="w-4 h-4" />
-                        Copy
-                      </Button>
-                    )}
-                  </div>
-
-                  {isLoadingTranscript ? (
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-5/6" />
-                      <Skeleton className="h-4 w-4/6" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/6" />
-                    </div>
-                  ) : transcriptError ? (
-                    <div className="text-center py-8">
-                      <p className="text-red-600 mb-2">
-                        Failed to load transcript
-                      </p>
-                      <p className="text-sm text-gray-500">{transcriptError}</p>
-                    </div>
-                  ) : transcript ? (
-                    <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {transcript.text}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500">No transcript available</p>
-                    </div>
-                  )}
-                </div>
+                <div className="p-6">{transcriptContent}</div>
               )}
             </div>
           </div>
@@ -284,4 +326,4 @@ export function PostModal({
       </div>
     </div>
   );
-}
+});

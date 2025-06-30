@@ -408,8 +408,10 @@ export class DatabaseService {
     // Transform the nested data structure
     return data
       ?.map(item => {
-        const post = item.posts;
-        const profile = post?.profiles;
+        const post = Array.isArray(item.posts) ? item.posts[0] : item.posts;
+        const profile = Array.isArray(post?.profiles)
+          ? post.profiles[0]
+          : post?.profiles;
 
         if (!post) return null;
 
@@ -818,8 +820,10 @@ export class DatabaseService {
     // Transform and deduplicate posts
     const uniquePosts = new Map();
     boardPosts?.forEach(item => {
-      const post = item.posts;
-      const profile = post?.profiles;
+      const post = Array.isArray(item.posts) ? item.posts[0] : item.posts;
+      const profile = Array.isArray(post?.profiles)
+        ? post.profiles[0]
+        : post?.profiles;
 
       if (!post) return;
 

@@ -27,7 +27,7 @@ interface PostCardProps {
   onCarouselPrev: (postId: string) => void;
 }
 
-export function PostCard({
+export const PostCard = React.memo<PostCardProps>(function PostCard({
   post,
   isSharedView = false,
   onPostClick,
@@ -35,7 +35,7 @@ export function PostCard({
   getCarouselIndex,
   onCarouselNext,
   onCarouselPrev,
-}: PostCardProps) {
+}) {
   const currentIndex = getCarouselIndex(post.id);
   const currentMedia = post.isCarousel
     ? post.carouselMedia?.[currentIndex]
@@ -45,17 +45,61 @@ export function PostCard({
     ? currentMedia?.thumbnail || post.thumbnail
     : post.thumbnail;
 
+  // Memoize event handlers to prevent unnecessary re-renders
+  const handlePostClick = React.useCallback(() => {
+    onPostClick(post);
+  }, [onPostClick, post]);
+
+  const handleRemovePost = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRemovePost?.(post.id);
+    },
+    [onRemovePost, post.id]
+  );
+
+  const handleCarouselPrev = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onCarouselPrev(post.id);
+    },
+    [onCarouselPrev, post.id]
+  );
+
+  const handleCarouselNext = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onCarouselNext(post.id, post.carouselMedia?.length || 0);
+    },
+    [onCarouselNext, post.id, post.carouselMedia?.length]
+  );
+
+  // Memoize computed values
+  const platformIcon = React.useMemo(() => {
+    return post.platform === "tiktok" ? (
+      <TikTok className="w-4 h-4 text-white" />
+    ) : (
+      <Instagram className="w-4 h-4 text-white" />
+    );
+  }, [post.platform]);
+
+  const hasCarousel =
+    post.isCarousel && post.carouselMedia && post.carouselMedia.length > 1;
+  const isFirstSlide = currentIndex === 0;
+  const isLastSlide = currentIndex === (post.carouselMedia?.length || 1) - 1;
+
   return (
     <div className="group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-100">
       {/* Post Image/Video */}
       <div
         className="relative aspect-square cursor-pointer overflow-hidden"
-        onClick={() => onPostClick(post)}
+        onClick={handlePostClick}
       >
         <img
           src={proxyImage(displayThumbnail, post.platform)}
           alt={post.caption}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
           onError={e => {
             const target = e.target as HTMLImageElement;
             target.src = "/placeholder-post.jpg";
@@ -65,64 +109,47 @@ export function PostCard({
         {/* Platform Icon */}
         <div className="absolute top-3 left-3">
           <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
-            {post.platform === "tiktok" ? (
-              <TikTok className="w-4 h-4 text-white" />
-            ) : (
-              <Instagram className="w-4 h-4 text-white" />
-            )}
+            {platformIcon}
           </div>
         </div>
 
         {/* Carousel Navigation */}
-        {post.isCarousel &&
-          post.carouselMedia &&
-          post.carouselMedia.length > 1 && (
-            <>
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  onCarouselPrev(post.id);
-                }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={currentIndex === 0}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  onCarouselNext(post.id, post.carouselMedia?.length || 0);
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={
-                  currentIndex === (post.carouselMedia?.length || 1) - 1
-                }
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+        {hasCarousel && (
+          <>
+            <button
+              onClick={handleCarouselPrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+              disabled={isFirstSlide}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleCarouselNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+              disabled={isLastSlide}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
 
-              {/* Carousel Dots */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
-                {post.carouselMedia.map((_, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "w-1.5 h-1.5 rounded-full transition-colors",
-                      index === currentIndex ? "bg-white" : "bg-white/50"
-                    )}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+            {/* Carousel Dots */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+              {post.carouselMedia?.map((_, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-colors",
+                    index === currentIndex ? "bg-white" : "bg-white/50"
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Remove Button */}
         {!isSharedView && onRemovePost && (
           <button
-            onClick={e => {
-              e.stopPropagation();
-              onRemovePost(post.id);
-            }}
+            onClick={handleRemovePost}
             className="absolute top-3 right-3 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
             title="Remove from board"
           >
@@ -142,6 +169,7 @@ export function PostCard({
             src={proxyImage(post.profile.avatarUrl, post.platform, true)}
             alt={post.profile.displayName}
             className="w-8 h-8 rounded-full object-cover"
+            loading="lazy"
             onError={e => {
               const target = e.target as HTMLImageElement;
               target.src = "/placeholder-avatar.jpg";
@@ -203,4 +231,4 @@ export function PostCard({
       </div>
     </div>
   );
-}
+});

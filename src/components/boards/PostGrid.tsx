@@ -19,7 +19,7 @@ interface PostGridProps {
   onCarouselPrev: (postId: string) => void;
 }
 
-export function PostGrid({
+export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   posts,
   isLoading,
   isSharedView = false,
@@ -29,17 +29,26 @@ export function PostGrid({
   getCarouselIndex,
   onCarouselNext,
   onCarouselPrev,
-}: PostGridProps) {
-  // Filter posts based on activeFilter
-  const filteredPosts = posts.filter(post => {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "instagram") return post.platform === "instagram";
-    if (activeFilter === "tiktok") return post.platform === "tiktok";
-    return true;
-  });
+}) {
+  // Memoize filtered posts to prevent unnecessary recalculations
+  const filteredPosts = React.useMemo(() => {
+    return posts.filter(post => {
+      if (activeFilter === "all") return true;
+      if (activeFilter === "instagram") return post.platform === "instagram";
+      if (activeFilter === "tiktok") return post.platform === "tiktok";
+      if (activeFilter === "recent") {
+        // Show posts from last 30 days
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return new Date(post.datePosted) >= thirtyDaysAgo;
+      }
+      return true;
+    });
+  }, [posts, activeFilter]);
 
-  if (isLoading) {
-    return (
+  // Memoize loading skeleton to prevent recreation
+  const loadingSkeleton = React.useMemo(
+    () => (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
@@ -69,7 +78,23 @@ export function PostGrid({
           </div>
         ))}
       </div>
-    );
+    ),
+    []
+  );
+
+  // Memoize empty state message based on filter
+  const emptyStateMessage = React.useMemo(() => {
+    if (activeFilter === "all") {
+      return "This board doesn't have any posts yet. Start adding posts to see them here.";
+    }
+    if (activeFilter === "recent") {
+      return "No recent posts found in this board.";
+    }
+    return `No ${activeFilter} posts found in this board.`;
+  }, [activeFilter]);
+
+  if (isLoading) {
+    return loadingSkeleton;
   }
 
   if (filteredPosts.length === 0) {
@@ -77,11 +102,7 @@ export function PostGrid({
       <EmptyState
         icons={[SearchList]}
         title="No posts found"
-        description={
-          activeFilter === "all"
-            ? "This board doesn't have any posts yet. Start adding posts to see them here."
-            : `No ${activeFilter} posts found in this board.`
-        }
+        description={emptyStateMessage}
       />
     );
   }
@@ -102,4 +123,4 @@ export function PostGrid({
       ))}
     </div>
   );
-}
+});
