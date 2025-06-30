@@ -384,19 +384,19 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                       {formatNumber(post.metrics.comments)}
                     </span>
                   </div>
-                  {post.metrics.views && (
+                  {(post.platform === "tiktok" || post.metrics.views) && (
                     <div className="flex items-center gap-1.5">
                       <Eye className="h-4 w-4 text-green-500" />
                       <span className="font-medium text-sm">
-                        {formatNumber(post.metrics.views)}
+                        {formatNumber(post.metrics.views || 0)}
                       </span>
                     </div>
                   )}
-                  {post.metrics.shares && (
+                  {(post.platform === "tiktok" || post.metrics.shares) && (
                     <div className="flex items-center gap-1.5">
                       <Share className="h-4 w-4 text-purple-500" />
                       <span className="font-medium text-sm">
-                        {formatNumber(post.metrics.shares)}
+                        {formatNumber(post.metrics.shares || 0)}
                       </span>
                     </div>
                   )}
@@ -462,19 +462,19 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                       {formatNumber(post.metrics.comments)}
                     </span>
                   </div>
-                  {post.metrics.views && (
+                  {(post.platform === "tiktok" || post.metrics.views) && (
                     <div className="flex items-center gap-1.5">
                       <Eye className="w-4 h-4 text-green-500" />
                       <span className="text-sm font-medium">
-                        {formatNumber(post.metrics.views)}
+                        {formatNumber(post.metrics.views || 0)}
                       </span>
                     </div>
                   )}
-                  {post.metrics.shares && (
+                  {(post.platform === "tiktok" || post.metrics.shares) && (
                     <div className="flex items-center gap-1.5">
                       <Share className="w-4 h-4 text-purple-500" />
                       <span className="text-sm font-medium">
-                        {formatNumber(post.metrics.shares)}
+                        {formatNumber(post.metrics.shares || 0)}
                       </span>
                     </div>
                   )}

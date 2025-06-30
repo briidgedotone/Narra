@@ -318,6 +318,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             caption: post.caption || "",
             thumbnail: post.thumbnail,
             metrics: {
+              // For Instagram: Only show metrics that are actually available
               ...(post.metrics?.views !== undefined && {
                 views: post.metrics.views,
               }),
@@ -450,9 +451,23 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             )
           : [];
 
-        // Cache the TikTok posts
-        setCache(postsCacheKey, realPosts);
-        setPosts(realPosts);
+        // For TikTok posts, ensure all metrics are shown (even if 0)
+        const processedPosts =
+          platform === "tiktok"
+            ? realPosts.map(post => ({
+                ...post,
+                metrics: {
+                  views: post.metrics.views || 0,
+                  likes: post.metrics.likes || 0,
+                  comments: post.metrics.comments || 0,
+                  shares: post.metrics.shares || 0,
+                },
+              }))
+            : realPosts;
+
+        // Cache the posts
+        setCache(postsCacheKey, processedPosts);
+        setPosts(processedPosts);
       } else {
         console.error("Failed to load posts:", result.error);
       }
