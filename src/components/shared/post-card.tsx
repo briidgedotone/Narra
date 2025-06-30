@@ -223,7 +223,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
               {formatNumber(post.metrics.comments)}
             </span>
           </div>
-          {(post.platform === "tiktok" || post.metrics.views) && (
+          {(post.platform === "tiktok" ||
+            (post.metrics.views !== undefined && post.metrics.views > 0)) && (
             <div className="flex items-center gap-1.5">
               <Eye className="h-4 w-4 text-green-500" />
               <span className="font-medium text-sm">
@@ -231,7 +232,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
               </span>
             </div>
           )}
-          {(post.platform === "tiktok" || post.metrics.shares) && (
+          {(post.platform === "tiktok" ||
+            (post.metrics.shares !== undefined && post.metrics.shares > 0)) && (
             <div className="flex items-center gap-1.5">
               <Share className="h-4 w-4 text-purple-500" />
               <span className="font-medium text-sm">
