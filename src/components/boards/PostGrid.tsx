@@ -8,17 +8,48 @@ import type { SavedPost } from "@/types/board";
 import { PostCard } from "./PostCard";
 
 interface PostGridProps {
+  /** Array of posts to display */
   posts: SavedPost[];
+  /** Whether posts are currently loading */
   isLoading: boolean;
+  /** Whether this is a shared/public view */
   isSharedView?: boolean;
+  /** Active filter for posts ("all" | "tiktok" | "instagram" | "recent") */
   activeFilter: string;
+  /** Callback when a post is clicked */
   onPostClick: (post: SavedPost) => void;
+  /** Callback to remove post (undefined in shared view) */
   onRemovePost?: ((postId: string) => Promise<void>) | undefined;
+  /** Function to get carousel index for a post */
   getCarouselIndex: (postId: string) => number;
+  /** Callback for carousel next navigation */
   onCarouselNext: (postId: string, maxIndex: number) => void;
+  /** Callback for carousel previous navigation */
   onCarouselPrev: (postId: string) => void;
 }
 
+/**
+ * PostGrid - Responsive grid layout for displaying posts
+ *
+ * Features:
+ * - Pinterest-style responsive grid (1-4 columns based on screen size)
+ * - Post filtering by platform and recency
+ * - Loading skeleton states
+ * - Empty state handling
+ * - Optimized rendering with React.memo
+ *
+ * Grid breakpoints:
+ * - Mobile: 1 column
+ * - Small tablet: 2 columns
+ * - Large tablet: 3 columns
+ * - Desktop: 4 columns
+ *
+ * Performance optimizations:
+ * - Memoized filtered posts calculation
+ * - Memoized loading skeleton
+ * - Memoized empty state messages
+ * - Recent filter with 30-day cutoff
+ */
 export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   posts,
   isLoading,
@@ -30,7 +61,10 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   onCarouselNext,
   onCarouselPrev,
 }) {
-  // Memoize filtered posts to prevent unnecessary recalculations
+  /**
+   * Memoized filtered posts to prevent unnecessary recalculations
+   * Filters posts based on platform or recency
+   */
   const filteredPosts = React.useMemo(() => {
     return posts.filter(post => {
       if (activeFilter === "all") return true;
@@ -46,7 +80,10 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     });
   }, [posts, activeFilter]);
 
-  // Memoize loading skeleton to prevent recreation
+  /**
+   * Memoized loading skeleton to prevent recreation
+   * Shows 8 skeleton cards in grid layout
+   */
   const loadingSkeleton = React.useMemo(
     () => (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -54,6 +91,8 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
           <div
             key={i}
             className="bg-white rounded-xl shadow-sm border border-gray-100"
+            role="status"
+            aria-label="Loading post"
           >
             <Skeleton className="aspect-square w-full rounded-t-xl" />
             <div className="p-4 space-y-3">
@@ -82,7 +121,9 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     []
   );
 
-  // Memoize empty state message based on filter
+  /**
+   * Memoized empty state message based on active filter
+   */
   const emptyStateMessage = React.useMemo(() => {
     if (activeFilter === "all") {
       return "This board doesn't have any posts yet. Start adding posts to see them here.";
@@ -93,10 +134,12 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     return `No ${activeFilter} posts found in this board.`;
   }, [activeFilter]);
 
+  // Loading state
   if (isLoading) {
     return loadingSkeleton;
   }
 
+  // Empty state
   if (filteredPosts.length === 0) {
     return (
       <EmptyState
@@ -107,8 +150,13 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     );
   }
 
+  // Main grid render
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      role="grid"
+      aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
+    >
       {filteredPosts.map(post => (
         <PostCard
           key={post.id}
