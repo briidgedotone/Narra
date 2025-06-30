@@ -258,13 +258,13 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                               }}
                             />
                           ) : (
-                            <Image
+                            <img
                               src={proxyInstagramImage(media.url)}
                               alt="Post media"
                               className="absolute inset-0 w-full h-full object-cover"
-                              width={400}
-                              height={300}
-                              unoptimized
+                              onError={e => {
+                                e.currentTarget.src = "/placeholder-post.jpg";
+                              }}
                             />
                           )}
                         </div>
@@ -405,23 +405,13 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
             >
               {/* Thumbnail */}
               <div className="relative w-16 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                {post.thumbnail ? (
-                  <Image
-                    src={proxyInstagramImage(post.thumbnail)}
-                    alt={post.caption || "Post thumbnail"}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <Image
-                    src="/placeholder-post.jpg"
-                    alt="Placeholder"
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+                <Image
+                  src={proxyInstagramImage(post.thumbnail)}
+                  alt={post.caption}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
               </div>
 
               {/* Content */}

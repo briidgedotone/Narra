@@ -1,4 +1,4 @@
-import type { Database, Post, Profile } from "@/types/database";
+import type { Database } from "@/types/database";
 
 import { createAdminClient, supabase } from "./supabase";
 
@@ -408,7 +408,7 @@ export class DatabaseService {
     // Transform the nested data structure
     return data
       ?.map(item => {
-        const post = item.posts as unknown as Post & { profiles: Profile };
+        const post = item.posts;
         const profile = post?.profiles;
 
         if (!post) return null;
@@ -818,7 +818,7 @@ export class DatabaseService {
     // Transform and deduplicate posts
     const uniquePosts = new Map();
     boardPosts?.forEach(item => {
-      const post = item.posts as unknown as Post & { profiles: Profile };
+      const post = item.posts;
       const profile = post?.profiles;
 
       if (!post) return;

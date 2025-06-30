@@ -1,20 +1,21 @@
 "use client";
 
-// Third-party imports
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { createRoot } from "react-dom/client";
 import { toast } from "sonner";
 
-// UI Components
+import { SavePostModal } from "@/components/shared/save-post-modal";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { 
-  TikTok, 
-  Instagram,
+import {
   ExternalLink,
   Heart,
   MessageCircle,
@@ -28,17 +29,19 @@ import {
   ChevronRight,
   Eye,
 } from "@/components/ui/icons";
+import { TikTok, Instagram } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
-import { OptimizedImage } from "@/components/ui/image";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Shared Components
-import { SavePostModal } from "@/components/shared/save-post-modal";
-
-// Utils and Types
 import { cn } from "@/lib/utils";
-import { formatNumber, formatDate, parseWebVTT, copyToClipboard } from "@/lib/utils/format";
+import { formatNumber, formatDate } from "@/lib/utils/format";
+import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { proxyInstagramImage, proxyImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
 
@@ -819,34 +822,24 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               {/* Profile Avatar */}
               <div className="flex-shrink-0">
                 <div className="relative">
-                  {searchResults.avatarUrl ? (
-                    <Image
-                      src={proxyImage(
-                        searchResults.avatarUrl,
-                        searchResults.platform
-                      )}
-                      alt={
-                        searchResults.displayName ||
-                        `${searchResults.platform} profile picture`
-                      }
-                      width={80}
-                      height={80}
-                      className="w-20 h-20 rounded-full object-cover"
-                      onError={e => {
-                        // Fallback to placeholder if image fails to load
-                        e.currentTarget.src = "/placeholder-avatar.jpg";
-                      }}
-                      unoptimized
-                    />
-                  ) : (
-                    <Image
-                      src="/placeholder-avatar.jpg"
-                      alt="Placeholder avatar"
-                      width={80}
-                      height={80}
-                      className="w-20 h-20 rounded-full object-cover"
-                    />
-                  )}
+                  <Image
+                    src={proxyImage(
+                      searchResults.avatarUrl,
+                      searchResults.platform
+                    )}
+                    alt={
+                      searchResults.displayName ||
+                      `${searchResults.platform} profile picture`
+                    }
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 rounded-full object-cover"
+                    onError={e => {
+                      // Fallback to placeholder if image fails to load
+                      e.currentTarget.src = "/placeholder-avatar.jpg";
+                    }}
+                    unoptimized
+                  />
                 </div>
               </div>
 
@@ -1008,31 +1001,32 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                     e.currentTarget.currentTime = 0;
                                   }}
                                   onError={e => {
-                                    const container = e.currentTarget.parentNode;
-                                    if (container) {
-                                      const imageContainer = document.createElement("div");
-                                      imageContainer.className = "relative w-full h-full";
-                                      const root = createRoot(imageContainer);
-                                      root.render(
-                                        <OptimizedImage
-                                          src={proxyImage(media.thumbnail, post.platform)}
-                                          alt="Post media"
-                                          className="absolute inset-0 w-full h-full object-cover"
-                                          fill
-                                          unoptimized
-                                        />
+                                    // Fallback to image if video fails
+                                    const img = document.createElement("img");
+                                    img.src = proxyImage(
+                                      media.thumbnail,
+                                      post.platform
+                                    );
+                                    img.className =
+                                      "w-full h-full object-cover";
+                                    img.alt = "Post media";
+                                    if (e.currentTarget.parentNode) {
+                                      e.currentTarget.parentNode.replaceChild(
+                                        img,
+                                        e.currentTarget
                                       );
-                                      container.replaceChild(imageContainer, e.currentTarget);
                                     }
                                   }}
                                 />
                               ) : (
-                                <OptimizedImage
+                                <img
                                   src={proxyInstagramImage(media.url)}
                                   alt="Post media"
                                   className="absolute inset-0 w-full h-full object-cover"
-                                  fill
-                                  unoptimized
+                                  onError={e => {
+                                    e.currentTarget.src =
+                                      "/placeholder-post.jpg";
+                                  }}
                                 />
                               )}
                             </div>
@@ -1059,21 +1053,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               e.currentTarget.currentTime = 0;
                             }}
                             onError={e => {
-                              const container = e.currentTarget.parentNode;
-                              if (container) {
-                                const imageContainer = document.createElement("div");
-                                imageContainer.className = "relative w-full h-full";
-                                const root = createRoot(imageContainer);
-                                root.render(
-                                  <OptimizedImage
-                                    src={proxyImage(post.thumbnail, post.platform)}
-                                    alt="Post media"
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                    fill
-                                    unoptimized
-                                  />
+                              // Fallback to image if video fails
+                              const img = document.createElement("img");
+                              img.src = proxyInstagramImage(post.thumbnail);
+                              img.className = "w-full h-full object-cover";
+                              img.alt = "Post thumbnail";
+                              if (e.currentTarget.parentNode) {
+                                e.currentTarget.parentNode.replaceChild(
+                                  img,
+                                  e.currentTarget
                                 );
-                                container.replaceChild(imageContainer, e.currentTarget);
                               }
                             }}
                           />
@@ -1427,7 +1416,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             controls
                           />
                         ) : (
-                          <OptimizedImage
+                          <img
                             key={
                               selectedPost.carouselMedia?.[currentCarouselIndex]
                                 ?.id || currentCarouselIndex
@@ -1445,8 +1434,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             }
                             alt="Carousel item"
                             className="w-full h-full object-cover"
-                            fill
-                            unoptimized
                           />
                         )}
 
@@ -1485,42 +1472,40 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       </>
                     ) : (
                       // Single Media Display
-                      <div className="relative w-full h-full">
-                        {selectedPost.isVideo ? (
-                          <video
-                            src={selectedPost.embedUrl}
-                            poster={selectedPost.thumbnail}
-                            className="w-full h-full object-cover"
-                            controls
-                            onError={e => {
-                              const container = e.currentTarget.parentNode;
-                              if (container && selectedPost) {
-                                const imageContainer = document.createElement("div");
-                                imageContainer.className = "relative w-full h-full";
-                                const root = createRoot(imageContainer);
-                                root.render(
-                                  <OptimizedImage
-                                    src={proxyImage(selectedPost.thumbnail, selectedPost.platform)}
-                                    alt="Post media"
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                    fill
-                                    unoptimized
-                                  />
-                                );
-                                container.replaceChild(imageContainer, e.currentTarget);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <OptimizedImage
-                            src={selectedPost.thumbnail}
-                            alt={selectedPost.caption || "Post thumbnail"}
-                            className="w-full h-full object-cover"
-                            fill
-                            unoptimized
-                          />
-                        )}
-                      </div>
+                      <video
+                        src={
+                          selectedPost.platform === "instagram"
+                            ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
+                            : selectedPost.embedUrl
+                        }
+                        poster={
+                          selectedPost.platform === "instagram"
+                            ? proxyInstagramImage(selectedPost.thumbnail)
+                            : selectedPost.thumbnail
+                        }
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src =
+                            selectedPost.platform === "instagram"
+                              ? proxyInstagramImage(selectedPost.thumbnail)
+                              : selectedPost.thumbnail;
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
+                            );
+                          }
+                        }}
+                      />
                     )}
                   </div>
                 </div>
