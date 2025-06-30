@@ -13,7 +13,7 @@ export function FollowingSkeleton() {
       </div>
 
       {/* Simple Profiles Grid Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {[...Array(6)].map((_, i) => (
           <div key={i} className="space-y-3">
             <Skeleton className="h-32 w-full rounded-lg" />
