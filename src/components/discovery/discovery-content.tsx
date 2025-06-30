@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { getCached, setCache } from "@/lib/utils/cache";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { proxyInstagramImage, proxyImage } from "@/lib/utils/image-proxy";
@@ -236,6 +237,18 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const handle = searchResults.handle;
       const platform = searchResults.platform;
 
+      // Create cache key for posts
+      const postsCacheKey = `posts-${handle}-${platform}`;
+
+      // Check cache first
+      const cachedPosts = getCached<Post[]>(postsCacheKey);
+      if (cachedPosts) {
+        console.log("Using cached posts for", handle);
+        setPosts(cachedPosts);
+        setIsLoadingPosts(false);
+        return;
+      }
+
       // Call our API to get real posts
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
@@ -289,12 +302,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             platform: post.platform,
           }));
 
+          // Cache the Instagram posts
+          setCache(postsCacheKey, newPosts);
           // Set the posts directly since we cleared the array at the start
           setPosts(newPosts);
           return; // Exit early since we've already processed Instagram posts
         }
 
-        // Transform the API response to our Post interface
+        // Transform the API response to our Post interface (TikTok)
         const realPosts: Post[] = Array.isArray(videosArray)
           ? videosArray.map(
               (
@@ -409,16 +424,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             )
           : [];
 
+        // Cache the TikTok posts
+        setCache(postsCacheKey, realPosts);
         setPosts(realPosts);
       } else {
-        // Fallback to empty array if API fails
         console.error("Failed to load posts:", result.error);
-        setPosts([]);
       }
     } catch (error) {
       console.error("Failed to load posts:", error);
-      // Set empty array on error
-      setPosts([]);
     } finally {
       setIsLoadingPosts(false);
     }
@@ -571,6 +584,22 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         // Clean the handle - remove @ and whitespace
         const cleanHandle = query.replace(/[@\s]/g, "");
 
+        // Create cache key for this search
+        const cacheKey = `discovery-${cleanHandle}-${selectedPlatform}`;
+
+        // Check cache first
+        const cachedResult = getCached<any>(cacheKey);
+        if (cachedResult) {
+          console.log("Using cached result for", cleanHandle);
+          const profile: Profile = {
+            ...cachedResult,
+            isFollowing: false,
+          };
+          setSearchResults(profile);
+          setIsSearching(false);
+          return;
+        }
+
         // Update URL with search parameters
         router.push(
           `/discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`,
@@ -584,6 +613,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         const result = await response.json();
 
         if (result.success && result.data) {
+          // Cache the successful result
+          setCache(cacheKey, result.data);
+
           const profile: Profile = {
             ...result.data,
             isFollowing: false,
