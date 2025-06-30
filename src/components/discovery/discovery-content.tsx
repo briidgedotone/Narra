@@ -3,10 +3,15 @@
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 
-import { SavePostModal } from "@/components/shared/save-post-modal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +36,7 @@ import {
 } from "@/components/ui/icons";
 import { TikTok, Instagram } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading";
 import {
   Select,
   SelectContent,
@@ -44,6 +50,13 @@ import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { proxyInstagramImage, proxyImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
+
+// Lazy load the SavePostModal component to reduce initial bundle size
+const SavePostModal = React.lazy(() =>
+  import("@/components/shared/save-post-modal").then(module => ({
+    default: module.SavePostModal,
+  }))
+);
 
 interface DiscoveryContentProps {
   userId: string;
@@ -1722,14 +1735,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       {/* Save Post Modal */}
       {postToSave && (
-        <SavePostModal
-          isOpen={showSaveModal}
-          onClose={() => {
-            setShowSaveModal(false);
-            setPostToSave(null);
-          }}
-          post={postToSave}
-        />
+        <Suspense fallback={<LoadingSpinner />}>
+          <SavePostModal
+            isOpen={showSaveModal}
+            onClose={() => {
+              setShowSaveModal(false);
+              setPostToSave(null);
+            }}
+            post={postToSave}
+          />
+        </Suspense>
       )}
     </div>
   );

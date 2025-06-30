@@ -1,9 +1,9 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 
-import { PostGrid, PostModal } from "@/components/boards";
+import { PostGrid } from "@/components/boards";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,17 @@ import {
   Instagram,
   TimeQuarter,
 } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 import { useBoard } from "@/hooks/useBoard";
 import { useCarousel } from "@/hooks/useCarousel";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import type { BoardPageContentProps } from "@/types/board";
+
+// Lazy load the PostModal component to reduce initial bundle size
+const PostModal = React.lazy(() =>
+  import("@/components/boards").then(module => ({ default: module.PostModal }))
+);
 
 // Global timeout declarations for board name and description auto-save
 declare global {
@@ -35,7 +41,7 @@ declare global {
  * - Board title and description editing with auto-save
  * - Post filtering (All, TikTok, Instagram, Recent)
  * - Post grid display with Pinterest-style layout
- * - Post detail modal with tabbed interface
+ * - Post detail modal with tabbed interface (lazy-loaded)
  * - Carousel navigation for multi-image posts
  * - Performance optimizations with memoized calculations
  *
@@ -198,82 +204,88 @@ export function BoardPageContent({
                 className="text-2xl font-semibold text-foreground bg-transparent focus:outline-none"
                 placeholder="Board name..."
                 aria-label="Board name"
+                disabled={isSharedView}
               />
               {isUpdating && (
-                <div
-                  className="text-sm text-muted-foreground"
-                  role="status"
-                  aria-live="polite"
-                >
-                  Saving...
-                </div>
+                <div className="text-xs text-muted-foreground">Saving...</div>
               )}
             </div>
+          </div>
+
+          <div>
             <textarea
+              ref={textareaRef}
               value={board?.description || ""}
               onChange={handleDescriptionChange}
-              placeholder="Type the description for this board"
-              className="text-muted-foreground text-base bg-transparent focus:outline-none resize-none w-full"
-              ref={textareaRef}
+              className="w-full text-muted-foreground bg-transparent focus:outline-none resize-none min-h-[60px]"
+              placeholder="Add a description to help organize your board..."
               aria-label="Board description"
+              disabled={isSharedView}
             />
           </div>
         </section>
 
-        {/* Post filtering section */}
-        <section className="space-y-4" aria-labelledby="post-filters">
-          <div
-            className="flex items-center gap-3 overflow-x-auto pb-2"
-            role="tablist"
-          >
-            {filterButtons.map(({ key, icon: Icon, label, filter }) => (
-              <button
-                key={key}
-                onClick={() => handleFilterClick(filter)}
-                className={`flex items-center gap-2 py-1.5 px-2 rounded-md font-medium whitespace-nowrap border ${
-                  activeFilter === filter
-                    ? "bg-[#F6F6F6] text-foreground border-[#DBDBDB]"
-                    : "bg-white border-[#DBDBDB] text-foreground hover:bg-[#F8F8F8]"
-                }`}
-                style={{ fontSize: "14px" }}
-                role="tab"
-                aria-selected={activeFilter === filter}
-                aria-label={`Filter by ${label}`}
-              >
-                <Icon className="w-4 h-4" style={{ color: "#8F8F8F" }} />
-                {label}
-              </button>
-            ))}
-          </div>
+        {/* Filter buttons section */}
+        <section className="flex flex-wrap gap-3" aria-label="Post filters">
+          {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+            <Button
+              key={key}
+              variant={activeFilter === filter ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleFilterClick(filter)}
+              className="flex items-center gap-2"
+              aria-pressed={activeFilter === filter}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Button>
+          ))}
         </section>
 
         {/* Posts grid section */}
-        <section aria-labelledby="posts-grid">
+        <section aria-label="Board posts">
           <PostGrid
             posts={posts}
             isLoading={isLoadingPosts}
-            isSharedView={isSharedView}
             activeFilter={activeFilter}
+            isSharedView={isSharedView}
             onPostClick={handlePostClick}
-            onRemovePost={!isSharedView ? handleRemovePost : undefined}
+            onRemovePost={handleRemovePost}
             getCarouselIndex={getPostCarouselIndex}
             onCarouselNext={handlePostCarouselNext}
             onCarouselPrev={handlePostCarouselPrev}
           />
         </section>
-      </div>
 
-      {/* Post detail modal */}
-      <PostModal
-        selectedPost={selectedPost}
-        activeTab={activeTab}
-        transcript={transcript}
-        isLoadingTranscript={isLoadingTranscript}
-        transcriptError={transcriptError}
-        onTabChange={handleTabChange}
-        onCopyTranscript={handleCopyTranscript}
-        onClose={closeModal}
-      />
+        {/* Post detail modal - lazy loaded */}
+        {selectedPost && (
+          <Suspense
+            fallback={
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl p-8">
+                  <div className="flex flex-col items-center space-y-4">
+                    <LoadingSpinner className="h-8 w-8" />
+                    <p className="text-sm text-muted-foreground">
+                      Loading post details...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <PostModal
+              selectedPost={selectedPost}
+              activeTab={activeTab}
+              transcript={transcript}
+              isLoadingTranscript={isLoadingTranscript}
+              transcriptError={transcriptError}
+              onTabChange={handleTabChange}
+              onCopyTranscript={handleCopyTranscript}
+              onClose={closeModal}
+            />
+          </Suspense>
+        )}
+      </div>
     </div>
   );
 }

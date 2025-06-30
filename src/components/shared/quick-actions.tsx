@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, PlusCircle, BookOpen, Users } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 
-import { CreateFolderModal } from "./create-folder-modal";
+// Lazy load the CreateFolderModal component to reduce initial bundle size
+const CreateFolderModal = React.lazy(() =>
+  import("./create-folder-modal").then(module => ({
+    default: module.CreateFolderModal,
+  }))
+);
 
 interface QuickActionsProps {
   userId: string;
@@ -19,10 +25,6 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
   const handleFolderCreated = () => {
     setCreateFolderOpen(false);
     onSuccess?.();
-  };
-
-  const handleCreateFolder = () => {
-    setCreateFolderOpen(true);
   };
 
   // Debug log
@@ -41,7 +43,7 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
       label: "Create Folder",
       description: "Organize your content",
       icon: PlusCircle,
-      action: handleCreateFolder,
+      action: () => setCreateFolderOpen(true),
     },
     {
       id: "saved-posts",
@@ -116,12 +118,28 @@ export function QuickActions({ userId, onSuccess }: QuickActionsProps) {
         </CardContent>
       </Card>
 
-      <CreateFolderModal
-        userId={userId}
-        open={createFolderOpen}
-        onOpenChange={setCreateFolderOpen}
-        onSuccess={handleFolderCreated}
-      />
+      {/* Lazy-loaded Create Folder Modal */}
+      {createFolderOpen && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+              <div className="bg-white rounded-2xl p-8">
+                <div className="flex flex-col items-center space-y-4">
+                  <LoadingSpinner className="h-6 w-6" />
+                  <p className="text-sm text-muted-foreground">Loading...</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <CreateFolderModal
+            userId={userId}
+            open={createFolderOpen}
+            onOpenChange={setCreateFolderOpen}
+            onSuccess={handleFolderCreated}
+          />
+        </Suspense>
+      )}
     </>
   );
 }
