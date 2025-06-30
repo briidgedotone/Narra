@@ -135,9 +135,25 @@ interface TikTokVideoData {
 
 interface InstagramPostData {
   id: string;
+  pk?: string;
   video_url?: string;
   display_url?: string;
   thumbnail_src?: string;
+  caption?: {
+    text?: string;
+  };
+  image_versions2?: {
+    candidates?: Array<{
+      url?: string;
+    }>;
+  };
+  carousel_media?: Array<{
+    image_versions2?: {
+      candidates?: Array<{
+        url?: string;
+      }>;
+    };
+  }>;
   edge_media_to_caption?: {
     edges?: Array<{
       node?: {
@@ -152,6 +168,11 @@ interface InstagramPostData {
     count?: number;
   };
   video_view_count?: number;
+  view_count?: number;
+  play_count?: number;
+  like_count?: number;
+  comment_count?: number;
+  taken_at?: number;
   taken_at_timestamp: number;
 }
 
@@ -298,7 +319,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setNextMaxId(result.data.next_max_id || null);
 
           // Convert to our Post interface format
-          const newPosts: Post[] = transformedPosts.map((post: any) => ({
+          const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
             caption: post.caption || "",
@@ -367,13 +388,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   };
                 } else {
                   // Transform Instagram post data
-                  const instagramItem = item as any; // Use any for now since API structure may vary
+                  const instagramItem = item as InstagramPostData;
 
                   // Handle different possible Instagram API response structures
-                  const postId =
-                    instagramItem.id ||
-                    instagramItem.pk ||
-                    `instagram-${index}`;
+                  const postId = instagramItem.id || `instagram-${index}`;
                   const caption =
                     instagramItem.caption?.text ||
                     instagramItem.edge_media_to_caption?.edges?.[0]?.node
@@ -476,7 +494,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setNextMaxId(result.data.next_max_id || null);
 
           // Convert to our Post interface format and append to existing posts
-          const newPosts: Post[] = transformedPosts.map((post: any) => ({
+          const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
             caption: post.caption || "",
@@ -599,7 +617,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         const cacheKey = `discovery-${cleanHandle}-${selectedPlatform}`;
 
         // Check cache first
-        const cachedResult = getCached<any>(cacheKey);
+        const cachedResult = getCached<Profile>(cacheKey);
         if (cachedResult) {
           console.log("Using cached result for", cleanHandle);
           const profile: Profile = {
@@ -1007,7 +1025,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   key={i}
                   className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-pulse"
                 >
-                  <Skeleton className="aspect-[9/16] w-full" />
+                  <Skeleton className="aspect-[2/3] w-full" />
                   <div className="p-4 space-y-3">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />
@@ -1036,7 +1054,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg"
                   )}
                 >
-                  <div className={cn("relative aspect-[9/16]")}>
+                  <div className={cn("relative aspect-[2/3]")}>
                     {/* Display current carousel media or single media */}
                     <div className="relative w-full h-full overflow-hidden">
                       {post.isCarousel &&

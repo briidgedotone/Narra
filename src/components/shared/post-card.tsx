@@ -1,5 +1,4 @@
-import Image from "next/image";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,15 +11,37 @@ import {
   TikTok,
   Instagram,
 } from "@/components/ui/icons";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
-import { proxyImage, proxyInstagramImage } from "@/lib/utils/image-proxy";
-import type { Post } from "@/types/content";
 
 interface PostCardProps {
-  post: Post;
-  onPostClick?: (post: Post) => void;
-  onSavePost?: (post: Post) => void;
+  post: {
+    id: string;
+    embedUrl: string;
+    caption: string;
+    thumbnail: string;
+    metrics: {
+      views?: number;
+      likes: number;
+      comments: number;
+      shares?: number;
+    };
+    datePosted: string;
+    platform: "instagram" | "tiktok";
+    isVideo?: boolean;
+    isCarousel?: boolean;
+    carouselMedia?: Array<{
+      id: string;
+      type: "image" | "video";
+      url: string;
+      thumbnail: string;
+      isVideo: boolean;
+    }>;
+    carouselCount?: number;
+  };
+  onPostClick?: (post: PostCardProps["post"]) => void;
+  onSavePost?: (post: PostCardProps["post"]) => void;
   onRemovePost?: (postId: string) => Promise<void>;
   getCarouselIndex?: (postId: string) => number;
   onCarouselNext?: (postId: string, maxIndex: number) => void;
@@ -40,53 +61,40 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
 }) {
   // Get current carousel state
   const currentIndex = getCarouselIndex(post.id);
+  const currentMedia = post.isCarousel
+    ? post.carouselMedia?.[currentIndex]
+    : null;
+
+  const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
    */
-  const handlePostClick = React.useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      onPostClick?.(post);
-    },
-    [onPostClick, post]
-  );
+  const handlePostClick = useCallback(() => {
+    onPostClick?.(post);
+  }, [onPostClick, post]);
 
-  const handleSavePost = React.useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onSavePost?.(post);
-    },
-    [onSavePost, post]
-  );
+  const handleSavePost = useCallback(() => {
+    onSavePost?.(post);
+  }, [onSavePost, post]);
 
-  const handleRemovePost = React.useCallback(
-    async (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      await onRemovePost?.(post.id);
-    },
-    [onRemovePost, post.id]
-  );
+  const handleRemovePost = useCallback(async () => {
+    if (onRemovePost) {
+      await onRemovePost(post.id);
+    }
+  }, [onRemovePost, post.id]);
 
-  const handleCarouselPrev = React.useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onCarouselPrev?.(post.id);
-    },
-    [onCarouselPrev, post.id]
-  );
+  const handleCarouselNext = useCallback(() => {
+    if (onCarouselNext && post.carouselMedia) {
+      onCarouselNext(post.id, post.carouselMedia.length - 1);
+    }
+  }, [onCarouselNext, post.id, post.carouselMedia]);
 
-  const handleCarouselNext = React.useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onCarouselNext?.(post.id, post.carouselMedia?.length || 0);
-    },
-    [onCarouselNext, post.id, post.carouselMedia?.length]
-  );
+  const handleCarouselPrev = useCallback(() => {
+    if (onCarouselPrev) {
+      onCarouselPrev(post.id);
+    }
+  }, [onCarouselPrev, post.id]);
 
   /**
    * Memoized platform icon to prevent recreation
@@ -115,112 +123,16 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       role={onPostClick ? "button" : "article"}
       tabIndex={onPostClick ? 0 : undefined}
     >
-      <div className={cn("relative aspect-[4/5]")}>
-        {/* Display current carousel media or single media */}
-        <div className="relative w-full h-full overflow-hidden">
-          {post.isCarousel &&
-          post.carouselMedia &&
-          post.carouselMedia.length > 0 ? (
-            // Carousel Media Display
-            <div
-              className="flex w-full h-full transition-transform duration-300 ease-in-out"
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {post.carouselMedia.map((media, index) => (
-                <div
-                  key={media.id || index}
-                  className="w-full h-full flex-shrink-0"
-                >
-                  {media.isVideo ? (
-                    <video
-                      src={proxyImage(media.url, post.platform)}
-                      poster={proxyImage(media.thumbnail, post.platform)}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      muted
-                      playsInline
-                      onMouseEnter={e => {
-                        e.currentTarget.play();
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.pause();
-                        e.currentTarget.currentTime = 0;
-                      }}
-                      onError={e => {
-                        // Fallback to image if video fails
-                        const img = document.createElement("img");
-                        img.src = proxyImage(media.thumbnail, post.platform);
-                        img.className = "w-full h-full object-cover";
-                        img.alt = "Post media";
-                        if (e.currentTarget.parentNode) {
-                          e.currentTarget.parentNode.replaceChild(
-                            img,
-                            e.currentTarget
-                          );
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      src={proxyInstagramImage(media.url)}
-                      alt="Post media"
-                      fill
-                      className="object-cover"
-                      onError={e => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "/placeholder-post.jpg";
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            // Single Media Display
-            <div className="w-full h-full">
-              {post.isVideo ? (
-                <video
-                  src={post.embedUrl}
-                  poster={proxyImage(post.thumbnail, post.platform)}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  muted
-                  playsInline
-                  onMouseEnter={e => {
-                    e.currentTarget.play();
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.pause();
-                    e.currentTarget.currentTime = 0;
-                  }}
-                  onError={e => {
-                    // Fallback to image if video fails
-                    const img = document.createElement("img");
-                    img.src = proxyImage(post.thumbnail, post.platform);
-                    img.className = "w-full h-full object-cover";
-                    img.alt = "Post thumbnail";
-                    if (e.currentTarget.parentNode) {
-                      e.currentTarget.parentNode.replaceChild(
-                        img,
-                        e.currentTarget
-                      );
-                    }
-                  }}
-                />
-              ) : (
-                <Image
-                  src={proxyImage(post.thumbnail, post.platform)}
-                  alt="Post thumbnail"
-                  fill
-                  className="object-cover"
-                  onError={e => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/placeholder-post.jpg";
-                  }}
-                />
-              )}
-            </div>
-          )}
+      <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
+        {/* Post thumbnail */}
+        <div className="relative h-full w-full">
+          <OptimizedImage
+            src={displayThumbnail}
+            alt={post.caption}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          />
         </div>
 
         {/* Platform indicator */}
