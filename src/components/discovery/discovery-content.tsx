@@ -318,10 +318,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             caption: post.caption || "",
             thumbnail: post.thumbnail,
             metrics: {
-              views: post.metrics?.views || 0,
+              ...(post.metrics?.views !== undefined && {
+                views: post.metrics.views,
+              }),
               likes: post.metrics?.likes || 0,
               comments: post.metrics?.comments || 0,
-              shares: post.metrics?.shares || 0,
+              ...(post.metrics?.shares !== undefined && {
+                shares: post.metrics.shares,
+              }),
             },
             datePosted: post.datePosted,
             platform: post.platform,
@@ -493,10 +497,14 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             caption: post.caption || "",
             thumbnail: post.thumbnail,
             metrics: {
-              views: post.metrics?.views || 0,
+              ...(post.metrics?.views !== undefined && {
+                views: post.metrics.views,
+              }),
               likes: post.metrics?.likes || 0,
               comments: post.metrics?.comments || 0,
-              shares: post.metrics?.shares || 0,
+              ...(post.metrics?.shares !== undefined && {
+                shares: post.metrics.shares,
+              }),
             },
             datePosted: post.datePosted,
             platform: post.platform,

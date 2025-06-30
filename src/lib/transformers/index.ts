@@ -161,7 +161,8 @@ export const transformers = {
           metrics: {
             likes: likes,
             comments: comments,
-            views: views,
+            ...(views !== undefined && { views: views }),
+            // Note: Instagram API doesn't provide shares data
           },
           datePosted: new Date(timestamp * 1000).toISOString(),
           isVideo: isVideo,
