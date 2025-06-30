@@ -47,6 +47,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useFolders } from "@/hooks/useFolders";
+import { preloadRoute } from "@/lib/utils/preload";
 
 import { SidebarSkeleton } from "./sidebar-skeleton";
 
@@ -393,6 +394,7 @@ export function Sidebar() {
               className={`sidebar-nav-item flex px-2 items-center rounded-md text-sm font-medium ${
                 isActive ? "active" : ""
               }`}
+              onMouseEnter={() => preloadRoute(item.href)}
             >
               <Icon className="mr-2 h-5 w-5 flex-shrink-0" />
               <span className="text-sm py-2">{item.name}</span>
@@ -499,6 +501,7 @@ export function Sidebar() {
                             <Link
                               href={`/boards/${board.id}`}
                               className="flex items-center flex-1"
+                              onMouseEnter={() => preloadRoute("/boards")}
                             >
                               <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
                               <span className="flex-1 truncate">
