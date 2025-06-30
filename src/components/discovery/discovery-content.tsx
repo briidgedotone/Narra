@@ -33,6 +33,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  Share,
 } from "@/components/ui/icons";
 import { TikTok, Instagram } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
@@ -1245,11 +1246,19 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           {formatNumber(post.metrics.comments)}
                         </span>
                       </div>
-                      {post.isVideo && post.metrics.views && (
+                      {post.metrics.views && (
                         <div className="flex items-center gap-1.5">
                           <Eye className="h-4 w-4 text-green-500" />
                           <span className="font-medium text-sm">
                             {formatNumber(post.metrics.views)}
+                          </span>
+                        </div>
+                      )}
+                      {post.metrics.shares && (
+                        <div className="flex items-center gap-1.5">
+                          <Share className="h-4 w-4 text-purple-500" />
+                          <span className="font-medium text-sm">
+                            {formatNumber(post.metrics.shares)}
                           </span>
                         </div>
                       )}
