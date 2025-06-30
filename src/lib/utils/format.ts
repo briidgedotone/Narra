@@ -34,7 +34,10 @@ export function formatMetric(value: number): string {
  * Format currency values
  * Example: 19 -> "$19", 1999 -> "$1,999"
  */
-export function formatCurrency(amount: number, currency: string = "USD"): string {
+export function formatCurrency(
+  amount: number,
+  currency: string = "USD"
+): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency,

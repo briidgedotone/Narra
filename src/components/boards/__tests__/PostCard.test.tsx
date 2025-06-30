@@ -8,10 +8,8 @@ import { PostCard } from "../PostCard";
 const mockPost: SavedPost = {
   id: "test-post-1",
   platform: "tiktok" as const,
-  platformPostId: "tiktok-123",
   embedUrl: "https://www.tiktok.com/embed/123",
   caption: "Test caption for TikTok video",
-  transcript: "Test transcript content",
   thumbnail: "https://example.com/thumbnail.jpg",
   metrics: {
     views: 1500000,
@@ -21,18 +19,11 @@ const mockPost: SavedPost = {
   },
   datePosted: "2024-01-15T10:30:00Z",
   isCarousel: false,
-  carouselMedia: null,
   profile: {
-    id: "profile-1",
     handle: "testuser",
-    platform: "tiktok" as const,
     displayName: "Test User",
-    bio: "Test bio",
-    followers: 100000,
     avatarUrl: "https://example.com/avatar.jpg",
     verified: true,
-    isActive: true,
-    lastUpdated: "2024-01-15T10:30:00Z",
   },
 };
 

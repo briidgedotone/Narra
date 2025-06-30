@@ -258,10 +258,11 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                               }}
                             />
                           ) : (
-                            <img
+                            <Image
                               src={proxyInstagramImage(media.url)}
                               alt="Post media"
-                              className="absolute inset-0 w-full h-full object-cover"
+                              fill
+                              className="object-cover"
                               onError={e => {
                                 e.currentTarget.src = "/placeholder-post.jpg";
                               }}

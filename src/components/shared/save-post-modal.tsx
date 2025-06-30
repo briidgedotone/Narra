@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -160,10 +161,12 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
         <div className="space-y-4">
           {/* Post Preview */}
           <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
-            <img
+            <Image
               src={post.thumbnail}
               alt="Post preview"
-              className="w-12 h-12 rounded object-cover"
+              width={48}
+              height={48}
+              className="rounded object-cover"
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">@{post.handle}</p>

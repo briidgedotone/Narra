@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -206,14 +207,14 @@ export const PostModal = React.memo<PostModalProps>(function PostModal({
                   title={`TikTok video by ${selectedPost.profile.displayName}`}
                 />
               ) : (
-                <img
+                <Image
                   src={proxyImage(
                     selectedPost.thumbnail,
                     selectedPost.platform
                   )}
                   alt={selectedPost.caption || "Instagram post"}
-                  className="max-w-full max-h-full object-contain"
-                  loading="lazy"
+                  fill
+                  className="object-contain"
                   onError={e => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/placeholder-post.jpg";
@@ -300,15 +301,16 @@ export const PostModal = React.memo<PostModalProps>(function PostModal({
                   {/* Profile information */}
                   <section aria-labelledby="profile-info">
                     <div className="flex items-center gap-4">
-                      <img
+                      <Image
                         src={proxyImage(
                           selectedPost.profile.avatarUrl,
                           selectedPost.platform,
                           true
                         )}
                         alt={`${selectedPost.profile.displayName} profile picture`}
-                        className="w-12 h-12 rounded-full object-cover"
-                        loading="lazy"
+                        width={48}
+                        height={48}
+                        className="rounded-full object-cover"
                         onError={e => {
                           const target = e.target as HTMLImageElement;
                           target.src = "/placeholder-avatar.jpg";

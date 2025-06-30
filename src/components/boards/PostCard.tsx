@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import {
@@ -136,11 +137,11 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           }
         }}
       >
-        <img
+        <Image
           src={proxyImage(displayThumbnail, post.platform)}
           alt={post.caption || "Post thumbnail"}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
           onError={e => {
             const target = e.target as HTMLImageElement;
             target.src = "/placeholder-post.jpg";
@@ -215,11 +216,12 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div className="p-4">
         {/* Profile information */}
         <div className="flex items-center gap-3 mb-3">
-          <img
+          <Image
             src={proxyImage(post.profile.avatarUrl, post.platform, true)}
             alt={`${post.profile.displayName} profile picture`}
-            className="w-8 h-8 rounded-full object-cover"
-            loading="lazy"
+            width={32}
+            height={32}
+            className="rounded-full object-cover"
             onError={e => {
               const target = e.target as HTMLImageElement;
               target.src = "/placeholder-avatar.jpg";

@@ -1019,10 +1019,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   }}
                                 />
                               ) : (
-                                <img
+                                <Image
                                   src={proxyInstagramImage(media.url)}
                                   alt="Post media"
-                                  className="absolute inset-0 w-full h-full object-cover"
+                                  fill
+                                  className="object-cover"
                                   onError={e => {
                                     e.currentTarget.src =
                                       "/placeholder-post.jpg";
@@ -1416,7 +1417,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             controls
                           />
                         ) : (
-                          <img
+                          <Image
                             key={
                               selectedPost.carouselMedia?.[currentCarouselIndex]
                                 ?.id || currentCarouselIndex
@@ -1433,7 +1434,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   ]?.url || ""
                             }
                             alt="Carousel item"
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                           />
                         )}
 
