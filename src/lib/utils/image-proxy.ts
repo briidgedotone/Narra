@@ -13,23 +13,32 @@ export function proxyInstagramImage(imageUrl: string): string {
 }
 
 /**
- * Proxy any external image through our API
+ * Proxy image URLs through our API to handle CORS and caching
  */
-export function proxyImage(
-  imageUrl: string,
-  platform?: "tiktok" | "instagram"
-): string {
-  if (!imageUrl || imageUrl.startsWith("/") || imageUrl.startsWith("data:")) {
-    return imageUrl;
+export const proxyImage = (
+  url: string | undefined,
+  platform: "tiktok" | "instagram",
+  isAvatar = false
+): string => {
+  // Return appropriate fallback for undefined URLs
+  if (!url) {
+    return isAvatar ? "/placeholder-avatar.jpg" : "/placeholder-post.jpg";
   }
 
-  const params = new URLSearchParams({
-    url: imageUrl,
-  });
-
-  if (platform) {
-    params.append("platform", platform);
+  // Don't proxy local URLs or data URLs
+  if (
+    url.startsWith("/") ||
+    url.startsWith("data:") ||
+    url.startsWith("blob:")
+  ) {
+    return url;
   }
 
-  return `/api/proxy-image?${params.toString()}`;
-}
+  // For TikTok videos, don't proxy the URL (contains expiring signatures)
+  if (platform === "tiktok" && url.includes("video")) {
+    return url;
+  }
+
+  // For Instagram images and TikTok thumbnails, proxy through our API
+  return `/api/proxy-image?url=${encodeURIComponent(url)}&platform=${platform}`;
+};
