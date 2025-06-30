@@ -37,6 +37,5 @@
  * @version 1.0.0
  */
 
-export { PostCard } from "./PostCard";
 export { PostGrid } from "./PostGrid";
 export { PostModal } from "./PostModal";

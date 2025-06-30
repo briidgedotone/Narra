@@ -1,11 +1,10 @@
 import React from "react";
 
+import { PostCard } from "@/components/shared/post-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SearchList } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SavedPost } from "@/types/board";
-
-import { PostCard } from "./PostCard";
 
 interface PostGridProps {
   /** Array of posts to display */
@@ -94,7 +93,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
             role="status"
             aria-label="Loading post"
           >
-            <Skeleton className="aspect-square w-full rounded-t-xl" />
+            <Skeleton className="aspect-[4/5] w-full rounded-t-xl" />
             <div className="p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <Skeleton className="w-8 h-8 rounded-full" />
@@ -161,9 +160,9 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
         <PostCard
           key={post.id}
           post={post}
-          isSharedView={isSharedView}
-          onPostClick={onPostClick}
+          onPostClick={() => onPostClick(post)}
           onRemovePost={onRemovePost}
+          isSharedView={isSharedView}
           getCarouselIndex={getCarouselIndex}
           onCarouselNext={onCarouselNext}
           onCarouselPrev={onCarouselPrev}

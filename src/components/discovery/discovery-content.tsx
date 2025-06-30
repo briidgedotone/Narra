@@ -45,11 +45,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCleanup, useDebounce } from "@/hooks/useCleanup";
 import { cn } from "@/lib/utils";
 import { getCached, setCache } from "@/lib/utils/cache";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import { parseWebVTT, copyToClipboard } from "@/lib/utils/format";
 import { proxyInstagramImage, proxyImage } from "@/lib/utils/image-proxy";
+import { logMemoryUsage } from "@/lib/utils/memory";
 import { VideoTranscript } from "@/types/content";
 
 // Lazy load the SavePostModal component to reduce initial bundle size
@@ -181,6 +183,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Memory optimization and cleanup
+  const {} = useCleanup();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
@@ -206,6 +211,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [postCarouselIndices, setPostCarouselIndices] = useState<
     Record<string, number>
   >({});
+
+  // Log memory usage in development
+  useEffect(() => {
+    logMemoryUsage("DiscoveryContent mounted");
+    return () => logMemoryUsage("DiscoveryContent unmounted");
+  }, []);
 
   // Handle URL parameters (from following page navigation)
   useEffect(() => {
@@ -654,6 +665,21 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, searchQuery, isSearching, handleSearch]);
 
+  // Debounced search for better performance
+  const debouncedSearch = useDebounce(handleSearch, 500);
+
+  // Handle input changes with debouncing
+  const handleSearchInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchQuery(value);
+      if (value.trim()) {
+        debouncedSearch(value);
+      }
+    },
+    [debouncedSearch]
+  );
+
   const handleFollowProfile = async () => {
     if (!searchResults) return;
 
@@ -838,7 +864,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   : "Search TikTok creators (e.g., @iamsydneythomas, @khaby.lame)"
               }
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={handleSearchInputChange}
               onKeyDown={e => {
                 if (e.key === "Enter") {
                   handleSearch(searchQuery);
