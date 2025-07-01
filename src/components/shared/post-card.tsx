@@ -208,14 +208,13 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
         {/* Action Buttons */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           {!isSharedView && onSavePost && (
-            <Button
-              size="sm"
-              variant="secondary"
+            <button
               onClick={handleSavePost}
-              className="mr-2"
+              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors mr-2"
+              title="Save to board"
             >
-              <Bookmark className="h-4 w-4" />
-            </Button>
+              <Bookmark className="h-4 w-4 text-gray-700" />
+            </button>
           )}
           {!isSharedView && onRemovePost && (
             <Button size="sm" variant="destructive" onClick={handleRemovePost}>
