@@ -133,41 +133,45 @@ export function DashboardContent({
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] space-y-8">
-        {/* Header Section Skeleton */}
-        <div className="text-center space-y-3">
-          <div className="h-9 w-80 bg-muted rounded-md animate-pulse mx-auto" />
-          <div className="h-6 w-96 bg-muted/60 rounded-md animate-pulse mx-auto" />
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] space-y-12">
+        {/* Header Section Skeleton - Motion Style */}
+        <div className="text-center space-y-4">
+          <div className="h-8 w-72 bg-gray-100 rounded-lg mx-auto animate-pulse" />
+          <div className="h-5 w-96 bg-gray-50 rounded-md mx-auto animate-pulse" />
         </div>
 
-        {/* Collections Grid Skeleton */}
-        <div className="inline-grid grid-cols-2 gap-y-4 gap-x-6">
+        {/* Collections Grid Skeleton - Motion Style */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
           {[1, 2, 3, 4].map(i => (
             <div
               key={i}
-              className="w-[488px] h-[152px] p-4 bg-[#F8F8F8] border-none rounded-xl"
+              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="flex h-full">
-                {/* Image placeholder */}
-                <div className="w-[120px] h-[120px] flex-shrink-0 rounded-md bg-muted animate-pulse" />
+              <div className="flex gap-4">
+                {/* Image placeholder - Clean rounded square */}
+                <div className="w-20 h-20 bg-gray-100 rounded-xl animate-pulse flex-shrink-0" />
 
-                {/* Content placeholder */}
-                <div className="pl-4 flex-1 flex flex-col justify-start py-2 space-y-3">
-                  {/* Title skeleton */}
-                  <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+                {/* Content placeholder - Clean spacing */}
+                <div className="flex-1 space-y-3">
+                  {/* Title skeleton - Professional width */}
+                  <div className="h-5 w-48 bg-gray-100 rounded-md animate-pulse" />
 
-                  {/* Description skeleton - 2 lines */}
+                  {/* Description skeleton - Two clean lines */}
                   <div className="space-y-2">
-                    <div className="h-3 w-full bg-muted/60 rounded animate-pulse" />
-                    <div className="h-3 w-4/5 bg-muted/60 rounded animate-pulse" />
+                    <div className="h-4 w-full bg-gray-50 rounded animate-pulse" />
+                    <div className="h-4 w-3/4 bg-gray-50 rounded animate-pulse" />
                   </div>
-
-                  {/* Bottom spacer to push content up like real card */}
-                  <div className="flex-1" />
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Loading indicator - Subtle Motion style */}
+        <div className="flex items-center gap-2 text-gray-400">
+          <div className="w-1 h-1 bg-gray-300 rounded-full animate-pulse" />
+          <div className="w-1 h-1 bg-gray-300 rounded-full animate-pulse delay-75" />
+          <div className="w-1 h-1 bg-gray-300 rounded-full animate-pulse delay-150" />
         </div>
       </div>
     );
