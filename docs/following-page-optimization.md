@@ -108,6 +108,7 @@ sequenceDiagram
    ```
 
 3. **Process Each Follow**
+
    ```typescript
    // For each follow relationship:
    for (const follow of follows) {
