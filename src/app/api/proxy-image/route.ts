@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const imageUrl = searchParams.get("url");
+  let imageUrl = searchParams.get("url");
   const platform = searchParams.get("platform");
 
   if (!imageUrl) {
@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
       { error: "URL parameter required" },
       { status: 400 }
     );
+  }
+
+  // 🔧 FIX: Convert HEIC URLs to JPEG for TikTok thumbnails
+  if (platform === "tiktok" && imageUrl.includes(".heic")) {
+    imageUrl = imageUrl.replace(".heic", ".jpeg");
   }
 
   try {
