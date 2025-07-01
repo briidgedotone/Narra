@@ -6,7 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface OptimizedImageProps {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   fill?: boolean;
   width?: number;
@@ -49,6 +49,11 @@ export function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Handle missing src by using placeholder immediately
+  const fallbackSrc = "/placeholder-post.jpg";
+  const effectiveSrc = src && src.trim() ? src : fallbackSrc;
+  const shouldUseFallback = !src || !src.trim() || hasError;
+
   // Generate a simple blur placeholder data URL
   const blurDataURL = `data:image/svg+xml;base64,${Buffer.from(
     `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
@@ -74,7 +79,7 @@ export function OptimizedImage({
   };
 
   const imageProps = {
-    src: hasError ? "/placeholder-post.jpg" : src,
+    src: shouldUseFallback ? fallbackSrc : effectiveSrc,
     alt,
     className: cn(
       "transition-opacity duration-300",
@@ -88,7 +93,7 @@ export function OptimizedImage({
     priority,
     sizes,
     ...(placeholder === "blur" &&
-      !hasError && {
+      !shouldUseFallback && {
         placeholder: "blur" as const,
         blurDataURL,
       }),
@@ -120,7 +125,7 @@ export function PostImage({
   onError,
   onClick,
 }: {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   className?: string;
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
@@ -149,7 +154,7 @@ export function AvatarImage({
   size = 40,
   className,
 }: {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   size?: number;
   className?: string;
