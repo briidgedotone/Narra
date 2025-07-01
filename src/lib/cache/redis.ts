@@ -51,6 +51,7 @@ export const cache = new MemoryCache();
 // Clear cache on startup to ensure fresh state (for development)
 if (process.env.NODE_ENV === "development") {
   cache.clear();
+  console.log("🧹 Cache cleared on startup for development");
 }
 
 // Cache key utilities
@@ -59,9 +60,16 @@ export const cacheKeys = {
   tiktokVideos: (handle: string, count: number) =>
     `tiktok:videos:${handle}:${count}`,
   tiktokTranscript: (videoUrl: string) => {
-    // Use a proper hash of the full URL to ensure uniqueness
-    const urlHash = btoa(videoUrl).replace(/[/+=]/g, "").slice(0, 32);
-    return `tiktok:transcript:${urlHash}`;
+    // Create a simple hash from the full URL to ensure uniqueness
+    let hash = 0;
+    for (let i = 0; i < videoUrl.length; i++) {
+      const char = videoUrl.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    // Convert to positive number and add URL length for extra uniqueness
+    const uniqueId = Math.abs(hash).toString(36) + videoUrl.length.toString(36);
+    return `tiktok:transcript:${uniqueId}`;
   },
   instagramProfile: (handle: string) => `instagram:profile:${handle}`,
   instagramPosts: (handle: string, count: number) =>
