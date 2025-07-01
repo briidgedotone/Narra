@@ -15,6 +15,7 @@ import {
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
+import { proxyImage } from "@/lib/utils/image-proxy";
 
 interface PostCardProps {
   post: {
@@ -66,7 +67,10 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
-  const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
+  const displayThumbnail = proxyImage(
+    currentMedia?.thumbnail || post.thumbnail,
+    post.platform
+  );
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
