@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { PostCard } from "@/components/shared/post-card";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ExternalLink, Users, TikTok, Instagram } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 
 import { FollowingSkeleton } from "./following-skeleton";
 
@@ -18,18 +20,62 @@ interface FollowedProfile {
   avatar_url?: string;
 }
 
+interface FollowedPost {
+  id: string;
+  embed_url: string;
+  caption?: string;
+  transcript?: string;
+  thumbnail_url?: string;
+  metrics: any;
+  date_posted: string;
+  platform: "tiktok" | "instagram";
+  profiles: {
+    handle: string;
+    display_name?: string;
+    avatar_url?: string;
+  };
+}
+
 interface FollowingContentProps {
   profiles: FollowedProfile[];
-  isLoading?: boolean;
+  posts: FollowedPost[];
+  isLoadingProfiles?: boolean;
+  isLoadingPosts?: boolean;
+  isLoadingMore?: boolean;
+  hasMorePosts?: boolean;
+  onLoadMore?: () => void;
 }
 
 export function FollowingContent({
   profiles,
-  isLoading = false,
+  posts,
+  isLoadingProfiles = false,
+  isLoadingPosts = false,
+  isLoadingMore = false,
+  hasMorePosts = false,
+  onLoadMore,
 }: FollowingContentProps) {
   const router = useRouter();
 
-  if (isLoading) {
+  // Transform posts to match PostCard interface
+  const transformedPosts = posts.map(post => ({
+    id: post.id,
+    embedUrl: post.embed_url,
+    caption: post.caption || "",
+    thumbnail: post.thumbnail_url || "",
+    metrics: {
+      views: post.metrics?.views || 0,
+      likes: post.metrics?.likes || 0,
+      comments: post.metrics?.comments || 0,
+      shares: post.metrics?.shares || 0,
+    },
+    datePosted: post.date_posted,
+    platform: post.platform,
+    isVideo: true,
+    isCarousel: false,
+  }));
+
+  if (isLoadingProfiles) {
     return <FollowingSkeleton />;
   }
 
@@ -100,6 +146,62 @@ export function FollowingContent({
             </p>
           </Link>
         ))}
+      </div>
+
+      {/* Posts Section */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Latest Posts</h2>
+        </div>
+
+        {isLoadingPosts ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center space-y-4">
+              <LoadingSpinner className="h-8 w-8 mx-auto" />
+              <p className="text-sm text-muted-foreground">Loading posts...</p>
+            </div>
+          </div>
+        ) : posts.length === 0 ? (
+          <EmptyState
+            icons={[Users]}
+            title="No Posts Yet"
+            description="Posts from your followed creators will appear here once they're available."
+            action={{
+              label: "Discover More Creators",
+              onClick: () => router.push("/discovery"),
+            }}
+          />
+        ) : (
+          <>
+            {/* Posts Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {transformedPosts.map(post => (
+                <PostCard key={post.id} post={post} isSharedView={true} />
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            {hasMorePosts && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={onLoadMore}
+                  disabled={isLoadingMore}
+                  variant="outline"
+                  size="lg"
+                >
+                  {isLoadingMore ? (
+                    <>
+                      <LoadingSpinner className="h-4 w-4 mr-2" />
+                      Loading...
+                    </>
+                  ) : (
+                    "Load More Posts"
+                  )}
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

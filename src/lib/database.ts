@@ -497,6 +497,23 @@ export class DatabaseService {
       .filter(Boolean);
   }
 
+  async getFollowedPosts(userId: string, limit = 50, offset = 0) {
+    const { data, error } = await this.client
+      .from("followed_posts")
+      .select(
+        `
+        *,
+        profiles(*)
+      `
+      )
+      .eq("user_id", userId)
+      .order("date_posted", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data;
+  }
+
   async isFollowing(userId: string, profileId: string) {
     const { data, error } = await this.client
       .from("follows")

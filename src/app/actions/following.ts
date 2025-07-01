@@ -81,6 +81,30 @@ export async function getFollowedProfiles() {
   }
 }
 
+export async function getFollowedPosts(limit = 50, offset = 0) {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const posts = await db.getFollowedPosts(userId, limit, offset);
+
+    return { success: true, data: posts || [] };
+  } catch (error) {
+    console.error("Get followed posts error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch followed posts",
+      data: [],
+    };
+  }
+}
+
 export async function checkIfFollowing(profileId: string) {
   try {
     const { userId } = await auth();

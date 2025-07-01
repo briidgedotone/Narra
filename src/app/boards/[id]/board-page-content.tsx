@@ -254,7 +254,7 @@ export function BoardPageContent({
       {selectedPost && (
         <Suspense>
           <PostModal
-            post={selectedPost}
+            selectedPost={selectedPost}
             activeTab={activeTab}
             transcript={transcript}
             isLoadingTranscript={isLoadingTranscript}

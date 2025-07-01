@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 
-import { getFollowedProfiles, unfollowProfile } from "@/app/actions/following";
+import { getFollowedProfiles, getFollowedPosts } from "@/app/actions/following";
 import { FollowingContent } from "@/components/following";
 
 interface FollowedProfile {
@@ -19,17 +19,37 @@ interface FollowedProfile {
   last_updated: string;
 }
 
+interface FollowedPost {
+  id: string;
+  embed_url: string;
+  caption?: string;
+  transcript?: string;
+  thumbnail_url?: string;
+  metrics: any;
+  date_posted: string;
+  platform: "tiktok" | "instagram";
+  profiles: {
+    handle: string;
+    display_name?: string;
+    avatar_url?: string;
+  };
+}
+
 interface FollowingPageContentProps {
   userId: string;
 }
 
 export function FollowingPageContent({}: FollowingPageContentProps) {
   const [profiles, setProfiles] = useState<FollowedProfile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<FollowedPost[]>([]);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
 
   const loadFollowedProfiles = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingProfiles(true);
       const result = await getFollowedProfiles();
 
       if (result.success && result.data) {
@@ -56,31 +76,63 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
       console.error("Error loading followed profiles:", error);
       toast.error("Failed to load followed creators");
     } finally {
-      setIsLoading(false);
+      setIsLoadingProfiles(false);
     }
   }, []);
 
-  const handleUnfollow = useCallback(async (profileId: string) => {
+  const loadFollowedPosts = useCallback(async (offset = 0, append = false) => {
     try {
-      const result = await unfollowProfile(profileId);
-
-      if (result.success) {
-        // Remove the profile from the list immediately for optimistic UI
-        setProfiles(prev => prev.filter(p => p.id !== profileId));
-        toast.success("Unfollowed creator successfully");
+      if (offset === 0) {
+        setIsLoadingPosts(true);
       } else {
-        toast.error(result.error || "Failed to unfollow creator");
+        setIsLoadingMore(true);
+      }
+
+      const result = await getFollowedPosts(50, offset);
+
+      if (result.success && result.data) {
+        const newPosts = result.data;
+
+        if (append) {
+          setPosts(prev => [...prev, ...newPosts]);
+        } else {
+          setPosts(newPosts);
+        }
+
+        // Check if we have more posts
+        setHasMorePosts(newPosts.length === 50);
+      } else {
+        console.error("Failed to load followed posts:", result.error);
+        if (offset === 0) {
+          toast.error("Failed to load posts");
+        }
       }
     } catch (error) {
-      console.error("Error unfollowing profile:", error);
-      toast.error("Failed to unfollow creator");
+      console.error("Error loading followed posts:", error);
+      if (offset === 0) {
+        toast.error("Failed to load posts");
+      }
+    } finally {
+      setIsLoadingPosts(false);
+      setIsLoadingMore(false);
     }
   }, []);
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoadingMore && hasMorePosts) {
+      loadFollowedPosts(posts.length, true);
+    }
+  }, [isLoadingMore, hasMorePosts, posts.length, loadFollowedPosts]);
 
   // Load followed profiles on mount
   useEffect(() => {
     loadFollowedProfiles();
   }, [loadFollowedProfiles]);
+
+  // Load followed posts on mount
+  useEffect(() => {
+    loadFollowedPosts();
+  }, [loadFollowedPosts]);
 
   // Refresh when coming back to the page (after following someone)
   useEffect(() => {
@@ -88,19 +140,24 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
       if (!document.hidden) {
         // Page became visible again, refresh data
         loadFollowedProfiles();
+        loadFollowedPosts();
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [loadFollowedProfiles]);
+  }, [loadFollowedProfiles, loadFollowedPosts]);
 
   return (
     <FollowingContent
       profiles={profiles}
-      isLoading={isLoading}
-      onUnfollow={handleUnfollow}
+      posts={posts}
+      isLoadingProfiles={isLoadingProfiles}
+      isLoadingPosts={isLoadingPosts}
+      isLoadingMore={isLoadingMore}
+      hasMorePosts={hasMorePosts}
+      onLoadMore={handleLoadMore}
     />
   );
 }
