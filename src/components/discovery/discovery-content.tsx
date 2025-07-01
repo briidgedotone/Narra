@@ -581,28 +581,38 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     async (videoUrl: string, postId: string) => {
       if (!videoUrl || !postId) return;
 
+      console.log("🔄 Starting transcript load for post:", postId);
+      console.log("🔄 Video URL:", videoUrl);
+
       setIsLoadingTranscript(true);
       setTranscriptError(null);
 
       try {
-        const response = await fetch(
-          `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
-        );
+        const apiUrl = `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`;
+        console.log("📡 API call:", apiUrl);
+
+        const response = await fetch(apiUrl);
         const result = await response.json();
 
+        console.log("📡 API response:", result);
+
         if (result.success && result.data) {
+          console.log("✅ Transcript loaded successfully for post:", postId);
+          console.log("📝 Transcript data:", result.data);
           setTranscript(result.data);
           setTranscriptPostId(postId); // Track which post this transcript belongs to
         } else {
+          console.log("❌ Transcript load failed:", result.error);
           setTranscriptError(result.error || "Failed to load transcript");
           setTranscriptPostId(null);
         }
       } catch (error) {
-        console.error("Failed to load transcript:", error);
+        console.error("❌ Transcript load error:", error);
         setTranscriptError("Failed to load transcript. Please try again.");
         setTranscriptPostId(null);
       } finally {
         setIsLoadingTranscript(false);
+        console.log("🏁 Transcript load finished for post:", postId);
       }
     },
     []
@@ -800,6 +810,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   };
 
   const handlePostClick = (post: Post) => {
+    console.log("🔄 Opening post:", post.id, "Platform:", post.platform);
+    console.log("🔄 Previous transcript was for post:", transcriptPostId);
     setSelectedPost(post);
     setActiveTab("overview");
     // Reset transcript state when opening new post
@@ -808,6 +820,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     setTranscriptError(null);
     setIsLoadingTranscript(false);
     setCurrentCarouselIndex(0); // Reset carousel to first item
+    console.log("✅ Transcript state reset for new post");
   };
 
   const handleCarouselNext = () => {
@@ -827,6 +840,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   };
 
   const handleTabChange = (tab: "overview" | "transcript") => {
+    console.log("📑 Tab change to:", tab);
     setActiveTab(tab);
 
     // Load transcript when transcript tab is opened for TikTok posts
@@ -837,9 +851,24 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       selectedPost.tiktokUrl &&
       !isLoadingTranscript
     ) {
+      console.log("🎯 Checking transcript for post:", selectedPost.id);
+      console.log("🎯 Current transcript is for post:", transcriptPostId);
+      console.log(
+        "🎯 Need to load transcript?",
+        transcriptPostId !== selectedPost.id
+      );
+
       // Only load transcript if we don't have one for this specific post
       if (transcriptPostId !== selectedPost.id) {
+        console.log(
+          "🚀 Loading transcript for post:",
+          selectedPost.id,
+          "URL:",
+          selectedPost.tiktokUrl
+        );
         loadTranscript(selectedPost.tiktokUrl, selectedPost.id);
+      } else {
+        console.log("✅ Using existing transcript for post:", selectedPost.id);
       }
     }
   };
@@ -1783,9 +1812,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               </Button>
                             </div>
                           ) : transcript?.transcript ? (
-                            <p className="text-sm leading-relaxed">
-                              {parseWebVTT(transcript.transcript)}
-                            </p>
+                            <>
+                              <div className="text-xs text-blue-600 mb-2 font-mono">
+                                DEBUG: Showing transcript for post:{" "}
+                                {transcriptPostId} | Current post:{" "}
+                                {selectedPost?.id}
+                              </div>
+                              <p className="text-sm leading-relaxed">
+                                {parseWebVTT(transcript.transcript)}
+                              </p>
+                            </>
                           ) : (
                             <div className="text-center py-4">
                               <p className="text-sm text-muted-foreground mb-2">

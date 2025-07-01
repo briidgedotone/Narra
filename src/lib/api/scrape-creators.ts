@@ -160,11 +160,21 @@ export const scrapeCreatorsApi = {
 
     async getVideoTranscript(videoUrl: string, language: string = "en") {
       const cacheKey = cacheKeys.tiktokTranscript(videoUrl);
-      return await makeRequest(
+      console.log(`🔑 Cache key for ${videoUrl}:`, cacheKey);
+
+      const result = await makeRequest(
         `/v1/tiktok/video/transcript?url=${encodeURIComponent(videoUrl)}&language=${language}`,
         cacheKey,
         cacheTTL.transcript
       );
+
+      console.log(`💾 Cache result for ${cacheKey}:`, {
+        success: result.success,
+        cached: result.cached,
+        hasData: !!result.data,
+      });
+
+      return result;
     },
   },
 
