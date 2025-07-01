@@ -43,7 +43,7 @@ interface PostCardProps {
   };
   onPostClick?: (post: PostCardProps["post"]) => void;
   onSavePost?: (post: PostCardProps["post"]) => void;
-  onRemovePost?: (postId: string) => Promise<void>;
+  onRemovePost?: ((postId: string) => Promise<void>) | undefined;
   getCarouselIndex?: (postId: string) => number;
   onCarouselNext?: (postId: string, maxIndex: number) => void;
   onCarouselPrev?: (postId: string) => void;
