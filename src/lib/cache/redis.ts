@@ -51,7 +51,6 @@ export const cache = new MemoryCache();
 // Clear cache on startup to ensure fresh state (for development)
 if (process.env.NODE_ENV === "development") {
   cache.clear();
-  console.log("🧹 Cache cleared on startup for development");
 }
 
 // Cache key utilities

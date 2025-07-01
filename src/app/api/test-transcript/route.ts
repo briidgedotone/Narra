@@ -23,21 +23,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(
-      `🎯 API: Fetching transcript for: ${videoUrl} (language: ${language})`
-    );
+    console.log(`Fetching transcript for: ${videoUrl} (language: ${language})`);
 
     const result = await scrapeCreatorsApi.tiktok.getVideoTranscript(
       videoUrl,
       language
     );
-
-    console.log(`📡 API: ScrapeCreators response:`, {
-      success: result.success,
-      cached: result.cached,
-      hasData: !!result.data,
-      error: result.error,
-    });
 
     if (!result.success) {
       return NextResponse.json(
