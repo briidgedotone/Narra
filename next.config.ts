@@ -40,26 +40,25 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
-      // TikTok CDN domains - comprehensive patterns
+      // TikTok CDN domains - specific patterns
       {
         protocol: "https",
-        hostname: "*.tiktokcdn.com",
+        hostname: "**.tiktokcdn.com",
         port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "*.tiktokcdn-us.com",
+        hostname: "**.tiktokcdn-us.com",
         port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "*.tiktokcdn-eu.com",
+        hostname: "**.tiktokcdn-eu.com",
         port: "",
         pathname: "/**",
       },
-      // Specific TikTok CDN patterns for signed URLs
       {
         protocol: "https",
         hostname: "p16-pu-sign-useast8.tiktokcdn-us.com",
@@ -75,19 +74,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "p16-pu-sign-no.tiktokcdn-eu.com",
-        port: "",
-        pathname: "/**",
-      },
-      // 🔧 FIX: Add missing TikTok CDN patterns
-      {
-        protocol: "https",
-        hostname: "p19-sign.tiktokcdn-us.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "p16-common-sign-sg.tiktokcdn-us.com",
         port: "",
         pathname: "/**",
       },

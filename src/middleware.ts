@@ -14,7 +14,6 @@ const isPublicRoute = createRouteMatcher([
   "/api/test-scrapecreators",
   "/api/test-cache",
   "/api/test-discovery",
-  "/api/proxy-image", // Allow public access to image proxy for thumbnails
   "/shared/(.*)", // Allow public access to shared board routes
 ]);
 
