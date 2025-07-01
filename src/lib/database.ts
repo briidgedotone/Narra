@@ -71,6 +71,17 @@ export class DatabaseService {
     return data;
   }
 
+  async getProfileById(id: string) {
+    const { data, error } = await this.client
+      .from("profiles")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async updateProfile(
     profileId: string,
     updates: Database["public"]["Tables"]["profiles"]["Update"]

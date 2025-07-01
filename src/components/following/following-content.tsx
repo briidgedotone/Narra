@@ -1,23 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
+import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import {
-  ExternalLink,
-  Users,
-  Check,
-  Eye,
-  UserPlus,
-} from "@/components/ui/icons";
-import { LoadingSpinner } from "@/components/ui/loading";
-import { formatNumber, formatDate } from "@/lib/utils/format";
+import { ExternalLink, Users, TikTok, Instagram } from "@/components/ui/icons";
 
 import { FollowingSkeleton } from "./following-skeleton";
 
@@ -26,60 +15,19 @@ interface FollowedProfile {
   handle: string;
   platform: "tiktok" | "instagram";
   display_name?: string;
-  bio?: string;
-  followers_count?: number;
   avatar_url?: string;
-  verified?: boolean;
-  created_at: string; // when user followed this profile
-  last_updated: string; // when profile data was last fetched
 }
 
 interface FollowingContentProps {
   profiles: FollowedProfile[];
   isLoading?: boolean;
-  onUnfollow: (profileId: string) => Promise<void>;
 }
 
 export function FollowingContent({
   profiles,
   isLoading = false,
-  onUnfollow,
 }: FollowingContentProps) {
   const router = useRouter();
-  const [unfollowingIds, setUnfollowingIds] = useState<Set<string>>(new Set());
-
-  const handleViewPosts = (profile: FollowedProfile) => {
-    // Navigate to discovery page with pre-filled handle
-    router.push(
-      `/discovery?handle=${profile.handle}&platform=${profile.platform}`
-    );
-  };
-
-  const handleUnfollow = async (profile: FollowedProfile) => {
-    setUnfollowingIds(prev => new Set(prev).add(profile.id));
-
-    try {
-      await onUnfollow(profile.id);
-    } catch (error) {
-      console.error("Failed to unfollow:", error);
-    } finally {
-      setUnfollowingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(profile.id);
-        return newSet;
-      });
-    }
-  };
-
-  const getPlatformColor = (platform: string) => {
-    return platform === "tiktok"
-      ? "bg-black text-white"
-      : "bg-gradient-to-r from-purple-500 to-pink-500 text-white";
-  };
-
-  const getPlatformIcon = (platform: string) => {
-    return platform === "tiktok" ? "🎵" : "📷";
-  };
 
   if (isLoading) {
     return <FollowingSkeleton />;
@@ -100,7 +48,7 @@ export function FollowingContent({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header with stats */}
       <div className="flex items-center justify-between">
         <div>
@@ -119,112 +67,39 @@ export function FollowingContent({
       </div>
 
       {/* Profiles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-6">
         {profiles.map(profile => (
-          <Card
+          <Link
             key={profile.id}
-            className="p-6 hover:shadow-md transition-shadow"
+            href={`/discovery?handle=${profile.handle}&platform=${profile.platform}`}
+            className="group relative flex flex-col items-center text-center p-2 rounded-lg transition-colors hover:bg-muted/50"
           >
-            <div className="space-y-4">
-              {/* Profile Header */}
-              <div className="flex items-start space-x-3">
-                <div className="relative">
-                  <Image
-                    src={profile.avatar_url || `/placeholder-avatar.jpg`}
-                    alt={profile.display_name || profile.handle}
-                    width={56}
-                    height={56}
-                    className="rounded-full object-cover"
-                  />
-                  <div className="absolute -bottom-1 -right-1">
-                    <Badge
-                      variant="secondary"
-                      className={`text-xs px-1.5 py-0.5 ${getPlatformColor(profile.platform)}`}
-                    >
-                      {getPlatformIcon(profile.platform)}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-1">
-                    <h3 className="font-semibold text-sm truncate">
-                      {profile.display_name || profile.handle}
-                    </h3>
-                    {profile.verified && (
-                      <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                    )}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    @{profile.handle}
-                  </p>
-
-                  {profile.followers_count && (
-                    <div className="flex items-center space-x-1 mt-1">
-                      <Users className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">
-                        {formatNumber(profile.followers_count)} followers
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Bio */}
-              {profile.bio && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {profile.bio}
-                </p>
-              )}
-
-              {/* Follow Info */}
-              <div className="text-xs text-muted-foreground">
-                <p>Followed {formatDate(profile.created_at)}</p>
-                <p>Updated {formatDate(profile.last_updated)}</p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex space-x-2">
-                <Button
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => handleViewPosts(profile)}
-                >
-                  <Eye className="h-4 w-4 mr-1" />
-                  View Posts
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleUnfollow(profile)}
-                  disabled={unfollowingIds.has(profile.id)}
-                  className="hover:bg-destructive hover:text-destructive-foreground"
-                >
-                  {unfollowingIds.has(profile.id) ? (
-                    <LoadingSpinner className="h-4 w-4" />
-                  ) : (
-                    <UserPlus className="h-4 w-4" />
-                  )}
-                </Button>
+            <div className="relative mb-3">
+              <AvatarWithFallback
+                profile={profile}
+                width={80}
+                height={80}
+                className="rounded-full object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute -bottom-1 -right-1">
+                {profile.platform === "tiktok" ? (
+                  <TikTok className="h-5 w-5 text-black" />
+                ) : (
+                  <Instagram className="h-5 w-5 text-pink-500" />
+                )}
               </div>
             </div>
-          </Card>
-        ))}
-      </div>
 
-      {/* Cost-saving notice */}
-      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="flex items-start space-x-2">
-          <div className="text-blue-600 text-sm">💡</div>
-          <div className="text-sm text-blue-700">
-            <p className="font-medium">Smart Following</p>
-            <p>
-              Posts are loaded fresh when you click View Posts - no background
-              refreshes, no API costs, always current content!
+            <div className="flex items-center space-x-1">
+              <h3 className="font-semibold text-sm truncate group-hover:text-primary">
+                {profile.display_name || profile.handle}
+              </h3>
+            </div>
+            <p className="text-muted-foreground text-xs truncate w-full">
+              @{profile.handle}
             </p>
-          </div>
-        </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

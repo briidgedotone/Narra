@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
+  ExternalLink,
   Heart,
   MessageCircle,
   Calendar,
@@ -1706,6 +1707,21 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             {formatDate(selectedPost.datePosted)}
                           </div>
                         </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            className="flex-1"
+                            onClick={() => handleSavePost(selectedPost)}
+                          >
+                            <Bookmark className="w-4 h-4 mr-2" />
+                            Save to Board
+                          </Button>
+                          <Button variant="outline">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Share
+                          </Button>
+                        </div>
                       </>
                     )}
 
@@ -1788,17 +1804,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                         </div>
                       </div>
                     )}
-                  </div>
-
-                  {/* Save to Board Button - Bottom of Right Panel */}
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <Button
-                      className="w-full"
-                      onClick={() => handleSavePost(selectedPost)}
-                    >
-                      <Bookmark className="w-4 h-4 mr-2" />
-                      Save to Board
-                    </Button>
                   </div>
                 </div>
               </div>
