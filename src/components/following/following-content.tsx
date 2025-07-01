@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ExternalLink, Users, TikTok, Instagram } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
+import { proxyImage } from "@/lib/utils/image-proxy";
 
 import { FollowingSkeleton } from "./following-skeleton";
 
@@ -62,7 +63,7 @@ export function FollowingContent({
     id: post.id,
     embedUrl: post.embed_url,
     caption: post.caption || "",
-    thumbnail: post.thumbnail_url || "",
+    thumbnail: proxyImage(post.thumbnail_url, post.platform),
     metrics: {
       views: post.metrics?.views || 0,
       likes: post.metrics?.likes || 0,
