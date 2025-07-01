@@ -219,6 +219,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     "overview"
   );
   const [transcript, setTranscript] = useState<VideoTranscript | null>(null);
+  const [transcriptPostId, setTranscriptPostId] = useState<string | null>(null); // Track which post's transcript we have
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
@@ -576,30 +577,36 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchResults?.handle, searchResults?.platform]);
 
-  const loadTranscript = useCallback(async (videoUrl: string) => {
-    if (!videoUrl) return;
+  const loadTranscript = useCallback(
+    async (videoUrl: string, postId: string) => {
+      if (!videoUrl || !postId) return;
 
-    setIsLoadingTranscript(true);
-    setTranscriptError(null);
+      setIsLoadingTranscript(true);
+      setTranscriptError(null);
 
-    try {
-      const response = await fetch(
-        `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
-      );
-      const result = await response.json();
+      try {
+        const response = await fetch(
+          `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
+        );
+        const result = await response.json();
 
-      if (result.success && result.data) {
-        setTranscript(result.data);
-      } else {
-        setTranscriptError(result.error || "Failed to load transcript");
+        if (result.success && result.data) {
+          setTranscript(result.data);
+          setTranscriptPostId(postId); // Track which post this transcript belongs to
+        } else {
+          setTranscriptError(result.error || "Failed to load transcript");
+          setTranscriptPostId(null);
+        }
+      } catch (error) {
+        console.error("Failed to load transcript:", error);
+        setTranscriptError("Failed to load transcript. Please try again.");
+        setTranscriptPostId(null);
+      } finally {
+        setIsLoadingTranscript(false);
       }
-    } catch (error) {
-      console.error("Failed to load transcript:", error);
-      setTranscriptError("Failed to load transcript. Please try again.");
-    } finally {
-      setIsLoadingTranscript(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   const handleCopyTranscript = async () => {
     if (!transcript?.transcript) return;
@@ -797,6 +804,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     setActiveTab("overview");
     // Reset transcript state when opening new post
     setTranscript(null);
+    setTranscriptPostId(null);
     setTranscriptError(null);
     setIsLoadingTranscript(false);
     setCurrentCarouselIndex(0); // Reset carousel to first item
@@ -821,16 +829,18 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const handleTabChange = (tab: "overview" | "transcript") => {
     setActiveTab(tab);
 
-    // Load transcript when transcript tab is opened and we don't have it yet
+    // Load transcript when transcript tab is opened for TikTok posts
     if (
       tab === "transcript" &&
       selectedPost &&
       selectedPost.platform === "tiktok" &&
       selectedPost.tiktokUrl &&
-      !transcript &&
       !isLoadingTranscript
     ) {
-      loadTranscript(selectedPost.tiktokUrl);
+      // Only load transcript if we don't have one for this specific post
+      if (transcriptPostId !== selectedPost.id) {
+        loadTranscript(selectedPost.tiktokUrl, selectedPost.id);
+      }
     }
   };
 
@@ -1763,7 +1773,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 onClick={() =>
                                   selectedPost &&
                                   selectedPost.tiktokUrl &&
-                                  loadTranscript(selectedPost.tiktokUrl)
+                                  loadTranscript(
+                                    selectedPost.tiktokUrl,
+                                    selectedPost.id
+                                  )
                                 }
                               >
                                 Try Again
@@ -1784,7 +1797,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 onClick={() =>
                                   selectedPost &&
                                   selectedPost.tiktokUrl &&
-                                  loadTranscript(selectedPost.tiktokUrl)
+                                  loadTranscript(
+                                    selectedPost.tiktokUrl,
+                                    selectedPost.id
+                                  )
                                 }
                               >
                                 Load Transcript
