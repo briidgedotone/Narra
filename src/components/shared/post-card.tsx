@@ -12,10 +12,8 @@ import {
   Instagram,
   Share,
 } from "@/components/ui/icons";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
-import { proxyImage } from "@/lib/utils/image-proxy";
 
 interface PostCardProps {
   post: {
@@ -67,9 +65,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
-  // Apply image proxy for TikTok thumbnails to handle HEIC format conversion
-  const rawThumbnail = currentMedia?.thumbnail || post.thumbnail;
-  const displayThumbnail = proxyImage(rawThumbnail, post.platform);
+  const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
+  const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
@@ -130,13 +127,32 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
         {/* Post thumbnail */}
         <div className="relative h-full w-full">
-          <OptimizedImage
-            src={displayThumbnail}
-            alt={post.caption}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-          />
+          {displayThumbnail ? (
+            <>
+              <img
+                src={proxiedThumbnail}
+                alt="Post thumbnail"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                onError={e => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const fallback =
+                    target.nextElementSibling as HTMLElement | null;
+                  if (fallback) {
+                    fallback.style.display = "flex";
+                  }
+                }}
+              />
+              <div className="absolute inset-0 hidden h-full w-full flex-col items-center justify-center bg-gray-200 text-center text-xs text-gray-500">
+                <p>Image could not be loaded.</p>
+              </div>
+            </>
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-500">
+              <p>No caption available</p>
+            </div>
+          )}
         </div>
 
         {/* Platform indicator */}

@@ -498,19 +498,41 @@ export class DatabaseService {
   }
 
   async getFollowedPosts(userId: string, limit = 50, offset = 0) {
+    // Get the profiles the user follows
+    const { data: follows, error: followsError } = await this.client
+      .from("follows")
+      .select("profile_id")
+      .eq("user_id", userId);
+
+    if (followsError) {
+      console.error("Error fetching followed profiles:", followsError);
+      throw followsError;
+    }
+
+    if (!follows || follows.length === 0) {
+      return [];
+    }
+
+    const profileIds = follows.map(f => f.profile_id);
+
+    // Get the posts from those profiles
     const { data, error } = await this.client
-      .from("followed_posts")
+      .from("posts")
       .select(
         `
         *,
         profiles(*)
       `
       )
-      .eq("user_id", userId)
+      .in("profile_id", profileIds)
       .order("date_posted", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Error fetching followed posts:", error);
+      throw error;
+    }
+
     return data;
   }
 

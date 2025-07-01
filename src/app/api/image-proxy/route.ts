@@ -8,15 +8,35 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const response = await fetch(imageUrl, {
+    // The URL from search params might still be partially encoded. Fully decode it.
+    const decodedUrl = decodeURIComponent(imageUrl);
+
+    const url = new URL(decodedUrl);
+    let referer = url.origin;
+
+    // Set specific referer for TikTok and Instagram
+    if (url.hostname.includes("tiktok")) {
+      referer = "https://www.tiktok.com/";
+    } else if (
+      url.hostname.includes("instagram") ||
+      url.hostname.includes("fbcdn")
+    ) {
+      referer = "https://www.instagram.com/";
+    }
+
+    const response = await fetch(decodedUrl, {
       headers: {
-        // Some sites require a user-agent header
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Referer: referer,
       },
     });
 
     if (!response.ok) {
+      console.error(`Image proxy failed for URL: ${decodedUrl}`, {
+        status: response.status,
+        statusText: response.statusText,
+      });
       return new NextResponse(`Failed to fetch image: ${response.statusText}`, {
         status: response.status,
       });
@@ -26,13 +46,17 @@ export async function GET(req: NextRequest) {
     const contentType = response.headers.get("content-type") || "image/jpeg";
 
     return new NextResponse(imageBuffer, {
+      status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, max-age=86400, immutable", // Cache for 1 day
       },
     });
-  } catch (error) {
-    console.error("Image proxy error:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+  } catch (error: any) {
+    console.error("Image proxy error:", {
+      message: error.message,
+      url: imageUrl,
+    });
+    return new NextResponse("Error processing image request", { status: 500 });
   }
 }

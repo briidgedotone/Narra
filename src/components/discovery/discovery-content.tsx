@@ -41,7 +41,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCleanup, useDebounce } from "@/hooks/useCleanup";
+import { useCleanup } from "@/hooks/useCleanup";
 import { cn } from "@/lib/utils";
 import { getCached, setCache } from "@/lib/utils/cache";
 import { formatNumber, formatDate } from "@/lib/utils/format";
@@ -699,19 +699,15 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, searchQuery, isLoading, handleSearch]);
 
-  // Debounced search for better performance
-  const debouncedSearch = useDebounce(handleSearch, 500);
-
-  // Handle input changes with debouncing
+  // Handle input changes WITHOUT automatic search
   const handleSearchInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearchQuery(value);
-      if (value.trim()) {
-        debouncedSearch(value);
-      }
+      // Remove automatic search on input change
+      // Search will only happen on Enter key or Search button click
     },
-    [debouncedSearch]
+    []
   );
 
   const handleFollowProfile = async () => {
@@ -900,15 +896,16 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
               value={searchQuery}
               onChange={handleSearchInputChange}
               onKeyDown={e => {
-                if (e.key === "Enter") {
-                  handleSearch(searchQuery);
+                if (e.key === "Enter" && searchQuery.trim()) {
+                  e.preventDefault();
+                  handleSearch(searchQuery.trim());
                 }
               }}
               className="pl-10 w-[600px] h-[36px] bg-[#F3F3F3] border-[#DBDBDB] shadow-none text-[#707070] placeholder:text-[#707070]"
             />
-            {searchQuery && (
+            {searchQuery.trim() && (
               <Button
-                onClick={() => handleSearch(searchQuery)}
+                onClick={() => handleSearch(searchQuery.trim())}
                 size="sm"
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-3 text-xs bg-[#2463EB] hover:bg-[#2463EB]/90"
               >

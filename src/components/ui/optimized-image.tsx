@@ -20,6 +20,7 @@ interface OptimizedImageProps {
     | undefined;
   onClick?: (() => void) | undefined;
   style?: React.CSSProperties;
+  unoptimized?: boolean;
 }
 
 /**
@@ -45,6 +46,7 @@ export function OptimizedImage({
   onError,
   onClick,
   style,
+  unoptimized = false,
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -90,6 +92,7 @@ export function OptimizedImage({
     onError: handleError,
     onClick,
     style,
+    unoptimized,
     priority,
     sizes,
     ...(placeholder === "blur" &&
