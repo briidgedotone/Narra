@@ -207,7 +207,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tiktokHasMore, setTiktokHasMore] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tiktokMaxCursor, setTiktokMaxCursor] = useState<string | null>(null);
@@ -1310,10 +1309,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             </div>
           )}
 
-          {/* Load More Button for Instagram */}
+          {/* Load More Button for Both Platforms */}
           {!isLoading &&
-            searchResults?.platform === "instagram" &&
-            hasMorePosts && (
+            ((searchResults?.platform === "instagram" && hasMorePosts) ||
+              (searchResults?.platform === "tiktok" && tiktokHasMore)) && (
               <div className="flex justify-center mt-6">
                 <Button
                   onClick={loadMorePosts}
