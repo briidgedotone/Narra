@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 
 import { refreshProfile } from "@/app/actions/profiles";
 
+import { OptimizedImage } from "./optimized-image";
+
 interface AvatarWithFallbackProps {
   profile: {
     id: string;
@@ -57,12 +59,14 @@ export function AvatarWithFallback({
   }
 
   return (
-    <img
-      key={profile.avatar_url} // Re-mount if URL changes
+    <OptimizedImage
       src={imageUrl}
       alt={profile.display_name || profile.handle}
+      width={props.width}
+      height={props.height}
+      className={`${props.className} rounded-full object-cover`}
       onError={handleImageError}
-      {...props}
+      sizes={`${props.width}px`}
     />
   );
 }

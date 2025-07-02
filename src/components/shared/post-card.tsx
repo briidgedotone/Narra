@@ -2,16 +2,17 @@ import React, { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Heart,
-  MessageCircle,
-  Eye,
+  Bookmark,
   ChevronLeft,
   ChevronRight,
-  Bookmark,
-  TikTok,
+  Eye,
+  Heart,
   Instagram,
+  MessageCircle,
   Share,
+  TikTok,
 } from "@/components/ui/icons";
+import { PostImage } from "@/components/ui/optimized-image";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
 
@@ -134,11 +135,10 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
         <div className="relative h-full w-full">
           {displayThumbnail ? (
             <>
-              <img
+              <PostImage
                 src={proxiedThumbnail}
                 alt="Post thumbnail"
                 className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
                 onError={e => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = "none";
