@@ -65,6 +65,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
+  // Use carousel item thumbnail, but fallback to main post thumbnail if carousel item fails
   const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
   const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
 
@@ -189,7 +190,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             {!isFirstSlide && (
               <button
                 onClick={handleCarouselPrev}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 shadow-md transition-colors"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -200,7 +201,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             {!isLastSlide && (
               <button
                 onClick={handleCarouselNext}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 shadow-md transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                 aria-label="Next image"
               >
                 <ChevronRight className="w-4 h-4" />
