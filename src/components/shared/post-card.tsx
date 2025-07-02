@@ -65,7 +65,6 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
-  // Use carousel item thumbnail, but fallback to main post thumbnail if carousel item fails
   const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
   const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
 

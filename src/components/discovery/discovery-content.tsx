@@ -323,7 +323,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format - preserve content type properties for carousel functionality
+          // Convert to our Post interface format - preserve all content type properties
           const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
@@ -342,7 +342,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             },
             datePosted: post.datePosted,
             platform: post.platform,
-            // Essential content type properties for carousel navigation
+            // Preserve content type properties for proper UI handling
             isVideo: post.isVideo || false,
             isCarousel: post.isCarousel || false,
             carouselMedia: post.carouselMedia || [],
@@ -528,7 +528,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format and append to existing posts - preserve carousel properties
+          // Convert to our Post interface format and append to existing posts - preserve content type properties
           const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
@@ -546,7 +546,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             },
             datePosted: post.datePosted,
             platform: post.platform,
-            // Essential content type properties for carousel navigation
+            // Preserve content type properties for proper UI handling
             isVideo: post.isVideo || false,
             isCarousel: post.isCarousel || false,
             carouselMedia: post.carouselMedia || [],

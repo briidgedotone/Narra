@@ -78,24 +78,7 @@ export const transformers = {
           carouselMedia = post.carousel_media.map(
             (item: any, itemIndex: number) => {
               const itemVideoUrl = item.video_versions?.[0]?.url;
-
-              // Try to find the best image URL from candidates array
-              // Prefer fbcdn.net domains over scontent domains for better proxy compatibility
-              let itemImageUrl = "";
-              if (item.image_versions2?.candidates) {
-                // First try to find fbcdn.net URLs
-                const fbcdnCandidate = item.image_versions2.candidates.find(
-                  (candidate: any) =>
-                    candidate.url && candidate.url.includes("fbcdn.net")
-                );
-
-                if (fbcdnCandidate) {
-                  itemImageUrl = fbcdnCandidate.url;
-                } else {
-                  // Fallback to first available candidate
-                  itemImageUrl = item.image_versions2.candidates[0]?.url || "";
-                }
-              }
+              const itemImageUrl = item.image_versions2?.candidates?.[0]?.url;
 
               return {
                 id: item.pk || `carousel-${itemIndex}`,

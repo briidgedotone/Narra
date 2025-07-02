@@ -12,37 +12,24 @@ export async function GET(req: NextRequest) {
     const decodedUrl = decodeURIComponent(imageUrl);
 
     const url = new URL(decodedUrl);
+    let referer = url.origin;
 
-    // Set specific headers for different domains
-    const headers: Record<string, string> = {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    };
-
+    // Set specific referer for TikTok and Instagram
     if (url.hostname.includes("tiktok")) {
-      headers.Referer = "https://www.tiktok.com/";
+      referer = "https://www.tiktok.com/";
     } else if (
       url.hostname.includes("instagram") ||
       url.hostname.includes("fbcdn")
     ) {
-      headers.Referer = "https://www.instagram.com/";
-    } else if (
-      url.hostname.includes("scontent") &&
-      url.hostname.includes("cdninstagram")
-    ) {
-      // Special handling for Instagram scontent CDN domains
-      headers.Referer = "https://www.instagram.com/";
-      headers["Accept"] = "image/webp,image/apng,image/*,*/*;q=0.8";
-      headers["Accept-Language"] = "en-US,en;q=0.9";
-      headers["Cache-Control"] = "no-cache";
-      headers["Pragma"] = "no-cache";
-      headers["Sec-Fetch-Dest"] = "image";
-      headers["Sec-Fetch-Mode"] = "no-cors";
-      headers["Sec-Fetch-Site"] = "cross-site";
+      referer = "https://www.instagram.com/";
     }
 
     const response = await fetch(decodedUrl, {
-      headers,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Referer: referer,
+      },
     });
 
     if (!response.ok) {
