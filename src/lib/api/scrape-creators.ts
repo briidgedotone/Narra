@@ -185,7 +185,7 @@ export const scrapeCreatorsApi = {
       const cacheKey = nextMaxId
         ? `instagram:posts:${handle}:${count}:${nextMaxId}`
         : cacheKeys.instagramPosts(handle, count);
-      let endpoint = `/v2/instagram/user/posts?handle=${handle}`;
+      let endpoint = `/v2/instagram/user/posts?handle=${handle}&count=${count}`;
 
       // Add pagination if nextMaxId is provided
       if (nextMaxId) {

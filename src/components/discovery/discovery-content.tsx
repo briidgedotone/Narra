@@ -207,6 +207,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tiktokHasMore, setTiktokHasMore] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tiktokMaxCursor, setTiktokMaxCursor] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
   const [sortOption, setSortOption] = useState("most-recent");
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -279,7 +283,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const endpoint =
         platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=50`
+        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=30`
       );
       const result = await response.json();
 
@@ -1242,16 +1246,15 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
                     {/* Save Button */}
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        size="sm"
-                        variant="secondary"
+                      <button
                         onClick={e => {
                           e.stopPropagation();
                           handleSavePost(post);
                         }}
+                        className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors"
                       >
                         <Bookmark className="h-4 w-4" />
-                      </Button>
+                      </button>
                     </div>
                   </div>
 
