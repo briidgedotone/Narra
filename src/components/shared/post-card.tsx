@@ -65,7 +65,12 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
-  const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
+  // For carousel posts, ensure we have a valid thumbnail
+  // If currentMedia.thumbnail is empty or undefined, fall back to post.thumbnail
+  const displayThumbnail =
+    post.isCarousel && currentMedia?.thumbnail
+      ? currentMedia.thumbnail
+      : post.thumbnail;
   const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
 
   /**

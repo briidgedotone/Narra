@@ -84,7 +84,7 @@ export const transformers = {
                 id: item.pk || `carousel-${itemIndex}`,
                 type: item.media_type === 2 ? "video" : "image",
                 url: itemVideoUrl || itemImageUrl || "",
-                thumbnail: itemImageUrl || "",
+                thumbnail: itemImageUrl || itemVideoUrl || "",
                 isVideo: item.media_type === 2 || !!item.video_versions?.length,
               };
             }
