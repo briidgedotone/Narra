@@ -208,7 +208,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
   const [tiktokHasMore, setTiktokHasMore] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tiktokMaxCursor, setTiktokMaxCursor] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
   const [sortOption, setSortOption] = useState("most-recent");
@@ -492,8 +491,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   }, [searchResults]);
 
   const loadMorePosts = useCallback(async () => {
-    if (!searchResults || !hasMorePosts || !nextMaxId || isLoadingMorePosts)
-      return;
+    if (!searchResults || isLoadingMorePosts) return;
+
+    // Check if there are more posts for the current platform
+    const hasMore =
+      searchResults.platform === "instagram" ? hasMorePosts : tiktokHasMore;
+    if (!hasMore) return;
 
     setIsLoadingMorePosts(true);
     try {
@@ -501,9 +504,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const platform = searchResults.platform;
 
       if (platform === "instagram") {
+        if (!nextMaxId) return;
+
         // Call Instagram API with pagination
         const response = await fetch(
-          `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=50&next_max_id=${nextMaxId}`
+          `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=30&next_max_id=${nextMaxId}`
         );
         const result = await response.json();
 
@@ -541,13 +546,87 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           // Append new posts to existing posts
           setPosts(prevPosts => [...prevPosts, ...newPosts]);
         }
+      } else if (platform === "tiktok") {
+        if (!tiktokMaxCursor) return;
+
+        // Call TikTok API with pagination
+        const response = await fetch(
+          `/api/test-scrapecreators?test=tiktok-videos&handle=${encodeURIComponent(handle)}&count=30&cursor=${tiktokMaxCursor}`
+        );
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Get videos array from TikTok response
+          let videosArray = [];
+          if (result.data.aweme_list) {
+            videosArray = result.data.aweme_list;
+          } else if (result.data.videos) {
+            videosArray = result.data.videos;
+          } else if (result.data.data) {
+            videosArray = result.data.data;
+          }
+
+          // Update TikTok pagination metadata
+          setTiktokHasMore(
+            result.data.has_more === 1 || result.data.has_more === true
+          );
+          setTiktokMaxCursor(result.data.max_cursor || null);
+
+          // Transform TikTok videos using the same logic as loadPosts
+          const newPosts: Post[] = Array.isArray(videosArray)
+            ? videosArray.map((item: TikTokVideoData, index: number): Post => {
+                // Try to get the best thumbnail URL (prefer non-HEIC formats)
+                const originCover =
+                  item.video?.origin_cover?.url_list?.[0] || "";
+                const dynamicCover =
+                  item.video?.dynamic_cover?.url_list?.[0] || "";
+
+                // Prefer dynamic cover or try to convert HEIC to a more compatible format
+                let thumbnailUrl = dynamicCover || originCover;
+
+                // If we have a HEIC URL, try to convert it to JPEG by changing the file extension
+                if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                  thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                }
+
+                return {
+                  id: item.aweme_id || `tiktok-${index}`,
+                  embedUrl:
+                    item.video?.play_addr?.url_list?.[0] ||
+                    item.video?.download_addr?.url_list?.[0] ||
+                    "",
+                  caption: item.desc || "No caption available",
+                  thumbnail: thumbnailUrl,
+                  metrics: {
+                    views: item.statistics?.play_count || 0,
+                    likes: item.statistics?.digg_count || 0,
+                    comments: item.statistics?.comment_count || 0,
+                    shares: item.statistics?.share_count || 0,
+                  },
+                  datePosted: new Date(item.create_time * 1000).toISOString(),
+                  platform: "tiktok" as const,
+                  tiktokUrl: `https://www.tiktok.com/@${handle}/video/${item.aweme_id}`,
+                };
+              })
+            : [];
+
+          // Append new posts to existing posts
+          setPosts(prevPosts => [...prevPosts, ...newPosts]);
+        }
       }
     } catch (error) {
       console.error("Failed to load more posts:", error);
     } finally {
       setIsLoadingMorePosts(false);
     }
-  }, [searchResults, hasMorePosts, nextMaxId, isLoadingMorePosts]);
+  }, [
+    searchResults,
+    hasMorePosts,
+    nextMaxId,
+    tiktokHasMore,
+    tiktokMaxCursor,
+    isLoadingMorePosts,
+  ]);
 
   // Auto-load posts when search results change
   useEffect(() => {
