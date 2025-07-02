@@ -258,20 +258,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     if (!searchResults) return;
 
     setIsLoading(true);
-    // Clear existing posts when loading new ones
     setPosts([]);
-    // Reset pagination state for both platforms
-    setHasMorePosts(false);
-    setNextMaxId(null);
-    setTiktokHasMore(false);
-    setTiktokMaxCursor(null);
+
     try {
-      // Get the handle from search results
       const handle = searchResults.handle;
       const platform = searchResults.platform;
-
-      // Create cache key for posts
-      const postsCacheKey = `posts-${handle}-${platform}`;
+      const postsCacheKey = `posts:${platform}:${handle}`;
 
       // Check cache first
       const cachedPosts = getCached<Post[]>(postsCacheKey);
@@ -288,7 +280,33 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       const response = await fetch(
         `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=30`
       );
-      const result = await response.json();
+
+      // Check if response is ok and has valid content type
+      if (!response.ok) {
+        throw new Error(
+          `API request failed: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("API response is not valid JSON");
+      }
+
+      // Get response text first to check if it's valid JSON
+      const responseText = await response.text();
+      if (!responseText || responseText.trim().length === 0) {
+        throw new Error("API response is empty");
+      }
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        console.error("Response text:", responseText.substring(0, 500) + "...");
+        throw new Error("Invalid JSON response from API");
+      }
 
       if (result.success && result.data) {
         // Handle different possible response structures
@@ -515,7 +533,29 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         const response = await fetch(
           `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=30&next_max_id=${nextMaxId}`
         );
-        const result = await response.json();
+
+        // Check if response is valid
+        if (!response.ok) {
+          throw new Error(
+            `API request failed: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const responseText = await response.text();
+        if (!responseText || responseText.trim().length === 0) {
+          throw new Error("API response is empty");
+        }
+
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error(
+            "JSON parse error in loadMorePosts (Instagram):",
+            parseError
+          );
+          throw new Error("Invalid JSON response from API");
+        }
 
         if (result.success && result.data) {
           const { transformers } = await import("@/lib/transformers");
@@ -563,7 +603,29 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         const response = await fetch(
           `/api/test-scrapecreators?test=tiktok-videos&handle=${encodeURIComponent(handle)}&count=30&cursor=${tiktokMaxCursor}`
         );
-        const result = await response.json();
+
+        // Check if response is valid
+        if (!response.ok) {
+          throw new Error(
+            `API request failed: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const responseText = await response.text();
+        if (!responseText || responseText.trim().length === 0) {
+          throw new Error("API response is empty");
+        }
+
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error(
+            "JSON parse error in loadMorePosts (TikTok):",
+            parseError
+          );
+          throw new Error("Invalid JSON response from API");
+        }
 
         if (result.success && result.data) {
           // Get videos array from TikTok response
@@ -689,7 +751,26 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         const response = await fetch(
           `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
         );
-        const result = await response.json();
+
+        // Check if response is valid
+        if (!response.ok) {
+          throw new Error(
+            `API request failed: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const responseText = await response.text();
+        if (!responseText || responseText.trim().length === 0) {
+          throw new Error("API response is empty");
+        }
+
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error("JSON parse error in loadTranscript:", parseError);
+          throw new Error("Invalid JSON response from API");
+        }
 
         if (result.success && result.data) {
           setTranscript(result.data);

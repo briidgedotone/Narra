@@ -89,6 +89,8 @@ async function makeRequest<T>(
         "x-api-key": API_KEY!,
         "Content-Type": "application/json",
       },
+      // Add timeout to prevent hanging requests
+      signal: AbortSignal.timeout(30000), // 30 second timeout
     });
 
     if (!response.ok) {
@@ -98,7 +100,38 @@ async function makeRequest<T>(
       };
     }
 
-    const data = await response.json();
+    // Check content type
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return {
+        success: false,
+        error: `API returned invalid content type: ${contentType}`,
+      };
+    }
+
+    // Get response text first to validate JSON
+    const responseText = await response.text();
+    if (!responseText || responseText.trim().length === 0) {
+      return {
+        success: false,
+        error: "API returned empty response",
+      };
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("ScrapeCreators JSON parse error:", parseError);
+      console.error(
+        "Response text preview:",
+        responseText.substring(0, 500) + "..."
+      );
+      return {
+        success: false,
+        error: "API returned invalid JSON",
+      };
+    }
 
     // Handle the official API response format
     if (data.success === false) {
@@ -119,9 +152,22 @@ async function makeRequest<T>(
       status: data.status,
     };
   } catch (error) {
+    // Handle timeout and network errors
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        return {
+          success: false,
+          error: "API request timed out",
+        };
+      }
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: "Unknown error occurred",
     };
   }
 }
