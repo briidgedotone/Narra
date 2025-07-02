@@ -262,6 +262,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
     setIsLoading(true);
     // Clear existing posts when loading new ones
     setPosts([]);
+    // Reset pagination state for both platforms
+    setHasMorePosts(false);
+    setNextMaxId(null);
+    setTiktokHasMore(false);
+    setTiktokMaxCursor(null);
     try {
       // Get the handle from search results
       const handle = searchResults.handle;
@@ -304,6 +309,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             console.log("TikTok API response structure:", result.data);
             videosArray = [];
           }
+
+          // Set pagination metadata for TikTok
+          setTiktokHasMore(result.data.has_more === 1 || false);
+          setTiktokMaxCursor(result.data.max_cursor || null);
         } else {
           // Instagram API returns posts in items array - use our client-safe transformer
           const { transformers } = await import("@/lib/transformers");
