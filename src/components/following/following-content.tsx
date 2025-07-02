@@ -176,7 +176,12 @@ export function FollowingContent({
             {/* Posts Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {transformedPosts.map(post => (
-                <PostCard key={post.id} post={post} isSharedView={true} />
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  isSharedView={true}
+                  context="following"
+                />
               ))}
             </div>
 

@@ -1,29 +1,34 @@
 "use client";
 
+import Image from "next/image";
 import { redirect } from "next/navigation";
-import React, { useState, Suspense } from "react";
+import React, { useState } from "react";
 
 import { PostGrid } from "@/components/boards";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Clipboard,
   SearchList,
   TikTok,
   Instagram,
   TimeQuarter,
+  ChevronDown,
+  Eye,
+  Heart,
+  MessageCircle,
+  Share,
+  Calendar,
 } from "@/components/ui/icons";
 import { useBoard } from "@/hooks/useBoard";
 import { useCarousel } from "@/hooks/useCarousel";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
+import { formatDate, formatNumber } from "@/lib/utils/format";
+import { proxyInstagramImage } from "@/lib/utils/image-proxy";
 import type { BoardPageContentProps } from "@/types/board";
-
-// Lazy load the PostModal component to reduce initial bundle size
-const PostModal = React.lazy(() =>
-  import("@/components/boards").then(module => ({ default: module.PostModal }))
-);
 
 // Global timeout declarations for board name and description auto-save
 declare global {
@@ -251,20 +256,278 @@ export function BoardPageContent({
       </div>
 
       {/* Post detail modal */}
-      {selectedPost && (
-        <Suspense>
-          <PostModal
-            selectedPost={selectedPost}
-            activeTab={activeTab}
-            transcript={transcript}
-            isLoadingTranscript={isLoadingTranscript}
-            transcriptError={transcriptError}
-            onTabChange={handleTabChange}
-            onCopyTranscript={handleCopyTranscript}
-            onClose={closeModal}
-          />
-        </Suspense>
-      )}
+      <Dialog open={!!selectedPost} onOpenChange={() => closeModal()}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedPost && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left: Video/Image with Carousel Support */}
+                <div className="space-y-4">
+                  <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden">
+                    {selectedPost.isCarousel && selectedPost.carouselMedia ? (
+                      // Carousel Media Display
+                      <>
+                        {selectedPost.carouselMedia[currentCarouselIndex]
+                          ?.isVideo ? (
+                          <video
+                            key={
+                              selectedPost.carouselMedia[currentCarouselIndex]
+                                .id
+                            }
+                            src={
+                              selectedPost.platform === "instagram"
+                                ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.carouselMedia[currentCarouselIndex].url)}`
+                                : selectedPost.carouselMedia[
+                                    currentCarouselIndex
+                                  ].url
+                            }
+                            poster={
+                              selectedPost.platform === "instagram"
+                                ? proxyInstagramImage(
+                                    selectedPost.carouselMedia[
+                                      currentCarouselIndex
+                                    ].thumbnail
+                                  )
+                                : selectedPost.carouselMedia[
+                                    currentCarouselIndex
+                                  ].thumbnail
+                            }
+                            className="w-full h-full object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            controls
+                          />
+                        ) : (
+                          <Image
+                            key={
+                              selectedPost.carouselMedia?.[currentCarouselIndex]
+                                ?.id || currentCarouselIndex
+                            }
+                            src={
+                              selectedPost.platform === "instagram"
+                                ? proxyInstagramImage(
+                                    selectedPost.carouselMedia?.[
+                                      currentCarouselIndex
+                                    ]?.url || ""
+                                  )
+                                : selectedPost.carouselMedia?.[
+                                    currentCarouselIndex
+                                  ]?.url || ""
+                            }
+                            alt="Carousel item"
+                            fill
+                            className="object-cover"
+                          />
+                        )}
+
+                        {/* Carousel Navigation */}
+                        {selectedPost.carouselMedia.length > 1 && (
+                          <>
+                            <button
+                              onClick={handlePostCarouselPrev}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+                            >
+                              <ChevronDown className="w-4 h-4 transform rotate-90" />
+                            </button>
+                            <button
+                              onClick={handlePostCarouselNext}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+                            >
+                              <ChevronDown className="w-4 h-4 transform -rotate-90" />
+                            </button>
+
+                            {/* Carousel Indicators */}
+                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                              {selectedPost.carouselMedia.map((_, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => setCurrentCarouselIndex(index)}
+                                  className={`w-2 h-2 rounded-full transition-colors ${
+                                    index === currentCarouselIndex
+                                      ? "bg-white"
+                                      : "bg-white/50 hover:bg-white/70"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      // Single Media Display
+                      <video
+                        src={
+                          selectedPost.platform === "instagram"
+                            ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
+                            : selectedPost.embedUrl
+                        }
+                        poster={
+                          selectedPost.platform === "instagram"
+                            ? proxyInstagramImage(selectedPost.thumbnail)
+                            : selectedPost.thumbnail
+                        }
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src =
+                            selectedPost.platform === "instagram"
+                              ? proxyInstagramImage(selectedPost.thumbnail)
+                              : selectedPost.thumbnail;
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
+                            );
+                          }
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Tabbed Content */}
+                <div className="space-y-4">
+                  {/* Tab Navigation */}
+                  <div className="flex border-b border-gray-200">
+                    <button
+                      onClick={() => handleTabChange("overview")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "overview"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      Overview
+                    </button>
+                    <button
+                      onClick={() => handleTabChange("transcript")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "transcript"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      Transcript
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="space-y-6">
+                    {activeTab === "overview" && (
+                      <>
+                        {/* Caption */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-2">Caption</h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {selectedPost.caption}
+                          </p>
+                        </div>
+
+                        {/* Metrics */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-3">
+                            Performance
+                          </h3>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {selectedPost.metrics.views && (
+                              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                                <Eye className="h-4 w-4 text-green-600" />
+                                <span className="font-semibold text-base text-green-800">
+                                  {formatNumber(selectedPost.metrics.views)}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                              <Heart className="h-4 w-4 text-red-600" />
+                              <span className="font-semibold text-base text-red-800">
+                                {formatNumber(selectedPost.metrics.likes)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                              <MessageCircle className="h-4 w-4 text-blue-600" />
+                              <span className="font-semibold text-base text-blue-800">
+                                {formatNumber(selectedPost.metrics.comments)}
+                              </span>
+                            </div>
+                            {selectedPost.metrics.shares && (
+                              <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                                <Share className="h-4 w-4 text-purple-600" />
+                                <span className="font-semibold text-base text-purple-800">
+                                  {formatNumber(selectedPost.metrics.shares)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Post Date */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-2">Posted</h3>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(selectedPost.datePosted)}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {activeTab === "transcript" && (
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-medium">Transcript</h3>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleCopyTranscript}
+                            disabled={
+                              !transcript?.transcript ||
+                              isLoadingTranscript ||
+                              selectedPost.platform !== "tiktok"
+                            }
+                          >
+                            Copy Transcript
+                          </Button>
+                        </div>
+                        {isLoadingTranscript ? (
+                          <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+                          </div>
+                        ) : transcriptError ? (
+                          <div className="text-sm text-red-600">
+                            {transcriptError}
+                          </div>
+                        ) : !transcript?.transcript ? (
+                          <div className="text-sm text-muted-foreground">
+                            {selectedPost.platform === "tiktok"
+                              ? "Loading transcript..."
+                              : "Transcript not available for Instagram posts."}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-muted-foreground whitespace-pre-wrap">
+                            {transcript.transcript}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

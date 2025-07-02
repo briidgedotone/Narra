@@ -166,6 +166,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
           getCarouselIndex={getCarouselIndex}
           onCarouselNext={onCarouselNext}
           onCarouselPrev={onCarouselPrev}
+          context="board"
         />
       ))}
     </div>

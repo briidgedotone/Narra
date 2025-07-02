@@ -1185,11 +1185,30 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                 <div className="mt-4 flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleFollowProfile}
-                    disabled={searchResults.isFollowing}
-                    className="w-full sm:w-auto bg-[#2463EB] hover:bg-[#2463EB]/90"
+                    className={cn(
+                      "w-full sm:w-auto relative group",
+                      searchResults.isFollowing
+                        ? "bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200 hover:border-red-200"
+                        : "bg-[#2463EB] hover:bg-[#2463EB]/90 text-white"
+                    )}
                   >
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Follow
+                    {searchResults.isFollowing ? (
+                      <>
+                        <span className="flex items-center group-hover:hidden">
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Following
+                        </span>
+                        <span className="hidden group-hover:flex items-center">
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Unfollow
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Follow
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>

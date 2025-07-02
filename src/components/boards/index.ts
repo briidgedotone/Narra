@@ -8,7 +8,6 @@
  * Components:
  * - PostCard: Individual post display with carousel navigation
  * - PostGrid: Responsive grid layout for displaying multiple posts
- * - PostModal: Full-screen modal for detailed post viewing
  *
  * Features:
  * - Pinterest-style responsive grid layout
@@ -21,14 +20,11 @@
  *
  * Usage:
  * ```tsx
- * import { PostGrid, PostModal } from '@/components/boards';
+ * import { PostGrid } from '@/components/boards';
  *
  * function BoardPage() {
  *   return (
- *     <>
- *       <PostGrid posts={posts} onPostClick={handlePostClick} />
- *       <PostModal selectedPost={selectedPost} onClose={handleClose} />
- *     </>
+ *     <PostGrid posts={posts} onPostClick={handlePostClick} />
  *   );
  * }
  * ```
@@ -38,4 +34,3 @@
  */
 
 export { PostGrid } from "./PostGrid";
-export { PostModal } from "./PostModal";

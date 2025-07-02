@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ interface PostCardProps {
   onCarouselNext?: (postId: string, maxIndex: number) => void;
   onCarouselPrev?: (postId: string) => void;
   isSharedView?: boolean;
+  context?: "discovery" | "board" | "following";
 }
 
 export const PostCard = React.memo<PostCardProps>(function PostCard({
@@ -58,6 +60,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   onCarouselNext,
   onCarouselPrev,
   isSharedView = false,
+  context = "discovery", // Default to discovery for backward compatibility
 }) {
   // Get current carousel state
   const currentIndex = getCarouselIndex(post.id);
@@ -67,6 +70,15 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
 
   const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
   const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
+
+  // Determine if we should use video first frame instead of thumbnail
+  const shouldUseVideoFirstFrame =
+    post.platform === "tiktok" &&
+    (context === "board" || context === "following") &&
+    post.embedUrl;
+
+  // State to track video loading failures for fallback
+  const [videoLoadFailed, setVideoLoadFailed] = React.useState(false);
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
@@ -127,16 +139,37 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
         {/* Post thumbnail */}
         <div className="relative h-full w-full">
-          {displayThumbnail ? (
+          {shouldUseVideoFirstFrame && !videoLoadFailed ? (
+            // Use video first frame for TikTok in board/following contexts
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              preload="metadata"
+              muted
+              playsInline
+              onError={() => {
+                console.log("Video failed to load, falling back to thumbnail");
+                setVideoLoadFailed(true);
+              }}
+              onLoadStart={() => {
+                // Reset failure state when trying to load
+                setVideoLoadFailed(false);
+              }}
+            >
+              <source src={post.embedUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : displayThumbnail ? (
+            // Use thumbnail approach for Instagram and Discovery context
             <>
-              <img
+              <Image
                 src={
                   currentMedia?.thumbnail
                     ? `/api/proxy-image?url=${encodeURIComponent(currentMedia.thumbnail)}`
                     : proxiedThumbnail
                 }
                 alt="Post thumbnail"
-                className="absolute inset-0 h-full w-full object-cover"
+                fill
+                className="object-cover"
                 loading="lazy"
                 onError={e => {
                   const target = e.target as HTMLImageElement;
