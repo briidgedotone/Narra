@@ -130,7 +130,11 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           {displayThumbnail ? (
             <>
               <img
-                src={proxiedThumbnail}
+                src={
+                  currentMedia?.thumbnail
+                    ? `/api/proxy-image?url=${encodeURIComponent(currentMedia.thumbnail)}`
+                    : proxiedThumbnail
+                }
                 alt="Post thumbnail"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
@@ -189,7 +193,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             {!isFirstSlide && (
               <button
                 onClick={handleCarouselPrev}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -200,7 +204,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             {!isLastSlide && (
               <button
                 onClick={handleCarouselNext}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
                 aria-label="Next image"
               >
                 <ChevronRight className="w-4 h-4" />
