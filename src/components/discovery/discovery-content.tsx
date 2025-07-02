@@ -323,7 +323,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format
+          // Convert to our Post interface format - preserve all content type properties
           const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
@@ -342,6 +342,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             },
             datePosted: post.datePosted,
             platform: post.platform,
+            // Preserve content type properties for proper UI handling
+            isVideo: post.isVideo || false,
+            isCarousel: post.isCarousel || false,
+            carouselMedia: post.carouselMedia || [],
+            carouselCount: post.carouselCount || 0,
           }));
 
           // Cache the Instagram posts
@@ -523,7 +528,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           setHasMorePosts(result.data.more_available || false);
           setNextMaxId(result.data.next_max_id || null);
 
-          // Convert to our Post interface format and append to existing posts
+          // Convert to our Post interface format and append to existing posts - preserve content type properties
           const newPosts: Post[] = transformedPosts.map((post: Post) => ({
             id: post.id,
             embedUrl: post.embedUrl,
@@ -541,6 +546,11 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             },
             datePosted: post.datePosted,
             platform: post.platform,
+            // Preserve content type properties for proper UI handling
+            isVideo: post.isVideo || false,
+            isCarousel: post.isCarousel || false,
+            carouselMedia: post.carouselMedia || [],
+            carouselCount: post.carouselCount || 0,
           }));
 
           // Append new posts to existing posts

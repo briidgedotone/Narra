@@ -162,6 +162,26 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           </div>
         </div>
 
+        {/* Carousel indicator */}
+        {hasCarousel && (
+          <div className="absolute top-3 right-3">
+            <div className="bg-black/70 backdrop-blur-sm rounded-full px-2 py-1">
+              <span className="text-white text-xs font-medium">
+                {currentIndex + 1}/{post.carouselMedia?.length}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Video play indicator */}
+        {(post.isVideo || currentMedia?.isVideo) && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
+              <div className="w-0 h-0 border-l-[12px] border-l-white border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent ml-1" />
+            </div>
+          </div>
+        )}
+
         {/* Carousel Navigation */}
         {hasCarousel && (
           <>
