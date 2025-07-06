@@ -297,6 +297,8 @@ export class DatabaseService {
                 caption: post.caption,
                 transcript: post.transcript,
                 originalUrl: post.original_url,
+                thumbnailStorageUrl: post.thumbnail_storage_url,
+                thumbnailStorageUrl: post.thumbnail_storage_url,
                 metrics: post.metrics,
                 datePosted: post.date_posted,
                 profile: profile
@@ -395,6 +397,7 @@ export class DatabaseService {
           caption,
           transcript,
           original_url,
+          thumbnail_storage_url,
           metrics,
           date_posted,
           profiles (
@@ -434,6 +437,7 @@ export class DatabaseService {
           caption: post.caption,
           transcript: post.transcript,
           originalUrl: post.original_url,
+          thumbnailStorageUrl: post.thumbnail_storage_url,
           metrics: post.metrics,
           datePosted: post.date_posted,
           profile: profile
@@ -848,6 +852,7 @@ export class DatabaseService {
           caption,
           transcript,
           original_url,
+          thumbnail_storage_url,
           metrics,
           date_posted,
           profiles (
@@ -887,6 +892,7 @@ export class DatabaseService {
           caption: post.caption,
           transcript: post.transcript,
           originalUrl: post.original_url,
+          thumbnailStorageUrl: post.thumbnail_storage_url,
           metrics: post.metrics,
           datePosted: post.date_posted,
           profile: profile

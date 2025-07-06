@@ -33,8 +33,26 @@ export default function RootLayout({
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          suppressHydrationWarning
+          suppressHydrationWarning={true}
         >
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Remove browser extension attributes before React hydration
+                (function() {
+                  if (typeof window !== 'undefined') {
+                    const cleanupAttributes = () => {
+                      const elements = document.querySelectorAll('[bis_skin_checked]');
+                      elements.forEach(el => el.removeAttribute('bis_skin_checked'));
+                    };
+                    cleanupAttributes();
+                    // Clean up again after a short delay
+                    setTimeout(cleanupAttributes, 0);
+                  }
+                })();
+              `,
+            }}
+          />
           <ThemeProvider>
             <ToastProvider>{children}</ToastProvider>
             <Toaster />

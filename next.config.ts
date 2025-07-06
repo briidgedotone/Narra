@@ -77,6 +77,20 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      // TikTok main domain for thumbnails
+      {
+        protocol: "https",
+        hostname: "www.tiktok.com",
+        port: "",
+        pathname: "/**",
+      },
+      // Supabase storage for stored thumbnails
+      {
+        protocol: "https",
+        hostname: "cvkqgduefcvkeagfvvgr.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
 };

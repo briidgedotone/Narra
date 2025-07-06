@@ -39,6 +39,7 @@ export interface Post {
   caption?: string;
   transcript?: string;
   original_url?: string;
+  thumbnail_storage_url?: string;
   metrics: PostMetrics;
   date_posted: string;
   created_at: string;

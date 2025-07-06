@@ -22,6 +22,7 @@ export interface SavedPost {
   embedUrl: string;
   caption: string;
   thumbnail?: string;
+  thumbnailStorageUrl?: string;
   originalUrl?: string;
   platformPostId?: string;
   metrics: {

@@ -23,6 +23,7 @@ interface PostCardProps {
     caption: string;
     originalUrl?: string;
     thumbnail?: string; // Keep for backward compatibility with Instagram
+    thumbnailStorageUrl?: string; // New field for stored thumbnails
     metrics: {
       views?: number;
       likes: number;
@@ -75,8 +76,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`
     : "";
 
-  // TikTok embed logic - simplified
-  const shouldUseTikTokEmbed =
+  // TikTok iframe logic - show iframe embed for TikTok posts
+  const shouldUseTikTokIframe =
     post.platform === "tiktok" &&
     (context === "board" || context === "following");
 
@@ -96,16 +97,14 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       handle: post.profile?.handle,
       constructedUrl: tiktokUrl,
       context,
-      shouldUseTikTokEmbed,
+      shouldUseTikTokIframe,
     });
   }
 
-  // State for TikTok thumbnail
+  // State for TikTok iframe embed
   const [embedLoading, setEmbedLoading] = React.useState(false);
   const [embedError, setEmbedError] = React.useState(false);
-  const [tiktokThumbnail, setTiktokThumbnail] = React.useState<string | null>(
-    null
-  );
+  const [tiktokEmbed, setTiktokEmbed] = React.useState<string | null>(null);
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
@@ -153,12 +152,12 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === (post.carouselMedia?.length || 1) - 1;
 
-  // Fetch TikTok thumbnail when needed
+  // Fetch TikTok iframe embed when needed
   useEffect(() => {
     if (
-      shouldUseTikTokEmbed &&
+      shouldUseTikTokIframe &&
       tiktokUrl &&
-      !tiktokThumbnail &&
+      !tiktokEmbed &&
       !embedLoading &&
       !embedError
     ) {
@@ -171,14 +170,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       })
         .then(res => res.json())
         .then(data => {
-          if (data.success && data.data) {
-            // Extract thumbnail URL
-            if (data.data.thumbnail_url) {
-              setTiktokThumbnail(data.data.thumbnail_url);
-            } else {
-              // No thumbnail URL available
-              setEmbedError(true);
-            }
+          if (data.success && data.data && data.data.html) {
+            setTiktokEmbed(data.data.html);
           } else {
             setEmbedError(true);
           }
@@ -186,13 +179,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
         .catch(() => setEmbedError(true))
         .finally(() => setEmbedLoading(false));
     }
-  }, [
-    shouldUseTikTokEmbed,
-    tiktokUrl,
-    tiktokThumbnail,
-    embedLoading,
-    embedError,
-  ]);
+  }, [shouldUseTikTokIframe, tiktokUrl, tiktokEmbed, embedLoading, embedError]);
 
   return (
     <article
@@ -205,36 +192,26 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       tabIndex={onPostClick ? 0 : undefined}
     >
       <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
-        {/* Post thumbnail */}
+        {/* Post content */}
         <div className="relative h-full w-full">
-          {shouldUseTikTokEmbed && tiktokThumbnail ? (
-            // TikTok thumbnail
-            <>
-              <Image
-                src={tiktokThumbnail}
-                alt="TikTok video thumbnail"
-                fill
-                className="object-cover"
-                loading="lazy"
-                onError={e => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  const fallback =
-                    target.nextElementSibling as HTMLElement | null;
-                  if (fallback) {
-                    fallback.style.display = "flex";
-                  }
-                }}
-              />
-              <div className="absolute inset-0 hidden h-full w-full flex-col items-center justify-center bg-gray-200 text-center text-xs text-gray-500">
-                <TikTok className="w-8 h-8 mb-2 opacity-50" />
-                <p>Thumbnail could not be loaded</p>
-              </div>
-            </>
-          ) : shouldUseTikTokEmbed && embedLoading ? (
+          {shouldUseTikTokIframe && tiktokEmbed ? (
+            // TikTok iframe embed
+            <div
+              className="absolute inset-0 w-full h-full"
+              dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
+            />
+          ) : shouldUseTikTokIframe && embedLoading ? (
             // Loading state for TikTok embed
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-              <div className="text-sm text-gray-500">Loading...</div>
+              <div className="text-sm text-gray-500">Loading TikTok...</div>
+            </div>
+          ) : shouldUseTikTokIframe && embedError ? (
+            // Error state for TikTok embed
+            <div className="absolute inset-0 h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-pink-400 via-red-500 to-yellow-500 text-white">
+              <TikTok className="w-16 h-16 mb-3" />
+              <p className="text-lg font-bold">TikTok</p>
+              <p className="text-sm opacity-90">@{post.profile?.handle}</p>
+              <p className="text-xs opacity-70 mt-2">Failed to load</p>
             </div>
           ) : post.platform === "instagram" && displayThumbnail ? (
             // Use thumbnail approach for Instagram and Discovery context

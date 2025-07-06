@@ -18,88 +18,94 @@ interface TikTokEmbedResult {
   success: boolean;
   data?: TikTokEmbedResponse;
   error?: string;
-  method?: 'oembed' | 'iframe';
+  method?: "oembed" | "iframe";
 }
 
 /**
  * Get TikTok embed using official oEmbed API
  */
-export async function getTikTokOEmbed(tiktokUrl: string): Promise<TikTokEmbedResult> {
+export async function getTikTokOEmbed(
+  tiktokUrl: string
+): Promise<TikTokEmbedResult> {
   try {
     // Validate TikTok URL format
     if (!isValidTikTokUrl(tiktokUrl)) {
       return {
         success: false,
-        error: "Invalid TikTok URL format"
+        error: "Invalid TikTok URL format",
       };
     }
 
     const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(tiktokUrl)}`;
-    
+
     console.log("Fetching TikTok oEmbed:", oembedUrl);
 
     const response = await fetch(oembedUrl, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'User-Agent': 'Use Narra Bot/1.0',
-        'Accept': 'application/json',
-        'Accept-Language': 'en-US,en;q=0.9',
+        "User-Agent": "Use Narra Bot/1.0",
+        Accept: "application/json",
+        "Accept-Language": "en-US,en;q=0.9",
       },
       // Add timeout to prevent hanging
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: AbortSignal.timeout(30000), // 30 second timeout
     });
 
     if (!response.ok) {
-      console.error(`TikTok oEmbed HTTP error: ${response.status} ${response.statusText}`);
+      console.error(
+        `TikTok oEmbed HTTP error: ${response.status} ${response.statusText}`
+      );
       return {
         success: false,
-        error: `TikTok oEmbed API returned ${response.status}: ${response.statusText}`
+        error: `TikTok oEmbed API returned ${response.status}: ${response.statusText}`,
       };
     }
 
     // Check content type
-    const contentType = response.headers.get('content-type');
-    if (!contentType?.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
       const responseText = await response.text();
-      console.error('TikTok oEmbed non-JSON response:', responseText.substring(0, 500));
+      console.error(
+        "TikTok oEmbed non-JSON response:",
+        responseText.substring(0, 500)
+      );
       return {
         success: false,
-        error: `Expected JSON response, got ${contentType}`
+        error: `Expected JSON response, got ${contentType}`,
       };
     }
 
     const data: TikTokEmbedResponse = await response.json();
-    console.log("TikTok oEmbed success:", { 
-      title: data.title, 
+    console.log("TikTok oEmbed success:", {
+      title: data.title,
       author: data.author_name,
-      hasHtml: !!data.html 
+      hasHtml: !!data.html,
     });
 
     return {
       success: true,
       data,
-      method: 'oembed'
+      method: "oembed",
     };
-
   } catch (error) {
     console.error("TikTok oEmbed error:", error);
-    
+
     if (error instanceof Error) {
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         return {
           success: false,
-          error: "TikTok oEmbed request timed out"
+          error: "TikTok oEmbed request timed out",
         };
       }
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
 
     return {
       success: false,
-      error: "Unknown error occurred"
+      error: "Unknown error occurred",
     };
   }
 }
@@ -113,7 +119,7 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
     if (!videoId) {
       return {
         success: false,
-        error: "Could not extract video ID from TikTok URL"
+        error: "Could not extract video ID from TikTok URL",
       };
     }
 
@@ -128,59 +134,59 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
       loading="lazy">
     </iframe>`;
 
+    // No thumbnail URL for iframe method
+    const thumbnailUrl = "";
+
     const embedData: TikTokEmbedResponse = {
       version: "1.0",
       type: "video",
       title: `TikTok Video ${videoId}`,
       author_name: "Unknown",
-      author_url: tiktokUrl.split('/video/')[0],
+      author_url: tiktokUrl.split("/video/")[0],
       width: 325,
       height: 560,
       html: iframeHtml,
-      thumbnail_url: "",
+      thumbnail_url: thumbnailUrl,
       thumbnail_width: 720,
-      thumbnail_height: 1280
+      thumbnail_height: 1280,
     };
 
     return {
       success: true,
       data: embedData,
-      method: 'iframe'
+      method: "iframe",
     };
-
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to generate iframe embed"
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to generate iframe embed",
     };
   }
 }
 
 /**
- * Get TikTok embed with fallback strategy
- * Tries oEmbed first, falls back to iframe if needed
+ * Get TikTok embed using iframe method directly
+ * Skips oEmbed API which is unreliable due to timeouts
  */
-export async function getTikTokEmbed(tiktokUrl: string): Promise<TikTokEmbedResult> {
-  // First try official oEmbed API
-  const oembedResult = await getTikTokOEmbed(tiktokUrl);
-  
-  if (oembedResult.success) {
-    return oembedResult;
-  }
+export async function getTikTokEmbed(
+  tiktokUrl: string
+): Promise<TikTokEmbedResult> {
+  // Use iframe method directly - more reliable than oEmbed
+  console.log("Using iframe method for TikTok embed:", tiktokUrl);
 
-  console.log("oEmbed failed, trying iframe fallback:", oembedResult.error);
-
-  // Fallback to iframe method
   const iframeResult = generateTikTokIframe(tiktokUrl);
-  
+
   if (iframeResult.success) {
     return iframeResult;
   }
 
-  // Both methods failed
+  // If iframe method fails, return the error
   return {
     success: false,
-    error: `Both embed methods failed. oEmbed: ${oembedResult.error}, iframe: ${iframeResult.error}`
+    error: `Iframe embed method failed: ${iframeResult.error}`,
   };
 }
 
@@ -188,7 +194,7 @@ export async function getTikTokEmbed(tiktokUrl: string): Promise<TikTokEmbedResu
  * Validate TikTok URL format
  */
 export function isValidTikTokUrl(url: string): boolean {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== "string") {
     return false;
   }
 
@@ -197,7 +203,7 @@ export function isValidTikTokUrl(url: string): boolean {
     /^https:\/\/www\.tiktok\.com\/@[\w.-]+\/video\/\d+/,
     /^https:\/\/vm\.tiktok\.com\/[\w]+/,
     /^https:\/\/m\.tiktok\.com\/v\/\d+/,
-    /^https:\/\/www\.tiktok\.com\/t\/[\w]+/
+    /^https:\/\/www\.tiktok\.com\/t\/[\w]+/,
   ];
 
   return tiktokPatterns.some(pattern => pattern.test(url));
@@ -207,7 +213,7 @@ export function isValidTikTokUrl(url: string): boolean {
  * Extract video ID from TikTok URL
  */
 export function extractTikTokVideoId(url: string): string | null {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== "string") {
     return null;
   }
 
@@ -220,7 +226,7 @@ export function extractTikTokVideoId(url: string): string | null {
  * Extract username from TikTok URL
  */
 export function extractTikTokUsername(url: string): string | null {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== "string") {
     return null;
   }
 
@@ -233,7 +239,7 @@ export function extractTikTokUsername(url: string): string | null {
  * Convert various TikTok URL formats to standard format
  */
 export function normalizeTikTokUrl(url: string): string | null {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== "string") {
     return null;
   }
 
@@ -244,8 +250,15 @@ export function normalizeTikTokUrl(url: string): string | null {
 
   // Handle short URLs - these would need to be resolved via HTTP redirect
   // For now, return null for short URLs as they need server-side resolution
-  if (url.includes('vm.tiktok.com') || url.includes('m.tiktok.com') || url.includes('/t/')) {
-    console.warn("Short TikTok URLs need to be resolved to full URLs first:", url);
+  if (
+    url.includes("vm.tiktok.com") ||
+    url.includes("m.tiktok.com") ||
+    url.includes("/t/")
+  ) {
+    console.warn(
+      "Short TikTok URLs need to be resolved to full URLs first:",
+      url
+    );
     return null;
   }
 
@@ -256,13 +269,16 @@ export function normalizeTikTokUrl(url: string): string | null {
  * Clean and sanitize TikTok embed HTML
  */
 export function sanitizeTikTokEmbed(html: string): string {
-  if (!html || typeof html !== 'string') {
-    return '';
+  if (!html || typeof html !== "string") {
+    return "";
   }
 
   // Basic sanitization - in production you might want more robust sanitization
   // Remove any script tags that aren't from TikTok
-  const cleanHtml = html.replace(/<script(?![^>]*tiktok\.com)[^>]*>.*?<\/script>/gi, '');
+  const cleanHtml = html.replace(
+    /<script(?![^>]*tiktok\.com)[^>]*>.*?<\/script>/gi,
+    ""
+  );
 
   return cleanHtml;
 }
