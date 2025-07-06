@@ -132,7 +132,7 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
       allowfullscreen
       sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
       loading="lazy"
-      style="border: none; outline: none;">
+      style="border: none; outline: none; object-fit: cover;">
     </iframe>`;
 
     // No thumbnail URL for iframe method

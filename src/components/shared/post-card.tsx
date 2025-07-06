@@ -191,21 +191,21 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       role={onPostClick ? "button" : "article"}
       tabIndex={onPostClick ? 0 : undefined}
     >
-      <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
+      <div
+        className={cn(
+          "group relative w-full overflow-hidden rounded-lg bg-gray-100",
+          // Use TikTok's natural aspect ratio for TikTok posts, Instagram ratio for others
+          shouldUseTikTokIframe ? "aspect-[9/16]" : "aspect-[2/3]"
+        )}
+      >
         {/* Post content */}
         <div className="relative h-full w-full">
           {shouldUseTikTokIframe && tiktokEmbed ? (
-            // TikTok iframe embed - scaled to fit container
-            <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center">
-              <div
-                className="w-full h-full"
-                style={{
-                  transform: "scale(0.8)", // Scale down to fit better
-                  transformOrigin: "center center",
-                }}
-                dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
-              />
-            </div>
+            // TikTok iframe embed - natural size
+            <div
+              className="absolute inset-0 w-full h-full"
+              dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
+            />
           ) : shouldUseTikTokIframe && embedLoading ? (
             // Loading state for TikTok embed
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
