@@ -38,7 +38,7 @@ export interface Post {
   embed_url: string;
   caption?: string;
   transcript?: string;
-  thumbnail_url?: string;
+  original_url?: string;
   metrics: PostMetrics;
   date_posted: string;
   created_at: string;
