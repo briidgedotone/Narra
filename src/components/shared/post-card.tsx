@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +21,8 @@ interface PostCardProps {
     id: string;
     embedUrl: string;
     caption: string;
-    thumbnail: string;
+    originalUrl?: string;
+    thumbnail?: string; // Keep for backward compatibility with Instagram
     metrics: {
       views?: number;
       likes: number;
@@ -69,16 +70,30 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     : null;
 
   const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
-  const proxiedThumbnail = `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`;
+  const proxiedThumbnail = displayThumbnail 
+    ? `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`
+    : "";
 
-  // Determine if we should use video first frame instead of thumbnail
+  // Determine if we should use TikTok embed
+  const shouldUseTikTokEmbed = 
+    post.platform === "tiktok" && 
+    post.originalUrl &&
+    (context === "board" || context === "following");
+
+  // Fallback: Determine if we should use video first frame instead of thumbnail
   const shouldUseVideoFirstFrame =
     post.platform === "tiktok" &&
     (context === "board" || context === "following") &&
-    post.embedUrl;
+    post.embedUrl &&
+    !shouldUseTikTokEmbed;
 
   // State to track video loading failures for fallback
   const [videoLoadFailed, setVideoLoadFailed] = React.useState(false);
+  
+  // State for TikTok embed
+  const [embedHtml, setEmbedHtml] = React.useState<string | null>(null);
+  const [embedLoading, setEmbedLoading] = React.useState(false);
+  const [embedError, setEmbedError] = React.useState(false);
 
   /**
    * Memoized event handlers to prevent unnecessary re-renders
@@ -126,6 +141,43 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === (post.carouselMedia?.length || 1) - 1;
 
+  // Fetch TikTok embed when needed
+  useEffect(() => {
+    if (shouldUseTikTokEmbed && post.originalUrl && !embedHtml && !embedLoading && !embedError) {
+      setEmbedLoading(true);
+      
+      fetch('/api/test-tiktok-embed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: post.originalUrl })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data?.html) {
+            // Extract just the iframe from the embed HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.data.html, 'text/html');
+            const iframe = doc.querySelector('iframe');
+            if (iframe) {
+              // Adjust iframe for PostCard display
+              iframe.style.width = '100%';
+              iframe.style.height = '100%';
+              iframe.style.position = 'absolute';
+              iframe.style.top = '0';
+              iframe.style.left = '0';
+              setEmbedHtml(iframe.outerHTML);
+            } else {
+              setEmbedError(true);
+            }
+          } else {
+            setEmbedError(true);
+          }
+        })
+        .catch(() => setEmbedError(true))
+        .finally(() => setEmbedLoading(false));
+    }
+  }, [shouldUseTikTokEmbed, post.originalUrl, embedHtml, embedLoading, embedError]);
+
   return (
     <article
       className={cn(
@@ -139,7 +191,18 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-100">
         {/* Post thumbnail */}
         <div className="relative h-full w-full">
-          {shouldUseVideoFirstFrame && !videoLoadFailed ? (
+          {shouldUseTikTokEmbed && embedHtml ? (
+            // TikTok embed
+            <div 
+              className="absolute inset-0 h-full w-full"
+              dangerouslySetInnerHTML={{ __html: embedHtml }}
+            />
+          ) : shouldUseTikTokEmbed && embedLoading ? (
+            // Loading state for TikTok embed
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="text-sm text-gray-500">Loading...</div>
+            </div>
+          ) : shouldUseVideoFirstFrame && !videoLoadFailed ? (
             // Use video first frame for TikTok in board/following contexts
             <video
               className="absolute inset-0 h-full w-full object-cover"
@@ -158,7 +221,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
               <source src={post.embedUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-          ) : displayThumbnail ? (
+          ) : displayThumbnail || post.platform === "instagram" ? (
             // Use thumbnail approach for Instagram and Discovery context
             <>
               <Image
@@ -187,7 +250,14 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             </>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-500">
-              <p>No caption available</p>
+              {post.platform === "tiktok" ? (
+                <>
+                  <TikTok className="w-12 h-12 mb-2 opacity-50" />
+                  <p className="text-sm">TikTok Video</p>
+                </>
+              ) : (
+                <p>No caption available</p>
+              )}
             </div>
           )}
         </div>

@@ -4,6 +4,7 @@ import {
   getCarouselIndex,
   handleCarouselNext,
   handleCarouselPrev,
+  setCarouselIndex,
 } from "@/lib/utils/carousel";
 
 export function useCarousel() {
@@ -29,9 +30,14 @@ export function useCarousel() {
     setCarouselStates(prev => handleCarouselPrev(prev, postId));
   }, []);
 
+  const setPostCarouselIndex = useCallback((postId: string, index: number) => {
+    setCarouselStates(prev => setCarouselIndex(prev, postId, index));
+  }, []);
+
   return {
     getPostCarouselIndex,
     handlePostCarouselNext,
     handlePostCarouselPrev,
+    setPostCarouselIndex,
   };
 }

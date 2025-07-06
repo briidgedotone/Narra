@@ -8,7 +8,10 @@ import { PostGrid } from "@/components/boards";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import {
   Clipboard,
   SearchList,
@@ -26,9 +29,10 @@ import { useBoard } from "@/hooks/useBoard";
 import { useCarousel } from "@/hooks/useCarousel";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
-import { formatDate, formatNumber } from "@/lib/utils/format";
+import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
 import { proxyInstagramImage } from "@/lib/utils/image-proxy";
 import type { BoardPageContentProps } from "@/types/board";
+import type { VideoTranscript } from "@/types/content";
 
 // Global timeout declarations for board name and description auto-save
 declare global {
@@ -91,7 +95,33 @@ export function BoardPageContent({
     getPostCarouselIndex,
     handlePostCarouselNext,
     handlePostCarouselPrev,
+    setPostCarouselIndex,
   } = useCarousel();
+
+  // Get current carousel index for selected post
+  const currentCarouselIndex = selectedPost ? getPostCarouselIndex(selectedPost.id) : 0;
+
+  // Carousel navigation handlers
+  const handlePrevClick = React.useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (selectedPost) {
+      handlePostCarouselPrev(selectedPost.id);
+    }
+  }, [handlePostCarouselPrev, selectedPost]);
+
+  const handleNextClick = React.useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (selectedPost) {
+      handlePostCarouselNext(selectedPost.id, selectedPost.carouselMedia?.length || 1);
+    }
+  }, [handlePostCarouselNext, selectedPost]);
+
+  const handleIndicatorClick = React.useCallback((e: React.MouseEvent, index: number) => {
+    e.stopPropagation();
+    if (selectedPost) {
+      setPostCarouselIndex(selectedPost.id, index);
+    }
+  }, [selectedPost, setPostCarouselIndex]);
 
   /**
    * Memoized filter counts to prevent recalculation on every render
@@ -326,13 +356,13 @@ export function BoardPageContent({
                         {selectedPost.carouselMedia.length > 1 && (
                           <>
                             <button
-                              onClick={handlePostCarouselPrev}
+                              onClick={handlePrevClick}
                               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
                             >
                               <ChevronDown className="w-4 h-4 transform rotate-90" />
                             </button>
                             <button
-                              onClick={handlePostCarouselNext}
+                              onClick={handleNextClick}
                               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
                             >
                               <ChevronDown className="w-4 h-4 transform -rotate-90" />
@@ -343,7 +373,7 @@ export function BoardPageContent({
                               {selectedPost.carouselMedia.map((_, index) => (
                                 <button
                                   key={index}
-                                  onClick={() => setCurrentCarouselIndex(index)}
+                                  onClick={(e) => handleIndicatorClick(e, index)}
                                   className={`w-2 h-2 rounded-full transition-colors ${
                                     index === currentCarouselIndex
                                       ? "bg-white"

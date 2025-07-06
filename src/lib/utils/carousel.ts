@@ -38,3 +38,17 @@ export const handleCarouselPrev = (
     [postId]: Math.max((carouselStates[postId] || 0) - 1, 0),
   };
 };
+
+/**
+ * Set carousel index to a specific value
+ */
+export const setCarouselIndex = (
+  carouselStates: Record<string, number>,
+  postId: string,
+  index: number
+): Record<string, number> => {
+  return {
+    ...carouselStates,
+    [postId]: index,
+  };
+};
