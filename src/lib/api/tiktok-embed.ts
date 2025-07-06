@@ -124,7 +124,7 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
     }
 
     const iframeHtml = `<iframe 
-      src="https://www.tiktok.com/embed/v2/${videoId}" 
+      src="https://www.tiktok.com/embed/v2/${videoId}?autoplay=1&loop=1" 
       width="325" 
       height="560"
       frameborder="0"
