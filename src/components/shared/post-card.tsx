@@ -195,11 +195,17 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
         {/* Post content */}
         <div className="relative h-full w-full">
           {shouldUseTikTokIframe && tiktokEmbed ? (
-            // TikTok iframe embed
-            <div
-              className="absolute inset-0 w-full h-full"
-              dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
-            />
+            // TikTok iframe embed - scaled to fit container
+            <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center">
+              <div
+                className="w-full h-full"
+                style={{
+                  transform: "scale(0.8)", // Scale down to fit better
+                  transformOrigin: "center center",
+                }}
+                dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
+              />
+            </div>
           ) : shouldUseTikTokIframe && embedLoading ? (
             // Loading state for TikTok embed
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">

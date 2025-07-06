@@ -125,13 +125,14 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
 
     const iframeHtml = `<iframe 
       src="https://www.tiktok.com/embed/v2/${videoId}?autoplay=1&loop=1" 
-      width="325" 
-      height="560"
+      width="100%" 
+      height="100%"
       frameborder="0"
       allow="encrypted-media; autoplay; picture-in-picture"
       allowfullscreen
       sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-      loading="lazy">
+      loading="lazy"
+      style="border: none; outline: none;">
     </iframe>`;
 
     // No thumbnail URL for iframe method
