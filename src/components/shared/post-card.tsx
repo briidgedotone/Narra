@@ -78,8 +78,27 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   // TikTok embed logic - simplified
   const shouldUseTikTokEmbed =
     post.platform === "tiktok" &&
-    post.originalUrl &&
     (context === "board" || context === "following");
+
+  // Construct TikTok URL if not provided (for backward compatibility)
+  const tiktokUrl =
+    post.originalUrl ||
+    (post.platform === "tiktok" && post.platformPostId && post.profile?.handle
+      ? `https://www.tiktok.com/@${post.profile.handle}/video/${post.platformPostId}`
+      : null);
+
+  // Debug logging
+  if (post.platform === "tiktok") {
+    console.log("TikTok post debug:", {
+      id: post.id,
+      originalUrl: post.originalUrl,
+      platformPostId: post.platformPostId,
+      handle: post.profile?.handle,
+      constructedUrl: tiktokUrl,
+      context,
+      shouldUseTikTokEmbed,
+    });
+  }
 
   // State for TikTok thumbnail
   const [embedLoading, setEmbedLoading] = React.useState(false);
@@ -138,7 +157,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   useEffect(() => {
     if (
       shouldUseTikTokEmbed &&
-      post.originalUrl &&
+      tiktokUrl &&
       !tiktokThumbnail &&
       !embedLoading &&
       !embedError
@@ -148,7 +167,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       fetch("/api/test-tiktok-embed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: post.originalUrl }),
+        body: JSON.stringify({ url: tiktokUrl }),
       })
         .then(res => res.json())
         .then(data => {
@@ -169,7 +188,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     }
   }, [
     shouldUseTikTokEmbed,
-    post.originalUrl,
+    tiktokUrl,
     tiktokThumbnail,
     embedLoading,
     embedError,

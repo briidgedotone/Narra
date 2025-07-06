@@ -21,7 +21,9 @@ export interface SavedPost {
   id: string;
   embedUrl: string;
   caption: string;
-  thumbnail: string;
+  thumbnail?: string;
+  originalUrl?: string;
+  platformPostId?: string;
   metrics: {
     views?: number;
     likes: number;
