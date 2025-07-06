@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { DatabaseService } from "@/lib/database";
+import type { Post } from "@/types/database";
 
 const db = new DatabaseService();
 
@@ -18,7 +19,7 @@ interface SavePostData {
   platformPostId: string;
   embedUrl: string;
   caption?: string;
-  thumbnail: string;
+  originalUrl?: string;
   metrics?: {
     views?: number;
     likes?: number;
@@ -69,7 +70,7 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
-        thumbnail_url: postData.thumbnail || "",
+        original_url: postData.originalUrl || null,
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
       });
@@ -159,7 +160,7 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Get all posts from user's boards
-    const allPosts: any[] = [];
+    const allPosts: Post[] = [];
     for (const boardId of boardIds) {
       const posts = await db.getPostsInBoard(boardId, 999, 0); // Get all posts
       allPosts.push(...(posts || []));
@@ -167,14 +168,14 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
 
     // Remove duplicates and sort by date
     const uniquePosts = allPosts.filter(
-      (post: any, index: number, self: any[]) =>
-        index === self.findIndex((p: any) => p.id === post.id)
+      (post: Post, index: number, self: Post[]) =>
+        index === self.findIndex((p: Post) => p.id === post.id)
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
       .sort(
-        (a: any, b: any) =>
+        (a: Post, b: Post) =>
           new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
       )
       .slice(offset, offset + limit);
