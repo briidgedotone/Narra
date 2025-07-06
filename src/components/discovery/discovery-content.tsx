@@ -963,7 +963,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       platform: post.platform,
       embedUrl: post.embedUrl,
       caption: post.caption,
-      thumbnail: post.thumbnail,
+      originalUrl: post.tiktokUrl, // Use tiktokUrl for original URL
       metrics: {
         views: post.metrics?.views || 0,
         likes: post.metrics?.likes || 0,

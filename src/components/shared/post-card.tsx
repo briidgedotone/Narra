@@ -69,26 +69,17 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     ? post.carouselMedia?.[currentIndex]
     : null;
 
+  // Instagram thumbnail handling
   const displayThumbnail = currentMedia?.thumbnail || post.thumbnail;
   const proxiedThumbnail = displayThumbnail 
     ? `/api/image-proxy?url=${encodeURIComponent(displayThumbnail)}`
     : "";
 
-  // Determine if we should use TikTok embed
+  // TikTok embed logic - simplified
   const shouldUseTikTokEmbed = 
     post.platform === "tiktok" && 
     post.originalUrl &&
     (context === "board" || context === "following");
-
-  // Fallback: Determine if we should use video first frame instead of thumbnail
-  const shouldUseVideoFirstFrame =
-    post.platform === "tiktok" &&
-    (context === "board" || context === "following") &&
-    post.embedUrl &&
-    !shouldUseTikTokEmbed;
-
-  // State to track video loading failures for fallback
-  const [videoLoadFailed, setVideoLoadFailed] = React.useState(false);
   
   // State for TikTok embed
   const [embedHtml, setEmbedHtml] = React.useState<string | null>(null);
@@ -202,26 +193,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
               <div className="text-sm text-gray-500">Loading...</div>
             </div>
-          ) : shouldUseVideoFirstFrame && !videoLoadFailed ? (
-            // Use video first frame for TikTok in board/following contexts
-            <video
-              className="absolute inset-0 h-full w-full object-cover"
-              preload="metadata"
-              muted
-              playsInline
-              onError={() => {
-                console.log("Video failed to load, falling back to thumbnail");
-                setVideoLoadFailed(true);
-              }}
-              onLoadStart={() => {
-                // Reset failure state when trying to load
-                setVideoLoadFailed(false);
-              }}
-            >
-              <source src={post.embedUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          ) : displayThumbnail || post.platform === "instagram" ? (
+          ) : post.platform === "instagram" && displayThumbnail ? (
             // Use thumbnail approach for Instagram and Discovery context
             <>
               <Image
