@@ -185,7 +185,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   return (
     <article
       className={cn(
-        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg",
+        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg w-full max-w-sm mx-auto",
         onPostClick && !shouldUseTikTokIframe && "cursor-pointer"
       )}
       onClick={
@@ -374,7 +374,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       {/* Post Details */}
       <div
         className={cn(
-          "p-4 space-y-3",
+          "p-3 sm:p-4 space-y-2 sm:space-y-3",
           shouldUseTikTokIframe &&
             onPostClick &&
             "cursor-pointer hover:bg-gray-50 transition-colors"
@@ -393,7 +393,7 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <Heart className="h-4 w-4 text-red-500" />
             <span className="font-medium text-sm">
