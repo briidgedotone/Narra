@@ -300,7 +300,7 @@ export function BoardPageContent({
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedPost && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col md:flex-row gap-6">
                 {/* Left: Video/Image with Carousel Support */}
                 <div className="space-y-4">
                   <div className="relative w-fit h-[560px] bg-black rounded-lg overflow-hidden">
