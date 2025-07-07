@@ -297,13 +297,13 @@ export function BoardPageContent({
 
       {/* Post detail modal */}
       <Dialog open={!!selectedPost} onOpenChange={() => closeModal()}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-fit max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
           {selectedPost && (
             <>
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                 {/* Left: Video/Image with Carousel Support */}
                 <div className="space-y-4">
-                  <div className="relative w-fit h-[560px] bg-black rounded-lg overflow-hidden">
+                  <div className="relative w-fit h-[400px] sm:h-[500px] lg:h-[560px] bg-black rounded-lg overflow-hidden mx-auto lg:mx-0">
                     {selectedPost.isCarousel && selectedPost.carouselMedia ? (
                       // Carousel Media Display
                       <>
@@ -433,7 +433,7 @@ export function BoardPageContent({
                 </div>
 
                 {/* Right: Tabbed Content */}
-                <div className="space-y-4">
+                <div className="space-y-4 flex-1 min-w-0">
                   {/* Tab Navigation */}
                   <div className="flex border-b border-gray-200">
                     <button
