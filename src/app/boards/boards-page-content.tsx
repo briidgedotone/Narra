@@ -195,11 +195,11 @@ export function BoardsPageContent() {
                     board={{
                       id: board.id,
                       name: board.name,
-                      description: "", // Default empty description
-                      postCount: 0, // Default post count
-                      updatedAt: new Date(), // Default to current date
-                      isPublic: false, // Default to private
-                      createdAt: new Date(), // Default to current date
+                      description: board.description || "",
+                      postCount: board.post_count || 0,
+                      updatedAt: new Date(board.updated_at || board.created_at),
+                      isPublic: board.is_shared || false,
+                      createdAt: new Date(board.created_at),
                       ...("folderName" in board && board.folderName
                         ? { folderName: board.folderName as string }
                         : {}),

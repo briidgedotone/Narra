@@ -186,8 +186,8 @@ export class DatabaseService {
         `
         *, 
         boards(
-          *, 
-          board_posts(count)
+          *,
+          board_posts(post_id)
         )
       `
       )
@@ -201,7 +201,7 @@ export class DatabaseService {
       ...folder,
       boards: folder.boards?.map((board: any) => ({
         ...board,
-        post_count: board.board_posts?.[0]?.count || 0,
+        post_count: board.board_posts?.length || 0,
       })),
     }));
   }
