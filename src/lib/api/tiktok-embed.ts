@@ -128,11 +128,13 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
       width="100%" 
       height="100%"
       frameborder="0"
+      border="0"
+      scrolling="no"
       allow="encrypted-media; autoplay; picture-in-picture"
       allowfullscreen
       sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
       loading="lazy"
-      style="border: none; outline: none; object-fit: cover;">
+      style="border: none; outline: none; margin: 0; padding: 0; display: block; background: transparent; overflow: hidden;">
     </iframe>`;
 
     // No thumbnail URL for iframe method

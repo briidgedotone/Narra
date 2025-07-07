@@ -184,169 +184,190 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   return (
     <article
       className={cn(
-        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg",
-        onPostClick && "cursor-pointer"
+        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg",
+        onPostClick && !shouldUseTikTokIframe && "cursor-pointer"
       )}
-      onClick={onPostClick ? handlePostClick : undefined}
-      role={onPostClick ? "button" : "article"}
-      tabIndex={onPostClick ? 0 : undefined}
+      onClick={
+        onPostClick && !shouldUseTikTokIframe ? handlePostClick : undefined
+      }
+      role={onPostClick && !shouldUseTikTokIframe ? "button" : "article"}
+      tabIndex={onPostClick && !shouldUseTikTokIframe ? 0 : undefined}
     >
       <div
         className={cn(
-          "group relative w-full overflow-hidden rounded-lg bg-gray-100",
+          "relative w-full overflow-hidden rounded-lg",
           // Use TikTok's natural aspect ratio for TikTok posts, Instagram ratio for others
-          shouldUseTikTokIframe ? "aspect-[9/16]" : "aspect-[2/3]"
+          shouldUseTikTokIframe
+            ? "aspect-[9/16] bg-transparent"
+            : "group aspect-[2/3] bg-gray-100"
         )}
       >
         {/* Post content */}
-        <div className="relative h-full w-full">
-          {shouldUseTikTokIframe && tiktokEmbed ? (
-            // TikTok iframe embed - natural size
-            <div
-              className="absolute inset-0 w-full h-full"
-              dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
-            />
-          ) : shouldUseTikTokIframe && embedLoading ? (
-            // Loading state for TikTok embed
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-              <div className="text-sm text-gray-500">Loading TikTok...</div>
-            </div>
-          ) : shouldUseTikTokIframe && embedError ? (
-            // Error state for TikTok embed
-            <div className="absolute inset-0 h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-pink-400 via-red-500 to-yellow-500 text-white">
-              <TikTok className="w-16 h-16 mb-3" />
-              <p className="text-lg font-bold">TikTok</p>
-              <p className="text-sm opacity-90">@{post.profile?.handle}</p>
-              <p className="text-xs opacity-70 mt-2">Failed to load</p>
-            </div>
-          ) : post.platform === "instagram" && displayThumbnail ? (
-            // Use thumbnail approach for Instagram and Discovery context
-            <>
-              <Image
-                src={
-                  currentMedia?.thumbnail
-                    ? `/api/proxy-image?url=${encodeURIComponent(currentMedia.thumbnail)}`
-                    : proxiedThumbnail
-                }
-                alt="Post thumbnail"
-                fill
-                className="object-cover"
-                loading="lazy"
-                onError={e => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  const fallback =
-                    target.nextElementSibling as HTMLElement | null;
-                  if (fallback) {
-                    fallback.style.display = "flex";
-                  }
+        {shouldUseTikTokIframe ? (
+          // TikTok iframe embed - completely isolated with NO overlays
+          <div className="absolute inset-0 bg-transparent border-none overflow-hidden">
+            {tiktokEmbed ? (
+              <div
+                className="w-full bg-transparent border-none overflow-hidden"
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  border: "none",
+                  outline: "none",
+                  overflow: "hidden",
+                  height: "calc(100% - 12px)",
                 }}
+                dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
               />
-              <div className="absolute inset-0 hidden h-full w-full flex-col items-center justify-center bg-gray-200 text-center text-xs text-gray-500">
-                <p>Image could not be loaded.</p>
+            ) : embedLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <div className="text-sm text-gray-500">Loading TikTok...</div>
               </div>
-            </>
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-500">
-              {post.platform === "tiktok" ? (
-                <>
-                  <TikTok className="w-12 h-12 mb-2 opacity-50" />
-                  <p className="text-sm">TikTok Video</p>
-                </>
-              ) : (
-                <p>No caption available</p>
+            ) : embedError ? (
+              <div className="absolute inset-0 h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-pink-400 via-red-500 to-yellow-500 text-white">
+                <TikTok className="w-16 h-16 mb-3" />
+                <p className="text-lg font-bold">TikTok</p>
+                <p className="text-sm opacity-90">@{post.profile?.handle}</p>
+                <p className="text-xs opacity-70 mt-2">Failed to load</p>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          // Non-TikTok content with all the overlays
+          <div className="relative h-full w-full">
+            {post.platform === "instagram" && displayThumbnail ? (
+              // Use thumbnail approach for Instagram and Discovery context
+              <>
+                <Image
+                  src={
+                    currentMedia?.thumbnail
+                      ? `/api/proxy-image?url=${encodeURIComponent(currentMedia.thumbnail)}`
+                      : proxiedThumbnail
+                  }
+                  alt="Post thumbnail"
+                  fill
+                  className="object-cover"
+                  loading="lazy"
+                  onError={e => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    const fallback =
+                      target.nextElementSibling as HTMLElement | null;
+                    if (fallback) {
+                      fallback.style.display = "flex";
+                    }
+                  }}
+                />
+                <div className="absolute inset-0 hidden h-full w-full flex-col items-center justify-center bg-gray-200 text-center text-xs text-gray-500">
+                  <p>Image could not be loaded.</p>
+                </div>
+              </>
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-500">
+                {post.platform === "tiktok" ? (
+                  <>
+                    <TikTok className="w-12 h-12 mb-2 opacity-50" />
+                    <p className="text-sm">TikTok Video</p>
+                  </>
+                ) : (
+                  <p>No caption available</p>
+                )}
+              </div>
+            )}
+
+            {/* Platform indicator */}
+            <div className="absolute top-3 left-3">
+              <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
+                {platformIcon}
+              </div>
+            </div>
+
+            {/* Carousel indicator */}
+            {hasCarousel && (
+              <div className="absolute top-3 right-3">
+                <div className="bg-black/70 backdrop-blur-sm rounded-full px-2 py-1">
+                  <span className="text-white text-xs font-medium">
+                    {currentIndex + 1}/{post.carouselMedia?.length}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Video play indicator */}
+            {(post.isVideo || currentMedia?.isVideo) && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
+                  <div className="w-0 h-0 border-l-[12px] border-l-white border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent ml-1" />
+                </div>
+              </div>
+            )}
+
+            {/* Carousel Navigation */}
+            {hasCarousel && (
+              <>
+                {/* Previous Arrow */}
+                {!isFirstSlide && (
+                  <button
+                    onClick={handleCarouselPrev}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                )}
+
+                {/* Next Arrow */}
+                {!isLastSlide && (
+                  <button
+                    onClick={handleCarouselNext}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+
+                {/* Carousel Indicators */}
+                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                  {post.carouselMedia?.map((_, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full transition-colors",
+                        index === currentIndex ? "bg-white" : "bg-white/50"
+                      )}
+                      role="tab"
+                      aria-selected={index === currentIndex}
+                      aria-label={`Image ${index + 1} of ${post.carouselMedia?.length}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Action Buttons */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {!isSharedView && onSavePost && (
+                <button
+                  onClick={handleSavePost}
+                  className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors mr-2"
+                  title="Save to board"
+                >
+                  <Bookmark className="h-4 w-4 text-gray-700" />
+                </button>
+              )}
+              {!isSharedView && onRemovePost && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleRemovePost}
+                >
+                  Remove
+                </Button>
               )}
             </div>
-          )}
-        </div>
-
-        {/* Platform indicator */}
-        <div className="absolute top-3 left-3">
-          <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
-            {platformIcon}
-          </div>
-        </div>
-
-        {/* Carousel indicator */}
-        {hasCarousel && (
-          <div className="absolute top-3 right-3">
-            <div className="bg-black/70 backdrop-blur-sm rounded-full px-2 py-1">
-              <span className="text-white text-xs font-medium">
-                {currentIndex + 1}/{post.carouselMedia?.length}
-              </span>
-            </div>
           </div>
         )}
-
-        {/* Video play indicator */}
-        {(post.isVideo || currentMedia?.isVideo) && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
-              <div className="w-0 h-0 border-l-[12px] border-l-white border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent ml-1" />
-            </div>
-          </div>
-        )}
-
-        {/* Carousel Navigation */}
-        {hasCarousel && (
-          <>
-            {/* Previous Arrow */}
-            {!isFirstSlide && (
-              <button
-                onClick={handleCarouselPrev}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-            )}
-
-            {/* Next Arrow */}
-            {!isLastSlide && (
-              <button
-                onClick={handleCarouselNext}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-black rounded-full p-1.5 shadow-md transition-colors backdrop-blur-sm"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-
-            {/* Carousel Indicators */}
-            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
-              {post.carouselMedia?.map((_, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-colors",
-                    index === currentIndex ? "bg-white" : "bg-white/50"
-                  )}
-                  role="tab"
-                  aria-selected={index === currentIndex}
-                  aria-label={`Image ${index + 1} of ${post.carouselMedia?.length}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* Action Buttons */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          {!isSharedView && onSavePost && (
-            <button
-              onClick={handleSavePost}
-              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors mr-2"
-              title="Save to board"
-            >
-              <Bookmark className="h-4 w-4 text-gray-700" />
-            </button>
-          )}
-          {!isSharedView && onRemovePost && (
-            <Button size="sm" variant="destructive" onClick={handleRemovePost}>
-              Remove
-            </Button>
-          )}
-        </div>
       </div>
 
       {/* Post Details */}

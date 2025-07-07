@@ -8,10 +8,7 @@ import { PostGrid } from "@/components/boards";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Clipboard,
   SearchList,
@@ -29,10 +26,9 @@ import { useBoard } from "@/hooks/useBoard";
 import { useCarousel } from "@/hooks/useCarousel";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
-import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
+import { formatDate, formatNumber } from "@/lib/utils/format";
 import { proxyInstagramImage } from "@/lib/utils/image-proxy";
 import type { BoardPageContentProps } from "@/types/board";
-import type { VideoTranscript } from "@/types/content";
 
 // Global timeout declarations for board name and description auto-save
 declare global {
@@ -99,29 +95,43 @@ export function BoardPageContent({
   } = useCarousel();
 
   // Get current carousel index for selected post
-  const currentCarouselIndex = selectedPost ? getPostCarouselIndex(selectedPost.id) : 0;
+  const currentCarouselIndex = selectedPost
+    ? getPostCarouselIndex(selectedPost.id)
+    : 0;
 
   // Carousel navigation handlers
-  const handlePrevClick = React.useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (selectedPost) {
-      handlePostCarouselPrev(selectedPost.id);
-    }
-  }, [handlePostCarouselPrev, selectedPost]);
+  const handlePrevClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (selectedPost) {
+        handlePostCarouselPrev(selectedPost.id);
+      }
+    },
+    [handlePostCarouselPrev, selectedPost]
+  );
 
-  const handleNextClick = React.useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (selectedPost) {
-      handlePostCarouselNext(selectedPost.id, selectedPost.carouselMedia?.length || 1);
-    }
-  }, [handlePostCarouselNext, selectedPost]);
+  const handleNextClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (selectedPost) {
+        handlePostCarouselNext(
+          selectedPost.id,
+          selectedPost.carouselMedia?.length || 1
+        );
+      }
+    },
+    [handlePostCarouselNext, selectedPost]
+  );
 
-  const handleIndicatorClick = React.useCallback((e: React.MouseEvent, index: number) => {
-    e.stopPropagation();
-    if (selectedPost) {
-      setPostCarouselIndex(selectedPost.id, index);
-    }
-  }, [selectedPost, setPostCarouselIndex]);
+  const handleIndicatorClick = React.useCallback(
+    (e: React.MouseEvent, index: number) => {
+      e.stopPropagation();
+      if (selectedPost) {
+        setPostCarouselIndex(selectedPost.id, index);
+      }
+    },
+    [selectedPost, setPostCarouselIndex]
+  );
 
   /**
    * Memoized filter counts to prevent recalculation on every render
@@ -299,36 +309,37 @@ export function BoardPageContent({
                       <>
                         {selectedPost.carouselMedia[currentCarouselIndex]
                           ?.isVideo ? (
-                          <video
-                            key={
-                              selectedPost.carouselMedia[currentCarouselIndex]
-                                .id
-                            }
-                            src={
-                              selectedPost.platform === "instagram"
-                                ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.carouselMedia[currentCarouselIndex].url)}`
-                                : selectedPost.carouselMedia[
-                                    currentCarouselIndex
-                                  ].url
-                            }
-                            poster={
-                              selectedPost.platform === "instagram"
-                                ? proxyInstagramImage(
-                                    selectedPost.carouselMedia[
-                                      currentCarouselIndex
-                                    ].thumbnail
-                                  )
-                                : selectedPost.carouselMedia[
-                                    currentCarouselIndex
-                                  ].thumbnail
-                            }
-                            className="w-full h-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            controls
-                          />
+                          selectedPost.platform === "tiktok" ? (
+                            <TikTokModalEmbed
+                              key={
+                                selectedPost.carouselMedia[currentCarouselIndex]
+                                  .id
+                              }
+                              tiktokUrl={
+                                selectedPost.carouselMedia[currentCarouselIndex]
+                                  .url
+                              }
+                              className="w-full h-full"
+                            />
+                          ) : (
+                            <video
+                              key={
+                                selectedPost.carouselMedia[currentCarouselIndex]
+                                  .id
+                              }
+                              src={`/api/proxy-image?url=${encodeURIComponent(selectedPost.carouselMedia[currentCarouselIndex].url)}`}
+                              poster={proxyInstagramImage(
+                                selectedPost.carouselMedia[currentCarouselIndex]
+                                  .thumbnail
+                              )}
+                              className="w-full h-full object-cover"
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              controls
+                            />
+                          )
                         ) : (
                           <Image
                             key={
@@ -373,7 +384,7 @@ export function BoardPageContent({
                               {selectedPost.carouselMedia.map((_, index) => (
                                 <button
                                   key={index}
-                                  onClick={(e) => handleIndicatorClick(e, index)}
+                                  onClick={e => handleIndicatorClick(e, index)}
                                   className={`w-2 h-2 rounded-full transition-colors ${
                                     index === currentCarouselIndex
                                       ? "bg-white"
@@ -385,19 +396,18 @@ export function BoardPageContent({
                           </>
                         )}
                       </>
+                    ) : // Single Media Display - Use iframe for TikTok, video for Instagram
+                    selectedPost.platform === "tiktok" ? (
+                      <TikTokModalEmbed
+                        tiktokUrl={
+                          selectedPost.originalUrl || selectedPost.embedUrl
+                        }
+                        className="w-full h-full"
+                      />
                     ) : (
-                      // Single Media Display
                       <video
-                        src={
-                          selectedPost.platform === "instagram"
-                            ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
-                            : selectedPost.embedUrl
-                        }
-                        poster={
-                          selectedPost.platform === "instagram"
-                            ? proxyInstagramImage(selectedPost.thumbnail)
-                            : selectedPost.thumbnail
-                        }
+                        src={`/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`}
+                        poster={proxyInstagramImage(selectedPost.thumbnail)}
                         className="w-full h-full object-cover"
                         autoPlay
                         loop
@@ -407,10 +417,7 @@ export function BoardPageContent({
                         onError={e => {
                           // Fallback to image if video fails
                           const img = document.createElement("img");
-                          img.src =
-                            selectedPost.platform === "instagram"
-                              ? proxyInstagramImage(selectedPost.thumbnail)
-                              : selectedPost.thumbnail;
+                          img.src = proxyInstagramImage(selectedPost.thumbnail);
                           img.className = "w-full h-full object-cover";
                           img.alt = "Post thumbnail";
                           if (e.currentTarget.parentNode) {
@@ -559,5 +566,86 @@ export function BoardPageContent({
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+/**
+ * TikTokModalEmbed - Component for displaying TikTok iframe embeds in modal
+ * Reuses the same logic as PostCard but adapted for modal context
+ */
+function TikTokModalEmbed({
+  tiktokUrl,
+  className,
+}: {
+  tiktokUrl: string;
+  className?: string;
+}) {
+  const [embedLoading, setEmbedLoading] = React.useState(false);
+  const [embedError, setEmbedError] = React.useState(false);
+  const [tiktokEmbed, setTiktokEmbed] = React.useState<string | null>(null);
+
+  // Fetch TikTok iframe embed
+  React.useEffect(() => {
+    if (tiktokUrl && !tiktokEmbed && !embedLoading && !embedError) {
+      setEmbedLoading(true);
+
+      fetch("/api/test-tiktok-embed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: tiktokUrl }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data && data.data.html) {
+            setTiktokEmbed(data.data.html);
+          } else {
+            setEmbedError(true);
+          }
+        })
+        .catch(() => setEmbedError(true))
+        .finally(() => setEmbedLoading(false));
+    }
+  }, [tiktokUrl, tiktokEmbed, embedLoading, embedError]);
+
+  if (embedLoading) {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center bg-gray-100",
+          className
+        )}
+      >
+        <div className="text-sm text-gray-500">Loading TikTok...</div>
+      </div>
+    );
+  }
+
+  if (embedError || !tiktokEmbed) {
+    return (
+      <div
+        className={cn(
+          "flex flex-col items-center justify-center bg-gradient-to-br from-pink-400 via-red-500 to-yellow-500 text-white",
+          className
+        )}
+      >
+        <TikTok className="w-16 h-16 mb-3" />
+        <p className="text-lg font-bold">TikTok</p>
+        <p className="text-xs opacity-70 mt-2">Failed to load</p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn("bg-transparent border-none overflow-hidden", className)}
+      style={{
+        margin: 0,
+        padding: 0,
+        border: "none",
+        outline: "none",
+        overflow: "hidden",
+      }}
+      dangerouslySetInnerHTML={{ __html: tiktokEmbed }}
+    />
   );
 }
