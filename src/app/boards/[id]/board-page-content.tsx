@@ -303,7 +303,7 @@ export function BoardPageContent({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left: Video/Image with Carousel Support */}
                 <div className="space-y-4">
-                  <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden">
+                  <div className="relative w-fit h-[560px] bg-black rounded-lg overflow-hidden">
                     {selectedPost.isCarousel && selectedPost.carouselMedia ? (
                       // Carousel Media Display
                       <>

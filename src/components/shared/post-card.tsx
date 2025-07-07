@@ -12,6 +12,7 @@ import {
   TikTok,
   Instagram,
   Share,
+  ExternalLink,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/utils/format";
@@ -371,8 +372,26 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       </div>
 
       {/* Post Details */}
-      <div className={cn("p-4 space-y-3")}>
-        <p className="text-sm line-clamp-2">{post.caption}</p>
+      <div
+        className={cn(
+          "p-4 space-y-3",
+          shouldUseTikTokIframe &&
+            onPostClick &&
+            "cursor-pointer hover:bg-gray-50 transition-colors"
+        )}
+        onClick={
+          shouldUseTikTokIframe && onPostClick ? handlePostClick : undefined
+        }
+      >
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-sm line-clamp-2 flex-1">{post.caption}</p>
+          {shouldUseTikTokIframe && onPostClick && (
+            <ExternalLink
+              className="w-4 h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-0.5"
+              title="Click to view details"
+            />
+          )}
+        </div>
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
