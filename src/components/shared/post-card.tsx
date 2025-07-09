@@ -185,7 +185,10 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   return (
     <article
       className={cn(
-        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg w-full max-w-sm mx-auto",
+        "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg",
+        shouldUseTikTokIframe
+          ? "w-auto inline-block"
+          : "w-full max-w-sm mx-auto",
         onPostClick && !shouldUseTikTokIframe && "cursor-pointer"
       )}
       onClick={
@@ -196,16 +199,16 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     >
       <div
         className={cn(
-          "relative w-full overflow-hidden rounded-lg",
-          // Use TikTok's natural aspect ratio for TikTok posts, Instagram ratio for others
+          "relative overflow-hidden rounded-lg",
+          // Use consistent aspect ratio for both platforms
           shouldUseTikTokIframe
-            ? "aspect-[9/16] bg-transparent"
-            : "group aspect-[2/3] bg-gray-100"
+            ? "w-auto aspect-[9/16] bg-transparent"
+            : "w-full group aspect-[9/16] bg-gray-100"
         )}
       >
         {/* Post content */}
         {shouldUseTikTokIframe ? (
-          // TikTok iframe embed - completely isolated with NO overlays
+          // TikTok iframe embed - flexible width to match embed
           <div className="absolute inset-0 bg-transparent border-none overflow-hidden">
             {tiktokEmbed ? (
               <div

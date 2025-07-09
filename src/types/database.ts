@@ -39,11 +39,23 @@ export interface Post {
   caption?: string;
   transcript?: string;
   original_url?: string;
-  thumbnail_storage_url?: string;
   metrics: PostMetrics;
   date_posted: string;
   created_at: string;
   updated_at: string;
+  // Instagram-specific fields
+  thumbnail?: string;
+  is_video?: boolean;
+  is_carousel?: boolean;
+  carousel_media?: CarouselMediaData[];
+  carousel_count?: number;
+  video_url?: string;
+  display_url?: string;
+  shortcode?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
 }
 
 // Post metrics
@@ -53,6 +65,15 @@ export interface PostMetrics {
   comments?: number;
   shares?: number;
   saves?: number;
+}
+
+// Carousel media data for Instagram posts
+export interface CarouselMediaData {
+  id: string;
+  type: "image" | "video";
+  url: string;
+  thumbnail: string;
+  is_video: boolean;
 }
 
 // Organization folders

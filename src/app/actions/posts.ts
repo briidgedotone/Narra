@@ -27,6 +27,25 @@ interface SavePostData {
     shares?: number;
   };
   datePosted: string;
+  // Instagram-specific fields
+  thumbnail?: string;
+  isVideo?: boolean;
+  isCarousel?: boolean;
+  carouselMedia?: Array<{
+    id: string;
+    type: "image" | "video";
+    url: string;
+    thumbnail: string;
+    isVideo: boolean;
+  }>;
+  carouselCount?: number;
+  videoUrl?: string;
+  displayUrl?: string;
+  shortcode?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
 }
 
 export async function savePostToBoard(postData: SavePostData, boardId: string) {
@@ -73,6 +92,23 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         original_url: postData.originalUrl || null,
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
+        // Instagram-specific fields
+        thumbnail: postData.thumbnail || null,
+        is_video: postData.isVideo || false,
+        is_carousel: postData.isCarousel || false,
+        carousel_media:
+          postData.carouselMedia?.map(item => ({
+            id: item.id,
+            type: item.type,
+            url: item.url,
+            thumbnail: item.thumbnail,
+            is_video: item.isVideo,
+          })) || null,
+        carousel_count: postData.carouselCount || 0,
+        video_url: postData.videoUrl || null,
+        display_url: postData.displayUrl || null,
+        shortcode: postData.shortcode || null,
+        dimensions: postData.dimensions || null,
       });
     }
 

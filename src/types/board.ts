@@ -43,6 +43,14 @@ export interface SavedPost {
   isCarousel?: boolean;
   carouselMedia?: CarouselMediaItem[];
   carouselCount?: number;
+  // Instagram-specific fields
+  videoUrl?: string;
+  displayUrl?: string;
+  shortcode?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
 }
 
 export interface CarouselMediaItem {

@@ -47,6 +47,25 @@ interface SavePostModalProps {
     followers?: number;
     avatarUrl?: string;
     verified?: boolean;
+    // Instagram-specific fields
+    thumbnail?: string;
+    isVideo?: boolean;
+    isCarousel?: boolean;
+    carouselMedia?: Array<{
+      id: string;
+      type: "image" | "video";
+      url: string;
+      thumbnail: string;
+      isVideo: boolean;
+    }>;
+    carouselCount?: number;
+    videoUrl?: string;
+    displayUrl?: string;
+    shortcode?: string;
+    dimensions?: {
+      width: number;
+      height: number;
+    };
   };
 }
 

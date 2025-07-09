@@ -1,21 +1,5 @@
 "use client";
 
-/**
- * DiscoveryContent Component
- *
- * Main component for creator discovery functionality. Allows users to search for
- * TikTok and Instagram creators, view their profiles and posts, and save content
- * to boards.
- *
- * Organization:
- * - State Management: Grouped by functionality (search, posts, modals, etc.)
- * - Effects: URL parameter handling and lifecycle hooks
- * - API & Data Loading: Posts loading and pagination logic
- * - Event Handlers: User interaction handlers
- * - Helper Functions: Utility functions for data manipulation
- * - Render: Main JSX with organized sections
- */
-
 import { Search01Icon, InstagramIcon, TiktokIcon } from "hugeicons-react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -113,18 +97,10 @@ interface Post {
   datePosted: string;
   platform: "instagram" | "tiktok";
   tiktokUrl?: string;
-  shortcode?: string;
   isVideo?: boolean;
   isCarousel?: boolean;
   carouselMedia?: CarouselMediaItem[];
   carouselCount?: number;
-  // Instagram-specific fields
-  videoUrl?: string;
-  displayUrl?: string;
-  dimensions?: {
-    width: number;
-    height: number;
-  };
 }
 
 interface TikTokVideoData {
@@ -202,6 +178,7 @@ interface SavePostData {
   platform: "instagram" | "tiktok";
   embedUrl: string;
   caption?: string;
+  thumbnail: string;
   metrics: {
     views?: number;
     likes: number;
@@ -224,21 +201,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   // Memory optimization and cleanup
   const {} = useCleanup();
 
-  // ============================================================================
-  // STATE MANAGEMENT
-  // ============================================================================
-
-  // Search & Discovery State
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Profile | null>(null);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState<
-    "instagram" | "tiktok"
-  >("tiktok");
-
-  // Posts State
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMorePosts, setHasMorePosts] = useState(false);
   const [nextMaxId, setNextMaxId] = useState<string | null>(null);
@@ -246,28 +211,23 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const [tiktokMaxCursor, setTiktokMaxCursor] = useState<string | null>(null);
   const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
   const [sortOption, setSortOption] = useState("most-recent");
-
-  // Modal & Detail State
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<
+    "instagram" | "tiktok"
+  >("tiktok");
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "transcript">(
     "overview"
   );
-
-  // Transcript State
   const [transcript, setTranscript] = useState<VideoTranscript | null>(null);
   const [transcriptPostId, setTranscriptPostId] = useState<string | null>(null); // Track which post's transcript we have
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
   const [transcriptError, setTranscriptError] = useState<string | null>(null);
-
-  // Carousel State
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
   const [postCarouselIndices, setPostCarouselIndices] = useState<
     Record<string, number>
   >({});
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
 
   // Log memory usage in development
   useEffect(() => {
@@ -293,10 +253,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       }
     }
   }, [searchParams]);
-
-  // ============================================================================
-  // API & DATA LOADING FUNCTIONS
-  // ============================================================================
 
   const loadPosts = useCallback(async () => {
     if (!searchResults) return;
@@ -429,6 +385,20 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                   // Transform TikTok video data
                   const tiktokItem = item as TikTokVideoData;
 
+                  // Try to get the best thumbnail URL (prefer non-HEIC formats)
+                  const originCover =
+                    tiktokItem.video?.origin_cover?.url_list?.[0] || "";
+                  const dynamicCover =
+                    tiktokItem.video?.dynamic_cover?.url_list?.[0] || "";
+
+                  // Prefer dynamic cover or try to convert HEIC to a more compatible format
+                  let thumbnailUrl = dynamicCover || originCover;
+
+                  // If we have a HEIC URL, try to convert it to JPEG by changing the file extension
+                  if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                    thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                  }
+
                   return {
                     id: tiktokItem.aweme_id || `tiktok-${index}`,
                     embedUrl:
@@ -436,6 +406,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                       tiktokItem.video?.download_addr?.url_list?.[0] ||
                       "",
                     caption: tiktokItem.desc || "No caption available",
+                    thumbnail: thumbnailUrl,
                     metrics: {
                       views: tiktokItem.statistics?.play_count || 0,
                       likes: tiktokItem.statistics?.digg_count || 0,
@@ -676,6 +647,20 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           // Transform TikTok videos using the same logic as loadPosts
           const newPosts: Post[] = Array.isArray(videosArray)
             ? videosArray.map((item: TikTokVideoData, index: number): Post => {
+                // Try to get the best thumbnail URL (prefer non-HEIC formats)
+                const originCover =
+                  item.video?.origin_cover?.url_list?.[0] || "";
+                const dynamicCover =
+                  item.video?.dynamic_cover?.url_list?.[0] || "";
+
+                // Prefer dynamic cover or try to convert HEIC to a more compatible format
+                let thumbnailUrl = dynamicCover || originCover;
+
+                // If we have a HEIC URL, try to convert it to JPEG by changing the file extension
+                if (thumbnailUrl && thumbnailUrl.includes(".heic")) {
+                  thumbnailUrl = thumbnailUrl.replace(".heic", ".jpeg");
+                }
+
                 return {
                   id: item.aweme_id || `tiktok-${index}`,
                   embedUrl:
@@ -683,6 +668,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                     item.video?.download_addr?.url_list?.[0] ||
                     "",
                   caption: item.desc || "No caption available",
+                  thumbnail: thumbnailUrl,
                   metrics: {
                     views: item.statistics?.play_count || 0,
                     likes: item.statistics?.digg_count || 0,
@@ -817,10 +803,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       console.error("Failed to copy transcript");
     }
   };
-
-  // ============================================================================
-  // EVENT HANDLERS
-  // ============================================================================
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -981,15 +963,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       platform: post.platform,
       embedUrl: post.embedUrl,
       caption: post.caption,
-      originalUrl:
-        post.platform === "instagram"
-          ? `https://www.instagram.com/p/${post.shortcode}/`
-          : post.tiktokUrl,
+      originalUrl: post.tiktokUrl, // Use tiktokUrl for original URL
       metrics: {
-        views: post.metrics?.views,
+        views: post.metrics?.views || 0,
         likes: post.metrics?.likes || 0,
         comments: post.metrics?.comments || 0,
-        shares: post.metrics?.shares,
+        shares: post.metrics?.shares || 0,
       },
       datePosted: post.datePosted,
       handle: searchResults?.handle || "",
@@ -998,16 +977,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       followers: searchResults?.followers,
       avatarUrl: searchResults?.avatarUrl,
       verified: searchResults?.verified,
-      // Instagram-specific fields
-      thumbnail: post.thumbnail,
-      isVideo: post.isVideo,
-      isCarousel: post.isCarousel,
-      carouselMedia: post.carouselMedia,
-      carouselCount: post.carouselCount,
-      videoUrl: post.videoUrl,
-      displayUrl: post.displayUrl,
-      shortcode: post.shortcode,
-      dimensions: post.dimensions,
     } as SavePostData);
     setShowSaveModal(true);
   };
@@ -1097,14 +1066,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         );
     }
   }, [posts, sortOption]);
-
-  // ============================================================================
-  // HELPER FUNCTIONS
-  // ============================================================================
-
-  // ============================================================================
-  // RENDER
-  // ============================================================================
 
   return (
     <div className="  space-y-6">
@@ -1338,14 +1299,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               {media.isVideo ? (
                                 <video
                                   src={proxyImage(media.url, post.platform)}
-                                  poster={
-                                    media.thumbnail
-                                      ? proxyImage(
-                                          media.thumbnail,
-                                          post.platform
-                                        )
-                                      : undefined
-                                  }
+                                  poster={proxyImage(
+                                    media.thumbnail,
+                                    post.platform
+                                  )}
                                   className="absolute inset-0 w-full h-full object-cover"
                                   muted
                                   playsInline
@@ -1359,12 +1316,10 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   onError={e => {
                                     // Fallback to image if video fails
                                     const img = document.createElement("img");
-                                    img.src = media.thumbnail
-                                      ? proxyImage(
-                                          media.thumbnail,
-                                          post.platform
-                                        )
-                                      : "/placeholder-post.jpg";
+                                    img.src = proxyImage(
+                                      media.thumbnail,
+                                      post.platform
+                                    );
                                     img.className =
                                       "w-full h-full object-cover";
                                     img.alt = "Post media";
@@ -1400,11 +1355,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
                                 : post.embedUrl
                             }
-                            poster={
-                              post.thumbnail
-                                ? proxyInstagramImage(post.thumbnail)
-                                : undefined
-                            }
+                            poster={proxyInstagramImage(post.thumbnail)}
                             className="absolute inset-0 w-full h-full object-cover"
                             muted
                             playsInline
@@ -1418,9 +1369,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             onError={e => {
                               // Fallback to image if video fails
                               const img = document.createElement("img");
-                              img.src = post.thumbnail
-                                ? proxyInstagramImage(post.thumbnail)
-                                : "/placeholder-post.jpg";
+                              img.src = proxyInstagramImage(post.thumbnail);
                               img.className = "w-full h-full object-cover";
                               img.alt = "Post thumbnail";
                               if (e.currentTarget.parentNode) {
@@ -1740,10 +1689,6 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
         </div>
       )}
 
-      {/* ================================================================ */}
-      {/* MODALS */}
-      {/* ================================================================ */}
-
       {/* Post Detail Modal */}
       <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -1779,7 +1724,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                   )
                                 : selectedPost.carouselMedia[
                                     currentCarouselIndex
-                                  ].thumbnail || "/placeholder-post.jpg"
+                                  ].thumbnail
                             }
                             className="w-full h-full object-cover"
                             autoPlay
@@ -1854,9 +1799,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                         }
                         poster={
                           selectedPost.platform === "instagram"
-                            ? selectedPost.thumbnail
-                              ? proxyInstagramImage(selectedPost.thumbnail)
-                              : undefined
+                            ? proxyInstagramImage(selectedPost.thumbnail)
                             : selectedPost.thumbnail
                         }
                         className="w-full h-full object-cover"
@@ -1870,11 +1813,8 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           const img = document.createElement("img");
                           img.src =
                             selectedPost.platform === "instagram"
-                              ? selectedPost.thumbnail
-                                ? proxyInstagramImage(selectedPost.thumbnail)
-                                : "/placeholder-post.jpg"
-                              : selectedPost.thumbnail ||
-                                "/placeholder-post.jpg";
+                              ? proxyInstagramImage(selectedPost.thumbnail)
+                              : selectedPost.thumbnail;
                           img.className = "w-full h-full object-cover";
                           img.alt = "Post thumbnail";
                           if (e.currentTarget.parentNode) {
