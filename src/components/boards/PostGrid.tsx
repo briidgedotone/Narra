@@ -68,7 +68,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
    */
   const loadingSkeleton = React.useMemo(
     () => (
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-6">
+      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
@@ -135,7 +135,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   // Main grid render - flexible layout for mixed content
   return (
     <div
-      className="columns-1 sm:columns-2 lg:columns-3 gap-8 masonry-container"
+      className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-8 masonry-container"
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
