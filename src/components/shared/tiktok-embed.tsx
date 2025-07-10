@@ -78,7 +78,7 @@ export function TikTokEmbed({
   }
 
   return (
-    <div className={`tiktok-embed ${className || ""}`}>
+    <div className={`tiktok-embed w-[325px] mx-auto ${className || ""}`}>
       <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
 
       {/* Optional caption and metrics */}

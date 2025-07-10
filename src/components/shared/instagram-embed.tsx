@@ -86,7 +86,7 @@ export function InstagramEmbed({
   const embedHtml = generateInstagramEmbed(url);
 
   return (
-    <div className={`instagram-embed ${className || ""}`}>
+    <div className={`instagram-embed w-[325px] mx-auto ${className || ""}`}>
       <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
 
       {/* Optional caption and metrics */}
