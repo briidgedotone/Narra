@@ -950,6 +950,41 @@ export class DatabaseService {
       )
       .slice(offset, offset + limit);
   }
+
+  // Board Copying Methods
+  async getBoardByUserAndCopiedFrom(userId: string, publicId: string) {
+    const { data, error } = await this.client
+      .from("boards")
+      .select(
+        `
+        *,
+        folders!inner(*)
+      `
+      )
+      .eq("folders.user_id", userId)
+      .eq("copied_from_public_id", publicId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found
+    return data;
+  }
+
+  async getCopiedBoardsByUser(userId: string) {
+    const { data, error } = await this.client
+      .from("boards")
+      .select(
+        `
+        *,
+        folders!inner(*)
+      `
+      )
+      .eq("folders.user_id", userId)
+      .not("copied_from_public_id", "is", null)
+      .order("copied_at", { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
 }
 
 // Export singleton instance
