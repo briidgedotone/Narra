@@ -4,7 +4,35 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { DatabaseService } from "@/lib/database";
-import type { Post } from "@/types/database";
+
+// Helper function to fetch Instagram embed on server
+async function fetchInstagramEmbed(url: string) {
+  try {
+    const apiUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}/api/instagram-embed`
+      : "http://localhost:3000/api/instagram-embed";
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch Instagram embed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
 
 const db = new DatabaseService();
 
@@ -82,6 +110,20 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
     );
 
     if (!post) {
+      // Fetch embed HTML for Instagram posts
+      let embedHtml: string | null = null;
+      if (postData.platform === "instagram" && postData.originalUrl) {
+        try {
+          const embedResult = await fetchInstagramEmbed(postData.originalUrl);
+          if (embedResult.success && embedResult.data?.html) {
+            embedHtml = embedResult.data.html;
+          }
+        } catch (error) {
+          console.error("Failed to fetch Instagram embed:", error);
+          // Continue without embed HTML - the post will still be saved
+        }
+      }
+
       // Create post if it doesn't exist
       post = await db.createPost({
         profile_id: profile.id,
@@ -89,26 +131,26 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
-        original_url: postData.originalUrl || null,
+        original_url: postData.originalUrl,
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
         // Instagram-specific fields
-        thumbnail: postData.thumbnail || null,
+        thumbnail: postData.thumbnail,
         is_video: postData.isVideo || false,
         is_carousel: postData.isCarousel || false,
-        carousel_media:
-          postData.carouselMedia?.map(item => ({
-            id: item.id,
-            type: item.type,
-            url: item.url,
-            thumbnail: item.thumbnail,
-            is_video: item.isVideo,
-          })) || null,
+        carousel_media: postData.carouselMedia?.map(item => ({
+          id: item.id,
+          type: item.type,
+          url: item.url,
+          thumbnail: item.thumbnail,
+          is_video: item.isVideo,
+        })),
         carousel_count: postData.carouselCount || 0,
-        video_url: postData.videoUrl || null,
-        display_url: postData.displayUrl || null,
-        shortcode: postData.shortcode || null,
-        dimensions: postData.dimensions || null,
+        video_url: postData.videoUrl,
+        display_url: postData.displayUrl,
+        shortcode: postData.shortcode,
+        dimensions: postData.dimensions,
+        embed_html: embedHtml || undefined,
       });
     }
 
@@ -196,23 +238,23 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Get all posts from user's boards
-    const allPosts: Post[] = [];
+    const allPosts: any[] = [];
     for (const boardId of boardIds) {
       const posts = await db.getPostsInBoard(boardId, 999, 0); // Get all posts
-      allPosts.push(...(posts || []));
+      allPosts.push(...(posts?.filter(Boolean) || []));
     }
 
     // Remove duplicates and sort by date
     const uniquePosts = allPosts.filter(
-      (post: Post, index: number, self: Post[]) =>
-        index === self.findIndex((p: Post) => p.id === post.id)
+      (post: any, index: number, self: any[]) =>
+        index === self.findIndex((p: any) => p.id === post.id)
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
       .sort(
-        (a: Post, b: Post) =>
-          new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime()
+        (a: any, b: any) =>
+          new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()
       )
       .slice(offset, offset + limit);
 

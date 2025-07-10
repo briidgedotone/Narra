@@ -61,7 +61,7 @@ export default function TestTikTokEmbedPage() {
       console.log("oEmbed data:", data);
 
       setEmbedData(data);
-    } catch (err) {
+    } catch {
       console.error("oEmbed test error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -94,7 +94,7 @@ export default function TestTikTokEmbedPage() {
       } else {
         throw new Error(data.error || "API returned error");
       }
-    } catch (err) {
+    } catch {
       console.error("API test error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -130,7 +130,7 @@ export default function TestTikTokEmbedPage() {
         height: 560,
       });
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to generate iframe embed");
     }
   };
@@ -237,12 +237,17 @@ export default function TestTikTokEmbedPage() {
               1. Enter a valid TikTok video URL (format:
               https://www.tiktok.com/@username/video/123456789)
             </li>
-            <li>2. Try "oEmbed API (Direct)" first to test direct API access</li>
             <li>
-              3. Try "Test via Our API" to test through our backend endpoint
+              2. Try &quot;oEmbed API (Direct)&quot; first to test direct API
+              access
             </li>
             <li>
-              4. Try "Generate Iframe Embed" as a fallback method if oEmbed fails
+              3. Try &quot;Test via Our API&quot; to test through our backend
+              endpoint
+            </li>
+            <li>
+              4. Try &quot;Generate Iframe Embed&quot; as a fallback method if
+              oEmbed fails
             </li>
             <li>5. Check if the embed displays and plays correctly</li>
           </ul>

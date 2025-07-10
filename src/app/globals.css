@@ -267,3 +267,41 @@
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
 }
+
+/* Instagram Embed Styles */
+.instagram-embed {
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.instagram-embed .instagram-media {
+  margin: 0 !important;
+  min-width: 326px !important;
+  max-width: 540px !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Instagram iframe embeds - clean video only */
+.instagram-embed iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  aspect-ratio: 9/16 !important;
+}
+
+/* Responsive Instagram embeds */
+@media (max-width: 640px) {
+  .instagram-embed .instagram-media {
+    min-width: 280px !important;
+    max-width: 100% !important;
+  }
+
+  .instagram-embed iframe {
+    border-radius: 4px !important;
+  }
+}

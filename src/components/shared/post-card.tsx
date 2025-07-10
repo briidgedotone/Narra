@@ -43,6 +43,12 @@ interface PostCardProps {
       isVideo: boolean;
     }>;
     carouselCount?: number;
+    embed_html?: string;
+    platformPostId?: string;
+    profile?: {
+      id: string;
+      handle: string;
+    };
   };
   onPostClick?: (post: PostCardProps["post"]) => void;
   onSavePost?: (post: PostCardProps["post"]) => void;
@@ -81,6 +87,18 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   const shouldUseTikTokIframe =
     post.platform === "tiktok" &&
     (context === "board" || context === "following");
+
+  // Instagram embed logic - show blockquote embed for Instagram posts in board/following contexts
+  const shouldUseInstagramEmbed =
+    post.platform === "instagram" &&
+    (context === "board" || context === "following") &&
+    post.embed_html;
+
+  // Use the pre-generated embed HTML from the database (without the script tag)
+  const instagramBlockquoteEmbed =
+    shouldUseInstagramEmbed && post.embed_html
+      ? post.embed_html.replace(/<script[^>]*>.*?<\/script>/gi, "")
+      : null;
 
   // Construct TikTok URL if not provided (for backward compatibility)
   const tiktokUrl =
@@ -153,6 +171,8 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === (post.carouselMedia?.length || 1) - 1;
 
+  // Note: Instagram script loading and processing moved to page level to avoid conflicts
+
   // Fetch TikTok iframe embed when needed
   useEffect(() => {
     if (
@@ -186,16 +206,29 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
     <article
       className={cn(
         "group bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-lg",
-        shouldUseTikTokIframe
+        shouldUseTikTokIframe || shouldUseInstagramEmbed
           ? "w-auto inline-block"
           : "w-full max-w-sm mx-auto",
-        onPostClick && !shouldUseTikTokIframe && "cursor-pointer"
+        onPostClick &&
+          !shouldUseTikTokIframe &&
+          !shouldUseInstagramEmbed &&
+          "cursor-pointer"
       )}
       onClick={
-        onPostClick && !shouldUseTikTokIframe ? handlePostClick : undefined
+        onPostClick && !shouldUseTikTokIframe && !shouldUseInstagramEmbed
+          ? handlePostClick
+          : undefined
       }
-      role={onPostClick && !shouldUseTikTokIframe ? "button" : "article"}
-      tabIndex={onPostClick && !shouldUseTikTokIframe ? 0 : undefined}
+      role={
+        onPostClick && !shouldUseTikTokIframe && !shouldUseInstagramEmbed
+          ? "button"
+          : "article"
+      }
+      tabIndex={
+        onPostClick && !shouldUseTikTokIframe && !shouldUseInstagramEmbed
+          ? 0
+          : undefined
+      }
     >
       <div
         className={cn(
@@ -203,11 +236,24 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
           // Use consistent aspect ratio for both platforms
           shouldUseTikTokIframe
             ? "w-auto aspect-[9/16] bg-transparent"
-            : "w-full group aspect-[9/16] bg-gray-100"
+            : shouldUseInstagramEmbed
+              ? "w-full max-w-lg mx-auto bg-transparent"
+              : "w-full group aspect-[9/16] bg-gray-100"
         )}
       >
         {/* Post content */}
-        {shouldUseTikTokIframe ? (
+        {shouldUseInstagramEmbed ? (
+          // Instagram blockquote embed - official Instagram embed structure
+          <div className="w-full bg-transparent">
+            <div
+              key={`instagram-embed-${post.id}`}
+              className="instagram-embed w-full bg-transparent"
+              dangerouslySetInnerHTML={{
+                __html: instagramBlockquoteEmbed || "",
+              }}
+            />
+          </div>
+        ) : shouldUseTikTokIframe ? (
           // TikTok iframe embed - flexible width to match embed
           <div className="absolute inset-0 bg-transparent border-none overflow-hidden">
             {tiktokEmbed ? (
@@ -378,22 +424,25 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       <div
         className={cn(
           "p-3 sm:p-4 space-y-2 sm:space-y-3",
-          shouldUseTikTokIframe &&
+          (shouldUseTikTokIframe || shouldUseInstagramEmbed) &&
             onPostClick &&
             "cursor-pointer hover:bg-gray-50 transition-colors"
         )}
         onClick={
-          shouldUseTikTokIframe && onPostClick ? handlePostClick : undefined
+          (shouldUseTikTokIframe || shouldUseInstagramEmbed) && onPostClick
+            ? handlePostClick
+            : undefined
         }
       >
         <div className="flex items-start justify-between gap-2">
           <p className="text-sm line-clamp-2 flex-1">{post.caption}</p>
-          {shouldUseTikTokIframe && onPostClick && (
-            <ExternalLink
-              className="w-4 h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-0.5"
-              title="Click to view details"
-            />
-          )}
+          {(shouldUseTikTokIframe || shouldUseInstagramEmbed) &&
+            onPostClick && (
+              <ExternalLink
+                className="w-4 h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-0.5"
+                title="Click to view details"
+              />
+            )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4 flex-wrap">

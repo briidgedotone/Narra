@@ -56,6 +56,8 @@ export interface Post {
     width: number;
     height: number;
   };
+  // Embed HTML for displaying posts in boards
+  embed_html?: string;
 }
 
 // Post metrics

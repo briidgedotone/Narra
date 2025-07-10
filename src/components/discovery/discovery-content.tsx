@@ -202,6 +202,7 @@ interface SavePostData {
   platform: "instagram" | "tiktok";
   embedUrl: string;
   caption?: string;
+  originalUrl?: string;
   metrics: {
     views?: number;
     likes: number;
@@ -409,6 +410,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             isCarousel: post.isCarousel || false,
             carouselMedia: post.carouselMedia || [],
             carouselCount: post.carouselCount || 0,
+            shortcode: post.shortcode,
           }));
 
           // Cache the Instagram posts
@@ -620,6 +622,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
             isCarousel: post.isCarousel || false,
             carouselMedia: post.carouselMedia || [],
             carouselCount: post.carouselCount || 0,
+            shortcode: post.shortcode,
           }));
 
           // Append new posts to existing posts
