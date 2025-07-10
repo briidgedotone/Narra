@@ -230,7 +230,12 @@ export function BoardPageContent({
   return (
     <div className={cn("min-h-screen", isSharedView && "p-4 sm:p-6")}>
       {/* Board header with navigation */}
-      <BoardHeader boardName={board.name} boardId={boardId} />
+      <BoardHeader
+        boardName={board.name}
+        boardId={boardId}
+        isSharedView={isSharedView}
+        publicId={isSharedView ? boardId : undefined}
+      />
 
       <div className="space-y-8">
         {/* Board title and description editing section */}

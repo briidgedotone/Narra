@@ -7,12 +7,21 @@ import { enableBoardSharing } from "@/app/actions/folders";
 import { Button } from "@/components/ui/button";
 import { Link, Menu } from "@/components/ui/icons";
 
+import { CopyBoardButton } from "./copy-board-button";
+
 interface BoardHeaderProps {
   boardName: string;
   boardId: string;
+  isSharedView?: boolean;
+  publicId?: string;
 }
 
-export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
+export function BoardHeader({
+  boardName,
+  boardId,
+  isSharedView = false,
+  publicId,
+}: BoardHeaderProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCopyLink = async () => {
@@ -56,28 +65,40 @@ export function BoardHeader({ boardName, boardId }: BoardHeaderProps) {
 
         {/* Right side - Actions */}
         <div className="flex items-center space-x-2 pr-6">
-          {/* Copy Link Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyLink}
-            disabled={isLoading}
-            className="h-8"
-          >
-            <Link className="w-4 h-4 mr-2" />
-            Copy Link
-          </Button>
+          {isSharedView && publicId ? (
+            /* Copy Board Button for shared views */
+            <CopyBoardButton
+              publicId={publicId}
+              boardName={boardName}
+              className="h-8"
+            />
+          ) : (
+            /* Original buttons for owned boards */
+            <>
+              {/* Copy Link Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyLink}
+                disabled={isLoading}
+                className="h-8"
+              >
+                <Link className="w-4 h-4 mr-2" />
+                Copy Link
+              </Button>
 
-          {/* Three Dots Menu */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={handleMenuClick}
-          >
-            <Menu className="w-4 h-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
+              {/* Three Dots Menu */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={handleMenuClick}
+              >
+                <Menu className="w-4 h-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
