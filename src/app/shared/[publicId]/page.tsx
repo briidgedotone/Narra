@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getPublicBoard } from "@/app/actions/folders";
 import { BoardPageContent } from "@/app/boards/[id]/board-page-content";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default async function SharedBoardPage({
   params,
@@ -17,5 +18,9 @@ export default async function SharedBoardPage({
     redirect("/");
   }
 
-  return <BoardPageContent boardId={publicId} isSharedView={true} />;
+  return (
+    <DashboardLayout>
+      <BoardPageContent boardId={publicId} isSharedView={true} />
+    </DashboardLayout>
+  );
 }

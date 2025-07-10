@@ -29,7 +29,7 @@ export function CopyBoardButton({
         className={className}
       >
         <Clipboard className="w-4 h-4 mr-2" />
-        Copy Board
+        Add to My Collection
       </Button>
 
       <CopyBoardModal

@@ -136,7 +136,7 @@ export function CopyBoardModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Copy Board to Your Account</DialogTitle>
+          <DialogTitle>Add Board to My Collection</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -206,7 +206,7 @@ export function CopyBoardModal({
                     isLoading || !selectedFolderId || !customName.trim()
                   }
                 >
-                  {isLoading ? "Copying..." : "Copy Board"}
+                  {isLoading ? "Adding..." : "Add to Collection"}
                 </Button>
               </div>
             </>

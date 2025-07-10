@@ -228,7 +228,7 @@ export function BoardPageContent({
 
   // Main render
   return (
-    <div className={cn("min-h-screen", isSharedView && "p-4 sm:p-6")}>
+    <div className="min-h-screen">
       {/* Board header with navigation */}
       <BoardHeader
         boardName={board.name}
