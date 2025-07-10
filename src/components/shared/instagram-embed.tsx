@@ -16,6 +16,7 @@ interface InstagramEmbedProps {
     shares?: number;
   };
   showMetrics?: boolean;
+  onDetailsClick?: () => void;
 }
 
 export function InstagramEmbed({
@@ -24,6 +25,7 @@ export function InstagramEmbed({
   caption,
   metrics,
   showMetrics = false,
+  onDetailsClick,
 }: InstagramEmbedProps) {
   useEffect(() => {
     const script = document.createElement("script");
@@ -89,7 +91,10 @@ export function InstagramEmbed({
 
       {/* Optional caption and metrics */}
       {showMetrics && (caption || metrics) && (
-        <div className="p-4 space-y-3 bg-white">
+        <div
+          className="p-4 space-y-3 bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={onDetailsClick}
+        >
           {/* Caption */}
           {caption && (
             <p className="text-sm line-clamp-2 text-gray-700">{caption}</p>

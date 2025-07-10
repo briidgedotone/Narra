@@ -13,6 +13,8 @@ interface PostGridProps {
   isLoading: boolean;
   /** Active filter for posts ("all" | "tiktok" | "instagram" | "recent") */
   activeFilter: string;
+  /** Callback when post details are clicked */
+  onPostClick?: (post: SavedPost) => void;
 }
 
 /**
@@ -42,6 +44,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   posts,
   isLoading,
   activeFilter,
+  onPostClick,
 }) {
   /**
    * Memoized filtered posts to prevent unnecessary recalculations
@@ -147,6 +150,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               caption={post.caption}
               metrics={post.metrics}
               showMetrics={true}
+              onDetailsClick={() => onPostClick?.(post)}
             />
           ) : (
             <TikTokEmbed
@@ -154,6 +158,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               caption={post.caption}
               metrics={post.metrics}
               showMetrics={true}
+              onDetailsClick={() => onPostClick?.(post)}
             />
           )}
         </div>

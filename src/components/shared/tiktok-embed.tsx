@@ -16,6 +16,7 @@ interface TikTokEmbedProps {
     shares?: number;
   };
   showMetrics?: boolean;
+  onDetailsClick?: () => void;
 }
 
 export function TikTokEmbed({
@@ -24,6 +25,7 @@ export function TikTokEmbed({
   caption,
   metrics,
   showMetrics = false,
+  onDetailsClick,
 }: TikTokEmbedProps) {
   const [error, setError] = useState<string | null>(null);
 
@@ -45,6 +47,7 @@ export function TikTokEmbed({
       width="325" 
       height="560"
       frameborder="0"
+      scrolling="no"
       allow="encrypted-media;"
       sandbox="allow-scripts allow-same-origin allow-popups allow-presentation">
     </iframe>`;
@@ -80,7 +83,10 @@ export function TikTokEmbed({
 
       {/* Optional caption and metrics */}
       {showMetrics && (caption || metrics) && (
-        <div className="p-4 space-y-3 bg-white">
+        <div
+          className="p-4 space-y-3 bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={onDetailsClick}
+        >
           {/* Caption */}
           {caption && (
             <p className="text-sm line-clamp-2 text-gray-700">{caption}</p>
