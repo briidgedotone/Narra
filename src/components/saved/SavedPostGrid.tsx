@@ -10,7 +10,6 @@ interface SavedPost {
   embedUrl: string;
   originalUrl?: string;
   caption: string;
-  thumbnail: string;
   metrics: {
     views?: number;
     likes: number;
@@ -25,16 +24,6 @@ interface SavedPost {
     avatarUrl: string;
     verified: boolean;
   };
-  isVideo?: boolean;
-  isCarousel?: boolean;
-  carouselMedia?: Array<{
-    id: string;
-    type: "image" | "video";
-    url: string;
-    thumbnail: string;
-    isVideo: boolean;
-  }>;
-  carouselCount?: number;
 }
 
 interface SavedPostGridProps {

@@ -16,8 +16,8 @@ interface SavedPostsContentProps {
 interface SavedPost {
   id: string;
   embedUrl: string;
+  originalUrl?: string;
   caption: string;
-  thumbnail: string;
   metrics: {
     views?: number;
     likes: number;
@@ -32,7 +32,6 @@ interface SavedPost {
     avatarUrl: string;
     verified: boolean;
   };
-  isVideo?: boolean;
 }
 
 export function SavedPostsContent({}: SavedPostsContentProps) {
