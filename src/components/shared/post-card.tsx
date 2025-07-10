@@ -244,10 +244,16 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
         {/* Post content */}
         {shouldUseInstagramEmbed ? (
           // Instagram blockquote embed - official Instagram embed structure
-          <div className="w-full bg-transparent">
+          <div className="w-full bg-transparent overflow-hidden max-w-full">
             <div
               key={`instagram-embed-${post.id}`}
-              className="instagram-embed w-full bg-transparent"
+              className="instagram-embed w-full bg-transparent max-w-full"
+              style={{
+                maxWidth: "100%",
+                width: "100%",
+                overflow: "hidden",
+                contain: "layout style",
+              }}
               dangerouslySetInnerHTML={{
                 __html: instagramBlockquoteEmbed || "",
               }}
@@ -421,63 +427,63 @@ export const PostCard = React.memo<PostCardProps>(function PostCard({
       </div>
 
       {/* Post Details */}
-      <div
-        className={cn(
-          "p-3 sm:p-4 space-y-2 sm:space-y-3",
-          (shouldUseTikTokIframe || shouldUseInstagramEmbed) &&
-            onPostClick &&
-            "cursor-pointer hover:bg-gray-50 transition-colors"
-        )}
-        onClick={
-          (shouldUseTikTokIframe || shouldUseInstagramEmbed) && onPostClick
-            ? handlePostClick
-            : undefined
-        }
-      >
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-sm line-clamp-2 flex-1">{post.caption}</p>
-          {(shouldUseTikTokIframe || shouldUseInstagramEmbed) &&
-            onPostClick && (
+      {!shouldUseInstagramEmbed && (
+        <div
+          className={cn(
+            "p-3 sm:p-4 space-y-2 sm:space-y-3",
+            shouldUseTikTokIframe &&
+              onPostClick &&
+              "cursor-pointer hover:bg-gray-50 transition-colors"
+          )}
+          onClick={
+            shouldUseTikTokIframe && onPostClick ? handlePostClick : undefined
+          }
+        >
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-sm line-clamp-2 flex-1">{post.caption}</p>
+            {shouldUseTikTokIframe && onPostClick && (
               <ExternalLink
                 className="w-4 h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-0.5"
                 title="Click to view details"
               />
             )}
-        </div>
+          </div>
 
-        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <Heart className="h-4 w-4 text-red-500" />
-            <span className="font-medium text-sm">
-              {formatNumber(post.metrics.likes)}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MessageCircle className="h-4 w-4 text-blue-500" />
-            <span className="font-medium text-sm">
-              {formatNumber(post.metrics.comments)}
-            </span>
-          </div>
-          {(post.platform === "tiktok" ||
-            (post.metrics.views !== undefined && post.metrics.views > 0)) && (
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
             <div className="flex items-center gap-1.5">
-              <Eye className="h-4 w-4 text-green-500" />
+              <Heart className="h-4 w-4 text-red-500" />
               <span className="font-medium text-sm">
-                {formatNumber(post.metrics.views || 0)}
+                {formatNumber(post.metrics.likes)}
               </span>
             </div>
-          )}
-          {(post.platform === "tiktok" ||
-            (post.metrics.shares !== undefined && post.metrics.shares > 0)) && (
             <div className="flex items-center gap-1.5">
-              <Share className="h-4 w-4 text-purple-500" />
+              <MessageCircle className="h-4 w-4 text-blue-500" />
               <span className="font-medium text-sm">
-                {formatNumber(post.metrics.shares || 0)}
+                {formatNumber(post.metrics.comments)}
               </span>
             </div>
-          )}
+            {(post.platform === "tiktok" ||
+              (post.metrics.views !== undefined && post.metrics.views > 0)) && (
+              <div className="flex items-center gap-1.5">
+                <Eye className="h-4 w-4 text-green-500" />
+                <span className="font-medium text-sm">
+                  {formatNumber(post.metrics.views || 0)}
+                </span>
+              </div>
+            )}
+            {(post.platform === "tiktok" ||
+              (post.metrics.shares !== undefined &&
+                post.metrics.shares > 0)) && (
+              <div className="flex items-center gap-1.5">
+                <Share className="h-4 w-4 text-purple-500" />
+                <span className="font-medium text-sm">
+                  {formatNumber(post.metrics.shares || 0)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </article>
   );
 });
