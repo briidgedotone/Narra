@@ -128,3 +128,27 @@ export async function checkIfFollowing(profileId: string) {
     };
   }
 }
+
+export async function getLastRefreshTime() {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const lastRefresh = await db.getLastRefreshTime(userId);
+
+    return { success: true, data: lastRefresh };
+  } catch (error) {
+    console.error("Get last refresh time error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to get last refresh time",
+      data: null,
+    };
+  }
+}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -25,7 +26,12 @@ interface FollowedPost {
   caption?: string;
   transcript?: string;
   thumbnail_url?: string;
-  metrics: any;
+  metrics: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
   date_posted: string;
   platform: "tiktok" | "instagram";
   profiles: {
@@ -38,41 +44,27 @@ interface FollowedPost {
 interface FollowingContentProps {
   profiles: FollowedProfile[];
   posts: FollowedPost[];
+  lastRefreshTime?: string | null;
   isLoadingProfiles?: boolean;
   isLoadingPosts?: boolean;
   isLoadingMore?: boolean;
   hasMorePosts?: boolean;
   onLoadMore?: () => void;
+  onPostClick?: (post: FollowedPost) => void;
 }
 
 export function FollowingContent({
   profiles,
   posts,
+  lastRefreshTime,
   isLoadingProfiles = false,
   isLoadingPosts = false,
   isLoadingMore = false,
   hasMorePosts = false,
   onLoadMore,
+  onPostClick,
 }: FollowingContentProps) {
   const router = useRouter();
-
-  // Transform posts data structure
-  const transformedPosts = posts.map(post => ({
-    id: post.id,
-    embedUrl: post.embed_url,
-    caption: post.caption || "",
-    thumbnail: post.thumbnail_url || "",
-    metrics: {
-      views: post.metrics?.views || 0,
-      likes: post.metrics?.likes || 0,
-      comments: post.metrics?.comments || 0,
-      shares: post.metrics?.shares || 0,
-    },
-    datePosted: post.date_posted,
-    platform: post.platform,
-    isVideo: true,
-    isCarousel: false,
-  }));
 
   if (isLoadingProfiles) {
     return <FollowingSkeleton />;
@@ -150,7 +142,14 @@ export function FollowingContent({
       {/* Posts Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Latest Posts</h2>
+          <div>
+            <h2 className="text-xl font-semibold">Latest Posts</h2>
+            {lastRefreshTime && (
+              <p className="text-sm text-muted-foreground">
+                Last updated: {new Date(lastRefreshTime).toLocaleString()}
+              </p>
+            )}
+          </div>
         </div>
 
         {isLoadingPosts ? (
@@ -173,23 +172,36 @@ export function FollowingContent({
         ) : (
           <>
             {/* Posts Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {transformedPosts.map(post => (
-                <div
-                  key={post.id}
-                  className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"
-                >
-                  <div className="text-sm text-gray-600 mb-2">
-                    {post.platform}
-                  </div>
-                  <div className="text-sm line-clamp-2">{post.caption}</div>
-                  <div className="text-xs text-gray-500 mt-2">
-                    {post.metrics.likes} likes • {post.metrics.comments}{" "}
-                    comments
-                  </div>
-                  <div className="text-xs text-gray-400 mt-1">
-                    Post card component removed - ready for recreation
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center">
+              {posts.map(post => (
+                <div key={post.id} className="flex justify-center">
+                  {post.platform === "instagram" ? (
+                    <InstagramEmbed
+                      url={post.embed_url}
+                      caption={post.caption}
+                      metrics={{
+                        views: post.metrics?.views,
+                        likes: post.metrics?.likes,
+                        comments: post.metrics?.comments,
+                        shares: post.metrics?.shares,
+                      }}
+                      showMetrics={true}
+                      onDetailsClick={() => onPostClick?.(post)}
+                    />
+                  ) : (
+                    <TikTokEmbed
+                      url={post.embed_url}
+                      caption={post.caption}
+                      metrics={{
+                        views: post.metrics?.views,
+                        likes: post.metrics?.likes,
+                        comments: post.metrics?.comments,
+                        shares: post.metrics?.shares,
+                      }}
+                      showMetrics={true}
+                      onDetailsClick={() => onPostClick?.(post)}
+                    />
+                  )}
                 </div>
               ))}
             </div>

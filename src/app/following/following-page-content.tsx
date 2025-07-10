@@ -3,8 +3,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 
-import { getFollowedProfiles, getFollowedPosts } from "@/app/actions/following";
+import {
+  getFollowedProfiles,
+  getFollowedPosts,
+  getLastRefreshTime,
+} from "@/app/actions/following";
 import { FollowingContent } from "@/components/following";
+import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface FollowedProfile {
   id: string;
@@ -25,7 +31,12 @@ interface FollowedPost {
   caption?: string;
   transcript?: string;
   thumbnail_url?: string;
-  metrics: any;
+  metrics: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
   date_posted: string;
   platform: "tiktok" | "instagram";
   profiles: {
@@ -42,10 +53,13 @@ interface FollowingPageContentProps {
 export function FollowingPageContent({}: FollowingPageContentProps) {
   const [profiles, setProfiles] = useState<FollowedProfile[]>([]);
   const [posts, setPosts] = useState<FollowedPost[]>([]);
+  const [lastRefreshTime, setLastRefreshTime] = useState<string | null>(null);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<FollowedPost | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadFollowedProfiles = useCallback(async () => {
     try {
@@ -118,21 +132,43 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     }
   }, []);
 
+  const loadLastRefreshTime = useCallback(async () => {
+    try {
+      const result = await getLastRefreshTime();
+      if (result.success && result.data) {
+        setLastRefreshTime(result.data);
+      }
+    } catch (error) {
+      console.error("Error loading last refresh time:", error);
+    }
+  }, []);
+
   const handleLoadMore = useCallback(() => {
     if (!isLoadingMore && hasMorePosts) {
       loadFollowedPosts(posts.length, true);
     }
   }, [isLoadingMore, hasMorePosts, posts.length, loadFollowedPosts]);
 
+  const handlePostClick = useCallback((post: FollowedPost) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  }, []);
+
   // Load followed profiles on mount
   useEffect(() => {
     loadFollowedProfiles();
   }, [loadFollowedProfiles]);
 
-  // Load followed posts on mount
+  // Load followed posts and refresh time on mount
   useEffect(() => {
     loadFollowedPosts();
-  }, [loadFollowedPosts]);
+    loadLastRefreshTime();
+  }, [loadFollowedPosts, loadLastRefreshTime]);
 
   // Refresh when coming back to the page (after following someone)
   useEffect(() => {
@@ -150,14 +186,76 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   }, [loadFollowedProfiles, loadFollowedPosts]);
 
   return (
-    <FollowingContent
-      profiles={profiles}
-      posts={posts}
-      isLoadingProfiles={isLoadingProfiles}
-      isLoadingPosts={isLoadingPosts}
-      isLoadingMore={isLoadingMore}
-      hasMorePosts={hasMorePosts}
-      onLoadMore={handleLoadMore}
-    />
+    <>
+      <FollowingContent
+        profiles={profiles}
+        posts={posts}
+        lastRefreshTime={lastRefreshTime}
+        isLoadingProfiles={isLoadingProfiles}
+        isLoadingPosts={isLoadingPosts}
+        isLoadingMore={isLoadingMore}
+        hasMorePosts={hasMorePosts}
+        onLoadMore={handleLoadMore}
+        onPostClick={handlePostClick}
+      />
+
+      <Dialog open={isModalOpen} onOpenChange={() => handleCloseModal()}>
+        <DialogContent className="w-fit max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+          {selectedPost && (
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+              {/* Left: Embed Component */}
+              <div className="space-y-4">
+                <div className="w-fit mx-auto lg:mx-0">
+                  {selectedPost.platform === "tiktok" ? (
+                    <TikTokEmbed url={selectedPost.embed_url} />
+                  ) : (
+                    <InstagramEmbed url={selectedPost.embed_url} />
+                  )}
+                </div>
+              </div>
+
+              {/* Right: Content */}
+              <div className="space-y-4 flex-1 min-w-0">
+                {/* Caption */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Caption</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {selectedPost.caption}
+                  </p>
+                </div>
+
+                {/* Metrics */}
+                <div>
+                  <h3 className="text-sm font-medium mb-3">Performance</h3>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {selectedPost.metrics?.views && (
+                      <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <span className="font-semibold text-base text-green-800">
+                          {selectedPost.metrics.views} views
+                        </span>
+                      </div>
+                    )}
+                    {selectedPost.metrics?.likes && (
+                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                        <span className="font-semibold text-base text-red-800">
+                          {selectedPost.metrics.likes} likes
+                        </span>
+                      </div>
+                    )}
+                    {selectedPost.metrics?.comments && (
+                      <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                        <span className="font-semibold text-base text-blue-800">
+                          {selectedPost.metrics.comments} comments
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

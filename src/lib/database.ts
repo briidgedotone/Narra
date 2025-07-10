@@ -534,33 +534,16 @@ export class DatabaseService {
   }
 
   async getFollowedPosts(userId: string, limit = 50, offset = 0) {
-    // Get the profiles the user follows
-    const { data: follows, error: followsError } = await this.client
-      .from("follows")
-      .select("profile_id")
-      .eq("user_id", userId);
-
-    if (followsError) {
-      console.error("Error fetching followed profiles:", followsError);
-      throw followsError;
-    }
-
-    if (!follows || follows.length === 0) {
-      return [];
-    }
-
-    const profileIds = follows.map(f => f.profile_id);
-
-    // Get the posts from those profiles
+    // Get posts directly from followed_posts table for this user
     const { data, error } = await this.client
-      .from("posts")
+      .from("followed_posts")
       .select(
         `
         *,
         profiles(*)
       `
       )
-      .in("profile_id", profileIds)
+      .eq("user_id", userId)
       .order("date_posted", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -569,7 +552,7 @@ export class DatabaseService {
       throw error;
     }
 
-    return data;
+    return data || [];
   }
 
   async isFollowing(userId: string, profileId: string) {
@@ -582,6 +565,19 @@ export class DatabaseService {
 
     if (error && error.code !== "PGRST116") throw error;
     return !!data;
+  }
+
+  async getLastRefreshTime(userId: string) {
+    const { data, error } = await this.client
+      .from("follows")
+      .select("last_refresh")
+      .eq("user_id", userId)
+      .order("last_refresh", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error;
+    return data?.last_refresh || null;
   }
 
   // Subscriptions
