@@ -268,15 +268,16 @@
   box-shadow: var(--card-shadow);
 }
 
-/* Instagram Embed Styles - Minimal styling to preserve natural behavior */
+/* Instagram Embed Styles - Consistent width with TikTok */
 .instagram-embed {
   width: 100%;
   margin: 0 auto;
 }
 
-/* Let Instagram handle its own styling completely */
+/* Set Instagram width to match TikTok (325px) with auto height */
 .instagram-embed .instagram-media {
   margin: 0 auto !important;
+  max-width: 325px !important;
 }
 
 .instagram-embed iframe {
