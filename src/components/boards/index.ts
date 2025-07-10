@@ -6,7 +6,6 @@
  * with post management, filtering, and detailed viewing capabilities.
  *
  * Components:
- * - PostCard: Individual post display with carousel navigation
  * - PostGrid: Responsive grid layout for displaying multiple posts
  *
  * Features:

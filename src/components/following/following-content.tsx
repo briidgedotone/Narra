@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { PostCard } from "@/components/shared/post-card";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -57,7 +56,7 @@ export function FollowingContent({
 }: FollowingContentProps) {
   const router = useRouter();
 
-  // Transform posts to match PostCard interface
+  // Transform posts data structure
   const transformedPosts = posts.map(post => ({
     id: post.id,
     embedUrl: post.embed_url,
@@ -176,12 +175,22 @@ export function FollowingContent({
             {/* Posts Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {transformedPosts.map(post => (
-                <PostCard
+                <div
                   key={post.id}
-                  post={post}
-                  isSharedView={true}
-                  context="following"
-                />
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm p-4"
+                >
+                  <div className="text-sm text-gray-600 mb-2">
+                    {post.platform}
+                  </div>
+                  <div className="text-sm line-clamp-2">{post.caption}</div>
+                  <div className="text-xs text-gray-500 mt-2">
+                    {post.metrics.likes} likes • {post.metrics.comments}{" "}
+                    comments
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    Post card component removed - ready for recreation
+                  </div>
+                </div>
               ))}
             </div>
 

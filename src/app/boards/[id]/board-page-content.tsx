@@ -622,7 +622,7 @@ export function BoardPageContent({
 
 /**
  * TikTokModalEmbed - Component for displaying TikTok iframe embeds in modal
- * Reuses the same logic as PostCard but adapted for modal context
+ * Reuses the same logic as post card components but adapted for modal context
  */
 function TikTokModalEmbed({
   tiktokUrl,

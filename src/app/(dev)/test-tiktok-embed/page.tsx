@@ -61,7 +61,7 @@ export default function TestTikTokEmbedPage() {
       console.log("oEmbed data:", data);
 
       setEmbedData(data);
-    } catch {
+    } catch (err) {
       console.error("oEmbed test error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -94,7 +94,7 @@ export default function TestTikTokEmbedPage() {
       } else {
         throw new Error(data.error || "API returned error");
       }
-    } catch {
+    } catch (err) {
       console.error("API test error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -222,7 +222,7 @@ export default function TestTikTokEmbedPage() {
               <div className="border rounded-lg p-4 bg-white">
                 <div
                   dangerouslySetInnerHTML={{ __html: embedData.html }}
-                  className="flex justify-center"
+                  className="tiktok-embed flex justify-center"
                 />
               </div>
             </div>

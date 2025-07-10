@@ -1,6 +1,6 @@
 import React from "react";
 
-import { PostCard } from "@/components/shared/post-card";
+import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SearchList } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,54 +11,37 @@ interface PostGridProps {
   posts: SavedPost[];
   /** Whether posts are currently loading */
   isLoading: boolean;
-  /** Whether this is a shared/public view */
-  isSharedView?: boolean;
   /** Active filter for posts ("all" | "tiktok" | "instagram" | "recent") */
   activeFilter: string;
-  /** Callback when a post is clicked */
-  onPostClick: (post: SavedPost) => void;
-  /** Callback to remove post (undefined in shared view) */
-  onRemovePost?: ((postId: string) => Promise<void>) | undefined;
-  /** Function to get carousel index for a post */
-  getCarouselIndex: (postId: string) => number;
-  /** Callback for carousel next navigation */
-  onCarouselNext: (postId: string, maxIndex: number) => void;
-  /** Callback for carousel previous navigation */
-  onCarouselPrev: (postId: string) => void;
 }
 
 /**
- * PostGrid - Responsive grid layout for displaying posts
+ * PostGrid - Flexible masonry layout for displaying raw embeds
  *
  * Features:
- * - Pinterest-style responsive grid (1-4 columns based on screen size)
+ * - Pinterest-style masonry layout using CSS columns (1-3 columns based on screen size)
+ * - Direct Instagram and TikTok embed display
  * - Post filtering by platform and recency
  * - Loading skeleton states
  * - Empty state handling
  * - Optimized rendering with React.memo
  *
- * Grid breakpoints:
+ * Layout breakpoints:
  * - Mobile: 1 column
  * - Small tablet: 2 columns
  * - Large tablet: 3 columns
- * - Desktop: 4 columns
  *
  * Performance optimizations:
  * - Memoized filtered posts calculation
  * - Memoized loading skeleton
  * - Memoized empty state messages
  * - Recent filter with 30-day cutoff
+ * - Break-inside-avoid for better column distribution
  */
 export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   posts,
   isLoading,
-  isSharedView = false,
   activeFilter,
-  onPostClick,
-  onRemovePost,
-  getCarouselIndex,
-  onCarouselNext,
-  onCarouselPrev,
 }) {
   /**
    * Memoized filtered posts to prevent unnecessary recalculations
@@ -81,19 +64,19 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
 
   /**
    * Memoized loading skeleton to prevent recreation
-   * Shows 8 skeleton cards in grid layout
+   * Shows 6 skeleton cards in flexible column layout
    */
   const loadingSkeleton = React.useMemo(
     () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {Array.from({ length: 8 }).map((_, i) => (
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-6">
+        {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl shadow-sm border border-gray-100"
+            className="bg-white rounded-xl shadow-sm border border-gray-100 break-inside-avoid mb-6"
             role="status"
             aria-label="Loading post"
           >
-            <Skeleton className="aspect-[2/3] w-full rounded-t-xl" />
+            <Skeleton className="aspect-[9/16] w-full rounded-t-xl" />
             <div className="p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <Skeleton className="w-8 h-8 rounded-full" />
@@ -149,25 +132,21 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     );
   }
 
-  // Main grid render
+  // Main grid render - flexible layout for mixed content
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      className="columns-1 sm:columns-2 lg:columns-3 gap-8 masonry-container"
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
       {filteredPosts.map(post => (
-        <PostCard
-          key={post.id}
-          post={post}
-          onPostClick={() => onPostClick(post)}
-          onRemovePost={onRemovePost}
-          isSharedView={isSharedView}
-          getCarouselIndex={getCarouselIndex}
-          onCarouselNext={onCarouselNext}
-          onCarouselPrev={onCarouselPrev}
-          context="board"
-        />
+        <div key={post.id} className="masonry-item mb-6">
+          {post.platform === "instagram" ? (
+            <InstagramEmbed url={post.originalUrl || post.embedUrl} />
+          ) : (
+            <TikTokEmbed url={post.originalUrl || post.embedUrl} />
+          )}
+        </div>
       ))}
     </div>
   );

@@ -18,3 +18,5 @@ export {
 } from "./dashboard-settings";
 export { BoardsSkeleton } from "./boards-skeleton";
 export { BoardContentSkeleton } from "./board-content-skeleton";
+export { InstagramEmbed } from "./instagram-embed";
+export { TikTokEmbed } from "./tiktok-embed";
