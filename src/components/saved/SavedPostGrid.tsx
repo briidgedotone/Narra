@@ -29,6 +29,7 @@ interface SavedPost {
 interface SavedPostGridProps {
   posts: SavedPost[];
   isLoading: boolean;
+  onPostClick?: (post: SavedPost) => void;
 }
 
 /**
@@ -41,7 +42,7 @@ interface SavedPostGridProps {
  * - Handles loading and empty states
  */
 export const SavedPostGrid = React.memo<SavedPostGridProps>(
-  function SavedPostGrid({ posts, isLoading }) {
+  function SavedPostGrid({ posts, isLoading, onPostClick }) {
     // Loading state
     if (isLoading) {
       return (
@@ -95,6 +96,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
                 caption={post.caption}
                 metrics={post.metrics}
                 showMetrics={true}
+                onDetailsClick={() => onPostClick?.(post)}
               />
             ) : (
               <TikTokEmbed
@@ -102,6 +104,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
                 caption={post.caption}
                 metrics={post.metrics}
                 showMetrics={true}
+                onDetailsClick={() => onPostClick?.(post)}
               />
             )}
           </div>
