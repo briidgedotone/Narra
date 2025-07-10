@@ -87,7 +87,10 @@ export function InstagramEmbed({
 
   return (
     <div className={`instagram-embed w-[325px] mx-auto ${className || ""}`}>
-      <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
+      <div
+        className="flex justify-center"
+        dangerouslySetInnerHTML={{ __html: embedHtml }}
+      />
 
       {/* Optional caption and metrics */}
       {showMetrics && (caption || metrics) && (

@@ -200,7 +200,7 @@ export function BoardPageContent({
   // Loading state
   if (isLoading) {
     return (
-      <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
+      <div className={cn("min-h-screen", isSharedView && "p-4 sm:p-6")}>
         <BoardContentSkeleton />
       </div>
     );
@@ -209,7 +209,7 @@ export function BoardPageContent({
   // Error state - board not found
   if (!board) {
     return (
-      <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
+      <div className={cn("min-h-screen", isSharedView && "p-4 sm:p-6")}>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <h3 className="text-lg font-medium mb-2">Board not found</h3>
@@ -228,7 +228,7 @@ export function BoardPageContent({
 
   // Main render
   return (
-    <div className={cn("min-h-screen", isSharedView && "p-6 md:p-8 lg:p-10")}>
+    <div className={cn("min-h-screen", isSharedView && "p-4 sm:p-6")}>
       {/* Board header with navigation */}
       <BoardHeader boardName={board.name} boardId={boardId} />
 
