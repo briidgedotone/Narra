@@ -268,16 +268,19 @@
   box-shadow: var(--card-shadow);
 }
 
-/* Instagram Embed Styles - Consistent width with TikTok */
+/* Instagram Embed Styles - Consistent width with subtle styling */
 .instagram-embed {
   width: 100%;
   margin: 0 auto;
 }
 
-/* Set Instagram width for 4-column layout with auto height */
+/* Set Instagram width for 4-column layout with auto height and subtle styling */
 .instagram-embed .instagram-media {
   margin: 0 auto !important;
   max-width: 300px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
 }
 
 .instagram-embed iframe {
