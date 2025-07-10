@@ -279,6 +279,8 @@
   border-radius: 8px !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
   overflow: hidden !important;
+  height: auto !important;
+  align-self: start !important;
 }
 
 .instagram-embed .instagram-media {
