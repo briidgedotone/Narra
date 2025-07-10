@@ -307,6 +307,7 @@
   max-width: 100%;
   height: auto;
   aspect-ratio: 325/560;
+  pointer-events: none !important;
 }
 
 /* Masonry layout improvements */
