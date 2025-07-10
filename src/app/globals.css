@@ -274,10 +274,10 @@
   margin: 0 auto;
 }
 
-/* Set Instagram width to match TikTok (325px) with auto height */
+/* Set Instagram width for 4-column layout with auto height */
 .instagram-embed .instagram-media {
   margin: 0 auto !important;
-  max-width: 325px !important;
+  max-width: 300px !important;
 }
 
 .instagram-embed iframe {
