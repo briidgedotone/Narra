@@ -149,7 +149,12 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               showMetrics={true}
             />
           ) : (
-            <TikTokEmbed url={post.originalUrl || post.embedUrl} />
+            <TikTokEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+            />
           )}
         </div>
       ))}
