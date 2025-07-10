@@ -89,7 +89,7 @@ export function InstagramEmbed({
 
       {/* Optional caption and metrics */}
       {showMetrics && (caption || metrics) && (
-        <div className="p-4 space-y-3 bg-white border-t border-gray-100">
+        <div className="p-4 space-y-3 bg-white">
           {/* Caption */}
           {caption && (
             <p className="text-sm line-clamp-2 text-gray-700">{caption}</p>

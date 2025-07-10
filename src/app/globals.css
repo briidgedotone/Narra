@@ -275,12 +275,19 @@
 }
 
 /* Set Instagram width for 4-column layout with auto height and subtle styling */
-.instagram-embed .instagram-media {
-  margin: 0 auto !important;
-  max-width: 300px !important;
+.instagram-embed {
   border: 1px solid #e5e7eb !important;
   border-radius: 8px !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.instagram-embed .instagram-media {
+  margin: 0 auto !important;
+  max-width: 300px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .instagram-embed iframe {
