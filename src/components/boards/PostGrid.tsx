@@ -142,7 +142,12 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
       {filteredPosts.map(post => (
         <div key={post.id} className="masonry-item mb-6">
           {post.platform === "instagram" ? (
-            <InstagramEmbed url={post.originalUrl || post.embedUrl} />
+            <InstagramEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+            />
           ) : (
             <TikTokEmbed url={post.originalUrl || post.embedUrl} />
           )}
