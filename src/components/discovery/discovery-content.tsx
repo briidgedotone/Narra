@@ -2046,7 +2046,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               </Button>
                             </div>
                           ) : transcript?.text ? (
-                            <p className="text-sm leading-relaxed">
+                            <p className="text-sm leading-relaxed max-h-[400px] overflow-y-auto pr-2">
                               {parseWebVTT(transcript.text)}
                             </p>
                           ) : (

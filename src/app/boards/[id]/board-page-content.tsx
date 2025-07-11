@@ -297,7 +297,7 @@ export function BoardPageContent({
 
       {/* Post detail modal */}
       <Dialog open={!!selectedPost} onOpenChange={() => closeModal()}>
-        <DialogContent className="w-fit max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
           {selectedPost && (
             <>
               <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
@@ -436,7 +436,7 @@ export function BoardPageContent({
                               : "Transcript not available for Instagram posts."}
                           </div>
                         ) : (
-                          <div className="text-sm text-muted-foreground whitespace-pre-wrap">
+                          <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
                             {transcript.text}
                           </div>
                         )}
