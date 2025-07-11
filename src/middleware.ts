@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 import { isUserAdmin } from "@/lib/auth/admin";
@@ -13,10 +14,15 @@ const isPublicRoute = createRouteMatcher([
   "/api/transcript", // Allow public access to transcript API
   "/api/instagram-embed", // Allow public access to Instagram embed API
   "/api/proxy-image", // Allow public access to image proxy
+  "/api/stripe/webhooks", // Allow Stripe webhook access
+  "/api/webhook/clerk", // Allow Clerk webhook access
 ]);
 
 // Define admin-only routes
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+
+// Define routes that require plan selection
+const requiresPlan = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Protect all routes except public ones
@@ -24,10 +30,29 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 
+  const { userId } = await auth();
+
+  // Check if user has selected a plan before accessing dashboard
+  if (userId && requiresPlan(req) && !req.url.includes("/select-plan")) {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: user } = await supabase
+      .from("users")
+      .select("plan_id")
+      .eq("id", userId)
+      .single();
+
+    // If user hasn't selected a plan, redirect to plan selection
+    if (!user?.plan_id) {
+      return NextResponse.redirect(new URL("/select-plan", req.url));
+    }
+  }
+
   // Additional admin route protection
   if (isAdminRoute(req)) {
-    const { userId } = await auth();
-
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
