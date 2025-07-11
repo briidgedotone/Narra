@@ -12,7 +12,6 @@ const isPublicRoute = createRouteMatcher([
   "/api/content", // Allow public access to content API
   "/api/transcript", // Allow public access to transcript API
   "/api/instagram-embed", // Allow public access to Instagram embed API
-  "/api/image-proxy", // Allow public access to image proxy
   "/api/proxy-image", // Allow public access to image proxy
 ]);
 

@@ -40,7 +40,7 @@ export function AvatarWithFallback({
   };
 
   const imageUrl = profile.avatar_url
-    ? `/api/image-proxy?url=${encodeURIComponent(profile.avatar_url)}`
+    ? `/api/proxy-image?url=${encodeURIComponent(profile.avatar_url)}&platform=instagram`
     : "";
 
   if (error || !profile.avatar_url) {
