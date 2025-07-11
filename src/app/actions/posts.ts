@@ -187,6 +187,30 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         }
       }
 
+      // Fetch transcript for Instagram video posts
+      if (
+        postData.platform === "instagram" &&
+        postData.isVideo &&
+        postData.originalUrl
+      ) {
+        try {
+          const transcriptResult =
+            await scrapeCreatorsApi.instagram.getVideoTranscript(
+              postData.originalUrl
+            );
+          if (transcriptResult.success && transcriptResult.data) {
+            // Check if response has transcripts array (based on your example)
+            const data = transcriptResult.data as any;
+            if (data.transcripts && data.transcripts.length > 0) {
+              transcript = data.transcripts[0].text;
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch Instagram transcript:", error);
+          // Continue without transcript - the post will still be saved
+        }
+      }
+
       // Create post if it doesn't exist
       post = await db.createPost({
         profile_id: profile.id,

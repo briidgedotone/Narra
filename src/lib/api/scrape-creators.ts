@@ -281,6 +281,15 @@ export const scrapeCreatorsApi = {
 
       return response;
     },
+
+    async getVideoTranscript(postUrl: string) {
+      const cacheKey = cacheKeys.instagramTranscript(postUrl);
+      return await makeRequest(
+        `/v2/instagram/media/transcript?url=${encodeURIComponent(postUrl)}`,
+        cacheKey,
+        cacheTTL.transcript
+      );
+    },
   },
 };
 

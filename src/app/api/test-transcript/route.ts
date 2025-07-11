@@ -15,20 +15,29 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Validate that it's a TikTok URL
-    if (!videoUrl.includes("tiktok.com")) {
+    // Validate that it's a supported platform URL
+    const isTikTok = videoUrl.includes("tiktok.com");
+    const isInstagram = videoUrl.includes("instagram.com");
+
+    if (!isTikTok && !isInstagram) {
       return NextResponse.json(
-        { success: false, error: "Only TikTok URLs are supported" },
+        {
+          success: false,
+          error: "Only TikTok and Instagram URLs are supported",
+        },
         { status: 400 }
       );
     }
 
-    console.log(`Fetching transcript for: ${videoUrl} (language: ${language})`);
-
-    const result = await scrapeCreatorsApi.tiktok.getVideoTranscript(
-      videoUrl,
-      language
+    console.log(
+      `Fetching transcript for: ${videoUrl} (platform: ${isTikTok ? "TikTok" : "Instagram"})`
     );
+
+    const result = isTikTok
+      ? await scrapeCreatorsApi.tiktok.getVideoTranscript(videoUrl, language)
+      : await scrapeCreatorsApi.instagram.getVideoTranscript(videoUrl);
+
+    console.log("API response:", result);
 
     if (!result.success) {
       return NextResponse.json(
@@ -38,10 +47,25 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the response to match our interface
+    let transcriptText = "";
+
+    if (isTikTok) {
+      // TikTok response format: { transcript: "text..." }
+      transcriptText = (result.data as any)?.transcript || "";
+    } else {
+      // Instagram response format: { transcripts: [{ text: "..." }] }
+      const transcripts = (result.data as any)?.transcripts;
+      console.log("Instagram transcripts array:", transcripts);
+      if (transcripts && transcripts.length > 0) {
+        transcriptText = transcripts[0].text || "";
+        console.log("Extracted transcript text:", transcriptText);
+      }
+    }
+
     const transcriptData = {
       id: (result.data as any)?.id || "unknown",
       url: (result.data as any)?.url || videoUrl,
-      transcript: (result.data as any)?.transcript || "",
+      transcript: transcriptText,
       cached: result.cached || false,
     };
 

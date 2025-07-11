@@ -26,7 +26,11 @@ export function usePostModal() {
   }, []);
 
   const loadTranscript = useCallback(async (post: SavedPost) => {
-    if (post.platform !== "tiktok") return;
+    if (
+      post.platform !== "tiktok" &&
+      !(post.platform === "instagram" && post.isVideo)
+    )
+      return;
 
     setIsLoadingTranscript(true);
     setTranscriptError(null);
@@ -66,7 +70,8 @@ export function usePostModal() {
       if (
         tab === "transcript" &&
         selectedPost &&
-        selectedPost.platform === "tiktok"
+        (selectedPost.platform === "tiktok" ||
+          (selectedPost.platform === "instagram" && selectedPost.isVideo))
       ) {
         if (selectedPost.transcript) {
           // Use transcript from database

@@ -759,6 +759,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
   const loadTranscript = useCallback(
     async (videoUrl: string, postId: string) => {
+      console.log("loadTranscript called with:", videoUrl, postId);
       if (!videoUrl || !postId) return;
 
       setIsLoadingTranscript(true);
@@ -808,9 +809,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   );
 
   const handleCopyTranscript = async () => {
-    if (!transcript?.text) return;
+    if (!transcript?.transcript) return;
 
-    const cleanText = parseWebVTT(transcript.text);
+    const cleanText = parseWebVTT(transcript.transcript);
     const success = await copyToClipboard(cleanText);
 
     if (success) {
@@ -1045,17 +1046,25 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   const handleTabChange = (tab: "overview" | "transcript") => {
     setActiveTab(tab);
 
-    // Load transcript when transcript tab is opened for TikTok posts
+    // Load transcript when transcript tab is opened for TikTok posts or Instagram videos
     if (
       tab === "transcript" &&
       selectedPost &&
-      selectedPost.platform === "tiktok" &&
-      selectedPost.tiktokUrl &&
+      ((selectedPost.platform === "tiktok" && selectedPost.tiktokUrl) ||
+        (selectedPost.platform === "instagram" &&
+          selectedPost.isVideo &&
+          selectedPost.shortcode)) &&
       !isLoadingTranscript
     ) {
       // Only load transcript if we don't have one for this specific post
       if (transcriptPostId !== selectedPost.id) {
-        loadTranscript(selectedPost.tiktokUrl, selectedPost.id);
+        const videoUrl =
+          selectedPost.platform === "tiktok"
+            ? selectedPost.tiktokUrl
+            : `https://www.instagram.com/p/${selectedPost.shortcode}/`;
+        if (videoUrl) {
+          loadTranscript(videoUrl, selectedPost.id);
+        }
       }
     }
   };
@@ -2004,19 +2013,30 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             size="sm"
                             onClick={handleCopyTranscript}
                             disabled={
-                              !transcript?.text ||
+                              !transcript?.transcript ||
                               isLoadingTranscript ||
-                              selectedPost?.platform !== "tiktok"
+                              (selectedPost?.platform === "instagram" &&
+                                !selectedPost?.isVideo) ||
+                              (selectedPost?.platform !== "tiktok" &&
+                                selectedPost?.platform !== "instagram")
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                          {selectedPost?.platform !== "tiktok" ? (
+                          {selectedPost?.platform === "instagram" &&
+                          !selectedPost?.isVideo ? (
                             <div className="text-center py-4">
                               <p className="text-sm text-muted-foreground mb-2">
-                                Transcripts are only available for TikTok videos
+                                Transcript not available for Instagram photos
+                              </p>
+                            </div>
+                          ) : selectedPost?.platform !== "tiktok" &&
+                            selectedPost?.platform !== "instagram" ? (
+                            <div className="text-center py-4">
+                              <p className="text-sm text-muted-foreground mb-2">
+                                Transcript not available for this platform
                               </p>
                             </div>
                           ) : isLoadingTranscript ? (
@@ -2033,21 +2053,49 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                  selectedPost &&
-                                  selectedPost.tiktokUrl &&
-                                  loadTranscript(
-                                    selectedPost.tiktokUrl,
-                                    selectedPost.id
-                                  )
-                                }
+                                onClick={() => {
+                                  console.log("Load Transcript button clicked");
+                                  if (selectedPost) {
+                                    console.log(
+                                      "Selected post:",
+                                      selectedPost.platform,
+                                      selectedPost.isVideo,
+                                      selectedPost.shortcode
+                                    );
+                                    let videoUrl: string | undefined;
+                                    if (
+                                      selectedPost.platform === "tiktok" &&
+                                      selectedPost.tiktokUrl
+                                    ) {
+                                      videoUrl = selectedPost.tiktokUrl;
+                                    } else if (
+                                      selectedPost.platform === "instagram" &&
+                                      selectedPost.isVideo &&
+                                      selectedPost.shortcode
+                                    ) {
+                                      videoUrl = `https://www.instagram.com/p/${selectedPost.shortcode}/`;
+                                    }
+                                    console.log(
+                                      "Constructed video URL:",
+                                      videoUrl
+                                    );
+                                    if (videoUrl) {
+                                      console.log(
+                                        "Calling loadTranscript with:",
+                                        videoUrl,
+                                        selectedPost.id
+                                      );
+                                      loadTranscript(videoUrl, selectedPost.id);
+                                    }
+                                  }
+                                }}
                               >
                                 Try Again
                               </Button>
                             </div>
-                          ) : transcript?.text ? (
+                          ) : transcript?.transcript ? (
                             <p className="text-sm leading-relaxed max-h-[400px] overflow-y-auto pr-2">
-                              {parseWebVTT(transcript.text)}
+                              {parseWebVTT(transcript.transcript)}
                             </p>
                           ) : (
                             <div className="text-center py-4">
@@ -2057,14 +2105,42 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                  selectedPost &&
-                                  selectedPost.tiktokUrl &&
-                                  loadTranscript(
-                                    selectedPost.tiktokUrl,
-                                    selectedPost.id
-                                  )
-                                }
+                                onClick={() => {
+                                  console.log("Load Transcript button clicked");
+                                  if (selectedPost) {
+                                    console.log(
+                                      "Selected post:",
+                                      selectedPost.platform,
+                                      selectedPost.isVideo,
+                                      selectedPost.shortcode
+                                    );
+                                    let videoUrl: string | undefined;
+                                    if (
+                                      selectedPost.platform === "tiktok" &&
+                                      selectedPost.tiktokUrl
+                                    ) {
+                                      videoUrl = selectedPost.tiktokUrl;
+                                    } else if (
+                                      selectedPost.platform === "instagram" &&
+                                      selectedPost.isVideo &&
+                                      selectedPost.shortcode
+                                    ) {
+                                      videoUrl = `https://www.instagram.com/p/${selectedPost.shortcode}/`;
+                                    }
+                                    console.log(
+                                      "Constructed video URL:",
+                                      videoUrl
+                                    );
+                                    if (videoUrl) {
+                                      console.log(
+                                        "Calling loadTranscript with:",
+                                        videoUrl,
+                                        selectedPost.id
+                                      );
+                                      loadTranscript(videoUrl, selectedPost.id);
+                                    }
+                                  }
+                                }}
                               >
                                 Load Transcript
                               </Button>
@@ -2072,11 +2148,15 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                           )}
                         </div>
                         <div className="mt-4 text-xs text-muted-foreground">
-                          {selectedPost?.platform !== "tiktok"
-                            ? "Transcript feature is TikTok exclusive"
-                            : isLoadingTranscript
-                              ? "Loading..."
-                              : "Transcript generated automatically. Accuracy may vary."}
+                          {selectedPost?.platform === "instagram" &&
+                          !selectedPost?.isVideo
+                            ? "Transcript not available for Instagram photos"
+                            : selectedPost?.platform !== "tiktok" &&
+                                selectedPost?.platform !== "instagram"
+                              ? "Transcript not available for this platform"
+                              : isLoadingTranscript
+                                ? "Loading..."
+                                : "Transcript generated automatically. Accuracy may vary."}
                         </div>
                       </div>
                     )}

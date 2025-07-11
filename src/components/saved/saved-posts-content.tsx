@@ -264,9 +264,11 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           </div>
                         ) : !transcript?.text ? (
                           <div className="text-sm text-muted-foreground">
-                            {selectedPost.platform === "tiktok"
+                            {selectedPost.platform === "tiktok" ||
+                            (selectedPost.platform === "instagram" &&
+                              selectedPost.isVideo)
                               ? "Loading transcript..."
-                              : "Transcript not available for Instagram posts."}
+                              : "Transcript not available for this content."}
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
