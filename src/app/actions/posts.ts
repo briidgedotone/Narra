@@ -3,7 +3,47 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
+import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
 import { DatabaseService } from "@/lib/database";
+
+// Helper function to convert WebVTT transcript to plain text
+function webvttToPlainText(webvttText: string): string {
+  // Remove WEBVTT header
+  const text = webvttText.replace(/^WEBVTT\s*\n/, "");
+
+  // Split by double newlines to get cue blocks
+  const cueBlocks = text.split(/\n\s*\n/);
+
+  const textLines: string[] = [];
+
+  for (const block of cueBlocks) {
+    const lines = block.trim().split("\n");
+
+    // Skip empty blocks
+    if (lines.length === 0) continue;
+
+    // Find lines that don't contain timestamps (format: HH:MM:SS.mmm --> HH:MM:SS.mmm)
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+
+      // Skip timestamp lines and empty lines
+      if (
+        trimmedLine === "" ||
+        /^\d{2}:\d{2}:\d{2}\.\d{3}\s+-->\s+\d{2}:\d{2}:\d{2}\.\d{3}$/.test(
+          trimmedLine
+        )
+      ) {
+        continue;
+      }
+
+      // This is actual transcript text
+      textLines.push(trimmedLine);
+    }
+  }
+
+  // Join all text lines with spaces and clean up
+  return textLines.join(" ").replace(/\s+/g, " ").trim();
+}
 
 // Helper function to fetch Instagram embed on server
 async function fetchInstagramEmbed(url: string) {
@@ -74,6 +114,7 @@ interface SavePostData {
     width: number;
     height: number;
   };
+  transcript?: string;
 }
 
 export async function savePostToBoard(postData: SavePostData, boardId: string) {
@@ -124,6 +165,28 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         }
       }
 
+      // Fetch transcript for TikTok posts
+      let transcript: string | null = null;
+      if (postData.platform === "tiktok" && postData.originalUrl) {
+        try {
+          const transcriptResult =
+            await scrapeCreatorsApi.tiktok.getVideoTranscript(
+              postData.originalUrl
+            );
+          if (
+            transcriptResult.success &&
+            (transcriptResult.data as any)?.transcript
+          ) {
+            const rawTranscript = (transcriptResult.data as any).transcript;
+            // Convert WebVTT format to plain text
+            transcript = webvttToPlainText(rawTranscript);
+          }
+        } catch (error) {
+          console.error("Failed to fetch transcript:", error);
+          // Continue without transcript - the post will still be saved
+        }
+      }
+
       // Create post if it doesn't exist
       post = await db.createPost({
         profile_id: profile.id,
@@ -131,6 +194,7 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
+        transcript: transcript || postData.transcript,
         original_url: postData.originalUrl,
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,

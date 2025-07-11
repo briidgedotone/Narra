@@ -62,17 +62,24 @@ export function usePostModal() {
     (tab: "overview" | "transcript") => {
       setActiveTab(tab);
 
-      // Load transcript when transcript tab is opened and either:
-      // 1. We don't have a transcript for this post yet, or
-      // 2. The transcript we have is for a different post
+      // Use transcript from database if available, otherwise fall back to API
       if (
         tab === "transcript" &&
         selectedPost &&
-        selectedPost.platform === "tiktok" &&
-        !isLoadingTranscript &&
-        currentTranscriptPostId !== selectedPost.id
+        selectedPost.platform === "tiktok"
       ) {
-        loadTranscript(selectedPost);
+        if (selectedPost.transcript) {
+          // Use transcript from database
+          setTranscript({ text: selectedPost.transcript });
+          setTranscriptError(null);
+          setCurrentTranscriptPostId(selectedPost.id);
+        } else if (
+          !isLoadingTranscript &&
+          currentTranscriptPostId !== selectedPost.id
+        ) {
+          // Fall back to API if no transcript in database
+          loadTranscript(selectedPost);
+        }
       }
     },
     [selectedPost, isLoadingTranscript, currentTranscriptPostId, loadTranscript]

@@ -21,6 +21,7 @@ export interface SavedPost {
   id: string;
   embedUrl: string;
   caption: string;
+  transcript?: string;
   thumbnail?: string;
   thumbnailStorageUrl?: string;
   originalUrl?: string;

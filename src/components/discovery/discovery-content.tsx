@@ -808,9 +808,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   );
 
   const handleCopyTranscript = async () => {
-    if (!transcript?.transcript) return;
+    if (!transcript?.text) return;
 
-    const cleanText = parseWebVTT(transcript.transcript);
+    const cleanText = parseWebVTT(transcript.text);
     const success = await copyToClipboard(cleanText);
 
     if (success) {
@@ -2004,7 +2004,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                             size="sm"
                             onClick={handleCopyTranscript}
                             disabled={
-                              !transcript?.transcript ||
+                              !transcript?.text ||
                               isLoadingTranscript ||
                               selectedPost?.platform !== "tiktok"
                             }
@@ -2045,9 +2045,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
                                 Try Again
                               </Button>
                             </div>
-                          ) : transcript?.transcript ? (
+                          ) : transcript?.text ? (
                             <p className="text-sm leading-relaxed">
-                              {parseWebVTT(transcript.transcript)}
+                              {parseWebVTT(transcript.text)}
                             </p>
                           ) : (
                             <div className="text-center py-4">

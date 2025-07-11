@@ -413,7 +413,7 @@ export function BoardPageContent({
                             size="sm"
                             onClick={handleCopyTranscript}
                             disabled={
-                              !transcript?.transcript ||
+                              !transcript?.text ||
                               isLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
@@ -429,7 +429,7 @@ export function BoardPageContent({
                           <div className="text-sm text-red-600">
                             {transcriptError}
                           </div>
-                        ) : !transcript?.transcript ? (
+                        ) : !transcript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok"
                               ? "Loading transcript..."
@@ -437,7 +437,7 @@ export function BoardPageContent({
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap">
-                            {transcript.transcript}
+                            {transcript.text}
                           </div>
                         )}
                       </div>

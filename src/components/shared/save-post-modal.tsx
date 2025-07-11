@@ -66,6 +66,7 @@ interface SavePostModalProps {
       width: number;
       height: number;
     };
+    transcript?: string;
   };
 }
 
