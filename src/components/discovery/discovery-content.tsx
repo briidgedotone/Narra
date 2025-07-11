@@ -320,10 +320,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
       }
 
       // Call our API to get real posts
-      const endpoint =
-        platform === "tiktok" ? "tiktok-videos" : "instagram-posts";
+      const type = platform === "tiktok" ? "videos" : "posts";
       const response = await fetch(
-        `/api/test-scrapecreators?test=${endpoint}&handle=${encodeURIComponent(handle)}&count=30`
+        `/api/content?platform=${platform}&type=${type}&handle=${encodeURIComponent(handle)}&count=30`
       );
 
       // Check if response is ok and has valid content type
@@ -562,7 +561,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
         // Call Instagram API with pagination
         const response = await fetch(
-          `/api/test-scrapecreators?test=instagram-posts&handle=${encodeURIComponent(handle)}&count=30&next_max_id=${nextMaxId}`
+          `/api/content?platform=instagram&type=posts&handle=${encodeURIComponent(handle)}&count=30&next_max_id=${nextMaxId}`
         );
 
         // Check if response is valid
@@ -633,7 +632,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
         // Call TikTok API with pagination
         const response = await fetch(
-          `/api/test-scrapecreators?test=tiktok-videos&handle=${encodeURIComponent(handle)}&count=30&cursor=${tiktokMaxCursor}`
+          `/api/content?platform=tiktok&type=videos&handle=${encodeURIComponent(handle)}&count=30&cursor=${tiktokMaxCursor}`
         );
 
         // Check if response is valid
@@ -767,7 +766,7 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
 
       try {
         const response = await fetch(
-          `/api/test-transcript?url=${encodeURIComponent(videoUrl)}&language=en`
+          `/api/transcript?url=${encodeURIComponent(videoUrl)}&language=en`
         );
 
         // Check if response is valid
@@ -862,9 +861,9 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
           { scroll: false }
         );
 
-        // Call our discovery API (using test endpoint for now)
+        // Call our discovery API
         const response = await fetch(
-          `/api/test-discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
+          `/api/discovery?handle=${encodeURIComponent(cleanHandle)}&platform=${selectedPlatform}`
         );
         const result = await response.json();
 

@@ -8,13 +8,9 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/test-auth",
-  "/test-ui",
-  "/test-database",
-  "/api/test-scrapecreators",
-  "/api/test-cache",
-  "/api/test-discovery",
-  "/api/test-tiktok-embed",
+  "/api/discovery", // Allow public access to discovery API
+  "/api/content", // Allow public access to content API
+  "/api/transcript", // Allow public access to transcript API
   "/api/instagram-embed", // Allow public access to Instagram embed API
   "/api/image-proxy", // Allow public access to image proxy
   "/api/proxy-image", // Allow public access to image proxy

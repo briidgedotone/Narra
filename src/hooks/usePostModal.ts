@@ -37,20 +37,14 @@ export function usePostModal() {
     setCurrentTranscriptPostId(post.id);
 
     try {
-      const response = await fetch("/api/test-transcript", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          videoUrl: post.embedUrl,
-        }),
-      });
+      const response = await fetch(
+        `/api/transcript?url=${encodeURIComponent(post.embedUrl)}`
+      );
 
       const data = await response.json();
 
-      if (data.success && data.transcript) {
-        setTranscript(data.transcript);
+      if (data.success && data.data) {
+        setTranscript({ text: data.data.transcript });
       } else {
         setTranscriptError(data.error || "Failed to load transcript");
       }

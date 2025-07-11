@@ -29,15 +29,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(
-      `Fetching transcript for: ${videoUrl} (platform: ${isTikTok ? "TikTok" : "Instagram"})`
-    );
-
     const result = isTikTok
       ? await scrapeCreatorsApi.tiktok.getVideoTranscript(videoUrl, language)
       : await scrapeCreatorsApi.instagram.getVideoTranscript(videoUrl);
-
-    console.log("API response:", result);
 
     if (!result.success) {
       return NextResponse.json(
@@ -55,10 +49,8 @@ export async function GET(request: NextRequest) {
     } else {
       // Instagram response format: { transcripts: [{ text: "..." }] }
       const transcripts = (result.data as any)?.transcripts;
-      console.log("Instagram transcripts array:", transcripts);
       if (transcripts && transcripts.length > 0) {
         transcriptText = transcripts[0].text || "";
-        console.log("Extracted transcript text:", transcriptText);
       }
     }
 
