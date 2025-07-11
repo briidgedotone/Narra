@@ -1,43 +1,62 @@
+"use client";
+
 import { useState, useCallback } from "react";
 
-import {
-  getCarouselIndex,
-  handleCarouselNext,
-  handleCarouselPrev,
-  setCarouselIndex,
-} from "@/lib/utils/carousel";
-
 export function useCarousel() {
-  const [carouselStates, setCarouselStates] = useState<Record<string, number>>(
-    {}
-  );
+  // Carousel State
+  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+  const [postCarouselIndices, setPostCarouselIndices] = useState<
+    Record<string, number>
+  >({});
 
-  const getPostCarouselIndex = useCallback(
-    (postId: string) => {
-      return getCarouselIndex(carouselStates, postId);
-    },
-    [carouselStates]
-  );
+  const handleCarouselNext = useCallback(() => {
+    setCurrentCarouselIndex(prev => prev + 1);
+  }, []);
+
+  const handleCarouselPrev = useCallback(() => {
+    setCurrentCarouselIndex(prev => prev - 1);
+  }, []);
 
   const handlePostCarouselNext = useCallback(
     (postId: string, maxIndex: number) => {
-      setCarouselStates(prev => handleCarouselNext(prev, postId, maxIndex));
+      setPostCarouselIndices(prev => ({
+        ...prev,
+        [postId]: Math.min((prev[postId] || 0) + 1, maxIndex - 1),
+      }));
     },
     []
   );
 
   const handlePostCarouselPrev = useCallback((postId: string) => {
-    setCarouselStates(prev => handleCarouselPrev(prev, postId));
+    setPostCarouselIndices(prev => ({
+      ...prev,
+      [postId]: Math.max((prev[postId] || 0) - 1, 0),
+    }));
   }, []);
 
-  const setPostCarouselIndex = useCallback((postId: string, index: number) => {
-    setCarouselStates(prev => setCarouselIndex(prev, postId, index));
-  }, []);
+  const getPostCarouselIndex = useCallback(
+    (postId: string) => {
+      return postCarouselIndices[postId] || 0;
+    },
+    [postCarouselIndices]
+  );
+
+  const resetCarousel = () => {
+    setCurrentCarouselIndex(0);
+  };
 
   return {
-    getPostCarouselIndex,
+    // State
+    currentCarouselIndex,
+    postCarouselIndices,
+
+    // Actions
+    setCurrentCarouselIndex,
+    handleCarouselNext,
+    handleCarouselPrev,
     handlePostCarouselNext,
     handlePostCarouselPrev,
-    setPostCarouselIndex,
+    getPostCarouselIndex,
+    resetCarousel,
   };
 }
