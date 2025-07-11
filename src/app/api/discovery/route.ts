@@ -1,7 +1,14 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
 import { transformers } from "@/lib/transformers";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -17,6 +24,57 @@ export async function GET(request: Request) {
 
   try {
     const startTime = Date.now();
+
+    // Get current user
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    // Check user's plan and usage
+    const { data: userData } = await supabase
+      .from("users")
+      .select("plan_id, monthly_profile_discoveries")
+      .eq("id", user.id)
+      .single();
+
+    if (!userData?.plan_id) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No active plan. Please select a plan to continue.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // Get plan limits
+    const { data: planData } = await supabase
+      .from("plans")
+      .select("limits")
+      .eq("id", userData.plan_id)
+      .single();
+
+    const monthlyLimit = planData?.limits?.profile_discoveries || 0;
+    const currentUsage = userData.monthly_profile_discoveries || 0;
+
+    // Check if user has reached limit
+    if (currentUsage >= monthlyLimit) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Monthly discovery limit reached",
+          limitReached: true,
+          currentUsage,
+          monthlyLimit,
+          planId: userData.plan_id,
+        },
+        { status: 429 }
+      );
+    }
 
     // Clean the handle - remove @ and whitespace
     const cleanHandle = handle.replace(/[@\s]/g, "");
@@ -103,11 +161,25 @@ export async function GET(request: Request) {
         };
       }
 
+      // Increment usage counter
+      await supabase
+        .from("users")
+        .update({
+          monthly_profile_discoveries: currentUsage + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
       return NextResponse.json({
         success: true,
         data: profile,
         cached: result.cached || false,
         duration: `${duration}ms`,
+        usage: {
+          current: currentUsage + 1,
+          limit: monthlyLimit,
+          remaining: monthlyLimit - (currentUsage + 1),
+        },
       });
     } else {
       return NextResponse.json({

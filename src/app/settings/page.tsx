@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { DashboardLayout } from "@/components/layout";
+import { UsagePage } from "@/components/usage-page";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -13,8 +14,7 @@ export default async function SettingsPage() {
   return (
     <DashboardLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-muted-foreground mt-2">Coming soon...</p>
+        <UsagePage />
       </div>
     </DashboardLayout>
   );

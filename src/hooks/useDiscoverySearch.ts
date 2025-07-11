@@ -86,11 +86,31 @@ export function useDiscoverySearch() {
           };
 
           setSearchResults(profile);
+
+          // Show usage info if close to limit
+          if (result.usage && result.usage.remaining <= 10) {
+            toast.warning(
+              `${result.usage.remaining} searches remaining this month`
+            );
+          }
         } else {
-          setSearchError(
-            result.error ||
-              "Profile not found. Please check the handle and try again."
-          );
+          // Handle usage limit error specifically
+          if (result.limitReached) {
+            setSearchError(
+              `Monthly search limit reached (${result.currentUsage}/${result.monthlyLimit}). Upgrade to continue searching.`
+            );
+            toast.error("Search limit reached", {
+              action: {
+                label: "Upgrade",
+                onClick: () => router.push("/select-plan"),
+              },
+            });
+          } else {
+            setSearchError(
+              result.error ||
+                "Profile not found. Please check the handle and try again."
+            );
+          }
         }
       } catch (error) {
         console.error("Search failed:", error);
