@@ -48,13 +48,44 @@ export function useTranscript() {
         if (result.success && result.data) {
           setTranscript(result.data);
           setTranscriptPostId(postId); // Track which post this transcript belongs to
+
+          // Show usage warning if close to limit
+          if (result.usage && result.usage.remaining <= 10) {
+            console.log(
+              `${result.usage.remaining} transcript views remaining this month`
+            );
+          }
         } else {
-          setTranscriptError(result.error || "Failed to load transcript");
+          // Handle usage limit error specifically
+          if (result.limitReached) {
+            setTranscriptError(
+              `Monthly transcript limit reached (${result.currentUsage}/${result.monthlyLimit}). Upgrade to view more transcripts.`
+            );
+          } else {
+            setTranscriptError(result.error || "Failed to load transcript");
+          }
           setTranscriptPostId(null);
         }
       } catch (error) {
         console.error("Failed to load transcript:", error);
-        setTranscriptError("Failed to load transcript. Please try again.");
+
+        // Handle specific error cases
+        if (error instanceof Error) {
+          if (error.message.includes("429")) {
+            setTranscriptError(
+              "Monthly transcript limit reached. Upgrade to view more transcripts."
+            );
+          } else if (error.message.includes("401")) {
+            setTranscriptError("Please sign in to view transcripts.");
+          } else if (error.message.includes("403")) {
+            setTranscriptError("Please select a plan to view transcripts.");
+          } else {
+            setTranscriptError("Failed to load transcript. Please try again.");
+          }
+        } else {
+          setTranscriptError("Failed to load transcript. Please try again.");
+        }
+
         setTranscriptPostId(null);
       } finally {
         setIsLoadingTranscript(false);

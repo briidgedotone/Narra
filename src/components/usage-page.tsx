@@ -26,6 +26,7 @@ interface UsageData {
   plan_id: string;
   monthly_profile_discoveries: number;
   monthly_transcripts_viewed: number;
+  current_follows?: number;
   limits: {
     profile_discoveries: number;
     transcript_views: number;
@@ -56,7 +57,17 @@ export function UsagePage() {
       // Fetch usage data
       const usageResponse = await fetch("/api/user/usage");
       const usageData = await usageResponse.json();
-      setUsage(usageData);
+
+      // Fetch follow count
+      const followsResponse = await fetch("/api/user/follows");
+      const followsData = await followsResponse.json();
+
+      // Combine the data
+      const combinedUsage = {
+        ...usageData,
+        current_follows: followsData.current_follows || 0,
+      };
+      setUsage(combinedUsage);
 
       // Fetch plan details
       const planResponse = await fetch(`/api/plans/${usageData.plan_id}`);
@@ -98,9 +109,17 @@ export function UsagePage() {
     100;
   const transcriptPercentage =
     (usage.monthly_transcripts_viewed / usage.limits.transcript_views) * 100;
+  const followPercentage =
+    ((usage.current_follows || 0) / usage.limits.profile_follows) * 100;
 
-  const isNearLimit = profilePercentage >= 80 || transcriptPercentage >= 80;
-  const isAtLimit = profilePercentage >= 100 || transcriptPercentage >= 100;
+  const isNearLimit =
+    profilePercentage >= 80 ||
+    transcriptPercentage >= 80 ||
+    followPercentage >= 80;
+  const isAtLimit =
+    profilePercentage >= 100 ||
+    transcriptPercentage >= 100 ||
+    followPercentage >= 100;
 
   return (
     <div className="space-y-6">
@@ -261,13 +280,30 @@ export function UsagePage() {
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Currently following</span>
               <span className="font-medium">
-                0 / {usage.limits.profile_follows}
+                {usage.current_follows || 0} / {usage.limits.profile_follows}
               </span>
             </div>
-            <Progress value={0} className="h-3" />
+            <Progress
+              value={
+                ((usage.current_follows || 0) / usage.limits.profile_follows) *
+                100
+              }
+              className="h-3"
+            />
             <div className="text-sm text-gray-500">
-              {usage.limits.profile_follows} profiles available for tracking
+              {usage.limits.profile_follows - (usage.current_follows || 0)}{" "}
+              slots available for tracking
             </div>
+            {(usage.current_follows || 0) >= usage.limits.profile_follows && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-600 text-sm font-medium">
+                  Follow Limit Reached
+                </p>
+                <p className="text-red-500 text-xs">
+                  Upgrade to follow more profiles
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

@@ -1,11 +1,16 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
 import { DatabaseService } from "@/lib/database";
 
 const db = new DatabaseService();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function createAndFollowProfile(profileData: {
   handle: string;
@@ -23,6 +28,39 @@ export async function createAndFollowProfile(profileData: {
 
     if (!userId) {
       throw new Error("Unauthorized");
+    }
+
+    // Check user's plan and current follow count
+    const { data: userData } = await supabase
+      .from("users")
+      .select("plan_id")
+      .eq("id", userId)
+      .single();
+
+    if (!userData?.plan_id) {
+      throw new Error("No active plan. Please select a plan to continue.");
+    }
+
+    // Get plan limits
+    const { data: planData } = await supabase
+      .from("plans")
+      .select("limits")
+      .eq("id", userData.plan_id)
+      .single();
+
+    const followLimit = planData?.limits?.profile_follows || 0;
+
+    // Count current follows
+    const { count: currentFollows } = await supabase
+      .from("follows")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    // Check if user has reached follow limit
+    if ((currentFollows || 0) >= followLimit) {
+      throw new Error(
+        `Follow limit reached (${currentFollows}/${followLimit}). Upgrade to follow more profiles.`
+      );
     }
 
     // First, check if profile already exists

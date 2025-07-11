@@ -192,7 +192,18 @@ export function useDiscoverySearch() {
           toast.success(`Now following @${searchResults.handle}!`);
         } else {
           console.error("Failed to follow:", result.error);
-          toast.error("Failed to follow creator");
+
+          // Handle specific follow limit error
+          if (result.error?.includes("Follow limit reached")) {
+            toast.error("Follow limit reached", {
+              action: {
+                label: "Upgrade",
+                onClick: () => router.push("/select-plan"),
+              },
+            });
+          } else {
+            toast.error(result.error || "Failed to follow creator");
+          }
         }
       }
     } catch (error) {

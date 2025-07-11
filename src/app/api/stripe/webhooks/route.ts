@@ -136,6 +136,33 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        // Only process subscription invoices (not one-time payments)
+        if (invoice.subscription) {
+          // Get user from subscription
+          const { data: subData } = await supabase
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", invoice.subscription)
+            .single();
+
+          if (subData) {
+            // Reset usage counters for new billing cycle
+            await supabase
+              .from("users")
+              .update({
+                monthly_profile_discoveries: 0,
+                monthly_transcripts_viewed: 0,
+                usage_reset_date: new Date().toISOString(),
+              })
+              .eq("id", subData.user_id);
+          }
+        }
+        break;
+      }
+
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
 
