@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-06-30.basil",
 });
 
 const supabase = createClient(
@@ -50,9 +50,9 @@ export async function POST(req: NextRequest) {
           }
 
           // Get the subscription details
-          const subscription = await stripe.subscriptions.retrieve(
+          const subscription = (await stripe.subscriptions.retrieve(
             session.subscription as string
-          );
+          )) as any;
 
           // Update user with plan_id
           const { error: userError } = await supabase
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as any;
 
         // Update subscription status
         const { error } = await supabase
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object as any;
 
         // Only process subscription invoices (not one-time payments)
         if (invoice.subscription) {
@@ -164,7 +164,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as any;
 
         // Update subscription status to canceled
         const { data: subData } = await supabase

@@ -96,6 +96,9 @@ export interface Board {
   description?: string;
   public_id?: string; // For public sharing
   is_shared: boolean;
+  copied_from_public_id?: string; // Public ID of the original shared board this was copied from
+  copied_at?: string; // Timestamp when this board was copied from a shared board
+  original_board_name?: string; // Original name of the shared board when it was copied
   created_at: string;
   updated_at: string;
 }
