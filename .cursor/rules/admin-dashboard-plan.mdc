@@ -1,0 +1,397 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Admin Dashboard Development Plan
+
+## 🎯 **Project Overview**
+This plan outlines the step-by-step development of a clean and simple admin dashboard for Use Narra. The admin section will be seamlessly integrated into the existing application with a single new sidebar navigation item and a comprehensive tab-based admin page.
+
+## 🏗️ **Architecture Overview**
+- **Single Admin Route**: `/admin` with tab-based navigation
+- **Sidebar Integration**: New "Admin" button above Settings (admin users only)
+- **Permission-Based Access**: Role-based rendering and route protection
+- **Consistent Design**: Uses existing design system and components
+
+---
+
+## **Phase 1: Foundation & Setup** 🔧
+
+### **Step 1.1: Admin Role Verification System**
+- [ ] Create admin role checking utility function
+- [ ] Add admin role validation to database service
+- [ ] Create admin permission hook for components
+- [ ] Test admin role detection with existing users
+
+**Files to create/modify:**
+- `src/lib/auth/admin.ts` - Admin utilities
+- `src/hooks/useAdmin.ts` - Admin permission hook
+- `src/lib/database.ts` - Add admin role methods
+
+### **Step 1.2: Route Protection Setup**
+- [ ] Add admin route matcher to middleware
+- [ ] Implement admin-only route protection
+- [ ] Create admin access redirect logic
+- [ ] Test route protection with non-admin users
+
+**Files to modify:**
+- `src/middleware.ts` - Add admin route protection
+- Add admin route patterns
+
+### **Step 1.3: Database Admin Functions**
+- [ ] Create admin-specific database queries
+- [ ] Add user management functions
+- [ ] Create content moderation queries
+- [ ] Add analytics data fetching functions
+
+**Files to create:**
+- `src/lib/database/admin.ts` - Admin-specific database operations
+
+---
+
+## **Phase 2: Sidebar Integration** 🧭
+
+### **Step 2.1: Admin Navigation Item**
+- [ ] Add Shield icon to icons collection
+- [ ] Create admin navigation configuration
+- [ ] Add admin role checking to sidebar
+- [ ] Implement conditional admin navigation rendering
+
+**Files to modify:**
+- `src/components/ui/icons.tsx` - Add Shield icon
+- `src/components/layout/sidebar.tsx` - Add admin navigation
+
+### **Step 2.2: Visual Integration**
+- [ ] Ensure admin nav item matches existing design
+- [ ] Add proper spacing and borders
+- [ ] Test responsive behavior
+- [ ] Verify active state styling
+
+**Files to test:**
+- Sidebar layout on desktop and mobile
+- Navigation active states
+- Admin nav visibility for different user roles
+
+---
+
+## **Phase 3: Admin Page Structure** 📄
+
+### **Step 3.1: Base Admin Page**
+- [ ] Create main admin page component
+- [ ] Set up tab-based navigation structure
+- [ ] Implement tab switching logic
+- [ ] Add admin page layout and styling
+
+**Files to create:**
+- `src/app/admin/page.tsx` - Main admin page
+- `src/components/admin/admin-layout.tsx` - Admin page layout
+- `src/components/admin/admin-tabs.tsx` - Tab navigation
+
+### **Step 3.2: Tab Navigation Component**
+- [ ] Create reusable tab component
+- [ ] Implement active tab highlighting
+- [ ] Add responsive tab behavior (dropdown on mobile)
+- [ ] Style tabs to match design system
+
+**Files to create:**
+- `src/components/admin/tab-navigation.tsx` - Reusable tab component
+
+---
+
+## **Phase 4: Overview Tab Implementation** 📊
+
+### **Step 4.1: Quick Stats Cards**
+- [ ] Create stats card component
+- [ ] Implement stats data fetching
+- [ ] Add loading states for stats
+- [ ] Style stats cards consistently
+
+**Files to create:**
+- `src/components/admin/overview-tab.tsx` - Overview tab content
+- `src/components/admin/stats-card.tsx` - Stats card component
+- `src/app/actions/admin-stats.ts` - Stats data fetching
+
+### **Step 4.2: Recent Activity Feed**
+- [ ] Create activity feed component
+- [ ] Implement activity data fetching
+- [ ] Add activity item types and icons
+- [ ] Style activity feed list
+
+**Files to create:**
+- `src/components/admin/activity-feed.tsx` - Activity feed component
+- `src/app/actions/admin-activity.ts` - Activity data fetching
+
+### **Step 4.3: System Health Indicators**
+- [ ] Create system health checking functions
+- [ ] Add health status indicators
+- [ ] Implement real-time health updates
+- [ ] Style health indicators with colors
+
+**Files to create:**
+- `src/lib/admin/system-health.ts` - System health utilities
+
+---
+
+## **Phase 5: Users Tab Implementation** 👥
+
+### **Step 5.1: User Management Table**
+- [ ] Create user table component
+- [ ] Implement user data fetching with pagination
+- [ ] Add user search and filtering
+- [ ] Style table to match design system
+
+**Files to create:**
+- `src/components/admin/users-tab.tsx` - Users tab content
+- `src/components/admin/user-table.tsx` - User management table
+- `src/app/actions/admin-users.ts` - User management actions
+
+### **Step 5.2: User Actions**
+- [ ] Implement user suspension/activation
+- [ ] Add user detail view modal
+- [ ] Create bulk user operations
+- [ ] Add user role management
+
+**Files to create:**
+- `src/components/admin/user-actions.tsx` - User action components
+- `src/components/admin/user-detail-modal.tsx` - User details
+
+### **Step 5.3: User Analytics**
+- [ ] Add user growth metrics
+- [ ] Implement user activity tracking
+- [ ] Create user engagement statistics
+- [ ] Style user analytics cards
+
+---
+
+## **Phase 6: Content Tab Implementation** 📝
+
+### **Step 6.1: Content Moderation Queue**
+- [ ] Create moderation queue component
+- [ ] Implement reported content fetching
+- [ ] Add content review actions
+- [ ] Style moderation cards
+
+**Files to create:**
+- `src/components/admin/content-tab.tsx` - Content tab content
+- `src/components/admin/moderation-queue.tsx` - Content moderation
+- `src/app/actions/admin-content.ts` - Content moderation actions
+
+### **Step 6.2: Content Actions**
+- [ ] Implement approve/reject content actions
+- [ ] Add content detail preview
+- [ ] Create bulk moderation tools
+- [ ] Add content flagging system
+
+**Files to create:**
+- `src/components/admin/content-actions.tsx` - Content action components
+
+---
+
+## **Phase 7: Collections Tab Implementation** 📚
+
+### **Step 7.1: Collections Management**
+- [ ] Create collections management interface
+- [ ] Implement featured collections CRUD
+- [ ] Add collection visibility controls
+- [ ] Style collections management cards
+
+**Files to create:**
+- `src/components/admin/collections-tab.tsx` - Collections tab content
+- `src/components/admin/collections-manager.tsx` - Collections management
+- `src/app/actions/admin-collections.ts` - Collections management actions
+
+### **Step 7.2: Collection Analytics**
+- [ ] Add collection performance metrics
+- [ ] Implement collection engagement tracking
+- [ ] Create collection popularity statistics
+- [ ] Style collection analytics
+
+---
+
+## **Phase 8: Analytics Tab Implementation** 📈
+
+### **Step 8.1: Analytics Dashboard**
+- [ ] Create analytics dashboard layout
+- [ ] Implement key metrics fetching
+- [ ] Add data visualization components
+- [ ] Style analytics cards and charts
+
+**Files to create:**
+- `src/components/admin/analytics-tab.tsx` - Analytics tab content
+- `src/components/admin/analytics-charts.tsx` - Chart components
+- `src/app/actions/admin-analytics.ts` - Analytics data fetching
+
+### **Step 8.2: Revenue Analytics**
+- [ ] Add subscription analytics
+- [ ] Implement revenue tracking
+- [ ] Create churn rate calculations
+- [ ] Add LTV (Lifetime Value) metrics
+
+---
+
+## **Phase 9: System Tab Implementation** ⚙️
+
+### **Step 9.1: System Health Dashboard**
+- [ ] Create system status dashboard
+- [ ] Implement API health checking
+- [ ] Add database status monitoring
+- [ ] Style system health indicators
+
+**Files to create:**
+- `src/components/admin/system-tab.tsx` - System tab content
+- `src/components/admin/system-health.tsx` - System health dashboard
+
+### **Step 9.2: System Settings**
+- [ ] Create feature flags management
+- [ ] Implement rate limit controls
+- [ ] Add maintenance mode toggle
+- [ ] Style system settings interface
+
+**Files to create:**
+- `src/components/admin/system-settings.tsx` - System settings interface
+
+---
+
+## **Phase 10: Mobile Responsiveness** 📱
+
+### **Step 10.1: Mobile Tab Navigation**
+- [ ] Convert tabs to dropdown on mobile
+- [ ] Implement mobile-friendly layouts
+- [ ] Test all admin components on mobile
+- [ ] Optimize touch interactions
+
+### **Step 10.2: Mobile Table Optimization**
+- [ ] Make tables horizontally scrollable
+- [ ] Implement mobile-friendly user actions
+- [ ] Optimize card layouts for mobile
+- [ ] Test mobile navigation flow
+
+---
+
+## **Phase 11: Testing & Quality Assurance** 🧪
+
+### **Step 11.1: Admin Permission Testing**
+- [ ] Test admin role detection
+- [ ] Verify route protection works
+- [ ] Test sidebar visibility logic
+- [ ] Validate admin-only features
+
+### **Step 11.2: Functionality Testing**
+- [ ] Test all admin actions
+- [ ] Verify data fetching and updates
+- [ ] Test error handling
+- [ ] Validate responsive behavior
+
+### **Step 11.3: Integration Testing**
+- [ ] Test admin dashboard with existing app
+- [ ] Verify design system consistency
+- [ ] Test performance with large datasets
+- [ ] Validate user experience flow
+
+---
+
+## **Phase 12: Documentation & Deployment** 📚
+
+### **Step 12.1: Admin User Setup Process**
+- [ ] Document admin user creation process
+- [ ] Create admin role assignment guide
+- [ ] Test admin user setup workflow
+- [ ] Create admin user management documentation
+
+### **Step 12.2: Admin Dashboard Documentation**
+- [ ] Document admin dashboard features
+- [ ] Create admin user guide
+- [ ] Document troubleshooting steps
+- [ ] Create maintenance procedures
+
+---
+
+## **🎯 Implementation Priority**
+
+### **MVP Phase (Essential Features)**
+1. **Phase 1-3**: Foundation, sidebar integration, basic page structure
+2. **Phase 4**: Overview tab with basic stats
+3. **Phase 5**: Basic user management
+4. **Phase 6**: Basic content moderation
+
+### **Enhancement Phase (Additional Features)**
+5. **Phase 7-9**: Collections, analytics, and system management
+6. **Phase 10**: Mobile responsiveness
+7. **Phase 11-12**: Testing and documentation
+
+---
+
+## **📋 File Structure Overview**
+
+```
+src/
+├── app/
+│   ├── admin/
+│   │   └── page.tsx                    # Main admin page
+│   └── actions/
+│       ├── admin-stats.ts              # Admin statistics
+│       ├── admin-users.ts              # User management
+│       ├── admin-content.ts            # Content moderation
+│       ├── admin-collections.ts        # Collections management
+│       └── admin-analytics.ts          # Analytics data
+├── components/
+│   └── admin/
+│       ├── admin-layout.tsx            # Admin page layout
+│       ├── admin-tabs.tsx              # Tab navigation
+│       ├── overview-tab.tsx            # Overview content
+│       ├── users-tab.tsx               # User management
+│       ├── content-tab.tsx             # Content moderation
+│       ├── collections-tab.tsx         # Collections management
+│       ├── analytics-tab.tsx           # Analytics dashboard
+│       ├── system-tab.tsx              # System management
+│       ├── stats-card.tsx              # Statistics cards
+│       ├── activity-feed.tsx           # Activity feed
+│       ├── user-table.tsx              # User management table
+│       ├── moderation-queue.tsx        # Content moderation
+│       └── system-health.tsx           # System health indicators
+├── lib/
+│   ├── auth/
+│   │   └── admin.ts                    # Admin utilities
+│   ├── database/
+│   │   └── admin.ts                    # Admin database operations
+│   └── admin/
+│       └── system-health.ts            # System health checking
+└── hooks/
+    └── useAdmin.ts                     # Admin permission hook
+```
+
+---
+
+## **🔒 Security Considerations**
+
+1. **Role-Based Access Control**
+   - Verify admin role on every request
+   - Implement proper route protection
+   - Validate admin permissions for all actions
+
+2. **Data Protection**
+   - Sanitize all admin inputs
+   - Implement proper error handling
+   - Log all admin actions for audit
+
+3. **API Security**
+   - Rate limit admin API endpoints
+   - Validate admin session tokens
+   - Implement CSRF protection
+
+---
+
+## **🚀 Success Criteria**
+
+- [ ] Admin users can access admin dashboard via sidebar
+- [ ] All six tabs are functional and responsive
+- [ ] Admin actions work correctly (user management, content moderation)
+- [ ] Design is consistent with existing application
+- [ ] Mobile experience is optimized
+- [ ] Performance is acceptable with large datasets
+- [ ] Security measures are properly implemented
+
+---
+
+This development plan provides a comprehensive roadmap for implementing the admin dashboard while maintaining the clean, simple approach and ensuring seamless integration with the existing Use Narra application.

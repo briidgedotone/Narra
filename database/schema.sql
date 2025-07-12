@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS boards (
   folder_id UUID NOT NULL REFERENCES folders(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
-  public_id TEXT UNIQUE DEFAULT encode(gen_random_bytes(16), 'base64url'),
+  public_id TEXT UNIQUE DEFAULT encode(gen_random_bytes(16), 'hex'),
   is_shared BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),

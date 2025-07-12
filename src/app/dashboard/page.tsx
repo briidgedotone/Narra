@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
+import { getFeaturedBoards } from "@/app/actions/folders";
 import { DashboardLayout } from "@/components/layout";
 import { DashboardContent } from "@/components/shared/dashboard-content";
 import { syncUserToDatabase } from "@/lib/auth/sync";
@@ -22,9 +23,20 @@ export default async function DashboardPage() {
     console.error("Error syncing user to database:", error);
   }
 
+  // Fetch featured boards on the server
+  let featuredBoards = [];
+  try {
+    const result = await getFeaturedBoards();
+    if (result.success) {
+      featuredBoards = result.data || [];
+    }
+  } catch (error) {
+    console.error("Failed to load featured boards:", error);
+  }
+
   return (
     <DashboardLayout>
-      <DashboardContent userId={userId} />
+      <DashboardContent initialFeaturedBoards={featuredBoards} />
     </DashboardLayout>
   );
 }

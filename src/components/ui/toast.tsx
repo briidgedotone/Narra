@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, X, AlertCircle, Info } from "lucide-react";
 import {
   createContext,
   useContext,
@@ -8,6 +7,8 @@ import {
   useCallback,
   ReactNode,
 } from "react";
+
+import { Check, X, AlertCircle, Info } from "@/components/ui/icons";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 

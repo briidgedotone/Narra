@@ -6,6 +6,7 @@ export interface Board {
   name: string;
   description?: string;
   folderId?: string;
+  folderName?: string;
   postCount: number;
   coverImage?: string;
   isPublic: boolean;
@@ -20,4 +21,25 @@ export interface Folder {
   boardCount: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Post {
+  id: string;
+  embedUrl: string;
+  caption: string;
+  thumbnail: string;
+  metrics: {
+    views?: number;
+    likes: number;
+    comments: number;
+    shares?: number;
+  };
+  datePosted: string;
+  platform: "instagram" | "tiktok";
+}
+
+export interface VideoTranscript {
+  id: string;
+  url: string;
+  transcript: string; // WEBVTT format
 }

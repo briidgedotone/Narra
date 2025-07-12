@@ -51,7 +51,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.45 0.12 252); /* #3D52A0 - Dark Blue */
+  --primary: oklch(0.55 0.19 252.01); /* #2463EB */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.65 0.08 252); /* #7091E6 - Medium Blue */
   --secondary-foreground: oklch(0.985 0 0);
@@ -76,6 +76,58 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Use Narra Custom Sidebar Theme */
+  --sidebar-width: 250px;
+  --sidebar-bg: #f8f8f8;
+  --sidebar-border-color: #e2e2e2;
+  --sidebar-text-primary: #1a1a1a;
+  --sidebar-text-secondary: #6b7280;
+  --sidebar-text-active: #3d52a0;
+  --sidebar-hover-bg: #f0f0f0;
+  --sidebar-active-bg: #3d52a0;
+  --sidebar-active-text: #ffffff;
+
+  /* Brand Colors */
+  --brand-primary: #3c82f6;
+  --brand-secondary: #2563eb;
+  --brand-accent: #60a5fa;
+
+  /* Sidebar Colors */
+  --sidebar-bg: #f8f8f8;
+  --sidebar-border-color: #e2e2e2;
+  --sidebar-text-primary: #1f2937;
+  --sidebar-text-secondary: #6b7280;
+  --sidebar-hover-bg: #f3f4f6;
+  --sidebar-active-bg: #e8e8e8;
+  --sidebar-active-text: #1f2937;
+
+  /* Component Colors */
+  --button-primary-bg: #3c82f6;
+  --button-primary-hover: #2563eb;
+  --button-primary-text: #ffffff;
+
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  /* Semantic Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3c82f6;
+
+  /* Neutral Colors */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
 }
 
 .dark {
@@ -114,6 +166,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Dark mode sidebar adjustments */
+  --sidebar-bg: #2a2a2a;
+  --sidebar-border-color: #404040;
+  --sidebar-text-primary: #ffffff;
+  --sidebar-text-secondary: #a0a0a0;
+  --sidebar-hover-bg: #353535;
 }
 
 @layer base {
@@ -163,4 +222,110 @@
   .content-spacing-compact {
     @apply space-y-4 md:space-y-6;
   }
+
+  /* Custom Sidebar Styles */
+  .sidebar-narra {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border-color);
+    color: var(--sidebar-text-primary);
+  }
+
+  .sidebar-nav-item {
+    color: var(--sidebar-text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+  }
+
+  .sidebar-nav-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+  }
+
+  .sidebar-brand {
+    color: var(--sidebar-text-primary);
+    font-weight: 600;
+  }
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.btn-primary:hover {
+  background-color: var(--button-primary-hover);
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+/* Instagram Embed Styles - Consistent width with subtle styling */
+.instagram-embed {
+  margin: 0 auto;
+}
+
+/* Set Instagram width for 4-column layout with auto height and subtle styling */
+.instagram-embed {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+  height: auto !important;
+  align-self: start !important;
+}
+
+.instagram-embed .instagram-media {
+  margin: 0 auto !important;
+  max-width: 300px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.instagram-embed iframe {
+  border: none !important;
+}
+
+/* TikTok Embed Styles - Consistent card styling with Instagram */
+.tiktok-embed {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.tiktok-embed iframe {
+  border: none !important;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 325/560;
+}
+
+/* Disable scrolling in TikTok iframe */
+.tiktok-embed iframe {
+  scrolling: no;
+}
+
+/* Masonry layout improvements */
+.masonry-container {
+  column-fill: balance;
+  orphans: 1;
+  widows: 1;
+}
+
+.masonry-item {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }

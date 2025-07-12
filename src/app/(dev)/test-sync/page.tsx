@@ -3,7 +3,6 @@
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
-import { syncCurrentUserToDatabase } from "@/app/actions/user-sync";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import { syncCurrentUserToDatabase } from "@/app/actions/user-sync";
 
 export default function TestSyncPage() {
   const { user, isLoaded } = useUser();

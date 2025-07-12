@@ -12,3 +12,16 @@ declare module "*.sass" {
   const content: Record<string, string>;
   export default content;
 }
+
+// Instagram embed window object
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds: {
+        process(): void;
+      };
+    };
+  }
+}
+
+export {};

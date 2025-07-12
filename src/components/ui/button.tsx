@@ -9,35 +9,34 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         success:
-          "bg-green-600 text-white shadow-xs hover:bg-green-700 focus-visible:ring-green-500/20 dark:bg-green-700 dark:hover:bg-green-800",
+          "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500/20 dark:bg-green-700 dark:hover:bg-green-800",
         warning:
-          "bg-yellow-600 text-white shadow-xs hover:bg-yellow-700 focus-visible:ring-yellow-500/20 dark:bg-yellow-700 dark:hover:bg-yellow-800",
+          "bg-yellow-600 text-white hover:bg-yellow-700 focus-visible:ring-yellow-500/20 dark:bg-yellow-700 dark:hover:bg-yellow-800",
         gradient:
-          "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-xs hover:from-purple-700 hover:to-blue-700 focus-visible:ring-purple-500/20",
-        soft: "bg-primary/10 text-primary shadow-xs hover:bg-primary/20 focus-visible:ring-primary/20",
+          "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 focus-visible:ring-purple-500/20",
+        soft: "bg-primary/10 text-primary hover:bg-primary/20 focus-visible:ring-primary/20",
         "outline-primary":
           "border border-primary text-primary bg-background shadow-xs hover:bg-primary hover:text-primary-foreground",
         "outline-destructive":
           "border border-destructive text-destructive bg-background shadow-xs hover:bg-destructive hover:text-destructive-foreground",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
         xl: "h-12 rounded-lg px-8 has-[>svg]:px-6 text-base",
-        icon: "size-9",
+        icon: "h-9 w-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
         "icon-xl": "size-12",

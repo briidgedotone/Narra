@@ -6,4 +6,5 @@
 
 export { DashboardLayout } from "./dashboard-layout";
 export { Sidebar } from "./sidebar";
+export { SidebarSkeleton } from "./sidebar-skeleton";
 export { Header } from "./header";
