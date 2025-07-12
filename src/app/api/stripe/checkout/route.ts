@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-06-30.basil",
 });
 
 export async function POST(req: NextRequest) {
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionData: any = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -62,12 +62,18 @@ export async function POST(req: NextRequest) {
       mode: "subscription",
       success_url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/select-plan`,
-      customer_email: user.emailAddresses[0]?.emailAddress,
       metadata: {
         userId: user.id,
         planId,
       },
-    });
+    };
+
+    // Only add customer_email if it exists
+    if (user.emailAddresses[0]?.emailAddress) {
+      sessionData.customer_email = user.emailAddresses[0].emailAddress;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionData);
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {

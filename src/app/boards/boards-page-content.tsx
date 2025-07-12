@@ -189,26 +189,31 @@ export function BoardsPageContent() {
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-                {selectedFolderBoards.map(board => (
-                  <BoardCard
-                    key={board.id}
-                    board={{
-                      id: board.id,
-                      name: board.name,
-                      description: board.description || "",
-                      postCount: board.post_count || 0,
-                      updatedAt: new Date(board.updated_at || board.created_at),
-                      isPublic: board.is_shared || false,
-                      createdAt: new Date(board.created_at),
-                      ...("folderName" in board && board.folderName
-                        ? { folderName: board.folderName as string }
-                        : {}),
-                    }}
-                    onView={board =>
-                      (window.location.href = `/boards/${board.id}`)
-                    }
-                  />
-                ))}
+                {selectedFolderBoards.map(board => {
+                  const anyBoard = board as any;
+                  return (
+                    <BoardCard
+                      key={board.id}
+                      board={{
+                        id: board.id,
+                        name: board.name,
+                        description: anyBoard.description || "",
+                        postCount: anyBoard.post_count || 0,
+                        updatedAt: new Date(
+                          anyBoard.updated_at || anyBoard.created_at
+                        ),
+                        isPublic: anyBoard.is_shared || false,
+                        createdAt: new Date(anyBoard.created_at),
+                        ...("folderName" in board && board.folderName
+                          ? { folderName: board.folderName as string }
+                          : {}),
+                      }}
+                      onView={board =>
+                        (window.location.href = `/boards/${board.id}`)
+                      }
+                    />
+                  );
+                })}
               </div>
             )}
           </div>

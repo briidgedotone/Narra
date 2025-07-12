@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
 import { DatabaseService } from "@/lib/database";
+import type { Database } from "@/types/database";
 
 // Helper function to convert WebVTT transcript to plain text
 function webvttToPlainText(webvttText: string): string {
@@ -212,34 +213,48 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
       }
 
       // Create post if it doesn't exist
-      post = await db.createPost({
+      const postCreateData: Database["public"]["Tables"]["posts"]["Insert"] = {
         profile_id: profile.id,
         platform: postData.platform,
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
-        transcript: transcript || postData.transcript,
-        original_url: postData.originalUrl,
+        ...(transcript || postData.transcript
+          ? { transcript: transcript || postData.transcript }
+          : {}),
+        ...(postData.originalUrl ? { original_url: postData.originalUrl } : {}),
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
         // Instagram-specific fields
-        thumbnail: postData.thumbnail,
-        is_video: postData.isVideo || false,
-        is_carousel: postData.isCarousel || false,
-        carousel_media: postData.carouselMedia?.map(item => ({
-          id: item.id,
-          type: item.type,
-          url: item.url,
-          thumbnail: item.thumbnail,
-          is_video: item.isVideo,
-        })),
-        carousel_count: postData.carouselCount || 0,
-        video_url: postData.videoUrl,
-        display_url: postData.displayUrl,
-        shortcode: postData.shortcode,
-        dimensions: postData.dimensions,
-        embed_html: embedHtml || undefined,
-      });
+        ...(postData.thumbnail ? { thumbnail: postData.thumbnail } : {}),
+        ...(postData.isVideo !== undefined
+          ? { is_video: postData.isVideo }
+          : {}),
+        ...(postData.isCarousel !== undefined
+          ? { is_carousel: postData.isCarousel }
+          : {}),
+        ...(postData.carouselMedia
+          ? {
+              carousel_media: postData.carouselMedia.map(item => ({
+                id: item.id,
+                type: item.type,
+                url: item.url,
+                thumbnail: item.thumbnail,
+                is_video: item.isVideo,
+              })),
+            }
+          : {}),
+        ...(postData.carouselCount !== undefined
+          ? { carousel_count: postData.carouselCount }
+          : {}),
+        ...(postData.videoUrl ? { video_url: postData.videoUrl } : {}),
+        ...(postData.displayUrl ? { display_url: postData.displayUrl } : {}),
+        ...(postData.shortcode ? { shortcode: postData.shortcode } : {}),
+        ...(postData.dimensions ? { dimensions: postData.dimensions } : {}),
+        ...(embedHtml ? { embed_html: embedHtml } : {}),
+      };
+
+      post = await db.createPost(postCreateData);
     }
 
     // Add post to board (this will handle duplicates via unique constraint)
