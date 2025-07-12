@@ -341,45 +341,73 @@ export function PostsGrid({
                     ))}
                   </div>
                 ) : (
-                  // Single Media Display (existing logic)
+                  // Single Media Display
                   <div className="w-full h-full">
-                    <video
-                      src={
-                        post.platform === "instagram"
-                          ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
-                          : post.embedUrl
-                      }
-                      poster={
-                        post.thumbnail
-                          ? proxyInstagramImage(post.thumbnail)
-                          : undefined
-                      }
-                      className="absolute inset-0 w-full h-full object-cover"
-                      muted
-                      playsInline
-                      onMouseEnter={e => {
-                        e.currentTarget.play();
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.pause();
-                        e.currentTarget.currentTime = 0;
-                      }}
-                      onError={e => {
-                        // Fallback to image if video fails
-                        const img = document.createElement("img");
-                        img.src = post.thumbnail
-                          ? proxyInstagramImage(post.thumbnail)
-                          : "/placeholder-post.jpg";
-                        img.className = "w-full h-full object-cover";
-                        img.alt = "Post thumbnail";
-                        if (e.currentTarget.parentNode) {
-                          e.currentTarget.parentNode.replaceChild(
-                            img,
-                            e.currentTarget
-                          );
+                    {post.platform === "tiktok" ? (
+                      // TikTok Thumbnail Display (since direct video URLs don't work)
+                      <div className="relative w-full h-full">
+                        {post.thumbnail ? (
+                          <Image
+                            src={post.thumbnail}
+                            alt="TikTok post thumbnail"
+                            fill
+                            className="object-cover"
+                            onError={e => {
+                              e.currentTarget.src = "/placeholder-post.jpg";
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                            <TiktokIcon className="w-12 h-12 text-gray-400" />
+                          </div>
+                        )}
+                        {/* TikTok Play Overlay */}
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                            <TiktokIcon className="w-8 h-8 text-black" />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      // Instagram video/image display
+                      <video
+                        src={
+                          post.platform === "instagram"
+                            ? `/api/proxy-image?url=${encodeURIComponent(post.embedUrl)}`
+                            : post.embedUrl
                         }
-                      }}
-                    />
+                        poster={
+                          post.thumbnail
+                            ? proxyInstagramImage(post.thumbnail)
+                            : undefined
+                        }
+                        className="absolute inset-0 w-full h-full object-cover"
+                        muted
+                        playsInline
+                        onMouseEnter={e => {
+                          e.currentTarget.play();
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.pause();
+                          e.currentTarget.currentTime = 0;
+                        }}
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src = post.thumbnail
+                            ? proxyInstagramImage(post.thumbnail)
+                            : "/placeholder-post.jpg";
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
+                            );
+                          }
+                        }}
+                      />
+                    )}
                   </div>
                 )}
               </div>
