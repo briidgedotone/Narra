@@ -98,6 +98,10 @@ export interface Board {
   is_shared: boolean;
   created_at: string;
   updated_at: string;
+  // Board copying fields
+  copied_from_public_id?: string;
+  copied_at?: string;
+  original_board_name?: string;
 }
 
 // Many-to-many relationship for posts in boards

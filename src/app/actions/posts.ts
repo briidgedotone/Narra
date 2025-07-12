@@ -212,33 +212,36 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
       }
 
       // Create post if it doesn't exist
+      const finalTranscript = transcript || postData.transcript;
       post = await db.createPost({
         profile_id: profile.id,
         platform: postData.platform,
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
-        transcript: transcript || postData.transcript,
-        original_url: postData.originalUrl,
+        ...(finalTranscript && { transcript: finalTranscript }),
+        ...(postData.originalUrl && { original_url: postData.originalUrl }),
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
         // Instagram-specific fields
-        thumbnail: postData.thumbnail,
+        ...(postData.thumbnail && { thumbnail: postData.thumbnail }),
         is_video: postData.isVideo || false,
         is_carousel: postData.isCarousel || false,
-        carousel_media: postData.carouselMedia?.map(item => ({
-          id: item.id,
-          type: item.type,
-          url: item.url,
-          thumbnail: item.thumbnail,
-          is_video: item.isVideo,
-        })),
+        ...(postData.carouselMedia && {
+          carousel_media: postData.carouselMedia.map(item => ({
+            id: item.id,
+            type: item.type,
+            url: item.url,
+            thumbnail: item.thumbnail,
+            is_video: item.isVideo,
+          })),
+        }),
         carousel_count: postData.carouselCount || 0,
-        video_url: postData.videoUrl,
-        display_url: postData.displayUrl,
-        shortcode: postData.shortcode,
-        dimensions: postData.dimensions,
-        embed_html: embedHtml || undefined,
+        ...(postData.videoUrl && { video_url: postData.videoUrl }),
+        ...(postData.displayUrl && { display_url: postData.displayUrl }),
+        ...(postData.shortcode && { shortcode: postData.shortcode }),
+        ...(postData.dimensions && { dimensions: postData.dimensions }),
+        ...(embedHtml && { embed_html: embedHtml }),
       });
     }
 

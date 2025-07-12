@@ -234,7 +234,7 @@ export function BoardPageContent({
         boardName={board.name}
         boardId={boardId}
         isSharedView={isSharedView}
-        publicId={isSharedView ? boardId : undefined}
+        {...(isSharedView && { publicId: boardId })}
       />
 
       <div className="space-y-8">

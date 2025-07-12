@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-06-30.basil",
 });
 
 const supabase = createClient(
@@ -78,12 +78,12 @@ export async function POST(req: NextRequest) {
               plan_id: planId,
               status: subscription.status,
               current_period_start: new Date(
-                subscription.current_period_start * 1000
+                (subscription as any).current_period_start * 1000
               ).toISOString(),
               current_period_end: new Date(
-                subscription.current_period_end * 1000
+                (subscription as any).current_period_end * 1000
               ).toISOString(),
-              cancel_at_period_end: subscription.cancel_at_period_end,
+              cancel_at_period_end: (subscription as any).cancel_at_period_end,
             });
 
           if (subError) {
@@ -103,12 +103,12 @@ export async function POST(req: NextRequest) {
           .update({
             status: subscription.status,
             current_period_start: new Date(
-              subscription.current_period_start * 1000
+              (subscription as any).current_period_start * 1000
             ).toISOString(),
             current_period_end: new Date(
-              subscription.current_period_end * 1000
+              (subscription as any).current_period_end * 1000
             ).toISOString(),
-            cancel_at_period_end: subscription.cancel_at_period_end,
+            cancel_at_period_end: (subscription as any).cancel_at_period_end,
           })
           .eq("stripe_subscription_id", subscription.id);
 
@@ -140,12 +140,12 @@ export async function POST(req: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
 
         // Only process subscription invoices (not one-time payments)
-        if (invoice.subscription) {
+        if ((invoice as any).subscription) {
           // Get user from subscription
           const { data: subData } = await supabase
             .from("subscriptions")
             .select("user_id")
-            .eq("stripe_subscription_id", invoice.subscription)
+            .eq("stripe_subscription_id", (invoice as any).subscription)
             .single();
 
           if (subData) {

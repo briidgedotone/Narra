@@ -9,7 +9,6 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/api/discovery", // Allow public access to discovery API
   "/api/content", // Allow public access to content API
   "/api/transcript", // Allow public access to transcript API
   "/api/instagram-embed", // Allow public access to Instagram embed API
