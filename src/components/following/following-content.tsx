@@ -181,12 +181,20 @@ export function FollowingContent({
                   {post.platform === "instagram" ? (
                     <InstagramEmbed
                       url={post.embed_url}
-                      caption={post.caption}
+                      {...(post.caption ? { caption: post.caption } : {})}
                       metrics={{
-                        views: post.metrics?.views,
-                        likes: post.metrics?.likes,
-                        comments: post.metrics?.comments,
-                        shares: post.metrics?.shares,
+                        ...(post.metrics?.views !== undefined
+                          ? { views: post.metrics.views }
+                          : {}),
+                        ...(post.metrics?.likes !== undefined
+                          ? { likes: post.metrics.likes }
+                          : {}),
+                        ...(post.metrics?.comments !== undefined
+                          ? { comments: post.metrics.comments }
+                          : {}),
+                        ...(post.metrics?.shares !== undefined
+                          ? { shares: post.metrics.shares }
+                          : {}),
                       }}
                       showMetrics={true}
                       onDetailsClick={() => onPostClick?.(post)}
@@ -194,12 +202,20 @@ export function FollowingContent({
                   ) : (
                     <TikTokEmbed
                       url={post.embed_url}
-                      caption={post.caption}
+                      {...(post.caption ? { caption: post.caption } : {})}
                       metrics={{
-                        views: post.metrics?.views,
-                        likes: post.metrics?.likes,
-                        comments: post.metrics?.comments,
-                        shares: post.metrics?.shares,
+                        ...(post.metrics?.views !== undefined
+                          ? { views: post.metrics.views }
+                          : {}),
+                        ...(post.metrics?.likes !== undefined
+                          ? { likes: post.metrics.likes }
+                          : {}),
+                        ...(post.metrics?.comments !== undefined
+                          ? { comments: post.metrics.comments }
+                          : {}),
+                        ...(post.metrics?.shares !== undefined
+                          ? { shares: post.metrics.shares }
+                          : {}),
                       }}
                       showMetrics={true}
                       onDetailsClick={() => onPostClick?.(post)}

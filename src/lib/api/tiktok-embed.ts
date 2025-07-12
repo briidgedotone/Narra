@@ -145,7 +145,7 @@ export function generateTikTokIframe(tiktokUrl: string): TikTokEmbedResult {
       type: "video",
       title: `TikTok Video ${videoId}`,
       author_name: "Unknown",
-      author_url: tiktokUrl.split("/video/")[0],
+      author_url: tiktokUrl.split("/video/")[0] || "",
       width: 325,
       height: 560,
       html: iframeHtml,
@@ -222,7 +222,7 @@ export function extractTikTokVideoId(url: string): string | null {
 
   // Match standard TikTok video URL format
   const match = url.match(/\/video\/(\d+)/);
-  return match ? match[1] : null;
+  return match ? (match[1] ?? null) : null;
 }
 
 /**
@@ -235,7 +235,7 @@ export function extractTikTokUsername(url: string): string | null {
 
   // Match @username in TikTok URL
   const match = url.match(/@([\w.-]+)\/video/);
-  return match ? match[1] : null;
+  return match ? (match[1] ?? null) : null;
 }
 
 /**
