@@ -13,8 +13,6 @@ import {
   Search,
   FileQuestion,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Eye,
   Share,
 } from "@/components/ui/icons";
@@ -405,42 +403,6 @@ export function PostsGrid({
                 )}
               </div>
 
-              {/* Carousel Navigation Arrows */}
-              {post.isCarousel &&
-                post.carouselMedia &&
-                post.carouselMedia.length > 1 && (
-                  <>
-                    {/* Previous Arrow */}
-                    {getPostCarouselIndex(post.id) > 0 && (
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          onPostCarouselPrev(post.id);
-                        }}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                    )}
-
-                    {/* Next Arrow */}
-                    {getPostCarouselIndex(post.id) <
-                      post.carouselMedia.length - 1 && (
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          onPostCarouselNext(
-                            post.id,
-                            post.carouselMedia!.length
-                          );
-                        }}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    )}
-                  </>
-                )}
 
               {/* Carousel Indicator Dots */}
               {post.isCarousel &&
