@@ -360,12 +360,6 @@ export function PostsGrid({
                             <TiktokIcon className="w-12 h-12 text-gray-400" />
                           </div>
                         )}
-                        {/* TikTok Play Overlay */}
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                          <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
-                            <TiktokIcon className="w-8 h-8 text-black" />
-                          </div>
-                        </div>
                       </div>
                     ) : (
                       // Instagram video/image display
