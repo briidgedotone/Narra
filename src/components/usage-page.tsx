@@ -251,57 +251,81 @@ export function UsagePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-x divide-border">
             {metrics.map((metric, index) => {
               const percentage = metric.limit ? (metric.used / metric.limit) * 100 : null;
-              const isAtRisk = percentage && percentage >= 75;
               
               return (
-                <div key={index} className="text-left space-y-3 p-8">
-                  {/* Usage Value */}
-                  <div>
-                    <div className={`text-2xl font-bold mb-1 ${
-                      getStatusColor(metric.used, metric.limit)
-                    }`}>
-                      {metric.used.toLocaleString()}{metric.suffix || ''}
+                <div key={index} className="text-left p-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className={`text-3xl font-bold mb-2 ${
+                        getStatusColor(metric.used, metric.limit)
+                      }`}>
+                        {metric.used.toLocaleString()}{metric.suffix || ''}
+                        {metric.limit && (
+                          <span className="text-sm font-normal text-muted-foreground ml-2">
+                            / {metric.limit.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm font-medium text-foreground">
+                          {metric.label}
+                        </span>
+                        <button className="text-muted-foreground hover:text-foreground transition-colors">
+                          <svg 
+                            className="w-3 h-3" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                            title={metric.tooltip}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <span className="text-sm font-medium text-foreground">
-                        {metric.label}
-                      </span>
-                      <button className="text-muted-foreground hover:text-foreground transition-colors">
-                        <svg 
-                          className="w-3 h-3" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                          title={metric.tooltip}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </button>
-                    </div>
+
+                    {/* Circular Progress */}
                     {metric.limit && (
-                      <div className="text-xs text-muted-foreground">
-                        {(metric.limit - metric.used).toLocaleString()} of {metric.limit.toLocaleString()} remaining
+                      <div className="relative w-16 h-16 ml-4">
+                        <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                          {/* Background Circle */}
+                          <circle
+                            cx="32"
+                            cy="32"
+                            r="28"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="none"
+                            className="text-gray-200"
+                          />
+                          {/* Progress Circle */}
+                          <circle
+                            cx="32"
+                            cy="32"
+                            r="28"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="none"
+                            strokeDasharray={`${2 * Math.PI * 28}`}
+                            strokeDashoffset={`${2 * Math.PI * 28 * (1 - (percentage / 100))}`}
+                            className={`transition-all duration-700 ease-out ${
+                              index === 0 ? 'text-red-500' :
+                              index === 1 ? 'text-blue-500' :
+                              index === 2 ? 'text-green-500' :
+                              'text-purple-500'
+                            }`}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        {/* Percentage Text */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-foreground">
+                            {Math.round(percentage)}%
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {/* Progress Bar */}
-                  {metric.limit && (
-                    <div className="w-full">
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full transition-all duration-500 ${
-                            percentage >= 90 
-                              ? 'bg-destructive' 
-                              : percentage >= 75 
-                                ? 'bg-yellow-500' 
-                                : 'bg-primary'
-                          }`}
-                          style={{ width: `${Math.min(percentage, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}
