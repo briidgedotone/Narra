@@ -220,7 +220,7 @@ export function UsagePage() {
         {/* Plan & Usage Overview */}
         <div className="bg-card rounded-lg border overflow-hidden">
           {/* Plan Details */}
-          <div className="p-12">
+          <div className="p-8">
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground mb-8">{planDetails.name} Plan</h2>
@@ -266,11 +266,14 @@ export function UsagePage() {
                       <span className="text-sm font-medium text-foreground">
                         {metric.label}
                       </span>
-                      <button 
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                        title={metric.tooltip}
-                      >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button className="text-muted-foreground hover:text-foreground transition-colors">
+                        <svg 
+                          className="w-3 h-3" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          title={metric.tooltip}
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </button>

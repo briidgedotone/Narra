@@ -50,6 +50,15 @@ import {
   Calendar03Icon,
   LaptopVideoIcon,
   SecurityIcon,
+  Invoice01Icon,
+  Invoice02Icon,
+  Dollar01Icon,
+  Dollar02Icon,
+  DollarSend01Icon,
+  DollarSend02Icon,
+  PaymentSuccess01Icon,
+  CreditCardIcon,
+  MicrosoftAdminIcon,
 } from "hugeicons-react";
 
 // Export all icons with their original Lucide names for compatibility
@@ -128,4 +137,15 @@ export const TimeQuarter = TimeQuarterIcon;
 export const FavouriteCircle = FavouriteCircleIcon;
 export const Calendar03 = Calendar03Icon;
 export const LaptopVideo = LaptopVideoIcon;
-export const Shield = SecurityIcon;
+export const Shield = MicrosoftAdminIcon;
+
+// Billing and financial icons
+export const Invoice = Invoice01Icon;
+export const Invoice2 = Invoice02Icon;
+export const Dollar = Dollar01Icon;
+export const Dollar2 = Dollar02Icon;
+export const DollarSend = DollarSend01Icon;
+export const DollarSend2 = DollarSend02Icon;
+export const PaymentSuccess = PaymentSuccess01Icon;
+export const CreditCard = CreditCardIcon;
+export const ReceiptText = Invoice01Icon; // Alias for compatibility with existing usage
