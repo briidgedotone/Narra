@@ -411,8 +411,8 @@ export function usePostsData() {
                         "",
                       caption: item.desc || "No caption available",
                       thumbnail:
-                        item.video?.origin_cover?.url_list?.[0] ||
                         item.video?.dynamic_cover?.url_list?.[0] ||
+                        item.video?.origin_cover?.url_list?.[0] ||
                         "",
                       metrics: {
                         views: item.statistics?.play_count || 0,
