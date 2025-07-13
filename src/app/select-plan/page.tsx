@@ -114,24 +114,30 @@ export default function SelectPlanPage() {
 
         {/* Billing Toggle */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg p-1 shadow-sm">
+          <div className="bg-white rounded-full p-1 border border-gray-200">
             <button
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-4 py-2 rounded-md transition-colors ${
+              className={`px-4 py-2 rounded-full transition-colors ${
                 billingPeriod === "monthly"
-                  ? "bg-blue-500 text-white"
+                  ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
               }`}
+              style={{
+                backgroundColor: billingPeriod === "monthly" ? "#3C82F6" : "transparent"
+              }}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-4 py-2 rounded-md transition-colors ${
+              className={`px-4 py-2 rounded-full transition-colors ${
                 billingPeriod === "yearly"
-                  ? "bg-blue-500 text-white"
+                  ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
               }`}
+              style={{
+                backgroundColor: billingPeriod === "yearly" ? "#3C82F6" : "transparent"
+              }}
             >
               Yearly (Save 30%)
             </button>
@@ -143,10 +149,12 @@ export default function SelectPlanPage() {
           {plans.map(plan => (
             <div
               key={plan.id}
-              className={`border-2 transition-all flex-shrink-0 ${
-                selectedPlan === plan.id
-                  ? "border-blue-500"
-                  : "border-gray-200"
+              className={`transition-all flex-shrink-0 ${
+                plan.id === 'growth' 
+                  ? '' 
+                  : selectedPlan === plan.id
+                    ? "border-2 border-blue-500"
+                    : "border-2 border-gray-200"
               }`}
               style={{ 
                 width: '459px', 
@@ -157,7 +165,8 @@ export default function SelectPlanPage() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
-                borderRadius: '16px'
+                borderRadius: '16px',
+                boxShadow: plan.id === 'growth' ? '0 8px 32px rgba(0, 0, 0, 0.15)' : 'none'
               }}
             >
               <div className="flex items-center justify-between mb-2">
