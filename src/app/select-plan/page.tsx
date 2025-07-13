@@ -19,10 +19,17 @@ export default function SelectPlanPage() {
       yearlyPrice: 210,
       features: [
         "Access 1000+ Viral Posts",
-        "Discover up to 100 Profiles/Month",
-        "Follow 20 Profiles",
-        "View 100 Video Transcripts/Month",
-        "Unlimited Boards & Folders",
+        "Discover up to 100 Profiles / Month",
+        "Follow 20 Profiles for 24/7 Tracking",
+        "Save Unlimited Videos",
+        "Sort & View Top Performing Posts",
+        "View up to 100 Video Transcripts / Month",
+        "Unlimited Boards & Folders for Inspiration",
+        "Public Shareable Board Links",
+        "Profile & Post Analytics",
+        "Data Range: Past 180 Days",
+        "Cancel anytime",
+        "24/7 dedicated support",
       ],
     },
     {
@@ -31,11 +38,38 @@ export default function SelectPlanPage() {
       monthlyPrice: 49.99,
       yearlyPrice: 419.99,
       features: [
-        "Everything in Inspiration, plus:",
-        "Discover up to 300 Profiles/Month",
-        "Follow 50 Profiles",
-        "View 300 Video Transcripts/Month",
-        "365 Days Data Range",
+        "Access 1000+ Viral Posts",
+        "Discover up to 300 Profiles / Month",
+        "Follow 50 Profiles for 24/7 Tracking",
+        "Save Unlimited Videos",
+        "Sort & View Top Performing Posts",
+        "View up to 300 Video Transcripts / Month",
+        "Unlimited Boards & Folders for Inspiration",
+        "Public Shareable Board Links",
+        "Profile & Post Analytics",
+        "Data Range: Past 365 Days",
+        "Cancel anytime",
+        "24/7 dedicated support",
+      ],
+    },
+    {
+      id: "enterprise",
+      name: "Enterprise Plan",
+      monthlyPrice: "Custom",
+      yearlyPrice: "Custom",
+      features: [
+        "Access 1000+ Viral Posts",
+        "Profile Discovery: Custom",
+        "Profile Follows: Custom",
+        "Save Unlimited Videos",
+        "Sort & View Top Performing Posts",
+        "Video Transcripts: Custom",
+        "Unlimited Boards & Folders for Inspiration",
+        "Public Shareable Board Links",
+        "Profile & Post Analytics",
+        "Data Range: Past 365 Days",
+        "Cancel anytime",
+        "24/7 dedicated support",
       ],
     },
   ];
@@ -105,45 +139,112 @@ export default function SelectPlanPage() {
         </div>
 
         {/* Plans Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex flex-col lg:flex-row justify-center items-center" style={{ gap: '32px' }}>
           {plans.map(plan => (
             <div
               key={plan.id}
-              className={`bg-white rounded-lg p-6 shadow-sm border-2 transition-all ${
+              className={`border-2 transition-all flex-shrink-0 ${
                 selectedPlan === plan.id
-                  ? "border-blue-500 shadow-lg"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-blue-500"
+                  : "border-gray-200"
               }`}
+              style={{ 
+                width: '459px', 
+                padding: '32px', 
+                minWidth: '459px',
+                backgroundColor: plan.id === 'growth' ? 'transparent' : '#ffffff',
+                backgroundImage: plan.id === 'growth' ? 'url(/growth-plan-bg.png)' : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                borderRadius: '16px'
+              }}
             >
-              <h2 className="text-xl font-semibold mb-4">{plan.name}</h2>
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-semibold" style={{ 
+                  fontSize: '24px',
+                  color: plan.id === 'growth' ? '#ffffff' : '#000000'
+                }}>{plan.name}</h2>
+                {plan.id === 'growth' && (
+                  <span style={{
+                    backgroundColor: '#ffffff',
+                    color: '#3C82F6',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    padding: '4px 12px',
+                    borderRadius: '12px'
+                  }}>
+                    Most Popular
+                  </span>
+                )}
+              </div>
+              <p style={{ 
+                fontSize: '18px', 
+                color: plan.id === 'growth' ? '#ffffff' : '#6b7280'
+              }}>3-Day Free Trial</p>
 
-              <div className="mb-6">
-                <span className="text-3xl font-bold">
-                  $
+              <div style={{ marginTop: '32px', marginBottom: '32px' }}>
+                <span style={{ 
+                  fontSize: '36px', 
+                  color: plan.id === 'growth' ? '#ffffff' : '#3b82f6', 
+                  fontWeight: 'bold' 
+                }}>
+                  {typeof plan.monthlyPrice === 'string' ? '' : '$'}
                   {billingPeriod === "monthly"
                     ? plan.monthlyPrice
                     : plan.yearlyPrice}
                 </span>
-                <span className="text-gray-500">
-                  /{billingPeriod === "monthly" ? "month" : "year"}
-                </span>
+                {typeof plan.monthlyPrice !== 'string' && (
+                  <span style={{ 
+                    color: plan.id === 'growth' ? '#ffffff' : '#3b82f6',
+                    fontSize: '36px',
+                    fontWeight: 'bold'
+                  }}>
+                    /{billingPeriod === "monthly" ? "month" : "year"}
+                  </span>
+                )}
               </div>
 
-              <ul className="space-y-3 mb-6">
+              {/* Horizontal line separator */}
+              <hr style={{ 
+                border: 'none', 
+                borderTop: plan.id === 'growth' ? '1px solid #ffffff' : '1px solid #e5e7eb', 
+                margin: '32px 0' 
+              }} />
+
+              <ul className="mb-6" style={{ gap: '12px', display: 'flex', flexDirection: 'column' }}>
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature}</span>
+                    <Check className={`h-5 w-5 mr-2 flex-shrink-0 mt-0.5 ${
+                      plan.id === 'growth' ? 'text-white' : 'text-green-500'
+                    }`} />
+                    <span style={{ 
+                      fontSize: '16px', 
+                      color: plan.id === 'growth' ? '#ffffff' : '#6b7280' 
+                    }}>{feature}</span>
                   </li>
                 ))}
               </ul>
 
+              {/* Horizontal line separator */}
+              <hr style={{ 
+                border: 'none', 
+                borderTop: plan.id === 'growth' ? '1px solid #ffffff' : '1px solid #e5e7eb', 
+                margin: '32px 0' 
+              }} />
+
               <Button
                 onClick={() => handleSelectPlan(plan.id)}
                 className="w-full"
-                variant={selectedPlan === plan.id ? "default" : "outline"}
+                style={{ 
+                  backgroundColor: plan.id === 'growth' ? '#ffffff' : '#000000', 
+                  color: plan.id === 'growth' ? '#000000' : '#ffffff', 
+                  fontSize: '14px',
+                  border: 'none',
+                  padding: '18px 24px'
+                }}
               >
-                {selectedPlan === plan.id ? "Selected" : "Select Plan"}
+                {plan.id === 'enterprise' ? 'Contact Us' : '3-Day Free Trial'}
               </Button>
             </div>
           ))}
