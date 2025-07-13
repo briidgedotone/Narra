@@ -344,14 +344,13 @@ export function PostsGrid({
                   // Single Media Display
                   <div className="w-full h-full">
                     {post.platform === "tiktok" ? (
-                      // TikTok Thumbnail Display (since direct video URLs don't work)
+                      // TikTok Thumbnail Display (now using AWEBP format)
                       <div className="relative w-full h-full">
                         {post.thumbnail ? (
-                          <Image
+                          <img
                             src={post.thumbnail}
                             alt="TikTok post thumbnail"
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                             onError={e => {
                               e.currentTarget.src = "/placeholder-post.jpg";
                             }}

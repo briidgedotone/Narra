@@ -18,7 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate, parseWebVTT } from "@/lib/utils/format";
-import { proxyInstagramImage } from "@/lib/utils/image-proxy";
+import { proxyImage, proxyInstagramImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
 import { Post, ActiveTab } from "@/types/discovery";
 
@@ -114,8 +114,11 @@ export function PostModal({
                                     currentCarouselIndex
                                   ].thumbnail
                                 )
-                              : selectedPost.carouselMedia[currentCarouselIndex]
-                                  .thumbnail || "/placeholder-post.jpg"
+                              : proxyImage(
+                                  selectedPost.carouselMedia[currentCarouselIndex]
+                                    .thumbnail,
+                                  "tiktok"
+                                ) || "/placeholder-post.jpg"
                           }
                           className="w-full h-full object-cover"
                           autoPlay
@@ -125,7 +128,7 @@ export function PostModal({
                           controls
                         />
                       ) : (
-                        <Image
+                        <img
                           key={
                             selectedPost.carouselMedia?.[currentCarouselIndex]
                               ?.id || currentCarouselIndex
@@ -137,13 +140,15 @@ export function PostModal({
                                     currentCarouselIndex
                                   ]?.url || ""
                                 )
-                              : selectedPost.carouselMedia?.[
-                                  currentCarouselIndex
-                                ]?.url || ""
+                              : proxyImage(
+                                  selectedPost.carouselMedia?.[
+                                    currentCarouselIndex
+                                  ]?.url,
+                                  "tiktok"
+                                )
                           }
                           alt="Carousel item"
-                          fill
-                          className="object-cover"
+                          className="absolute inset-0 w-full h-full object-cover"
                         />
                       )}
 
@@ -193,7 +198,7 @@ export function PostModal({
                           ? selectedPost.thumbnail
                             ? proxyInstagramImage(selectedPost.thumbnail)
                             : undefined
-                          : selectedPost.thumbnail
+                          : proxyImage(selectedPost.thumbnail, "tiktok")
                       }
                       className="w-full h-full object-cover"
                       autoPlay

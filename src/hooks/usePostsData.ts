@@ -159,8 +159,8 @@ export function usePostsData() {
                       "",
                     caption: tiktokItem.desc || "No caption available",
                     thumbnail:
-                      tiktokItem.video?.origin_cover?.url_list?.[0] ||
                       tiktokItem.video?.dynamic_cover?.url_list?.[0] ||
+                      tiktokItem.video?.origin_cover?.url_list?.[0] ||
                       "",
                     metrics: {
                       views: tiktokItem.statistics?.play_count || 0,

@@ -45,6 +45,8 @@ export async function GET(request: NextRequest) {
     } else if (platform === "tiktok" || imageUrl.includes("tiktokcdn")) {
       headers["Referer"] = "https://www.tiktok.com/";
       headers["Origin"] = "https://www.tiktok.com";
+      // Request JPEG format instead of HEIC for better browser compatibility
+      headers["Accept"] = "image/jpeg,image/png,image/webp,image/*;q=0.8";
     }
 
     // Fetch the image from the original URL
@@ -66,6 +68,8 @@ export async function GET(request: NextRequest) {
     // Get the image data
     const imageBuffer = await response.arrayBuffer();
     const contentType = response.headers.get("content-type") || "image/jpeg";
+
+    // Note: HEIC format handling removed since we now use video first frames for TikTok
 
     // Return the image with proper headers
     return new NextResponse(imageBuffer, {
