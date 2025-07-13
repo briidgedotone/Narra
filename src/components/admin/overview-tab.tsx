@@ -19,14 +19,15 @@ async function getAdminStats() {
       .from("users")
       .select("*", { count: "exact", head: true });
 
-    // Get active users (users with activity in last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    // Get new users this month
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
-    const { count: activeUsers } = await supabase
+    const { count: newUsersThisMonth } = await supabase
       .from("users")
       .select("*", { count: "exact", head: true })
-      .gte("last_sign_in_at", thirtyDaysAgo.toISOString());
+      .gte("created_at", startOfMonth.toISOString());
 
     // Get total boards count (collections)
     const { count: totalCollections } = await supabase
@@ -40,7 +41,7 @@ async function getAdminStats() {
 
     return {
       totalUsers: totalUsers || 0,
-      activeUsers: activeUsers || 0,
+      newUsersThisMonth: newUsersThisMonth || 0,
       totalCollections: totalCollections || 0,
       totalPosts: totalPosts || 0,
     };
@@ -48,7 +49,7 @@ async function getAdminStats() {
     console.error("Error fetching admin stats:", error);
     return {
       totalUsers: 0,
-      activeUsers: 0,
+      newUsersThisMonth: 0,
       totalCollections: 0,
       totalPosts: 0,
     };
@@ -65,7 +66,7 @@ interface Board {
 export function OverviewTab() {
   const [stats, setStats] = useState({
     totalUsers: 0,
-    activeUsers: 0,
+    newUsersThisMonth: 0,
     totalCollections: 0,
     totalPosts: 0,
   });
@@ -313,10 +314,6 @@ export function OverviewTab() {
     return num.toString();
   };
 
-  const activeUserPercentage =
-    stats.totalUsers > 0
-      ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)
-      : "0.0";
 
   // Empty state collections for admin
   const emptyCollections = [
@@ -349,62 +346,52 @@ export function OverviewTab() {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+      <div className="bg-card rounded-lg border overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-x divide-border">
+          <div className="text-left p-8">
+            <div className="text-3xl font-bold mb-2 text-foreground">
               {formatNumber(stats.totalUsers)}
             </div>
-            <p className="text-xs text-muted-foreground">Registered users</p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stats.activeUsers)}
+            <div className="flex items-center gap-1">
+              <span className="text-base font-medium text-foreground">
+                Total Users
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {activeUserPercentage}% of total users
-            </p>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card className="shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Collections
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <div className="text-left p-8">
+            <div className="text-3xl font-bold mb-2 text-foreground">
+              {formatNumber(stats.newUsersThisMonth)}
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-base font-medium text-foreground">
+                Users This Month
+              </span>
+            </div>
+          </div>
+
+          <div className="text-left p-8">
+            <div className="text-3xl font-bold mb-2 text-foreground">
               {formatNumber(stats.totalCollections)}
             </div>
-            <p className="text-xs text-muted-foreground">Created boards</p>
-          </CardContent>
-        </Card>
+            <div className="flex items-center gap-1">
+              <span className="text-base font-medium text-foreground">
+                Total Collections
+              </span>
+            </div>
+          </div>
 
-        <Card className="shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <div className="text-left p-8">
+            <div className="text-3xl font-bold mb-2 text-foreground">
               {formatNumber(stats.totalPosts)}
             </div>
-            <p className="text-xs text-muted-foreground">Saved posts</p>
-          </CardContent>
-        </Card>
+            <div className="flex items-center gap-1">
+              <span className="text-base font-medium text-foreground">
+                Total Posts
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Featured Collections */}
