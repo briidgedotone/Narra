@@ -50,6 +50,22 @@ export function clearUserCache(userId: string): void {
 }
 
 /**
+ * Check if user exists in cache (indicates user exists in database)
+ */
+export function isUserInCache(userId: string): boolean {
+  const cached = userCache.get(userId);
+  if (!cached) return false;
+
+  // Check if cache is still valid
+  if (Date.now() - cached.timestamp > CACHE_DURATION) {
+    userCache.delete(userId);
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * Clear all expired cache entries (cleanup function)
  */
 export function cleanupExpiredCache(): void {
