@@ -997,6 +997,67 @@ export class DatabaseService {
       })) || []
     );
   }
+
+  // Webhook Events
+  async getWebhookEvent(stripeEventId: string) {
+    const { data, error } = await this.client
+      .from("webhook_events")
+      .select("*")
+      .eq("stripe_event_id", stripeEventId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found
+    return data;
+  }
+
+  async createWebhookEvent(eventData: {
+    stripe_event_id: string;
+    event_type: string;
+  }) {
+    const { data, error } = await this.client
+      .from("webhook_events")
+      .insert(eventData)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Subscriptions
+  async getSubscriptionByUserId(userId: string) {
+    const { data, error } = await this.client
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found
+    return data;
+  }
+
+  async createSubscription(subscriptionData: any) {
+    const { data, error } = await this.client
+      .from("subscriptions")
+      .insert(subscriptionData)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updateSubscription(subscriptionId: string, updates: any) {
+    const { data, error } = await this.client
+      .from("subscriptions")
+      .update(updates)
+      .eq("stripe_subscription_id", subscriptionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
 }
 
 // Export singleton instance
