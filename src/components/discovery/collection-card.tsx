@@ -34,7 +34,24 @@ export function CollectionCard({
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-        ></div>
+        >
+          {/* Hidden image element for error handling */}
+          {coverImageUrl && (
+            <img
+              src={coverImageUrl}
+              alt=""
+              className="hidden"
+              onError={e => {
+                // If the image fails to load, fallback to background color
+                const parent = e.currentTarget.parentElement;
+                if (parent) {
+                  parent.style.backgroundImage = "none";
+                  parent.style.backgroundColor = backgroundColor;
+                }
+              }}
+            />
+          )}
+        </div>
         <div className="pl-4 flex-1 flex flex-col justify-start py-2">
           <h3 className="text-sm font-semibold mb-2">{title}</h3>
           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">

@@ -134,8 +134,23 @@ export function OverviewTab() {
     setUpdatingPosition(position);
 
     try {
-      // Generate a better cover image URL using a placeholder service with the board name
-      const coverImageUrl = `https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=${encodeURIComponent(board.name)}`;
+      // Generate a data URL for a solid color background instead of using external placeholder services
+      // This avoids network errors and provides consistent styling
+      const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4"];
+      const backgroundColor = colors[(position - 1) % colors.length];
+
+      // Create a simple SVG data URL for the cover image
+      const svgContent = `
+        <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="300" fill="${backgroundColor}"/>
+          <text x="200" y="150" text-anchor="middle" dominant-baseline="middle" 
+                fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+            ${board.name}
+          </text>
+        </svg>
+      `.trim();
+
+      const coverImageUrl = `data:image/svg+xml;base64,${btoa(svgContent)}`;
 
       const result = await setFeaturedBoard(
         board.id,
