@@ -65,7 +65,12 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Check if user has selected a plan before accessing dashboard
-  if (requiresPlan(req) && !req.url.includes("/select-plan")) {
+  // Skip plan check if coming from Stripe success (has session_id)
+  if (
+    requiresPlan(req) &&
+    !req.url.includes("/select-plan") &&
+    !req.url.includes("session_id=")
+  ) {
     if (!planId) {
       return NextResponse.redirect(new URL("/select-plan", req.url));
     }
