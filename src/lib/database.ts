@@ -263,8 +263,8 @@ export class DatabaseService {
         `
         *,
         folders(*),
-        board_posts!inner(
-          posts!inner(
+        board_posts(
+          posts(
             *,
             profiles(*)
           )
@@ -311,10 +311,10 @@ export class DatabaseService {
                   isVideo: item.is_video,
                 })),
                 carouselCount: post.carousel_count,
-                videoUrl: post.video_url,
-                displayUrl: post.display_url,
+                videoUrl: post.video_url || undefined,
+                displayUrl: post.display_url || undefined,
                 shortcode: post.shortcode,
-                dimensions: post.dimensions,
+                dimensions: post.dimensions || undefined,
                 profile: profile
                   ? {
                       id: profile.id,
@@ -419,10 +419,7 @@ export class DatabaseService {
           is_carousel,
           carousel_media,
           carousel_count,
-          video_url,
-          display_url,
           shortcode,
-          dimensions,
           profiles (
             id,
             handle,
@@ -468,10 +465,10 @@ export class DatabaseService {
           isCarousel: post.is_carousel,
           carouselMedia: post.carousel_media,
           carouselCount: post.carousel_count,
-          videoUrl: post.video_url,
-          displayUrl: post.display_url,
+          videoUrl: post.video_url || undefined,
+          displayUrl: post.display_url || undefined,
           shortcode: post.shortcode,
-          dimensions: post.dimensions,
+          dimensions: post.dimensions || undefined,
           profile: profile
             ? {
                 id: profile.id,
