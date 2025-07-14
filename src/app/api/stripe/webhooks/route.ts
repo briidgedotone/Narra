@@ -14,10 +14,13 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
+  console.log("🔔 [Webhook] Received webhook request");
+
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
 
   if (!signature) {
+    console.log("❌ [Webhook] No signature provided");
     return NextResponse.json({ error: "No signature" }, { status: 400 });
   }
 
@@ -29,8 +32,9 @@ export async function POST(req: NextRequest) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+    console.log(`✅ [Webhook] Event verified: ${event.type}`);
   } catch (err) {
-    console.error("Webhook signature verification failed:", err);
+    console.error("❌ [Webhook] Signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -38,37 +42,63 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+        console.log(
+          `💳 [Webhook] Processing checkout.session.completed for session ${session.id}`
+        );
+        console.log(
+          `💳 [Webhook] Session mode: ${session.mode}, status: ${session.status}`
+        );
 
         if (session.mode === "subscription") {
           const userId = session.metadata?.userId;
           const planId = session.metadata?.planId;
 
+          console.log(
+            `📋 [Webhook] Session metadata - userId: ${userId}, planId: ${planId}`
+          );
+
           if (!userId || !planId) {
-            console.error("Missing metadata in session");
+            console.error("❌ [Webhook] Missing metadata in session:", {
+              userId,
+              planId,
+            });
             return NextResponse.json(
               { error: "Missing metadata" },
               { status: 400 }
             );
           }
 
+          console.log(
+            `🔄 [Webhook] Retrieving subscription details for session ${session.id}`
+          );
           // Get the subscription details
           const subscription = (await stripe.subscriptions.retrieve(
             session.subscription as string
           )) as any;
 
+          console.log(
+            `📊 [Webhook] Subscription retrieved: ${subscription.id}, status: ${subscription.status}`
+          );
+
           // Update user with plan_id
-          const { error: userError } = await supabase
+          console.log(
+            `🔄 [Webhook] Updating user ${userId} with plan ${planId}`
+          );
+          const { data: updateResult, error: userError } = await supabase
             .from("users")
             .update({
               plan_id: planId,
               subscription_status: "active",
             })
-            .eq("id", userId);
+            .eq("id", userId)
+            .select("id, plan_id, subscription_status");
 
           if (userError) {
-            console.error("Error updating user:", userError);
+            console.error("❌ [Webhook] Error updating user:", userError);
             throw userError;
           }
+
+          console.log(`✅ [Webhook] User updated successfully:`, updateResult);
 
           // Create or update subscription record
           const { error: subError } = await supabase
@@ -96,7 +126,7 @@ export async function POST(req: NextRequest) {
           // Clear the user cache so middleware will fetch fresh plan data
           clearUserCache(userId);
           console.log(
-            `Cleared cache for user ${userId} after successful payment`
+            `✅ [Webhook] Cleared cache for user ${userId} after successful payment`
           );
         }
         break;
