@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getFeaturedBoards } from "@/app/actions/folders";
 import { DashboardLayout } from "@/components/layout";
 import { DashboardContent } from "@/components/shared/dashboard-content";
+import { PaymentSuccessHandler } from "@/components/shared/payment-success-handler";
 import { syncUserToDatabase } from "@/lib/auth/sync";
 import { isUserInCache, clearUserCache } from "@/lib/middleware-cache";
 
@@ -55,7 +56,13 @@ export default async function DashboardPage({
 
   return (
     <DashboardLayout>
-      <DashboardContent initialFeaturedBoards={featuredBoards} />
+      {sessionId && typeof sessionId === "string" ? (
+        <PaymentSuccessHandler sessionId={sessionId}>
+          <DashboardContent initialFeaturedBoards={featuredBoards} />
+        </PaymentSuccessHandler>
+      ) : (
+        <DashboardContent initialFeaturedBoards={featuredBoards} />
+      )}
     </DashboardLayout>
   );
 }

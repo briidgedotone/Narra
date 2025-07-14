@@ -67,7 +67,14 @@ export default clerkMiddleware(async (auth, req) => {
   // Check if user has selected a plan before accessing dashboard
   if (requiresPlan(req) && !req.url.includes("/select-plan")) {
     if (!planId) {
-      return NextResponse.redirect(new URL("/select-plan", req.url));
+      // Check if this is a successful payment redirect with session_id
+      const url = new URL(req.url);
+      const sessionId = url.searchParams.get("session_id");
+
+      // Skip plan check if user is coming from successful payment
+      if (!sessionId) {
+        return NextResponse.redirect(new URL("/select-plan", req.url));
+      }
     }
   }
 

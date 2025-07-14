@@ -42,7 +42,7 @@ export function useBoard(boardId: string, isSharedView = false) {
     try {
       const result = isSharedView
         ? await getPublicBoardPosts(boardId)
-        : await getPostsInBoard(boardId, 50, 0);
+        : await getPostsInBoard(boardId, 1000, 0);
       if (result.success && result.data) {
         setPosts(result.data as unknown as SavedPost[]);
       } else {
