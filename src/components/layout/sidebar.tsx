@@ -43,6 +43,7 @@ import {
   PlusCircle,
   ChevronDown,
   ChevronUp,
+  ReceiptText,
 } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -68,7 +69,7 @@ const mainNavigation = [
 const adminNavigation = [{ name: "Admin", href: "/admin", icon: Shield }];
 
 const bottomNavigation = [
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Usage & Billing", href: "/settings", icon: ReceiptText },
 ];
 
 export function Sidebar() {

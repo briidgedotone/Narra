@@ -13,9 +13,7 @@ export default async function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6">
-        <UsagePage />
-      </div>
+      <UsagePage />
     </DashboardLayout>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -18,7 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatNumber, formatDate, parseWebVTT } from "@/lib/utils/format";
-import { proxyInstagramImage } from "@/lib/utils/image-proxy";
+import { proxyImage, proxyInstagramImage } from "@/lib/utils/image-proxy";
 import { VideoTranscript } from "@/types/content";
 import { Post, ActiveTab } from "@/types/discovery";
 
@@ -56,6 +56,38 @@ export function PostModal({
   onSetCarouselIndex,
   onLoadTranscript,
 }: PostModalProps) {
+  const [imageLoading, setImageLoading] = useState(true);
+
+  // Reset loading state when carousel index changes
+  useEffect(() => {
+    setImageLoading(true);
+  }, [currentCarouselIndex]);
+
+  // Preload adjacent images for better UX
+  useEffect(() => {
+    if (selectedPost?.isCarousel && selectedPost.carouselMedia) {
+      const nextIndex = currentCarouselIndex + 1;
+      const prevIndex = currentCarouselIndex - 1;
+      
+      // Preload next image
+      if (nextIndex < selectedPost.carouselMedia.length) {
+        const nextImage = document.createElement('img');
+        const nextUrl = selectedPost.platform === "instagram"
+          ? proxyInstagramImage(selectedPost.carouselMedia[nextIndex]?.url || "")
+          : proxyImage(selectedPost.carouselMedia[nextIndex]?.url, "tiktok");
+        nextImage.src = nextUrl;
+      }
+      
+      // Preload previous image
+      if (prevIndex >= 0) {
+        const prevImage = document.createElement('img');
+        const prevUrl = selectedPost.platform === "instagram"
+          ? proxyInstagramImage(selectedPost.carouselMedia[prevIndex]?.url || "")
+          : proxyImage(selectedPost.carouselMedia[prevIndex]?.url, "tiktok");
+        prevImage.src = prevUrl;
+      }
+    }
+  }, [currentCarouselIndex, selectedPost]);
   const handleLoadTranscript = () => {
     console.log("Load Transcript button clicked");
     if (selectedPost) {
@@ -114,8 +146,11 @@ export function PostModal({
                                     currentCarouselIndex
                                   ].thumbnail
                                 )
-                              : selectedPost.carouselMedia[currentCarouselIndex]
-                                  .thumbnail || "/placeholder-post.jpg"
+                              : proxyImage(
+                                  selectedPost.carouselMedia[currentCarouselIndex]
+                                    .thumbnail,
+                                  "tiktok"
+                                ) || "/placeholder-post.jpg"
                           }
                           className="w-full h-full object-cover"
                           autoPlay
@@ -125,26 +160,40 @@ export function PostModal({
                           controls
                         />
                       ) : (
-                        <Image
-                          key={
-                            selectedPost.carouselMedia?.[currentCarouselIndex]
-                              ?.id || currentCarouselIndex
-                          }
-                          src={
-                            selectedPost.platform === "instagram"
-                              ? proxyInstagramImage(
-                                  selectedPost.carouselMedia?.[
-                                    currentCarouselIndex
-                                  ]?.url || ""
-                                )
-                              : selectedPost.carouselMedia?.[
-                                  currentCarouselIndex
-                                ]?.url || ""
-                          }
-                          alt="Carousel item"
-                          fill
-                          className="object-cover"
-                        />
+                        <div className="relative w-full h-full">
+                          {imageLoading && (
+                            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                            </div>
+                          )}
+                          <img
+                            key={
+                              selectedPost.carouselMedia?.[currentCarouselIndex]
+                                ?.id || currentCarouselIndex
+                            }
+                            src={
+                              selectedPost.platform === "instagram"
+                                ? proxyInstagramImage(
+                                    selectedPost.carouselMedia?.[
+                                      currentCarouselIndex
+                                    ]?.url || ""
+                                  )
+                                : proxyImage(
+                                    selectedPost.carouselMedia?.[
+                                      currentCarouselIndex
+                                    ]?.url,
+                                    "tiktok"
+                                  )
+                            }
+                            alt="Carousel item"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            onLoad={() => setImageLoading(false)}
+                            onError={e => {
+                              setImageLoading(false);
+                              e.currentTarget.src = "/placeholder-post.jpg";
+                            }}
+                          />
+                        </div>
                       )}
 
                       {/* Carousel Navigation */}
@@ -182,44 +231,61 @@ export function PostModal({
                     </>
                   ) : (
                     // Single Media Display
-                    <video
-                      src={
-                        selectedPost.platform === "instagram"
-                          ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
-                          : selectedPost.embedUrl
-                      }
-                      poster={
-                        selectedPost.platform === "instagram"
-                          ? selectedPost.thumbnail
-                            ? proxyInstagramImage(selectedPost.thumbnail)
-                            : undefined
-                          : selectedPost.thumbnail
-                      }
-                      className="w-full h-full object-cover"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      controls
-                      onError={e => {
-                        // Fallback to image if video fails
-                        const img = document.createElement("img");
-                        img.src =
+                    selectedPost.isVideo ? (
+                      <video
+                        src={
+                          selectedPost.platform === "instagram"
+                            ? selectedPost.videoUrl 
+                              ? `/api/proxy-image?url=${encodeURIComponent(selectedPost.videoUrl)}`
+                              : `/api/proxy-image?url=${encodeURIComponent(selectedPost.embedUrl)}`
+                            : selectedPost.embedUrl
+                        }
+                        poster={
                           selectedPost.platform === "instagram"
                             ? selectedPost.thumbnail
                               ? proxyInstagramImage(selectedPost.thumbnail)
-                              : "/placeholder-post.jpg"
-                            : selectedPost.thumbnail || "/placeholder-post.jpg";
-                        img.className = "w-full h-full object-cover";
-                        img.alt = "Post thumbnail";
-                        if (e.currentTarget.parentNode) {
-                          e.currentTarget.parentNode.replaceChild(
-                            img,
-                            e.currentTarget
-                          );
+                              : undefined
+                            : proxyImage(selectedPost.thumbnail, "tiktok")
                         }
-                      }}
-                    />
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                        onError={e => {
+                          // Fallback to image if video fails
+                          const img = document.createElement("img");
+                          img.src =
+                            selectedPost.platform === "instagram"
+                              ? selectedPost.thumbnail
+                                ? proxyInstagramImage(selectedPost.thumbnail)
+                                : "/placeholder-post.jpg"
+                              : selectedPost.thumbnail || "/placeholder-post.jpg";
+                          img.className = "w-full h-full object-cover";
+                          img.alt = "Post thumbnail";
+                          if (e.currentTarget.parentNode) {
+                            e.currentTarget.parentNode.replaceChild(
+                              img,
+                              e.currentTarget
+                            );
+                          }
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={
+                          selectedPost.platform === "instagram"
+                            ? proxyInstagramImage(selectedPost.thumbnail || selectedPost.embedUrl)
+                            : selectedPost.thumbnail || selectedPost.embedUrl
+                        }
+                        alt="Post image"
+                        className="w-full h-full object-cover"
+                        onError={e => {
+                          e.currentTarget.src = "/placeholder-post.jpg";
+                        }}
+                      />
+                    )
                   )}
                 </div>
               </div>

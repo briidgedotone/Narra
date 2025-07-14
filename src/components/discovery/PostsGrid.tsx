@@ -13,8 +13,6 @@ import {
   Search,
   FileQuestion,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Eye,
   Share,
 } from "@/components/ui/icons";
@@ -344,14 +342,13 @@ export function PostsGrid({
                   // Single Media Display
                   <div className="w-full h-full">
                     {post.platform === "tiktok" ? (
-                      // TikTok Thumbnail Display (since direct video URLs don't work)
+                      // TikTok Thumbnail Display (now using AWEBP format)
                       <div className="relative w-full h-full">
                         {post.thumbnail ? (
-                          <Image
+                          <img
                             src={post.thumbnail}
                             alt="TikTok post thumbnail"
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                             onError={e => {
                               e.currentTarget.src = "/placeholder-post.jpg";
                             }}
@@ -361,12 +358,6 @@ export function PostsGrid({
                             <TiktokIcon className="w-12 h-12 text-gray-400" />
                           </div>
                         )}
-                        {/* TikTok Play Overlay */}
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                          <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
-                            <TiktokIcon className="w-8 h-8 text-black" />
-                          </div>
-                        </div>
                       </div>
                     ) : (
                       // Instagram video/image display
@@ -412,42 +403,6 @@ export function PostsGrid({
                 )}
               </div>
 
-              {/* Carousel Navigation Arrows */}
-              {post.isCarousel &&
-                post.carouselMedia &&
-                post.carouselMedia.length > 1 && (
-                  <>
-                    {/* Previous Arrow */}
-                    {getPostCarouselIndex(post.id) > 0 && (
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          onPostCarouselPrev(post.id);
-                        }}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                    )}
-
-                    {/* Next Arrow */}
-                    {getPostCarouselIndex(post.id) <
-                      post.carouselMedia.length - 1 && (
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          onPostCarouselNext(
-                            post.id,
-                            post.carouselMedia!.length
-                          );
-                        }}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-black rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    )}
-                  </>
-                )}
 
               {/* Carousel Indicator Dots */}
               {post.isCarousel &&
