@@ -78,7 +78,7 @@ export function TikTokEmbed({
   }
 
   return (
-    <div className={`tiktok-embed w-[325px] mx-auto ${className || ""}`}>
+    <div className={`tiktok-embed max-w-full mx-auto ${className || ""}`}>
       <div
         className="flex justify-center"
         dangerouslySetInnerHTML={{ __html: embedHtml }}

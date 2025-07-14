@@ -325,7 +325,42 @@
 .masonry-item {
   display: inline-block;
   width: 100%;
+  max-width: 100%;
   vertical-align: top;
   page-break-inside: avoid;
   break-inside: avoid;
+}
+
+/* Allow embeds to use their natural size but constrain max width */
+.masonry-item iframe,
+.masonry-item blockquote {
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* Make Instagram embeds responsive */
+.instagram-embed {
+  width: 100% !important;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.instagram-embed blockquote.instagram-media {
+  max-width: 100% !important;
+  width: 100% !important;
+  min-width: unset !important;
+}
+
+/* Scale Instagram embed content properly */
+@media (max-width: 640px) {
+  .instagram-embed {
+    max-width: 100%;
+  }
+}
+
+/* Same for TikTok embeds */
+.tiktok-embed {
+  width: 100% !important;
+  max-width: 340px;
+  margin: 0 auto;
 }

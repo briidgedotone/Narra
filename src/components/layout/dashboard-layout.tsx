@@ -52,7 +52,7 @@ export function DashboardLayout({ children, header }: DashboardLayoutProps) {
           )}
 
           {/* Main Content */}
-          <div className="flex-1 md:ml-[var(--sidebar-width)]">
+          <div className="flex-1 md:ml-[var(--sidebar-width)] overflow-x-hidden">
             {/* Mobile Menu Button */}
             <div className="md:hidden p-3 sm:p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
               <div className="flex items-center justify-between">

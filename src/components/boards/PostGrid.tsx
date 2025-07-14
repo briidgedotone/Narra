@@ -138,7 +138,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   // Main grid render - flexible layout for mixed content
   return (
     <div
-      className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4"
+      className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 max-w-full"
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
