@@ -174,9 +174,11 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
             );
           if (
             transcriptResult.success &&
-            (transcriptResult.data as any)?.transcript
+            (transcriptResult.data as { transcript?: string })?.transcript
           ) {
-            const rawTranscript = (transcriptResult.data as any).transcript;
+            const rawTranscript = (
+              transcriptResult.data as { transcript: string }
+            ).transcript;
             // Convert WebVTT format to plain text
             transcript = webvttToPlainText(rawTranscript);
           }
@@ -199,7 +201,9 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
             );
           if (transcriptResult.success && transcriptResult.data) {
             // Check if response has transcripts array (based on your example)
-            const data = transcriptResult.data as any;
+            const data = transcriptResult.data as {
+              transcripts?: Array<{ text: string }>;
+            };
             if (data.transcripts && data.transcripts.length > 0) {
               transcript = data.transcripts[0].text;
             }
@@ -339,7 +343,7 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Get all posts from user's boards
-    const allPosts: any[] = [];
+    const allPosts: Array<Record<string, unknown>> = [];
     for (const boardId of boardIds) {
       const posts = await db.getPostsInBoard(boardId, 999, 0); // Get all posts
       allPosts.push(...(posts?.filter(Boolean) || []));
@@ -347,15 +351,19 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
 
     // Remove duplicates and sort by date
     const uniquePosts = allPosts.filter(
-      (post: any, index: number, self: any[]) =>
-        index === self.findIndex((p: any) => p.id === post.id)
+      (post, index, self) =>
+        index ===
+        self.findIndex(
+          p => (p as { id: string }).id === (post as { id: string }).id
+        )
     );
 
     // Sort by date_posted descending and apply pagination
     const sortedPosts = uniquePosts
       .sort(
-        (a: any, b: any) =>
-          new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()
+        (a, b) =>
+          new Date((b as { datePosted: string }).datePosted).getTime() -
+          new Date((a as { datePosted: string }).datePosted).getTime()
       )
       .slice(offset, offset + limit);
 
@@ -377,5 +385,28 @@ export async function getPublicBoardPosts(publicId: string) {
   } catch (error) {
     console.error("Failed to get posts in board:", error);
     return { success: false, error: "Failed to load posts" };
+  }
+}
+
+export async function checkPostInUserBoards(
+  platformPostId: string,
+  platform: "tiktok" | "instagram"
+) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const boardsWithPost = await db.getBoardsContainingPlatformPost(
+      platformPostId,
+      platform,
+      userId
+    );
+    return { success: true, data: boardsWithPost };
+  } catch (error) {
+    console.error("Failed to check post in boards:", error);
+    return { success: false, error: "Failed to check post status" };
   }
 }

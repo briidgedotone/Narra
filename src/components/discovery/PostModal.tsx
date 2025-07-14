@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
-  ExternalLink,
   Heart,
   MessageCircle,
   Calendar,
@@ -390,10 +389,6 @@ export function PostModal({
                         >
                           <Bookmark className="w-4 h-4 mr-2" />
                           Save to Board
-                        </Button>
-                        <Button variant="outline">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Share
                         </Button>
                       </div>
                     </>

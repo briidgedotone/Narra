@@ -211,7 +211,7 @@ export class DatabaseService {
     // Transform data to include post counts
     return data?.map(folder => ({
       ...folder,
-      boards: folder.boards?.map((board: any) => ({
+      boards: folder.boards?.map((board: { board_posts?: unknown[] }) => ({
         ...board,
         post_count: board.board_posts?.length || 0,
       })),
@@ -295,9 +295,9 @@ export class DatabaseService {
         ...data,
         posts:
           data.board_posts
-            ?.map((bp: any) => {
-              const post = bp.posts;
-              const profile = post?.profiles;
+            ?.map((bp: { posts: unknown; added_at: string }) => {
+              const post = bp.posts as Record<string, unknown>;
+              const profile = post?.profiles as Record<string, unknown>;
 
               if (!post) return null;
 
@@ -315,12 +315,14 @@ export class DatabaseService {
                 thumbnail: post.thumbnail,
                 isVideo: post.is_video,
                 isCarousel: post.is_carousel,
-                carouselMedia: post.carousel_media?.map((item: any) => ({
-                  id: item.id,
-                  type: item.type,
-                  url: item.url,
-                  thumbnail: item.thumbnail,
-                  isVideo: item.is_video,
+                carouselMedia: (
+                  post.carousel_media as Array<Record<string, unknown>>
+                )?.map(item => ({
+                  id: item.id as string,
+                  type: item.type as string,
+                  url: item.url as string,
+                  thumbnail: item.thumbnail as string,
+                  isVideo: item.is_video as boolean,
                 })),
                 carouselCount: post.carousel_count,
                 videoUrl: post.video_url || undefined,
@@ -533,8 +535,8 @@ export class DatabaseService {
         // Add follow metadata
         created_at: item.created_at, // when user followed this profile
         last_updated:
-          (item.profiles as any)?.last_updated ||
-          (item.profiles as any)?.created_at, // when profile data was last fetched
+          (item.profiles as Record<string, unknown>)?.last_updated ||
+          (item.profiles as Record<string, unknown>)?.created_at, // when profile data was last fetched
       }))
       .filter(Boolean);
   }
@@ -728,7 +730,7 @@ export class DatabaseService {
         if (follow.profiles) {
           const profile = Array.isArray(follow.profiles)
             ? follow.profiles[0]
-            : follow.profiles;
+            : (follow.profiles as Record<string, unknown>);
           if (profile) {
             activities.push({
               type: "followed_profile",
@@ -986,6 +988,48 @@ export class DatabaseService {
 
     if (error) throw error;
     return data || [];
+  }
+
+  // Check which boards contain a specific post by platform ID
+  async getBoardsContainingPlatformPost(
+    platformPostId: string,
+    platform: "tiktok" | "instagram",
+    userId: string
+  ) {
+    const { data, error } = await this.client
+      .from("board_posts")
+      .select(
+        `
+        board_id,
+        boards!inner(
+          id,
+          name,
+          folders!inner(
+            id,
+            name,
+            user_id
+          )
+        ),
+        posts!inner(
+          platform_post_id,
+          platform
+        )
+      `
+      )
+      .eq("posts.platform_post_id", platformPostId)
+      .eq("posts.platform", platform)
+      .eq("boards.folders.user_id", userId);
+
+    if (error) throw error;
+
+    return (
+      data?.map(item => ({
+        boardId: item.board_id,
+        boardName: item.boards.name,
+        folderId: item.boards.folders.id,
+        folderName: item.boards.folders.name,
+      })) || []
+    );
   }
 }
 
