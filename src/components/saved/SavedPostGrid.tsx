@@ -84,7 +84,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
     // Main grid render
     return (
       <div
-        className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 masonry-container"
+        className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 masonry-container max-w-full"
         role="grid"
         aria-label={`${posts.length} saved posts`}
       >

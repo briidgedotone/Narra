@@ -172,7 +172,7 @@ export function FollowingContent({
         ) : (
           <>
             {/* Posts Grid */}
-            <div className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4">
+            <div className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 max-w-full">
               {posts.map(post => (
                 <div
                   key={post.id}
