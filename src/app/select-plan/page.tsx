@@ -10,6 +10,7 @@ export default function SelectPlanPage() {
     "monthly"
   );
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const plans = [
     {
@@ -75,7 +76,7 @@ export default function SelectPlanPage() {
   ];
 
   const handleSelectPlan = async (planId: string) => {
-    setSelectedPlan(planId);
+    setLoadingPlan(planId);
 
     try {
       const response = await fetch("/api/stripe/checkout", {
@@ -96,9 +97,11 @@ export default function SelectPlanPage() {
         window.location.href = data.url;
       } else {
         console.error("Failed to create checkout session");
+        setLoadingPlan(null);
       }
     } catch (error) {
       console.error("Error:", error);
+      setLoadingPlan(null);
     }
   };
 
@@ -149,13 +152,7 @@ export default function SelectPlanPage() {
           {plans.map(plan => (
             <div
               key={plan.id}
-              className={`transition-all flex-shrink-0 ${
-                plan.id === 'growth' 
-                  ? '' 
-                  : selectedPlan === plan.id
-                    ? "border-2 border-blue-500"
-                    : "border-2 border-gray-200"
-              }`}
+              className="transition-all flex-shrink-0 border-2 border-gray-200 relative overflow-hidden"
               style={{ 
                 width: '459px', 
                 padding: '32px', 
@@ -166,7 +163,8 @@ export default function SelectPlanPage() {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 borderRadius: '16px',
-                boxShadow: plan.id === 'growth' ? '0 8px 32px rgba(0, 0, 0, 0.15)' : 'none'
+                boxShadow: plan.id === 'growth' ? '0 8px 32px rgba(0, 0, 0, 0.15)' : 'none',
+                border: plan.id === 'growth' ? 'none' : undefined
               }}
             >
               <div className="flex items-center justify-between mb-2">
@@ -245,15 +243,25 @@ export default function SelectPlanPage() {
               <Button
                 onClick={() => handleSelectPlan(plan.id)}
                 className="w-full"
+                disabled={loadingPlan === plan.id}
                 style={{ 
                   backgroundColor: plan.id === 'growth' ? '#ffffff' : '#000000', 
                   color: plan.id === 'growth' ? '#000000' : '#ffffff', 
                   fontSize: '14px',
                   border: 'none',
-                  padding: '18px 24px'
+                  padding: '18px 24px',
+                  cursor: 'pointer',
+                  opacity: loadingPlan === plan.id ? 0.7 : 1
                 }}
               >
-                {plan.id === 'enterprise' ? 'Contact Us' : '3-Day Free Trial'}
+                {loadingPlan === plan.id ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    Loading...
+                  </div>
+                ) : (
+                  plan.id === 'enterprise' ? 'Contact Us' : '3-Day Free Trial'
+                )}
               </Button>
             </div>
           ))}
