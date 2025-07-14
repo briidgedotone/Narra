@@ -5,13 +5,29 @@ import { getFeaturedBoards } from "@/app/actions/folders";
 import { DashboardLayout } from "@/components/layout";
 import { DashboardContent } from "@/components/shared/dashboard-content";
 import { syncUserToDatabase } from "@/lib/auth/sync";
-import { isUserInCache } from "@/lib/middleware-cache";
+import { isUserInCache, clearUserCache } from "@/lib/middleware-cache";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Get search params to check for successful payment redirect
+  const params = await searchParams;
+  const sessionId = params.session_id;
+
+  // If coming from successful payment, clear cache to ensure fresh plan data
+  if (sessionId && typeof sessionId === "string") {
+    clearUserCache(userId);
+    console.log(
+      `Cleared cache for user ${userId} after payment success redirect`
+    );
   }
 
   // Sync user to database only if not in cache (new user or cache miss)

@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { clearUserCache } from "@/lib/middleware-cache";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
 });
@@ -90,6 +92,12 @@ export async function POST(req: NextRequest) {
             console.error("Error creating subscription:", subError);
             throw subError;
           }
+
+          // Clear the user cache so middleware will fetch fresh plan data
+          clearUserCache(userId);
+          console.log(
+            `Cleared cache for user ${userId} after successful payment`
+          );
         }
         break;
       }
@@ -132,6 +140,12 @@ export async function POST(req: NextRequest) {
                 subscription.status === "active" ? "active" : "inactive",
             })
             .eq("id", subData.user_id);
+
+          // Clear cache when subscription status changes
+          clearUserCache(subData.user_id);
+          console.log(
+            `Cleared cache for user ${subData.user_id} after subscription update`
+          );
         }
         break;
       }
@@ -185,6 +199,12 @@ export async function POST(req: NextRequest) {
               plan_id: null,
             })
             .eq("id", subData.user_id);
+
+          // Clear cache when subscription is canceled
+          clearUserCache(subData.user_id);
+          console.log(
+            `Cleared cache for user ${subData.user_id} after subscription cancellation`
+          );
         }
         break;
       }
