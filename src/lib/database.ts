@@ -535,8 +535,14 @@ export class DatabaseService {
         // Add follow metadata
         created_at: item.created_at, // when user followed this profile
         last_updated:
-          (item.profiles as Record<string, unknown>)?.last_updated ||
-          (item.profiles as Record<string, unknown>)?.created_at, // when profile data was last fetched
+          (Array.isArray(item.profiles)
+            ? item.profiles[0]
+            : (item.profiles as Record<string, unknown>)
+          )?.last_updated ||
+          (Array.isArray(item.profiles)
+            ? item.profiles[0]
+            : (item.profiles as Record<string, unknown>)
+          )?.created_at, // when profile data was last fetched
       }))
       .filter(Boolean);
   }
@@ -1025,9 +1031,9 @@ export class DatabaseService {
     return (
       data?.map(item => ({
         boardId: item.board_id,
-        boardName: item.boards.name,
-        folderId: item.boards.folders.id,
-        folderName: item.boards.folders.name,
+        boardName: (item.boards as any).name,
+        folderId: (item.boards as any).folders.id,
+        folderName: (item.boards as any).folders.name,
       })) || []
     );
   }

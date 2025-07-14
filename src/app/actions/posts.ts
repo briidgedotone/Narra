@@ -347,10 +347,18 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
     }
 
     // Get all posts from user's boards
-    const allPosts: Array<Record<string, unknown>> = [];
+    const allPosts: Array<
+      NonNullable<Awaited<ReturnType<typeof db.getPostsInBoard>>[number]>
+    > = [];
     for (const boardId of boardIds) {
       const posts = await db.getPostsInBoard(boardId, 999, 0); // Get all posts
-      allPosts.push(...(posts?.filter(Boolean) || []));
+      if (posts) {
+        const validPosts = posts.filter(
+          (post): post is NonNullable<typeof post> =>
+            post != null && post.profile != null
+        );
+        allPosts.push(...validPosts);
+      }
     }
 
     // Remove duplicates and sort by date
@@ -369,7 +377,27 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
           new Date((b as { datePosted: string }).datePosted).getTime() -
           new Date((a as { datePosted: string }).datePosted).getTime()
       )
-      .slice(offset, offset + limit);
+      .slice(offset, offset + limit)
+      .map(post => ({
+        id: post.id as string,
+        embedUrl: post.embedUrl as string,
+        ...(post.originalUrl && { originalUrl: post.originalUrl as string }),
+        caption: post.caption as string,
+        metrics: post.metrics as {
+          views?: number;
+          likes: number;
+          comments: number;
+          shares?: number;
+        },
+        datePosted: post.datePosted as string,
+        platform: post.platform as "instagram" | "tiktok",
+        profile: {
+          handle: (post.profile as any).handle,
+          displayName: (post.profile as any).displayName,
+          avatarUrl: (post.profile as any).avatarUrl,
+          verified: (post.profile as any).verified,
+        },
+      }));
 
     return { success: true, data: sortedPosts };
   } catch (error) {

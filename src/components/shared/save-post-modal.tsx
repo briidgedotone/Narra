@@ -88,7 +88,7 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
             post.platformPostId,
             post.platform
           );
-          if (result.success) {
+          if (result.success && result.data) {
             setBoardsWithPost(
               result.data.map((board: { boardId: string }) => board.boardId)
             );
