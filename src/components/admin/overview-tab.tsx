@@ -7,8 +7,7 @@ import {
   getAdminBoards,
   setFeaturedBoard,
 } from "@/app/actions/folders";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, PlusCircle } from "@/components/ui/icons";
+import { PlusCircle } from "@/components/ui/icons";
 import { supabase } from "@/lib/supabase";
 
 // Function to fetch real admin stats
@@ -313,7 +312,6 @@ export function OverviewTab() {
     }
     return num.toString();
   };
-
 
   // Empty state collections for admin
   const emptyCollections = [

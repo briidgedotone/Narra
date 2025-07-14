@@ -71,8 +71,6 @@ export function PostsGrid({
   onPlatformChange,
   onResetSearch,
   getPostCarouselIndex,
-  onPostCarouselNext,
-  onPostCarouselPrev,
 }: PostsGridProps) {
   // Empty state when no search
   if (!searchResults && !isLoading && !hasSearched) {
@@ -402,7 +400,6 @@ export function PostsGrid({
                   </div>
                 )}
               </div>
-
 
               {/* Carousel Indicator Dots */}
               {post.isCarousel &&

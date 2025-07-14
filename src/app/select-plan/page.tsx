@@ -9,7 +9,6 @@ export default function SelectPlanPage() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const plans = [
@@ -126,7 +125,8 @@ export default function SelectPlanPage() {
                   : "text-gray-600 hover:text-gray-800"
               }`}
               style={{
-                backgroundColor: billingPeriod === "monthly" ? "#3C82F6" : "transparent"
+                backgroundColor:
+                  billingPeriod === "monthly" ? "#3C82F6" : "transparent",
               }}
             >
               Monthly
@@ -139,7 +139,8 @@ export default function SelectPlanPage() {
                   : "text-gray-600 hover:text-gray-800"
               }`}
               style={{
-                backgroundColor: billingPeriod === "yearly" ? "#3C82F6" : "transparent"
+                backgroundColor:
+                  billingPeriod === "yearly" ? "#3C82F6" : "transparent",
               }}
             >
               Yearly (Save 30%)
@@ -148,110 +149,156 @@ export default function SelectPlanPage() {
         </div>
 
         {/* Plans Grid */}
-        <div className="flex flex-col lg:flex-row justify-center items-center" style={{ gap: '32px' }}>
+        <div
+          className="flex flex-col lg:flex-row justify-center items-center"
+          style={{ gap: "32px" }}
+        >
           {plans.map(plan => (
             <div
               key={plan.id}
               className="transition-all flex-shrink-0 border-2 border-gray-200 relative overflow-hidden"
-              style={{ 
-                width: '459px', 
-                padding: '32px', 
-                minWidth: '459px',
-                backgroundColor: plan.id === 'growth' ? 'transparent' : '#ffffff',
-                backgroundImage: plan.id === 'growth' ? 'url(/growth-plan-bg.png)' : 'none',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                borderRadius: '16px',
-                boxShadow: plan.id === 'growth' ? '0 8px 32px rgba(0, 0, 0, 0.15)' : 'none',
-                border: plan.id === 'growth' ? 'none' : undefined
+              style={{
+                width: "459px",
+                padding: "32px",
+                minWidth: "459px",
+                backgroundColor:
+                  plan.id === "growth" ? "transparent" : "#ffffff",
+                backgroundImage:
+                  plan.id === "growth" ? "url(/growth-plan-bg.png)" : "none",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                borderRadius: "16px",
+                boxShadow:
+                  plan.id === "growth"
+                    ? "0 8px 32px rgba(0, 0, 0, 0.15)"
+                    : "none",
+                border: plan.id === "growth" ? "none" : undefined,
               }}
             >
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold" style={{ 
-                  fontSize: '24px',
-                  color: plan.id === 'growth' ? '#ffffff' : '#000000'
-                }}>{plan.name}</h2>
-                {plan.id === 'growth' && (
-                  <span style={{
-                    backgroundColor: '#ffffff',
-                    color: '#3C82F6',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    padding: '4px 12px',
-                    borderRadius: '12px'
-                  }}>
+                <h2
+                  className="font-semibold"
+                  style={{
+                    fontSize: "24px",
+                    color: plan.id === "growth" ? "#ffffff" : "#000000",
+                  }}
+                >
+                  {plan.name}
+                </h2>
+                {plan.id === "growth" && (
+                  <span
+                    style={{
+                      backgroundColor: "#ffffff",
+                      color: "#3C82F6",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      padding: "4px 12px",
+                      borderRadius: "12px",
+                    }}
+                  >
                     Most Popular
                   </span>
                 )}
               </div>
-              <p style={{ 
-                fontSize: '18px', 
-                color: plan.id === 'growth' ? '#ffffff' : '#6b7280'
-              }}>3-Day Free Trial</p>
+              <p
+                style={{
+                  fontSize: "18px",
+                  color: plan.id === "growth" ? "#ffffff" : "#6b7280",
+                }}
+              >
+                3-Day Free Trial
+              </p>
 
-              <div style={{ marginTop: '32px', marginBottom: '32px' }}>
-                <span style={{ 
-                  fontSize: '36px', 
-                  color: plan.id === 'growth' ? '#ffffff' : '#3b82f6', 
-                  fontWeight: 'bold' 
-                }}>
-                  {typeof plan.monthlyPrice === 'string' ? '' : '$'}
+              <div style={{ marginTop: "32px", marginBottom: "32px" }}>
+                <span
+                  style={{
+                    fontSize: "36px",
+                    color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {typeof plan.monthlyPrice === "string" ? "" : "$"}
                   {billingPeriod === "monthly"
                     ? plan.monthlyPrice
                     : plan.yearlyPrice}
                 </span>
-                {typeof plan.monthlyPrice !== 'string' && (
-                  <span style={{ 
-                    color: plan.id === 'growth' ? '#ffffff' : '#3b82f6',
-                    fontSize: '36px',
-                    fontWeight: 'bold'
-                  }}>
+                {typeof plan.monthlyPrice !== "string" && (
+                  <span
+                    style={{
+                      color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
+                      fontSize: "36px",
+                      fontWeight: "bold",
+                    }}
+                  >
                     /{billingPeriod === "monthly" ? "month" : "year"}
                   </span>
                 )}
               </div>
 
               {/* Horizontal line separator */}
-              <hr style={{ 
-                border: 'none', 
-                borderTop: plan.id === 'growth' ? '1px solid #ffffff' : '1px solid #e5e7eb', 
-                margin: '32px 0' 
-              }} />
+              <hr
+                style={{
+                  border: "none",
+                  borderTop:
+                    plan.id === "growth"
+                      ? "1px solid #ffffff"
+                      : "1px solid #e5e7eb",
+                  margin: "32px 0",
+                }}
+              />
 
-              <ul className="mb-6" style={{ gap: '12px', display: 'flex', flexDirection: 'column' }}>
+              <ul
+                className="mb-6"
+                style={{
+                  gap: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <Check className={`h-5 w-5 mr-2 flex-shrink-0 mt-0.5 ${
-                      plan.id === 'growth' ? 'text-white' : 'text-green-500'
-                    }`} />
-                    <span style={{ 
-                      fontSize: '16px', 
-                      color: plan.id === 'growth' ? '#ffffff' : '#6b7280' 
-                    }}>{feature}</span>
+                    <Check
+                      className={`h-5 w-5 mr-2 flex-shrink-0 mt-0.5 ${
+                        plan.id === "growth" ? "text-white" : "text-green-500"
+                      }`}
+                    />
+                    <span
+                      style={{
+                        fontSize: "16px",
+                        color: plan.id === "growth" ? "#ffffff" : "#6b7280",
+                      }}
+                    >
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
 
               {/* Horizontal line separator */}
-              <hr style={{ 
-                border: 'none', 
-                borderTop: plan.id === 'growth' ? '1px solid #ffffff' : '1px solid #e5e7eb', 
-                margin: '32px 0' 
-              }} />
+              <hr
+                style={{
+                  border: "none",
+                  borderTop:
+                    plan.id === "growth"
+                      ? "1px solid #ffffff"
+                      : "1px solid #e5e7eb",
+                  margin: "32px 0",
+                }}
+              />
 
               <Button
                 onClick={() => handleSelectPlan(plan.id)}
                 className="w-full"
                 disabled={loadingPlan === plan.id}
-                style={{ 
-                  backgroundColor: plan.id === 'growth' ? '#ffffff' : '#000000', 
-                  color: plan.id === 'growth' ? '#000000' : '#ffffff', 
-                  fontSize: '14px',
-                  border: 'none',
-                  padding: '18px 24px',
-                  cursor: 'pointer',
-                  opacity: loadingPlan === plan.id ? 0.7 : 1
+                style={{
+                  backgroundColor: plan.id === "growth" ? "#ffffff" : "#000000",
+                  color: plan.id === "growth" ? "#000000" : "#ffffff",
+                  fontSize: "14px",
+                  border: "none",
+                  padding: "18px 24px",
+                  cursor: "pointer",
+                  opacity: loadingPlan === plan.id ? 0.7 : 1,
                 }}
               >
                 {loadingPlan === plan.id ? (
@@ -259,8 +306,10 @@ export default function SelectPlanPage() {
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                     Loading...
                   </div>
+                ) : plan.id === "enterprise" ? (
+                  "Contact Us"
                 ) : (
-                  plan.id === 'enterprise' ? 'Contact Us' : '3-Day Free Trial'
+                  "3-Day Free Trial"
                 )}
               </Button>
             </div>

@@ -49,7 +49,7 @@ import {
   FavouriteCircleIcon,
   Calendar03Icon,
   LaptopVideoIcon,
-  SecurityIcon,
+  // SecurityIcon, // Unused
   Invoice01Icon,
   Invoice02Icon,
   Dollar01Icon,

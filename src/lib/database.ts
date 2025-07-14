@@ -465,10 +465,7 @@ export class DatabaseService {
           isCarousel: post.is_carousel,
           carouselMedia: post.carousel_media,
           carouselCount: post.carousel_count,
-          videoUrl: post.video_url || undefined,
-          displayUrl: post.display_url || undefined,
           shortcode: post.shortcode,
-          dimensions: post.dimensions || undefined,
           profile: profile
             ? {
                 id: profile.id,

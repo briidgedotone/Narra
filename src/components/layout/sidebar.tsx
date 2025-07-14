@@ -34,7 +34,6 @@ import {
   Search,
   Bookmark,
   Users,
-  Settings,
   Shield,
   Clipboard,
   // Folder, // Not currently used
