@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Suspense, lazy } from "react";
 
+import { getUserFoldersWithBoards } from "@/app/actions/folders";
 import { DashboardLayout } from "@/components/layout";
 import { LoadingSpinner } from "@/components/ui/loading";
 
@@ -19,6 +20,17 @@ export default async function BoardsPage() {
     redirect("/sign-in");
   }
 
+  // Pre-fetch folders and boards data on server
+  let initialFolders = [];
+  try {
+    const result = await getUserFoldersWithBoards();
+    if (result.success) {
+      initialFolders = result.data || [];
+    }
+  } catch (error) {
+    console.error("Failed to load folders:", error);
+  }
+
   return (
     <DashboardLayout>
       <Suspense
@@ -31,7 +43,7 @@ export default async function BoardsPage() {
           </div>
         }
       >
-        <BoardsPageContent />
+        <BoardsPageContent initialFolders={initialFolders} />
       </Suspense>
     </DashboardLayout>
   );

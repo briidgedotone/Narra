@@ -16,8 +16,32 @@ import {
 } from "@/components/ui/icons";
 import { useFolders } from "@/hooks/useFolders";
 
-export function BoardsPageContent() {
-  const { folders, isLoading, createNewBoard, createNewFolder } = useFolders();
+interface Folder {
+  id: string;
+  name: string;
+  boards: Array<{
+    id: string;
+    name: string;
+  }>;
+}
+
+interface BoardsPageContentProps {
+  initialFolders?: Folder[];
+}
+
+export function BoardsPageContent({
+  initialFolders = [],
+}: BoardsPageContentProps) {
+  const {
+    folders: hookFolders,
+    isLoading: hookLoading,
+    createNewBoard,
+    createNewFolder,
+  } = useFolders();
+
+  // Use initial data if available, otherwise fall back to hook data
+  const folders = initialFolders.length > 0 ? initialFolders : hookFolders;
+  const isLoading = initialFolders.length > 0 ? false : hookLoading;
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set()
   );
