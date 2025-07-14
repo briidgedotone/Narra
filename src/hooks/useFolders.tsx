@@ -8,6 +8,7 @@ import React, {
   ReactNode,
   useCallback,
   useRef,
+  useMemo,
 } from "react";
 import { toast } from "sonner";
 
@@ -61,58 +62,36 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
     foldersRef.current = folders;
   }, [folders]);
 
-  const loadFolders = useCallback(
-    async (forceRefresh: boolean = false) => {
-      const now = Date.now();
-      const timeSinceLastFetch = now - lastFetchTimeRef.current;
+  const loadFolders = useCallback(async (forceRefresh: boolean = false) => {
+    const now = Date.now();
+    const timeSinceLastFetch = now - lastFetchTimeRef.current;
 
-      console.log("🔍 loadFolders called:", {
-        forceRefresh,
-        foldersCount: foldersRef.current.length,
-        timeSinceLastFetch: `${timeSinceLastFetch}ms`,
-        cacheThreshold: `${CACHE_DURATION}ms`,
-        shouldSkip:
-          !forceRefresh &&
-          foldersRef.current.length > 0 &&
-          timeSinceLastFetch < CACHE_DURATION,
-      });
+    // Skip if data is fresh and not forcing refresh
+    if (
+      !forceRefresh &&
+      foldersRef.current.length > 0 &&
+      timeSinceLastFetch < CACHE_DURATION
+    ) {
+      return;
+    }
 
-      // Skip if data is fresh and not forcing refresh
-      if (
-        !forceRefresh &&
-        foldersRef.current.length > 0 &&
-        timeSinceLastFetch < CACHE_DURATION
-      ) {
-        console.log("⏭️ Skipping folders load (cache still fresh)");
-        return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await getUserFoldersWithBoards();
+      if (result.success && result.data) {
+        setFolders(result.data);
+        lastFetchTimeRef.current = now;
+      } else {
+        setError(result.error || "Failed to load folders");
       }
-
-      console.log("📡 Loading folders from API...");
-      setIsLoading(true);
-      setError(null);
-      try {
-        const result = await getUserFoldersWithBoards();
-        if (result.success && result.data) {
-          setFolders(result.data);
-          lastFetchTimeRef.current = now;
-          console.log(
-            "✅ Folders loaded successfully:",
-            result.data.length,
-            "folders"
-          );
-        } else {
-          setError(result.error || "Failed to load folders");
-          console.error("❌ Failed to load folders:", result.error);
-        }
-      } catch (err) {
-        console.error("Failed to load folders:", err);
-        setError("Failed to load folders");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [CACHE_DURATION]
-  );
+    } catch (err) {
+      console.error("Failed to load folders:", err);
+      setError("Failed to load folders");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const refreshFolders = useCallback(async () => {
     await loadFolders(true);
@@ -199,15 +178,26 @@ export function FoldersProvider({ children }: FoldersProviderProps) {
     loadFolders();
   }, [loadFolders]);
 
-  const value: FoldersContextValue = {
-    folders,
-    isLoading,
-    error,
-    loadFolders,
-    createNewBoard,
-    createNewFolder,
-    refreshFolders,
-  };
+  const value = useMemo<FoldersContextValue>(
+    () => ({
+      folders,
+      isLoading,
+      error,
+      loadFolders,
+      createNewBoard,
+      createNewFolder,
+      refreshFolders,
+    }),
+    [
+      folders,
+      isLoading,
+      error,
+      loadFolders,
+      createNewBoard,
+      createNewFolder,
+      refreshFolders,
+    ]
+  );
 
   return (
     <FoldersContext.Provider value={value}>{children}</FoldersContext.Provider>
