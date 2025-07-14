@@ -3,8 +3,6 @@
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 
-import { isUserAdmin } from "@/lib/auth/admin";
-
 /**
  * Hook to check if current user is admin
  * @returns {isAdmin: boolean, isLoading: boolean}
@@ -23,10 +21,13 @@ export function useAdmin() {
       }
 
       try {
-        const adminStatus = await isUserAdmin(user.id);
-        setIsAdmin(adminStatus);
+        console.log(`🔍 [useAdmin] Checking admin status for user ${user.id}`);
+        const response = await fetch("/api/auth/admin-status");
+        const data = await response.json();
+        console.log(`📊 [useAdmin] Admin status response:`, data);
+        setIsAdmin(data.isAdmin || false);
       } catch (error) {
-        console.error("Error checking admin status:", error);
+        console.error("❌ [useAdmin] Error checking admin status:", error);
         setIsAdmin(false);
       } finally {
         setIsLoading(false);

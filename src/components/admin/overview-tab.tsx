@@ -8,44 +8,27 @@ import {
   setFeaturedBoard,
 } from "@/app/actions/folders";
 import { PlusCircle } from "@/components/ui/icons";
-import { supabase } from "@/lib/supabase";
-
-// Function to fetch real admin stats
+// Function to fetch real admin stats via API
 async function getAdminStats() {
   try {
-    // Get total users count
-    const { count: totalUsers } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true });
+    console.log("🔍 [Overview Tab] Fetching admin stats via API...");
+    const response = await fetch("/api/admin/stats");
 
-    // Get new users this month
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
-    const { count: newUsersThisMonth } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .gte("created_at", startOfMonth.toISOString());
-
-    // Get total boards count (collections)
-    const { count: totalCollections } = await supabase
-      .from("boards")
-      .select("*", { count: "exact", head: true });
-
-    // Get total posts count
-    const { count: totalPosts } = await supabase
-      .from("posts")
-      .select("*", { count: "exact", head: true });
+    const stats = await response.json();
+    console.log("📊 [Overview Tab] Admin stats fetched:", stats);
 
     return {
-      totalUsers: totalUsers || 0,
-      newUsersThisMonth: newUsersThisMonth || 0,
-      totalCollections: totalCollections || 0,
-      totalPosts: totalPosts || 0,
+      totalUsers: stats.totalUsers || 0,
+      newUsersThisMonth: stats.newUsersThisMonth || 0,
+      totalCollections: stats.totalCollections || 0,
+      totalPosts: stats.totalPosts || 0,
     };
   } catch (error) {
-    console.error("Error fetching admin stats:", error);
+    console.error("❌ [Overview Tab] Error fetching admin stats:", error);
     return {
       totalUsers: 0,
       newUsersThisMonth: 0,
