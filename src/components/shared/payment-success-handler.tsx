@@ -127,8 +127,10 @@ export function PaymentSuccessHandler({
             </p>
             <button
               onClick={() => {
+                // Add payment_bypass parameter to allow dashboard access temporarily
                 const url = new URL(window.location.href);
                 url.searchParams.delete("session_id");
+                url.searchParams.set("payment_bypass", "true");
                 router.replace(url.pathname + url.search);
               }}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

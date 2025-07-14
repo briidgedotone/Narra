@@ -67,12 +67,13 @@ export default clerkMiddleware(async (auth, req) => {
   // Check if user has selected a plan before accessing dashboard
   if (requiresPlan(req) && !req.url.includes("/select-plan")) {
     if (!planId) {
-      // Check if this is a successful payment redirect with session_id
+      // Check if this is a successful payment redirect with session_id or payment bypass
       const url = new URL(req.url);
       const sessionId = url.searchParams.get("session_id");
+      const paymentBypass = url.searchParams.get("payment_bypass");
 
-      // Skip plan check if user is coming from successful payment
-      if (!sessionId) {
+      // Skip plan check if user is coming from successful payment or has payment bypass
+      if (!sessionId && !paymentBypass) {
         return NextResponse.redirect(new URL("/select-plan", req.url));
       }
     }
