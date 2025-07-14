@@ -204,7 +204,11 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
             const data = transcriptResult.data as {
               transcripts?: Array<{ text: string }>;
             };
-            if (data.transcripts && data.transcripts.length > 0) {
+            if (
+              data.transcripts &&
+              data.transcripts.length > 0 &&
+              data.transcripts[0]
+            ) {
               transcript = data.transcripts[0].text;
             }
           }
