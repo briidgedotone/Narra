@@ -78,26 +78,15 @@ export default function SelectPlanPage() {
     setLoadingPlan(planId);
 
     try {
-      const response = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planId,
-          billingPeriod,
-        }),
-      });
+      // TODO: Implement alternative payment processing or plan activation
+      console.log("Selected plan:", planId, "billing period:", billingPeriod);
 
-      const data = await response.json();
+      // For now, show an alert that payment processing is not implemented
+      alert(
+        "Plan selection functionality is available but payment processing has been removed. Please implement alternative payment method."
+      );
 
-      if (data.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        console.error("Failed to create checkout session");
-        setLoadingPlan(null);
-      }
+      setLoadingPlan(null);
     } catch (error) {
       console.error("Error:", error);
       setLoadingPlan(null);

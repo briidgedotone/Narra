@@ -120,21 +120,6 @@ export interface Follow {
   last_refresh?: string;
 }
 
-// Stripe subscription data
-export interface Subscription {
-  id: string;
-  user_id: string;
-  stripe_customer_id: string;
-  stripe_subscription_id: string;
-  plan_id: string;
-  status: "active" | "inactive" | "trialing" | "past_due" | "canceled";
-  current_period_start: string;
-  current_period_end: string;
-  cancel_at_period_end: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 // Database table names
 export type TableName =
   | "users"
@@ -184,11 +169,6 @@ export interface Database {
         Row: Follow;
         Insert: Omit<Follow, "id" | "created_at" | "last_refresh">;
         Update: Partial<Pick<Follow, "last_refresh">>;
-      };
-      subscriptions: {
-        Row: Subscription;
-        Insert: Omit<Subscription, "id" | "created_at" | "updated_at">;
-        Update: Partial<Omit<Subscription, "id" | "user_id" | "created_at">>;
       };
     };
   };

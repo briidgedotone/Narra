@@ -1,24 +1,28 @@
 {
-    "mcpServers": {
-      "@21st-dev/magic": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@21st-dev/magic@latest",
-          "API_KEY=\"0502b01f47a97dbf58d955c02c7a79e8aa4ee47a34f1f2901c27532e5cc7c92a\""
-        ]
-      },
-      "supabase": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@supabase/mcp-server-supabase@latest",
-          "--access-token",
-          "sbp_cb30880514358363587c8d552ab54367f6c746d4"
-        ]
+  "mcpServers": {
+    "@21st-dev/magic": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@21st-dev/magic@latest",
+        "API_KEY=\"0502b01f47a97dbf58d955c02c7a79e8aa4ee47a34f1f2901c27532e5cc7c92a\""
+      ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_cb30880514358363587c8d552ab54367f6c746d4"
+      ]
+    },
+    "stripe": {
+      "command": "npx",
+      "args": ["-y", "@stripe/mcp", "--tools=all"],
+      "env": {
+        "STRIPE_SECRET_KEY": "sk_test_51N4ZQWL1PtCEN6o2nXaEiodqc6XgpUOAhzHRPYN0i8Lnrp3xsBfrdPDUHyXNhjqXihobtp8ORj55zHlo2waEXgcd000v2T3ktF"
       }
     }
   }
-  
-  
-  
+}

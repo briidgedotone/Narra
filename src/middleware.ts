@@ -14,15 +14,11 @@ const isPublicRoute = createRouteMatcher([
   "/api/transcript", // Allow public access to transcript API
   "/api/instagram-embed", // Allow public access to Instagram embed API
   "/api/proxy-image", // Allow public access to image proxy
-  "/api/stripe/webhooks", // Allow Stripe webhook access
   "/api/webhook/clerk", // Allow Clerk webhook access
 ]);
 
 // Define admin-only routes
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-
-// Define routes that require plan selection
-const requiresPlan = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Protect all routes except public ones
@@ -37,12 +33,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Try to get cached user data first
   const cachedData = getCachedUserData(userId);
-  let planId: string | null = null;
   let isAdmin = false;
 
   if (cachedData) {
     // Use cached data
-    planId = cachedData.planId;
     isAdmin = cachedData.isAdmin;
   } else {
     // Cache miss - query database
@@ -53,27 +47,14 @@ export default clerkMiddleware(async (auth, req) => {
 
     const { data: user } = await supabase
       .from("users")
-      .select("plan_id, role")
+      .select("role")
       .eq("id", userId)
       .single();
 
-    planId = user?.plan_id || null;
     isAdmin = user?.role === "admin";
 
-    // Cache the result
-    setCachedUserData(userId, planId, isAdmin);
-  }
-
-  // Check if user has selected a plan before accessing dashboard
-  // Skip plan check if coming from Stripe success (has session_id)
-  if (
-    requiresPlan(req) &&
-    !req.url.includes("/select-plan") &&
-    !req.url.includes("session_id=")
-  ) {
-    if (!planId) {
-      return NextResponse.redirect(new URL("/select-plan", req.url));
-    }
+    // Cache the result (no plan data needed anymore)
+    setCachedUserData(userId, null, isAdmin);
   }
 
   // Additional admin route protection

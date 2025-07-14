@@ -594,46 +594,6 @@ export class DatabaseService {
     return data?.last_refresh || null;
   }
 
-  // Subscriptions
-  async createSubscription(
-    subscriptionData: Database["public"]["Tables"]["subscriptions"]["Insert"]
-  ) {
-    const { data, error } = await this.adminClient
-      .from("subscriptions")
-      .insert(subscriptionData)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async getSubscriptionByUserId(userId: string) {
-    const { data, error } = await this.client
-      .from("subscriptions")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    if (error && error.code !== "PGRST116") throw error;
-    return data;
-  }
-
-  async updateSubscription(
-    userId: string,
-    updates: Database["public"]["Tables"]["subscriptions"]["Update"]
-  ) {
-    const { data, error } = await this.adminClient
-      .from("subscriptions")
-      .update(updates)
-      .eq("user_id", userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
   // User Statistics
   async getUserStats(userId: string) {
     // Get folder and board counts

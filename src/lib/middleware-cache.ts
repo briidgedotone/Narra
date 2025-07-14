@@ -3,7 +3,6 @@
  */
 
 interface CachedUserData {
-  planId: string | null;
   isAdmin: boolean;
   timestamp: number;
 }
@@ -32,18 +31,17 @@ export function getCachedUserData(userId: string): CachedUserData | null {
  */
 export function setCachedUserData(
   userId: string,
-  planId: string | null,
+  planId: string | null, // Keep for backward compatibility but ignore
   isAdmin: boolean
 ): void {
   userCache.set(userId, {
-    planId,
     isAdmin,
     timestamp: Date.now(),
   });
 }
 
 /**
- * Clear cache for a specific user (useful when plan changes)
+ * Clear cache for a specific user
  */
 export function clearUserCache(userId: string): void {
   userCache.delete(userId);
