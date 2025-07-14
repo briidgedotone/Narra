@@ -235,7 +235,7 @@ export function PostModal({
                       )}
                     </>
                   ) : // Single Media Display
-                  selectedPost.isVideo ? (
+                  selectedPost.isVideo || selectedPost.platform === "tiktok" ? (
                     <video
                       src={
                         selectedPost.platform === "instagram"
