@@ -1,6 +1,4 @@
-import { DatabaseService } from "@/lib/database";
-
-const db = new DatabaseService();
+import { db } from "@/lib/database";
 
 /**
  * Check if a user is an admin

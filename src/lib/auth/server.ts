@@ -1,8 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 
-import { DatabaseService } from "@/lib/database";
-
-const db = new DatabaseService();
+import { db } from "@/lib/database";
 
 /**
  * Check if the current authenticated user is an admin (server-side only)

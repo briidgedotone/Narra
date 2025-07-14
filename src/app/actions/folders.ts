@@ -4,10 +4,8 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { isAdmin } from "@/lib/auth/server";
-import { DatabaseService } from "@/lib/database";
+import { db } from "@/lib/database";
 import type { Database } from "@/types/database";
-
-const db = new DatabaseService();
 
 export async function getUserFoldersWithBoards() {
   const { userId } = await auth();

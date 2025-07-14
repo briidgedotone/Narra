@@ -2,10 +2,22 @@ import type { Database } from "@/types/database";
 
 import { createAdminClient, supabase } from "./supabase";
 
-// Generic database operations
+// Generic database operations with singleton pattern
 export class DatabaseService {
+  private static instance: DatabaseService;
   private client = supabase;
   private adminClient = createAdminClient();
+
+  private constructor() {
+    // Private constructor to prevent direct instantiation
+  }
+
+  public static getInstance(): DatabaseService {
+    if (!DatabaseService.instance) {
+      DatabaseService.instance = new DatabaseService();
+    }
+    return DatabaseService.instance;
+  }
 
   // Users
   async createUser(userData: Database["public"]["Tables"]["users"]["Insert"]) {
@@ -978,4 +990,4 @@ export class DatabaseService {
 }
 
 // Export singleton instance
-export const db = new DatabaseService();
+export const db = DatabaseService.getInstance();

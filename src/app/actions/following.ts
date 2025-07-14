@@ -3,9 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-import { DatabaseService } from "@/lib/database";
-
-const db = new DatabaseService();
+import { db } from "@/lib/database";
 
 export async function followProfile(profileId: string) {
   try {

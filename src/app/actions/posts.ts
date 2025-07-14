@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { scrapeCreatorsApi } from "@/lib/api/scrape-creators";
-import { DatabaseService } from "@/lib/database";
+import { db } from "@/lib/database";
 import type { Database } from "@/types/database";
 
 // Helper function to convert WebVTT transcript to plain text
@@ -74,8 +74,6 @@ async function fetchInstagramEmbed(url: string) {
     };
   }
 }
-
-const db = new DatabaseService();
 
 interface SavePostData {
   handle: string;

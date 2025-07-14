@@ -3,9 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-import { DatabaseService } from "@/lib/database";
-
-const db = new DatabaseService();
+import { db } from "@/lib/database";
 
 /**
  * Copy a shared board to user's account

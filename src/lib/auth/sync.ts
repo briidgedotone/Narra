@@ -1,9 +1,7 @@
 import { User } from "@clerk/nextjs/server";
 
-import { DatabaseService } from "@/lib/database";
+import { db } from "@/lib/database";
 import type { Database } from "@/types/database";
-
-const db = new DatabaseService();
 
 /**
  * Sync a Clerk user to our database
