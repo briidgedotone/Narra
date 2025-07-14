@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 import { getCachedUserData, setCachedUserData } from "@/lib/middleware-cache";
+import { checkAndResetUserUsage } from "@/lib/usage-reset";
 
 // Define public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
@@ -30,6 +31,11 @@ export default clerkMiddleware(async (auth, req) => {
   if (!userId) {
     return NextResponse.next();
   }
+
+  // Check and reset user usage if needed (run in background)
+  checkAndResetUserUsage(userId).catch(error => {
+    console.error("Usage reset error in middleware:", error);
+  });
 
   // Try to get cached user data first
   const cachedData = getCachedUserData(userId);

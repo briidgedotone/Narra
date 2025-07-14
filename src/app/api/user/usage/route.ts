@@ -18,7 +18,7 @@ export async function GET() {
     const { data: userData } = await supabase
       .from("users")
       .select(
-        "plan_id, monthly_profile_discoveries, monthly_transcripts_viewed"
+        "plan_id, monthly_profile_discoveries, monthly_transcripts_viewed, subscription_status"
       )
       .eq("id", user.id)
       .single();
@@ -38,6 +38,7 @@ export async function GET() {
       plan_id: userData.plan_id,
       monthly_profile_discoveries: userData.monthly_profile_discoveries || 0,
       monthly_transcripts_viewed: userData.monthly_transcripts_viewed || 0,
+      subscription_status: userData.subscription_status || "inactive",
       limits: planData?.limits || {
         profile_discoveries: 0,
         transcript_views: 0,

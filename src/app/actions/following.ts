@@ -13,6 +13,40 @@ export async function followProfile(profileId: string) {
       throw new Error("Unauthorized");
     }
 
+    // Check user's plan and current follows
+    const user = await db.getUserById(userId);
+    if (!user?.plan_id) {
+      throw new Error("No active plan. Please select a plan to continue.");
+    }
+
+    // Get plan limits by creating a temporary client query
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: planData } = await supabase
+      .from("plans")
+      .select("limits")
+      .eq("id", user.plan_id)
+      .single();
+
+    const followLimit = planData?.limits?.profile_follows || 0;
+
+    // Get current follow count
+    const { count: currentFollows } = await supabase
+      .from("follows")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    // Check if user has reached limit
+    if ((currentFollows || 0) >= followLimit) {
+      throw new Error(
+        `Profile follow limit reached. You can follow up to ${followLimit} profiles on your current plan.`
+      );
+    }
+
     const result = await db.followProfile(userId, profileId);
 
     // Revalidate relevant pages
