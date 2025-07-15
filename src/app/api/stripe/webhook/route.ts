@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
           // Update user's subscription status
           await db.updateUser(userId, {
-            subscription_status: "active",
+            subscription_status: subscription.status as any,
             plan_id: planId,
           } as any);
         }

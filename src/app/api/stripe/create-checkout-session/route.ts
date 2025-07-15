@@ -51,6 +51,9 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "subscription",
+      subscription_data: {
+        trial_period_days: 3,
+      },
       success_url: `${request.nextUrl.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.nextUrl.origin}/select-plan`,
       // Let Stripe collect email during checkout
