@@ -34,11 +34,21 @@ export async function GET() {
       .eq("id", userData.plan_id)
       .single();
 
+    // Get subscription details for billing period and end date
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("billing_period, current_period_end")
+      .eq("user_id", user.id)
+      .eq("status", userData.subscription_status)
+      .single();
+
     return NextResponse.json({
       plan_id: userData.plan_id,
       monthly_profile_discoveries: userData.monthly_profile_discoveries || 0,
       monthly_transcripts_viewed: userData.monthly_transcripts_viewed || 0,
       subscription_status: userData.subscription_status || "inactive",
+      billing_period: subscription?.billing_period || "monthly",
+      current_period_end: subscription?.current_period_end || null,
       limits: planData?.limits || {
         profile_discoveries: 0,
         transcript_views: 0,

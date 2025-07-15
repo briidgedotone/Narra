@@ -11,6 +11,8 @@ interface UsageData {
   monthly_profile_discoveries: number;
   monthly_transcripts_viewed: number;
   current_follows?: number;
+  billing_period?: "monthly" | "yearly";
+  current_period_end?: string;
   limits: {
     profile_discoveries: number;
     transcript_views: number;
@@ -232,7 +234,41 @@ export function UsagePage() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => window.open("https://billing.stripe.com/", "_blank")}
+            onClick={async () => {
+              try {
+                const response = await fetch(
+                  "/api/stripe/create-portal-session",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+
+                if (!response.ok) {
+                  throw new Error(
+                    `HTTP ${response.status}: ${response.statusText}`
+                  );
+                }
+
+                const data = await response.json();
+
+                if (data.url) {
+                  window.open(data.url, "_blank");
+                } else if (data.error) {
+                  console.error("Portal error:", data.error);
+                  // Fallback to generic Stripe billing
+                  window.open("https://billing.stripe.com/", "_blank");
+                } else {
+                  throw new Error("No URL returned from portal session");
+                }
+              } catch (error) {
+                console.error("Failed to open billing portal:", error);
+                // Fallback to generic Stripe billing
+                window.open("https://billing.stripe.com/", "_blank");
+              }
+            }}
             size="sm"
           >
             Manage Billing
@@ -251,22 +287,34 @@ export function UsagePage() {
               </h2>
               <div className="flex items-baseline gap-2">
                 <div className="text-4xl font-bold text-foreground">
-                  ${planDetails.price_monthly}
+                  $
+                  {usage.billing_period === "yearly"
+                    ? (planDetails.price_yearly / 100).toFixed(2)
+                    : (planDetails.price_monthly / 100).toFixed(2)}
                 </div>
-                <div className="text-sm text-muted-foreground">per month</div>
+                <div className="text-sm text-muted-foreground">
+                  {usage.billing_period === "yearly"
+                    ? "billed yearly"
+                    : "per month"}
+                </div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground flex items-center justify-end gap-2">
-                Next billing date
+                {usage.billing_period === "yearly"
+                  ? "Renews yearly on"
+                  : "Renews monthly on"}
                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                  {new Date(
-                    Date.now() + 30 * 24 * 60 * 60 * 1000
-                  ).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                  {usage.current_period_end
+                    ? new Date(usage.current_period_end).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )
+                    : "N/A"}
                 </span>
               </div>
             </div>
