@@ -16,10 +16,21 @@ const isPublicRoute = createRouteMatcher([
   "/api/instagram-embed", // Allow public access to Instagram embed API
   "/api/proxy-image", // Allow public access to image proxy
   "/api/webhook/clerk", // Allow Clerk webhook access
+  "/api/stripe/webhook", // Allow Stripe webhook access
 ]);
 
 // Define admin-only routes
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+
+// Define routes that require an active subscription (for future use)
+// const isSubscriptionRoute = createRouteMatcher([
+//   "/dashboard(.*)",
+//   "/discovery",
+//   "/following",
+//   "/boards(.*)",
+//   "/saved",
+//   "/settings"
+// ]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Protect all routes except public ones

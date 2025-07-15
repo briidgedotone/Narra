@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
 import { getFeaturedBoards } from "@/app/actions/folders";
@@ -6,6 +7,11 @@ import { DashboardLayout } from "@/components/layout";
 import { DashboardContent } from "@/components/shared/dashboard-content";
 import { syncUserToDatabase } from "@/lib/auth/sync";
 import { isUserInCache, clearUserCache } from "@/lib/middleware-cache";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export default async function DashboardPage({
   searchParams,
@@ -16,6 +22,18 @@ export default async function DashboardPage({
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Check user's subscription status
+  const { data: userData } = await supabase
+    .from("users")
+    .select("subscription_status")
+    .eq("id", userId)
+    .single();
+
+  // Redirect to plan selection if user doesn't have active subscription
+  if (!userData || userData.subscription_status !== "active") {
+    redirect("/select-plan");
   }
 
   // Get search params to check for successful payment redirect
