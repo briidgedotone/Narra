@@ -232,7 +232,41 @@ export function UsagePage() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => window.open("https://billing.stripe.com/", "_blank")}
+            onClick={async () => {
+              try {
+                const response = await fetch(
+                  "/api/stripe/create-portal-session",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+
+                if (!response.ok) {
+                  throw new Error(
+                    `HTTP ${response.status}: ${response.statusText}`
+                  );
+                }
+
+                const data = await response.json();
+
+                if (data.url) {
+                  window.open(data.url, "_blank");
+                } else if (data.error) {
+                  console.error("Portal error:", data.error);
+                  // Fallback to generic Stripe billing
+                  window.open("https://billing.stripe.com/", "_blank");
+                } else {
+                  throw new Error("No URL returned from portal session");
+                }
+              } catch (error) {
+                console.error("Failed to open billing portal:", error);
+                // Fallback to generic Stripe billing
+                window.open("https://billing.stripe.com/", "_blank");
+              }
+            }}
             size="sm"
           >
             Manage Billing

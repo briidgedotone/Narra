@@ -46,7 +46,49 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         const { userId, planId } = session.metadata || {};
 
-        if (userId && planId) {
+        if (userId && planId && session.subscription) {
+          // Get the subscription details from Stripe
+          const subscription = await stripe.subscriptions.retrieve(
+            session.subscription as string
+          );
+
+          // Create or update subscription record
+          try {
+            const periodStart = (subscription as any).current_period_start;
+            const periodEnd = (subscription as any).current_period_end;
+            const cancelAtPeriodEnd = (subscription as any)
+              .cancel_at_period_end;
+
+            console.log("Subscription data:", {
+              id: subscription.id,
+              customer: subscription.customer,
+              status: subscription.status,
+              periodStart,
+              periodEnd,
+              cancelAtPeriodEnd,
+            });
+
+            await db.createSubscription({
+              user_id: userId,
+              stripe_customer_id: subscription.customer as string,
+              stripe_subscription_id: subscription.id,
+              plan_id: planId,
+              status: subscription.status as any,
+              current_period_start: periodStart
+                ? new Date(periodStart * 1000).toISOString()
+                : new Date().toISOString(),
+              current_period_end: periodEnd
+                ? new Date(periodEnd * 1000).toISOString()
+                : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              cancel_at_period_end: cancelAtPeriodEnd || false,
+            });
+
+            console.log("Subscription record created successfully");
+          } catch (error) {
+            console.error("Error creating subscription record:", error);
+            console.error("Subscription object:", subscription);
+          }
+
           // Update user's subscription status
           await db.updateUser(userId, {
             subscription_status: "active",
@@ -58,14 +100,39 @@ export async function POST(request: NextRequest) {
 
       case "customer.subscription.created":
       case "customer.subscription.updated": {
-        // Handle subscription updates
-        console.log("Subscription updated:", event.id);
+        const stripeSubscription = event.data.object as Stripe.Subscription;
+
+        // Update subscription in database
+        try {
+          await db.updateSubscription(stripeSubscription.id, {
+            status: stripeSubscription.status as any,
+            current_period_start: new Date(
+              (stripeSubscription as any).current_period_start * 1000
+            ).toISOString(),
+            current_period_end: new Date(
+              (stripeSubscription as any).current_period_end * 1000
+            ).toISOString(),
+            cancel_at_period_end: (stripeSubscription as any)
+              .cancel_at_period_end,
+          });
+        } catch (error) {
+          console.error("Error updating subscription:", error);
+        }
         break;
       }
 
       case "customer.subscription.deleted": {
-        // Handle subscription cancellation
-        console.log("Subscription cancelled:", event.id);
+        const stripeSubscription = event.data.object as Stripe.Subscription;
+
+        // Mark subscription as cancelled
+        try {
+          await db.updateSubscription(stripeSubscription.id, {
+            status: "canceled",
+            cancel_at_period_end: false,
+          });
+        } catch (error) {
+          console.error("Error cancelling subscription:", error);
+        }
         break;
       }
 
