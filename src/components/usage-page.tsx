@@ -11,6 +11,8 @@ interface UsageData {
   monthly_profile_discoveries: number;
   monthly_transcripts_viewed: number;
   current_follows?: number;
+  billing_period?: "monthly" | "yearly";
+  current_period_end?: string;
   limits: {
     profile_discoveries: number;
     transcript_views: number;
@@ -285,22 +287,32 @@ export function UsagePage() {
               </h2>
               <div className="flex items-baseline gap-2">
                 <div className="text-4xl font-bold text-foreground">
-                  ${planDetails.price_monthly}
+                  $
+                  {usage.billing_period === "yearly"
+                    ? (planDetails.price_yearly / 12).toFixed(2)
+                    : planDetails.price_monthly}
                 </div>
-                <div className="text-sm text-muted-foreground">per month</div>
+                <div className="text-sm text-muted-foreground">
+                  {usage.billing_period === "yearly"
+                    ? "per month (billed yearly)"
+                    : "per month"}
+                </div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground flex items-center justify-end gap-2">
                 Next billing date
                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                  {new Date(
-                    Date.now() + 30 * 24 * 60 * 60 * 1000
-                  ).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                  {usage.current_period_end
+                    ? new Date(usage.current_period_end).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )
+                    : "N/A"}
                 </span>
               </div>
             </div>
