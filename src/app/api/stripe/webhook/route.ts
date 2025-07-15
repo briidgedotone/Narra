@@ -68,6 +68,33 @@ export async function POST(request: NextRequest) {
               cancelAtPeriodEnd,
             });
 
+            // For trialing subscriptions, calculate proper end date based on billing period
+            let actualPeriodEnd = periodEnd
+              ? new Date(periodEnd * 1000)
+              : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+            if (
+              subscription.status === "trialing" &&
+              billingPeriod === "yearly"
+            ) {
+              // For yearly trials, set period end to 1 year from trial end
+              const trialEnd = subscription.trial_end
+                ? new Date(subscription.trial_end * 1000)
+                : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 day trial
+              actualPeriodEnd = new Date(trialEnd);
+              actualPeriodEnd.setFullYear(actualPeriodEnd.getFullYear() + 1);
+            } else if (
+              subscription.status === "trialing" &&
+              billingPeriod === "monthly"
+            ) {
+              // For monthly trials, set period end to 1 month from trial end
+              const trialEnd = subscription.trial_end
+                ? new Date(subscription.trial_end * 1000)
+                : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 day trial
+              actualPeriodEnd = new Date(trialEnd);
+              actualPeriodEnd.setMonth(actualPeriodEnd.getMonth() + 1);
+            }
+
             await db.createSubscription({
               user_id: userId,
               stripe_customer_id: subscription.customer as string,
@@ -79,9 +106,7 @@ export async function POST(request: NextRequest) {
               current_period_start: periodStart
                 ? new Date(periodStart * 1000).toISOString()
                 : new Date().toISOString(),
-              current_period_end: periodEnd
-                ? new Date(periodEnd * 1000).toISOString()
-                : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              current_period_end: actualPeriodEnd.toISOString(),
               cancel_at_period_end: cancelAtPeriodEnd || false,
             });
 

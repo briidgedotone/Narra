@@ -289,19 +289,21 @@ export function UsagePage() {
                 <div className="text-4xl font-bold text-foreground">
                   $
                   {usage.billing_period === "yearly"
-                    ? (planDetails.price_yearly / 12).toFixed(2)
-                    : planDetails.price_monthly}
+                    ? (planDetails.price_yearly / 100).toFixed(2)
+                    : (planDetails.price_monthly / 100).toFixed(2)}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {usage.billing_period === "yearly"
-                    ? "per month (billed yearly)"
+                    ? "billed yearly"
                     : "per month"}
                 </div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground flex items-center justify-end gap-2">
-                Next billing date
+                {usage.billing_period === "yearly"
+                  ? "Renews yearly on"
+                  : "Renews monthly on"}
                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
                   {usage.current_period_end
                     ? new Date(usage.current_period_end).toLocaleDateString(
