@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { userId, planId } = session.metadata || {};
+        const { userId, planId, billingPeriod } = session.metadata || {};
 
         if (userId && planId && session.subscription) {
           // Get the subscription details from Stripe
@@ -74,6 +74,8 @@ export async function POST(request: NextRequest) {
               stripe_subscription_id: subscription.id,
               plan_id: planId,
               status: subscription.status as any,
+              billing_period:
+                (billingPeriod as "monthly" | "yearly") || "monthly",
               current_period_start: periodStart
                 ? new Date(periodStart * 1000).toISOString()
                 : new Date().toISOString(),
