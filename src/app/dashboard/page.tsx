@@ -31,8 +31,12 @@ export default async function DashboardPage({
     .eq("id", userId)
     .single();
 
-  // Redirect to plan selection if user doesn't have active subscription
-  if (!userData || userData.subscription_status !== "active") {
+  // Redirect to plan selection if user doesn't have active or trialing subscription
+  if (
+    !userData ||
+    (userData.subscription_status !== "active" &&
+      userData.subscription_status !== "trialing")
+  ) {
     redirect("/select-plan");
   }
 
