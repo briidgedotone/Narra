@@ -94,6 +94,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// Export named functions for Next.js API routes
-export { POST };
