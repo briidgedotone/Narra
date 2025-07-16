@@ -105,10 +105,18 @@ export default function SelectPlanPage() {
 
     try {
       if (planId === "enterprise") {
-        // Enterprise plan requires custom pricing - show contact message
-        alert(
-          "Enterprise plan requires custom pricing. Please contact us for a quote."
-        );
+        // Enterprise plan requires custom pricing - open email client
+        const subject = "Enterprise Plan Inquiry - Use Narra";
+        const body = `Hi there,
+
+I'm interested in learning more about the Enterprise plan features and pricing for my organization.
+
+Could you please share the details and let me know if there's a good time to discuss our requirements?
+
+Best regards`;
+
+        const mailtoLink = `mailto:hey@usenarra.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
         setLoadingPlan(null);
         return;
       }
