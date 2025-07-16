@@ -157,21 +157,21 @@ export default function SelectPlanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Choose Your Plan</h1>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-6xl mx-auto px-4 w-full">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-gray-600">
             Select a plan to start discovering viral content
           </p>
         </div>
 
         {/* Billing Toggle */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <div className="bg-white rounded-full p-1 border border-gray-200">
             <button
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-4 py-2 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors ${
                 billingPeriod === "monthly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
@@ -185,7 +185,7 @@ export default function SelectPlanPage() {
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-4 py-2 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors ${
                 billingPeriod === "yearly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
@@ -203,16 +203,16 @@ export default function SelectPlanPage() {
         {/* Plans Grid */}
         <div
           className="flex flex-col lg:flex-row justify-center items-center"
-          style={{ gap: "32px" }}
+          style={{ gap: "24px" }}
         >
           {plans.map(plan => (
             <div
               key={plan.id}
               className="transition-all flex-shrink-0 border-2 border-gray-200 relative overflow-hidden"
               style={{
-                width: "459px",
-                padding: "32px",
-                minWidth: "459px",
+                width: "400px",
+                padding: "24px",
+                minWidth: "400px",
                 backgroundColor:
                   plan.id === "growth" ? "transparent" : "#ffffff",
                 backgroundImage:
@@ -232,7 +232,7 @@ export default function SelectPlanPage() {
                 <h2
                   className="font-semibold"
                   style={{
-                    fontSize: "24px",
+                    fontSize: "20px",
                     color: plan.id === "growth" ? "#ffffff" : "#000000",
                   }}
                 >
@@ -255,17 +255,17 @@ export default function SelectPlanPage() {
               </div>
               <p
                 style={{
-                  fontSize: "18px",
+                  fontSize: "16px",
                   color: plan.id === "growth" ? "#ffffff" : "#6b7280",
                 }}
               >
                 3-Day Free Trial
               </p>
 
-              <div style={{ marginTop: "32px", marginBottom: "32px" }}>
+              <div style={{ marginTop: "20px", marginBottom: "20px" }}>
                 <span
                   style={{
-                    fontSize: "36px",
+                    fontSize: "32px",
                     color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
                     fontWeight: "bold",
                   }}
@@ -279,7 +279,7 @@ export default function SelectPlanPage() {
                   <span
                     style={{
                       color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
-                      fontSize: "36px",
+                      fontSize: "32px",
                       fontWeight: "bold",
                     }}
                   >
@@ -296,14 +296,14 @@ export default function SelectPlanPage() {
                     plan.id === "growth"
                       ? "1px solid #ffffff"
                       : "1px solid #e5e7eb",
-                  margin: "32px 0",
+                  margin: "20px 0",
                 }}
               />
 
               <ul
-                className="mb-6"
+                className="mb-4"
                 style={{
-                  gap: "12px",
+                  gap: "10px",
                   display: "flex",
                   flexDirection: "column",
                 }}
@@ -311,13 +311,13 @@ export default function SelectPlanPage() {
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <Check
-                      className={`h-5 w-5 mr-2 flex-shrink-0 mt-0.5 ${
+                      className={`h-4 w-4 mr-2 flex-shrink-0 mt-0.5 ${
                         plan.id === "growth" ? "text-white" : "text-green-500"
                       }`}
                     />
                     <span
                       style={{
-                        fontSize: "16px",
+                        fontSize: "15px",
                         color: plan.id === "growth" ? "#ffffff" : "#6b7280",
                       }}
                     >
@@ -335,7 +335,7 @@ export default function SelectPlanPage() {
                     plan.id === "growth"
                       ? "1px solid #ffffff"
                       : "1px solid #e5e7eb",
-                  margin: "32px 0",
+                  margin: "20px 0",
                 }}
               />
 
@@ -348,7 +348,7 @@ export default function SelectPlanPage() {
                   color: plan.id === "growth" ? "#000000" : "#ffffff",
                   fontSize: "14px",
                   border: "none",
-                  padding: "18px 24px",
+                  padding: "16px 22px",
                   cursor: "pointer",
                   opacity: loadingPlan === plan.id ? 0.7 : 1,
                 }}
