@@ -1,15 +1,19 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
+import { getUserSubscriptionStatus } from "@/app/actions/subscription";
 import { Button } from "@/components/ui/button";
 
 export default function SelectPlanPage() {
+  const router = useRouter();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
 
   const plans = [
     {
@@ -74,6 +78,28 @@ export default function SelectPlanPage() {
     },
   ];
 
+  // Check subscription status on page load
+  useEffect(() => {
+    const checkSubscriptionStatus = async () => {
+      try {
+        const result = await getUserSubscriptionStatus();
+
+        if (result.success && result.data.hasActiveSubscription) {
+          // User already has an active subscription, redirect to dashboard
+          router.push("/dashboard");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking subscription status:", error);
+        // On error, allow access to select-plan page
+      } finally {
+        setIsCheckingSubscription(false);
+      }
+    };
+
+    checkSubscriptionStatus();
+  }, [router]);
+
   const handleSelectPlan = async (planId: string) => {
     setLoadingPlan(planId);
 
@@ -117,6 +143,18 @@ export default function SelectPlanPage() {
       setLoadingPlan(null);
     }
   };
+
+  // Show loading state while checking subscription
+  if (isCheckingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking subscription status...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
