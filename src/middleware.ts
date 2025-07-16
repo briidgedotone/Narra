@@ -29,7 +29,7 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 //   "/following",
 //   "/boards(.*)",
 //   "/saved",
-//   "/settings"
+//   "/usage-and-billing"
 // ]);
 
 export default clerkMiddleware(async (auth, req) => {

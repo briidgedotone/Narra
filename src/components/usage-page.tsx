@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // import { Badge } from "@/components/ui/badge"; // Unused
@@ -32,7 +31,6 @@ export function UsagePage() {
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [planDetails, setPlanDetails] = useState<PlanDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     fetchData();
@@ -158,13 +156,6 @@ export function UsagePage() {
     },
   ];
 
-  const criticalMetrics = metrics.filter(
-    m => m.limit && m.used / m.limit >= 0.9
-  );
-  const warningMetrics = metrics.filter(
-    m => m.limit && m.used / m.limit >= 0.75 && m.used / m.limit < 0.9
-  );
-
   const getStatusColor = (used: number, limit: number | null) => {
     if (!limit) return "text-foreground";
     const percentage = used / limit;
@@ -202,36 +193,6 @@ export function UsagePage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Status Indicator */}
-          {(criticalMetrics.length > 0 || warningMetrics.length > 0) && (
-            <>
-              {criticalMetrics.length > 0 && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-destructive/10 border border-destructive/20 rounded-full">
-                  <div className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
-                  <span className="text-xs font-medium text-destructive">
-                    Limits Reached
-                  </span>
-                </div>
-              )}
-              {warningMetrics.length > 0 && criticalMetrics.length === 0 && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full">
-                  <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full" />
-                  <span className="text-xs font-medium text-yellow-700">
-                    Approaching Limits
-                  </span>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Action Buttons */}
-          <Button
-            variant="outline"
-            onClick={() => router.push("/select-plan")}
-            size="sm"
-          >
-            Upgrade Plan
-          </Button>
           <Button
             variant="outline"
             onClick={async () => {
@@ -353,21 +314,6 @@ export function UsagePage() {
                       <span className="text-sm font-medium text-foreground">
                         {metric.label}
                       </span>
-                      <button className="text-muted-foreground hover:text-foreground transition-colors">
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </button>
                     </div>
                   </div>
 
@@ -424,29 +370,6 @@ export function UsagePage() {
           })}
         </div>
       </div>
-
-      {/* Upgrade Prompt */}
-      {(criticalMetrics.length > 0 || warningMetrics.length > 0) && (
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-foreground">
-                {criticalMetrics.length > 0
-                  ? "Action Required"
-                  : "Consider Upgrading"}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {criticalMetrics.length > 0
-                  ? "You've reached your usage limits. Upgrade to continue your workflow."
-                  : "You're approaching your usage limits. Upgrade to ensure uninterrupted access."}
-              </p>
-            </div>
-            <Button onClick={() => router.push("/select-plan")} size="sm">
-              {criticalMetrics.length > 0 ? "Upgrade Now" : "View Plans"}
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

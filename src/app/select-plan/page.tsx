@@ -171,7 +171,7 @@ export default function SelectPlanPage() {
           <div className="bg-white rounded-full p-1 border border-gray-200">
             <button
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-4 py-1.5 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors cursor-pointer ${
                 billingPeriod === "monthly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
@@ -185,7 +185,7 @@ export default function SelectPlanPage() {
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-4 py-1.5 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors cursor-pointer ${
                 billingPeriod === "yearly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"

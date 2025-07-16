@@ -68,7 +68,7 @@ const mainNavigation = [
 const adminNavigation = [{ name: "Admin", href: "/admin", icon: Shield }];
 
 const bottomNavigation = [
-  { name: "Usage & Billing", href: "/settings", icon: ReceiptText },
+  { name: "Usage & Billing", href: "/usage-and-billing", icon: ReceiptText },
 ];
 
 export function Sidebar() {
