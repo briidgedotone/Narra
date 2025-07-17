@@ -238,9 +238,6 @@ export const scrapeCreatorsApi = {
         endpoint += `&next_max_id=${nextMaxId}`;
       }
 
-      // Add trim parameter for cleaner response
-      endpoint += `&trim=true`;
-
       const response = await makeRequest(endpoint, cacheKey, cacheTTL.posts);
 
       // If the v2 endpoint fails, fallback to profile extraction

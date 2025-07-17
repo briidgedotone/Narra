@@ -12,7 +12,7 @@ export const ROUTES = {
   following: "/following",
   boards: "/boards",
   collections: "/collections",
-  settings: "/settings",
+  settings: "/usage-and-billing",
   signIn: "/sign-in",
   signUp: "/sign-up",
 } as const;

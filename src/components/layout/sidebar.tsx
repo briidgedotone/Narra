@@ -68,7 +68,7 @@ const mainNavigation = [
 const adminNavigation = [{ name: "Admin", href: "/admin", icon: Shield }];
 
 const bottomNavigation = [
-  { name: "Usage & Billing", href: "/settings", icon: ReceiptText },
+  { name: "Usage & Billing", href: "/usage-and-billing", icon: ReceiptText },
 ];
 
 export function Sidebar() {
@@ -613,7 +613,9 @@ export function Sidebar() {
           />
           <div className="ml-2 flex-1 min-w-0">
             <p className="text-sm font-medium text-[var(--sidebar-text-primary)] truncate">
-              {user?.firstName || user?.username || "User"}
+              {user?.username ||
+                user?.primaryEmailAddress?.emailAddress ||
+                "User"}
             </p>
           </div>
         </div>

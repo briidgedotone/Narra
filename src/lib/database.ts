@@ -177,6 +177,21 @@ export class DatabaseService {
     return data;
   }
 
+  async updatePost(
+    postId: string,
+    updates: Database["public"]["Tables"]["posts"]["Update"]
+  ) {
+    const { data, error } = await this.client
+      .from("posts")
+      .update(updates)
+      .eq("id", postId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   // Folders
   async createFolder(
     folderData: Database["public"]["Tables"]["folders"]["Insert"]

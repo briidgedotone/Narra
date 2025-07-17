@@ -131,7 +131,11 @@ export const transformers = {
         if (isV2ApiPost) {
           likes = post.like_count || 0;
           comments = post.comment_count || 0;
-          views = post.play_count || post.view_count || undefined;
+          views =
+            post.play_count ||
+            post.ig_play_count ||
+            post.view_count ||
+            undefined;
         } else {
           likes = post.like_count || post.edge_liked_by?.count || 0;
           comments =

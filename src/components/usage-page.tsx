@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // import { Badge } from "@/components/ui/badge"; // Unused
@@ -32,7 +31,6 @@ export function UsagePage() {
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [planDetails, setPlanDetails] = useState<PlanDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     fetchData();
@@ -65,23 +63,56 @@ export function UsagePage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="animate-pulse space-y-6">
-          <div className="space-y-2">
-            <div className="h-7 bg-muted rounded w-64" />
-            <div className="h-4 bg-muted/60 rounded w-96" />
+        <div className="animate-pulse">
+          {/* Header Section Skeleton */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="h-7 bg-muted rounded w-48 mb-2" />
+              <div className="h-4 bg-muted/60 rounded w-80" />
+            </div>
+            <div className="h-9 bg-muted rounded w-32" />
           </div>
-          <div className="h-4 bg-muted/40 rounded w-80" />
-          <div className="bg-card rounded-lg border p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="text-center space-y-3">
-                  <div className="w-12 h-12 bg-muted rounded-lg mx-auto" />
-                  <div className="space-y-2">
-                    <div className="h-6 bg-muted rounded w-16 mx-auto" />
-                    <div className="h-4 bg-muted/60 rounded w-20 mx-auto" />
-                    <div className="h-3 bg-muted/40 rounded w-24 mx-auto" />
+
+          {/* Plan & Usage Card Skeleton */}
+          <div className="bg-card rounded-lg border overflow-hidden">
+            {/* Plan Details Section */}
+            <div className="p-8">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="h-7 bg-muted rounded w-32 mb-8" />
+                  <div className="flex items-baseline gap-2">
+                    <div className="h-12 bg-muted rounded w-20" />
+                    <div className="h-5 bg-muted/60 rounded w-24" />
                   </div>
-                  <div className="h-1.5 bg-muted rounded-full w-full" />
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <div className="h-4 bg-muted/60 rounded w-32" />
+                    <div className="h-6 bg-muted rounded-full w-20" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border"></div>
+
+            {/* Usage Metrics Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-x divide-border">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="text-left p-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="h-9 bg-muted rounded w-20 mb-2" />
+                      <div className="h-5 bg-muted/60 rounded w-24" />
+                    </div>
+                    {/* Circular Progress Skeleton for first 3 metrics */}
+                    {i <= 3 && (
+                      <div className="relative w-16 h-16 ml-4">
+                        <div className="w-16 h-16 bg-muted/40 rounded-full" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -158,13 +189,6 @@ export function UsagePage() {
     },
   ];
 
-  const criticalMetrics = metrics.filter(
-    m => m.limit && m.used / m.limit >= 0.9
-  );
-  const warningMetrics = metrics.filter(
-    m => m.limit && m.used / m.limit >= 0.75 && m.used / m.limit < 0.9
-  );
-
   const getStatusColor = (used: number, limit: number | null) => {
     if (!limit) return "text-foreground";
     const percentage = used / limit;
@@ -202,38 +226,9 @@ export function UsagePage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Status Indicator */}
-          {(criticalMetrics.length > 0 || warningMetrics.length > 0) && (
-            <>
-              {criticalMetrics.length > 0 && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-destructive/10 border border-destructive/20 rounded-full">
-                  <div className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
-                  <span className="text-xs font-medium text-destructive">
-                    Limits Reached
-                  </span>
-                </div>
-              )}
-              {warningMetrics.length > 0 && criticalMetrics.length === 0 && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full">
-                  <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full" />
-                  <span className="text-xs font-medium text-yellow-700">
-                    Approaching Limits
-                  </span>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Action Buttons */}
           <Button
             variant="outline"
-            onClick={() => router.push("/select-plan")}
-            size="sm"
-          >
-            Upgrade Plan
-          </Button>
-          <Button
-            variant="outline"
+            className="cursor-pointer"
             onClick={async () => {
               try {
                 const response = await fetch(
@@ -353,21 +348,6 @@ export function UsagePage() {
                       <span className="text-sm font-medium text-foreground">
                         {metric.label}
                       </span>
-                      <button className="text-muted-foreground hover:text-foreground transition-colors">
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </button>
                     </div>
                   </div>
 
@@ -424,29 +404,6 @@ export function UsagePage() {
           })}
         </div>
       </div>
-
-      {/* Upgrade Prompt */}
-      {(criticalMetrics.length > 0 || warningMetrics.length > 0) && (
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-foreground">
-                {criticalMetrics.length > 0
-                  ? "Action Required"
-                  : "Consider Upgrading"}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {criticalMetrics.length > 0
-                  ? "You've reached your usage limits. Upgrade to continue your workflow."
-                  : "You're approaching your usage limits. Upgrade to ensure uninterrupted access."}
-              </p>
-            </div>
-            <Button onClick={() => router.push("/select-plan")} size="sm">
-              {criticalMetrics.length > 0 ? "Upgrade Now" : "View Plans"}
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
