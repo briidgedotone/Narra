@@ -197,6 +197,23 @@ export function BoardPageContent({
     [filterCounts]
   );
 
+  /**
+   * Memoized embed component to prevent reloading on tab switches
+   */
+  const embedComponent = React.useMemo(() => {
+    if (!selectedPost) return null;
+
+    return selectedPost.platform === "tiktok" ? (
+      <TikTokEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
+    ) : (
+      <InstagramEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
+    );
+  }, [
+    selectedPost?.platform,
+    selectedPost?.originalUrl,
+    selectedPost?.embedUrl,
+  ]);
+
   // Loading state
   if (isLoading) {
     return (
@@ -301,19 +318,9 @@ export function BoardPageContent({
           {selectedPost && (
             <>
               <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-                {/* Left: Embed Component */}
+                {/* Left: Embed Component - Memoized to prevent reloading */}
                 <div className="space-y-4">
-                  <div className="w-fit mx-auto lg:mx-0">
-                    {selectedPost.platform === "tiktok" ? (
-                      <TikTokEmbed
-                        url={selectedPost.originalUrl || selectedPost.embedUrl}
-                      />
-                    ) : (
-                      <InstagramEmbed
-                        url={selectedPost.originalUrl || selectedPost.embedUrl}
-                      />
-                    )}
-                  </div>
+                  <div className="w-fit mx-auto lg:mx-0">{embedComponent}</div>
                 </div>
 
                 {/* Right: Tabbed Content */}
