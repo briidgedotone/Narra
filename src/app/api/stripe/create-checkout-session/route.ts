@@ -6,6 +6,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
 });
 
+const PLAN_NAMES = {
+  inspiration: "Inspiration Plan",
+  growth: "Growth Plan",
+  enterprise: "Enterprise Plan",
+} as const;
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -31,7 +37,9 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: `${planId} Plan`,
+              name:
+                PLAN_NAMES[planId as keyof typeof PLAN_NAMES] ||
+                `${planId} Plan`,
             },
             unit_amount:
               planId === "inspiration"

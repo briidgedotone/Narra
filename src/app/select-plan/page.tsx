@@ -1,15 +1,19 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
+import { getUserSubscriptionStatus } from "@/app/actions/subscription";
 import { Button } from "@/components/ui/button";
 
 export default function SelectPlanPage() {
+  const router = useRouter();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
 
   const plans = [
     {
@@ -74,15 +78,45 @@ export default function SelectPlanPage() {
     },
   ];
 
+  // Check subscription status on page load
+  useEffect(() => {
+    const checkSubscriptionStatus = async () => {
+      try {
+        const result = await getUserSubscriptionStatus();
+
+        if (result.success && result.data.hasActiveSubscription) {
+          // User already has an active subscription, redirect to dashboard
+          router.push("/dashboard");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking subscription status:", error);
+        // On error, allow access to select-plan page
+      } finally {
+        setIsCheckingSubscription(false);
+      }
+    };
+
+    checkSubscriptionStatus();
+  }, [router]);
+
   const handleSelectPlan = async (planId: string) => {
     setLoadingPlan(planId);
 
     try {
       if (planId === "enterprise") {
-        // Enterprise plan requires custom pricing - show contact message
-        alert(
-          "Enterprise plan requires custom pricing. Please contact us for a quote."
-        );
+        // Enterprise plan requires custom pricing - open email client
+        const subject = "Enterprise Plan Inquiry - Use Narra";
+        const body = `Hi there,
+
+I'm interested in learning more about the Enterprise plan features and pricing for my organization.
+
+Could you please share the details and let me know if there's a good time to discuss our requirements?
+
+Best regards`;
+
+        const mailtoLink = `mailto:hey@usenarra.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
         setLoadingPlan(null);
         return;
       }
@@ -118,22 +152,34 @@ export default function SelectPlanPage() {
     }
   };
 
+  // Show loading state while checking subscription
+  if (isCheckingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking subscription status...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Choose Your Plan</h1>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-6xl mx-auto px-4 w-full">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-gray-600">
             Select a plan to start discovering viral content
           </p>
         </div>
 
         {/* Billing Toggle */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <div className="bg-white rounded-full p-1 border border-gray-200">
             <button
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-4 py-2 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors cursor-pointer ${
                 billingPeriod === "monthly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
@@ -147,7 +193,7 @@ export default function SelectPlanPage() {
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-4 py-2 rounded-full transition-colors ${
+              className={`px-4 py-1.5 rounded-full transition-colors cursor-pointer ${
                 billingPeriod === "yearly"
                   ? "text-white"
                   : "text-gray-600 hover:text-gray-800"
@@ -165,16 +211,16 @@ export default function SelectPlanPage() {
         {/* Plans Grid */}
         <div
           className="flex flex-col lg:flex-row justify-center items-center"
-          style={{ gap: "32px" }}
+          style={{ gap: "24px" }}
         >
           {plans.map(plan => (
             <div
               key={plan.id}
               className="transition-all flex-shrink-0 border-2 border-gray-200 relative overflow-hidden"
               style={{
-                width: "459px",
-                padding: "32px",
-                minWidth: "459px",
+                width: "400px",
+                padding: "24px",
+                minWidth: "400px",
                 backgroundColor:
                   plan.id === "growth" ? "transparent" : "#ffffff",
                 backgroundImage:
@@ -194,7 +240,7 @@ export default function SelectPlanPage() {
                 <h2
                   className="font-semibold"
                   style={{
-                    fontSize: "24px",
+                    fontSize: "20px",
                     color: plan.id === "growth" ? "#ffffff" : "#000000",
                   }}
                 >
@@ -217,17 +263,17 @@ export default function SelectPlanPage() {
               </div>
               <p
                 style={{
-                  fontSize: "18px",
+                  fontSize: "16px",
                   color: plan.id === "growth" ? "#ffffff" : "#6b7280",
                 }}
               >
                 3-Day Free Trial
               </p>
 
-              <div style={{ marginTop: "32px", marginBottom: "32px" }}>
+              <div style={{ marginTop: "20px", marginBottom: "20px" }}>
                 <span
                   style={{
-                    fontSize: "36px",
+                    fontSize: "32px",
                     color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
                     fontWeight: "bold",
                   }}
@@ -241,7 +287,7 @@ export default function SelectPlanPage() {
                   <span
                     style={{
                       color: plan.id === "growth" ? "#ffffff" : "#3b82f6",
-                      fontSize: "36px",
+                      fontSize: "32px",
                       fontWeight: "bold",
                     }}
                   >
@@ -258,14 +304,14 @@ export default function SelectPlanPage() {
                     plan.id === "growth"
                       ? "1px solid #ffffff"
                       : "1px solid #e5e7eb",
-                  margin: "32px 0",
+                  margin: "20px 0",
                 }}
               />
 
               <ul
-                className="mb-6"
+                className="mb-4"
                 style={{
-                  gap: "12px",
+                  gap: "10px",
                   display: "flex",
                   flexDirection: "column",
                 }}
@@ -273,13 +319,13 @@ export default function SelectPlanPage() {
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <Check
-                      className={`h-5 w-5 mr-2 flex-shrink-0 mt-0.5 ${
+                      className={`h-4 w-4 mr-2 flex-shrink-0 mt-0.5 ${
                         plan.id === "growth" ? "text-white" : "text-green-500"
                       }`}
                     />
                     <span
                       style={{
-                        fontSize: "16px",
+                        fontSize: "15px",
                         color: plan.id === "growth" ? "#ffffff" : "#6b7280",
                       }}
                     >
@@ -297,7 +343,7 @@ export default function SelectPlanPage() {
                     plan.id === "growth"
                       ? "1px solid #ffffff"
                       : "1px solid #e5e7eb",
-                  margin: "32px 0",
+                  margin: "20px 0",
                 }}
               />
 
@@ -310,7 +356,7 @@ export default function SelectPlanPage() {
                   color: plan.id === "growth" ? "#000000" : "#ffffff",
                   fontSize: "14px",
                   border: "none",
-                  padding: "18px 24px",
+                  padding: "16px 22px",
                   cursor: "pointer",
                   opacity: loadingPlan === plan.id ? 0.7 : 1,
                 }}

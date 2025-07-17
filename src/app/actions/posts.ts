@@ -150,84 +150,14 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
     );
 
     if (!post) {
-      // Fetch embed HTML for Instagram posts
-      let embedHtml: string | null = null;
-      if (postData.platform === "instagram" && postData.originalUrl) {
-        try {
-          const embedResult = await fetchInstagramEmbed(postData.originalUrl);
-          if (embedResult.success && embedResult.data?.html) {
-            embedHtml = embedResult.data.html;
-          }
-        } catch (error) {
-          console.error("Failed to fetch Instagram embed:", error);
-          // Continue without embed HTML - the post will still be saved
-        }
-      }
-
-      // Fetch transcript for TikTok posts
-      let transcript: string | null = null;
-      if (postData.platform === "tiktok" && postData.originalUrl) {
-        try {
-          const transcriptResult =
-            await scrapeCreatorsApi.tiktok.getVideoTranscript(
-              postData.originalUrl
-            );
-          if (
-            transcriptResult.success &&
-            (transcriptResult.data as { transcript?: string })?.transcript
-          ) {
-            const rawTranscript = (
-              transcriptResult.data as { transcript: string }
-            ).transcript;
-            // Convert WebVTT format to plain text
-            transcript = webvttToPlainText(rawTranscript);
-          }
-        } catch (error) {
-          console.error("Failed to fetch transcript:", error);
-          // Continue without transcript - the post will still be saved
-        }
-      }
-
-      // Fetch transcript for Instagram video posts
-      if (
-        postData.platform === "instagram" &&
-        postData.isVideo &&
-        postData.originalUrl
-      ) {
-        try {
-          const transcriptResult =
-            await scrapeCreatorsApi.instagram.getVideoTranscript(
-              postData.originalUrl
-            );
-          if (transcriptResult.success && transcriptResult.data) {
-            // Check if response has transcripts array (based on your example)
-            const data = transcriptResult.data as {
-              transcripts?: Array<{ text: string }>;
-            };
-            if (
-              data.transcripts &&
-              data.transcripts.length > 0 &&
-              data.transcripts[0]
-            ) {
-              transcript = data.transcripts[0].text;
-            }
-          }
-        } catch (error) {
-          console.error("Failed to fetch Instagram transcript:", error);
-          // Continue without transcript - the post will still be saved
-        }
-      }
-
-      // Create post if it doesn't exist
+      // Create post immediately without slow operations
       const postCreateData: Database["public"]["Tables"]["posts"]["Insert"] = {
         profile_id: profile.id,
         platform: postData.platform,
         platform_post_id: postData.platformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
-        ...(transcript || postData.transcript
-          ? { transcript: transcript || postData.transcript }
-          : {}),
+        ...(postData.transcript ? { transcript: postData.transcript } : {}),
         ...(postData.originalUrl ? { original_url: postData.originalUrl } : {}),
         metrics: postData.metrics || {},
         date_posted: postData.datePosted,
@@ -257,10 +187,88 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
         ...(postData.displayUrl ? { display_url: postData.displayUrl } : {}),
         ...(postData.shortcode ? { shortcode: postData.shortcode } : {}),
         ...(postData.dimensions ? { dimensions: postData.dimensions } : {}),
-        ...(embedHtml ? { embed_html: embedHtml } : {}),
       };
 
       post = await db.createPost(postCreateData);
+
+      // Update post with embed/transcript in background (don't await)
+      Promise.resolve().then(async () => {
+        try {
+          const updates: Partial<
+            Database["public"]["Tables"]["posts"]["Update"]
+          > = {};
+
+          // Fetch embed HTML for Instagram posts
+          if (postData.platform === "instagram" && postData.originalUrl) {
+            try {
+              const embedResult = await fetchInstagramEmbed(
+                postData.originalUrl
+              );
+              if (embedResult.success && embedResult.data?.html) {
+                updates.embed_html = embedResult.data.html;
+              }
+            } catch (error) {
+              console.error("Failed to fetch Instagram embed:", error);
+            }
+          }
+
+          // Fetch transcript for TikTok posts
+          if (postData.platform === "tiktok" && postData.originalUrl) {
+            try {
+              const transcriptResult =
+                await scrapeCreatorsApi.tiktok.getVideoTranscript(
+                  postData.originalUrl
+                );
+              if (
+                transcriptResult.success &&
+                (transcriptResult.data as { transcript?: string })?.transcript
+              ) {
+                const rawTranscript = (
+                  transcriptResult.data as { transcript: string }
+                ).transcript;
+                updates.transcript = webvttToPlainText(rawTranscript);
+              }
+            } catch (error) {
+              console.error("Failed to fetch transcript:", error);
+            }
+          }
+
+          // Fetch transcript for Instagram video posts
+          if (
+            postData.platform === "instagram" &&
+            postData.isVideo &&
+            postData.originalUrl
+          ) {
+            try {
+              const transcriptResult =
+                await scrapeCreatorsApi.instagram.getVideoTranscript(
+                  postData.originalUrl
+                );
+              if (transcriptResult.success && transcriptResult.data) {
+                const data = transcriptResult.data as {
+                  transcripts?: Array<{ text: string }>;
+                };
+                if (
+                  data.transcripts &&
+                  data.transcripts.length > 0 &&
+                  data.transcripts[0]
+                ) {
+                  updates.transcript = data.transcripts[0].text;
+                }
+              }
+            } catch (error) {
+              console.error("Failed to fetch Instagram transcript:", error);
+            }
+          }
+
+          // Update post with fetched data if any
+          if (Object.keys(updates).length > 0) {
+            await db.updatePost(post.id, updates);
+          }
+        } catch (error) {
+          console.error("Failed to update post with embed/transcript:", error);
+        }
+      });
     }
 
     // Add post to board (this will handle duplicates via unique constraint)
