@@ -49,20 +49,29 @@ export async function followProfile(profileId: string) {
 
     const result = await db.followProfile(userId, profileId);
 
-    // Trigger immediate refresh for the new follow (fire and forget)
+    // Trigger immediate refresh for the new follow (via API)
     try {
-      fetch(
+      console.log(`🔄 Triggering immediate refresh for profile: ${profileId}`);
+      
+      const refreshResponse = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/refresh-profile`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ profileId }),
+          body: JSON.stringify({ profileId, userId }),
         }
-      ).catch(error => {
-        console.error("Background refresh failed:", error);
-      });
+      );
+      
+      if (refreshResponse.ok) {
+        const refreshResult = await refreshResponse.json();
+        console.log(`📊 Refresh result:`, refreshResult);
+        console.log(`✅ Successfully refreshed profile: ${refreshResult.data?.newPosts || 0} new posts`);
+      } else {
+        const errorResult = await refreshResponse.json();
+        console.error(`❌ Refresh failed with status ${refreshResponse.status}:`, errorResult);
+      }
     } catch (error) {
       // Don't let refresh failures affect the follow action
       console.error("Failed to trigger immediate refresh:", error);
