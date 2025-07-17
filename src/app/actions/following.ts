@@ -49,6 +49,25 @@ export async function followProfile(profileId: string) {
 
     const result = await db.followProfile(userId, profileId);
 
+    // Trigger immediate refresh for the new follow (fire and forget)
+    try {
+      fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/refresh-profile`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ profileId }),
+        }
+      ).catch(error => {
+        console.error("Background refresh failed:", error);
+      });
+    } catch (error) {
+      // Don't let refresh failures affect the follow action
+      console.error("Failed to trigger immediate refresh:", error);
+    }
+
     // Revalidate relevant pages
     revalidatePath("/following");
     revalidatePath("/discovery");
