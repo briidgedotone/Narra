@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 
 import { getAllUserSavedPosts } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -14,36 +14,27 @@ import {
   MessageCircle,
   Share,
   Calendar,
+  Bookmark,
 } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
+import { parseWebVTT } from "@/lib/utils/format";
 import { formatDate, formatNumber } from "@/lib/utils/format";
+import type { SavedPost } from "@/types/board";
+import type { SavePostData } from "@/types/discovery";
 
 import { SavedPostGrid } from "./SavedPostGrid";
 
+// Lazy load the SavePostModal component to reduce initial bundle size
+const SavePostModal = React.lazy(() =>
+  import("@/components/shared/save-post-modal").then(module => ({
+    default: module.SavePostModal,
+  }))
+);
+
 interface SavedPostsContentProps {
   userId: string;
-}
-
-interface SavedPost {
-  id: string;
-  embedUrl: string;
-  originalUrl?: string;
-  caption: string;
-  metrics: {
-    views?: number;
-    likes: number;
-    comments: number;
-    shares?: number;
-  };
-  datePosted: string;
-  platform: "instagram" | "tiktok";
-  profile: {
-    handle: string;
-    displayName: string;
-    avatarUrl: string;
-    verified: boolean;
-  };
 }
 
 export function SavedPostsContent({}: SavedPostsContentProps) {
@@ -51,7 +42,11 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Custom hooks for post modal management
+  // Save post modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
+
+  // Custom hooks for post modal management with database-first transcript loading
   const {
     selectedPost,
     activeTab,
@@ -60,9 +55,39 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     transcriptError,
     handlePostClick,
     handleTabChange,
-    handleCopyTranscript,
     closeModal,
   } = usePostModal();
+
+  // Override transcript with database value for saved posts
+  const displayTranscript = React.useMemo(() => {
+    if (!selectedPost) return transcript;
+
+    // For saved posts, check if we have transcript in the post data
+    const savedPost = selectedPost as SavedPost;
+    if (savedPost.transcript) {
+      return {
+        text: parseWebVTT(savedPost.transcript),
+        id: savedPost.id,
+      };
+    }
+
+    // Fallback to API transcript from usePostModal
+    return transcript;
+  }, [selectedPost, transcript]);
+
+  // Override loading state for saved posts with database transcripts
+  const displayIsLoadingTranscript = React.useMemo(() => {
+    if (!selectedPost) return isLoadingTranscript;
+
+    const savedPost = selectedPost as SavedPost;
+    // If we have database transcript, don't show loading
+    if (savedPost.transcript) {
+      return false;
+    }
+
+    // Otherwise use the API loading state
+    return isLoadingTranscript;
+  }, [selectedPost, isLoadingTranscript]);
 
   useEffect(() => {
     loadSavedPosts();
@@ -85,6 +110,54 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
       setIsLoading(false);
     }
   };
+
+  // Transform SavedPost to SavePostData for saving functionality
+  const transformPostForSaving = React.useCallback(
+    (post: SavedPost): SavePostData => {
+      return {
+        id: post.id,
+        platformPostId: post.platformPostId || post.id, // Use platformPostId if available
+        platform: post.platform,
+        embedUrl: post.embedUrl,
+        caption: post.caption,
+        originalUrl: post.originalUrl || post.embedUrl,
+        metrics: {
+          views: post.metrics?.views || 0,
+          likes: post.metrics?.likes || 0,
+          comments: post.metrics?.comments || 0,
+          shares: post.metrics?.shares || 0,
+        },
+        datePosted: post.datePosted,
+        handle: post.profile?.handle || "",
+        displayName: post.profile?.displayName || post.profile?.handle || "",
+        bio: post.profile?.bio || "",
+        followers: post.profile?.followers || 0,
+        avatarUrl: post.profile?.avatarUrl || "",
+        verified: post.profile?.verified || false,
+        // Instagram-specific fields
+        thumbnail: post.thumbnail,
+        isVideo: post.isVideo,
+        isCarousel: post.isCarousel,
+        carouselMedia: post.carouselMedia || [],
+        carouselCount: post.carouselCount || 0,
+        videoUrl: post.videoUrl,
+        displayUrl: post.displayUrl,
+        shortcode: post.shortcode,
+        dimensions: post.dimensions,
+        transcript: post.transcript,
+      };
+    },
+    []
+  );
+
+  const handleSavePost = React.useCallback(
+    (post: SavedPost) => {
+      const savePostData = transformPostForSaving(post);
+      setPostToSave(savePostData);
+      setShowSaveModal(true);
+    },
+    [transformPostForSaving]
+  );
 
   if (error) {
     return (
@@ -126,6 +199,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         posts={posts}
         isLoading={isLoading}
         onPostClick={handlePostClick}
+        onSavePost={handleSavePost}
       />
 
       {/* Post detail modal */}
@@ -234,6 +308,25 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                             {formatDate(selectedPost.datePosted)}
                           </div>
                         </div>
+
+                        {/* Save to Another Board Button */}
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            className="flex-1"
+                            onClick={() => {
+                              // Find the original SavedPost to pass to handleSavePost
+                              const originalPost = posts.find(
+                                p => p.id === selectedPost.id
+                              );
+                              if (originalPost) {
+                                handleSavePost(originalPost);
+                              }
+                            }}
+                          >
+                            <Bookmark className="w-4 h-4 mr-2" />
+                            Save to Another Board
+                          </Button>
+                        </div>
                       </>
                     )}
 
@@ -244,17 +337,23 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={handleCopyTranscript}
+                            onClick={() => {
+                              if (displayTranscript?.text) {
+                                navigator.clipboard.writeText(
+                                  displayTranscript.text
+                                );
+                              }
+                            }}
                             disabled={
-                              !transcript?.text ||
-                              isLoadingTranscript ||
+                              !displayTranscript?.text ||
+                              displayIsLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
-                        {isLoadingTranscript ? (
+                        {displayIsLoadingTranscript ? (
                           <div className="flex items-center justify-center py-8">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
                           </div>
@@ -262,7 +361,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           <div className="text-sm text-red-600">
                             {transcriptError}
                           </div>
-                        ) : !transcript?.text ? (
+                        ) : !displayTranscript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok" ||
                             (selectedPost.platform === "instagram" &&
@@ -272,7 +371,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
-                            {transcript.text}
+                            {displayTranscript.text}
                           </div>
                         )}
                       </div>
@@ -284,6 +383,20 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Save Post Modal */}
+      {postToSave && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <SavePostModal
+            isOpen={showSaveModal}
+            onClose={() => {
+              setShowSaveModal(false);
+              setPostToSave(null);
+            }}
+            post={postToSave}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

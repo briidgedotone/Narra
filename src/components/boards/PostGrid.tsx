@@ -1,4 +1,5 @@
 import React from "react";
+import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -15,13 +16,15 @@ interface PostGridProps {
   activeFilter: string;
   /** Callback when post details are clicked */
   onPostClick?: (post: SavedPost) => void;
+  /** Callback when post save is clicked */
+  onSavePost?: (post: SavedPost) => void;
 }
 
 /**
  * PostGrid - Flexible masonry layout for displaying raw embeds
  *
  * Features:
- * - Pinterest-style masonry layout using CSS columns (1-3 columns based on screen size)
+ * - Pinterest-style masonry layout using react-masonry-css (1-4 columns based on screen size)
  * - Direct Instagram and TikTok embed display
  * - Post filtering by platform and recency
  * - Loading skeleton states
@@ -32,20 +35,36 @@ interface PostGridProps {
  * - Mobile: 1 column
  * - Small tablet: 2 columns
  * - Large tablet: 3 columns
+ * - Desktop: 4 columns
  *
  * Performance optimizations:
  * - Memoized filtered posts calculation
- * - Memoized loading skeleton
+ * - Memoized loading skeleton with masonry layout
  * - Memoized empty state messages
  * - Recent filter with 30-day cutoff
- * - Break-inside-avoid for better column distribution
+ * - JavaScript-based masonry for optimal distribution
  */
 export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   posts,
   isLoading,
   activeFilter,
   onPostClick,
+  onSavePost,
 }) {
+  /**
+   * Masonry breakpoints - matches saved posts and following pages
+   */
+  const breakpointColumnsObj = React.useMemo(
+    () => ({
+      default: 4, // xl:columns-4
+      1280: 4, // xl
+      1024: 3, // lg:columns-3
+      640: 2, // sm:columns-2
+      0: 1, // columns-1
+    }),
+    []
+  );
+
   /**
    * Memoized filtered posts to prevent unnecessary recalculations
    * Filters posts based on platform or recency
@@ -67,15 +86,19 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
 
   /**
    * Memoized loading skeleton to prevent recreation
-   * Shows 6 skeleton cards in flexible column layout
+   * Shows 6 skeleton cards in masonry layout
    */
   const loadingSkeleton = React.useMemo(
     () => (
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-6">
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="flex w-auto -ml-4"
+        columnClassName="pl-4 bg-clip-padding"
+      >
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 break-inside-avoid mb-6"
+            className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4"
             role="status"
             aria-label="Loading post"
           >
@@ -101,9 +124,9 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
             </div>
           </div>
         ))}
-      </div>
+      </Masonry>
     ),
-    []
+    [breakpointColumnsObj]
   );
 
   /**
@@ -135,15 +158,17 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     );
   }
 
-  // Main grid render - flexible layout for mixed content
+  // Main grid render - masonry layout for mixed content
   return (
-    <div
-      className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 max-w-full"
+    <Masonry
+      breakpointCols={breakpointColumnsObj}
+      className="flex w-auto -ml-4"
+      columnClassName="pl-4 bg-clip-padding"
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
       {filteredPosts.map(post => (
-        <div key={post.id} className="masonry-item mb-6 flex justify-center">
+        <div key={post.id} className="mb-4 flex justify-center">
           {post.platform === "instagram" ? (
             <InstagramEmbed
               url={post.originalUrl || post.embedUrl}
@@ -151,6 +176,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               metrics={post.metrics}
               showMetrics={true}
               onDetailsClick={() => onPostClick?.(post)}
+              onSaveClick={() => onSavePost?.(post)}
             />
           ) : (
             <TikTokEmbed
@@ -159,10 +185,11 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               metrics={post.metrics}
               showMetrics={true}
               onDetailsClick={() => onPostClick?.(post)}
+              onSaveClick={() => onSavePost?.(post)}
             />
           )}
         </div>
       ))}
-    </div>
+    </Masonry>
   );
 });
