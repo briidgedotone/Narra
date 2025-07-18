@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/database";
+import { refreshProfileForUser } from "@/lib/refresh-profile";
 
 export async function followProfile(profileId: string) {
   try {
@@ -49,28 +50,18 @@ export async function followProfile(profileId: string) {
 
     const result = await db.followProfile(userId, profileId);
 
-    // Trigger immediate refresh for the new follow (via API)
+    // Trigger immediate refresh for the new follow (direct function call)
     try {
       console.log(`🔄 Triggering immediate refresh for profile: ${profileId}`);
-      
-      const refreshResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/refresh-profile`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ profileId, userId }),
-        }
-      );
-      
-      if (refreshResponse.ok) {
-        const refreshResult = await refreshResponse.json();
-        console.log(`📊 Refresh result:`, refreshResult);
-        console.log(`✅ Successfully refreshed profile: ${refreshResult.data?.newPosts || 0} new posts`);
+
+      const refreshResult = await refreshProfileForUser(userId, profileId);
+
+      if (refreshResult.success) {
+        console.log(
+          `✅ Successfully refreshed profile: ${refreshResult.newPosts} new posts`
+        );
       } else {
-        const errorResult = await refreshResponse.json();
-        console.error(`❌ Refresh failed with status ${refreshResponse.status}:`, errorResult);
+        console.error(`❌ Refresh failed: ${refreshResult.message}`);
       }
     } catch (error) {
       // Don't let refresh failures affect the follow action

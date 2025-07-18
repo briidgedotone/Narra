@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/database";
+import { refreshProfileForUser } from "@/lib/refresh-profile";
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -92,6 +93,24 @@ export async function createAndFollowProfile(profileData: {
 
     // Now follow the profile
     const followResult = await db.followProfile(userId, profile.id);
+
+    // Trigger immediate refresh for the new follow (direct function call)
+    try {
+      console.log(`🔄 Triggering immediate refresh for profile: ${profile.id}`);
+
+      const refreshResult = await refreshProfileForUser(userId, profile.id);
+
+      if (refreshResult.success) {
+        console.log(
+          `✅ Successfully refreshed profile: ${refreshResult.newPosts} new posts`
+        );
+      } else {
+        console.error(`❌ Refresh failed: ${refreshResult.message}`);
+      }
+    } catch (error) {
+      // Don't let refresh failures affect the follow action
+      console.error("Failed to trigger immediate refresh:", error);
+    }
 
     // Revalidate relevant pages
     revalidatePath("/following");

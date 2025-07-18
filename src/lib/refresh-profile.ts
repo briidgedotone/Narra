@@ -40,7 +40,7 @@ export async function refreshProfileForUser(
     if (profile.platform === "tiktok") {
       const response = await scrapeCreatorsApi.tiktok.getProfileVideos(
         profile.handle,
-        10 // Get 10 latest posts
+        20 // Get 20 latest posts
       );
 
       if (response.success && response.data) {
@@ -49,7 +49,7 @@ export async function refreshProfileForUser(
     } else if (profile.platform === "instagram") {
       const response = await scrapeCreatorsApi.instagram.getPosts(
         profile.handle,
-        10 // Get 10 latest posts
+        20 // Get 20 latest posts
       );
 
       if (response.success && response.data) {
@@ -62,8 +62,8 @@ export async function refreshProfileForUser(
     let newPostsCount = 0;
     let errorsCount = 0;
 
-    // Process posts (limit to 7 like the edge function)
-    for (let i = 0; i < Math.min(7, posts.length); i++) {
+    // Process posts (limit to 20 as requested)
+    for (let i = 0; i < Math.min(20, posts.length); i++) {
       const post = posts[i];
 
       try {

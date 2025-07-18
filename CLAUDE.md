@@ -144,6 +144,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Always handle failed embeds gracefully with fallback content
 - Store original URLs alongside embed URLs for reliability
 
+### Following System
+
+- **Automatic Post Fetching**: When users follow profiles, 20 latest posts are automatically fetched and stored
+- **Two Follow Actions**:
+  - `followProfile` in `actions/following.ts` - for existing profiles
+  - `createAndFollowProfile` in `actions/discovery.ts` - creates profile first, then follows
+- **Direct Function Calls**: Both actions call `refreshProfileForUser` directly (not via HTTP)
+- **Error Handling**: Refresh failures don't prevent successful follows
+- **Cache Revalidation**: Following pages are revalidated after follow actions
+
 ### Testing Strategy
 
 - Jest configuration includes coverage thresholds (70% minimum)
@@ -167,3 +177,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 5. Implement proper loading and error states
 6. Add cache revalidation after mutations
 7. Include proper authentication checks
+
+### Following System Patterns
+
+1. **For follow actions**: Always call `refreshProfileForUser` directly after `db.followProfile`
+2. **Error isolation**: Wrap refresh calls in try-catch to prevent follow failures
+3. **Post limits**: Fetch 20 posts from API, process all 20 (not limited to 7)
+4. **Logging**: Use console.log for successful operations, console.error for failures
+5. **Revalidation**: Always revalidate `/following` and `/discovery` paths after follow actions
