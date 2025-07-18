@@ -157,6 +157,7 @@ export interface SavePostData {
     width: number;
     height: number;
   };
+  transcript?: string;
 }
 
 // Search and UI State Types
