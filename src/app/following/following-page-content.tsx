@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  Suspense,
+} from "react";
 import { toast } from "sonner";
 
 import {
@@ -18,12 +24,21 @@ import {
   MessageCircle,
   Share,
   Calendar,
+  Bookmark,
 } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
 import type { SavedPost } from "@/types/board";
-import type { SortOption } from "@/types/discovery";
+import type { SortOption, SavePostData } from "@/types/discovery";
+
+// Lazy load the SavePostModal component to reduce initial bundle size
+const SavePostModal = React.lazy(() =>
+  import("@/components/shared/save-post-modal").then(module => ({
+    default: module.SavePostModal,
+  }))
+);
 
 interface FollowedProfile {
   id: string;
@@ -72,6 +87,10 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
+
+  // Save post modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
   // Post modal functionality
   const {
@@ -227,6 +246,54 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     setSortOption(value);
   }, []);
 
+  // Transform FollowedPost to SavePostData for saving functionality
+  const transformPostForSaving = useCallback(
+    (post: FollowedPost): SavePostData => {
+      return {
+        id: post.id,
+        platformPostId: post.id, // Use the post id as platform post id
+        platform: post.platform,
+        embedUrl: post.embed_url,
+        caption: post.caption,
+        originalUrl: post.embed_url, // Use embed_url as fallback for originalUrl
+        metrics: {
+          views: post.metrics?.views || 0,
+          likes: post.metrics?.likes || 0,
+          comments: post.metrics?.comments || 0,
+          shares: post.metrics?.shares || 0,
+        },
+        datePosted: post.date_posted,
+        handle: post.profiles.handle,
+        displayName: post.profiles.display_name || post.profiles.handle,
+        bio: "", // Not available in FollowedPost
+        followers: 0, // Not available in FollowedPost
+        avatarUrl: post.profiles.avatar_url || "",
+        verified: false, // Not available in FollowedPost
+        // Instagram-specific fields
+        thumbnail: post.thumbnail_url,
+        isVideo: post.platform === "instagram" ? true : false, // Assume Instagram posts could be videos
+        isCarousel: false, // Not available in FollowedPost
+        carouselMedia: [], // Not available in FollowedPost
+        carouselCount: 0, // Not available in FollowedPost
+        videoUrl: undefined, // Not available in FollowedPost
+        displayUrl: undefined, // Not available in FollowedPost
+        shortcode: "", // Not available in FollowedPost
+        dimensions: undefined, // Not available in FollowedPost
+        transcript: post.transcript, // Include transcript if available
+      };
+    },
+    []
+  );
+
+  const handleSavePost = useCallback(
+    (post: FollowedPost) => {
+      const savePostData = transformPostForSaving(post);
+      setPostToSave(savePostData);
+      setShowSaveModal(true);
+    },
+    [transformPostForSaving]
+  );
+
   // Sort posts based on selected option
   const sortedPosts = useMemo(() => {
     const postsCopy = [...posts];
@@ -294,6 +361,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
         sortOption={sortOption}
         onLoadMore={handleLoadMore}
         onPostClick={handleFollowingPostClick}
+        onSavePost={handleSavePost}
         onSortChange={handleSortChange}
       />
 
@@ -392,6 +460,25 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
                             {formatDate(selectedPost.datePosted)}
                           </div>
                         </div>
+
+                        {/* Save to Board Button */}
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            className="flex-1"
+                            onClick={() => {
+                              // Find the original FollowedPost to pass to handleSavePost
+                              const originalPost = posts.find(
+                                p => p.id === selectedPost.id
+                              );
+                              if (originalPost) {
+                                handleSavePost(originalPost);
+                              }
+                            }}
+                          >
+                            <Bookmark className="w-4 h-4 mr-2" />
+                            Save to Board
+                          </Button>
+                        </div>
                       </>
                     )}
 
@@ -442,6 +529,20 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Save Post Modal */}
+      {postToSave && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <SavePostModal
+            isOpen={showSaveModal}
+            onClose={() => {
+              setShowSaveModal(false);
+              setPostToSave(null);
+            }}
+            post={postToSave}
+          />
+        </Suspense>
+      )}
     </>
   );
 }

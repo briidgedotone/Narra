@@ -61,6 +61,7 @@ interface FollowingContentProps {
   sortOption?: SortOption;
   onLoadMore?: () => void;
   onPostClick?: (post: FollowedPost) => void;
+  onSavePost?: (post: FollowedPost) => void;
   onSortChange?: (value: SortOption) => void;
 }
 
@@ -75,6 +76,7 @@ export function FollowingContent({
   sortOption = "most-recent",
   onLoadMore,
   onPostClick,
+  onSavePost,
   onSortChange,
 }: FollowingContentProps) {
   const router = useRouter();
@@ -237,6 +239,7 @@ export function FollowingContent({
                       }}
                       showMetrics={true}
                       onDetailsClick={() => onPostClick?.(post)}
+                      onSaveClick={() => onSavePost?.(post)}
                     />
                   ) : (
                     <TikTokEmbed
@@ -258,6 +261,7 @@ export function FollowingContent({
                       }}
                       showMetrics={true}
                       onDetailsClick={() => onPostClick?.(post)}
+                      onSaveClick={() => onSavePost?.(post)}
                     />
                   )}
                 </div>

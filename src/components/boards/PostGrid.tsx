@@ -16,6 +16,8 @@ interface PostGridProps {
   activeFilter: string;
   /** Callback when post details are clicked */
   onPostClick?: (post: SavedPost) => void;
+  /** Callback when post save is clicked */
+  onSavePost?: (post: SavedPost) => void;
 }
 
 /**
@@ -47,6 +49,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   isLoading,
   activeFilter,
   onPostClick,
+  onSavePost,
 }) {
   /**
    * Masonry breakpoints - matches saved posts and following pages
@@ -173,6 +176,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               metrics={post.metrics}
               showMetrics={true}
               onDetailsClick={() => onPostClick?.(post)}
+              onSaveClick={() => onSavePost?.(post)}
             />
           ) : (
             <TikTokEmbed
@@ -181,6 +185,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
               metrics={post.metrics}
               showMetrics={true}
               onDetailsClick={() => onPostClick?.(post)}
+              onSaveClick={() => onSavePost?.(post)}
             />
           )}
         </div>

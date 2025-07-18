@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 
 import { PostGrid } from "@/components/boards";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -20,12 +20,22 @@ import {
   MessageCircle,
   Share,
   Calendar,
+  Bookmark,
 } from "@/components/ui/icons";
+import { LoadingSpinner } from "@/components/ui/loading";
 import { useBoard } from "@/hooks/useBoard";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
-import type { BoardPageContentProps } from "@/types/board";
+import type { BoardPageContentProps, SavedPost } from "@/types/board";
+import type { SavePostData } from "@/types/discovery";
+
+// Lazy load the SavePostModal component to reduce initial bundle size
+const SavePostModal = React.lazy(() =>
+  import("@/components/shared/save-post-modal").then(module => ({
+    default: module.SavePostModal,
+  }))
+);
 
 // Global timeout declarations for board name and description auto-save
 declare global {
@@ -57,6 +67,10 @@ export function BoardPageContent({
   const [activeFilter, setActiveFilter] = useState<
     "all" | "tiktok" | "instagram" | "recent"
   >("all");
+
+  // Save post modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
   // Custom hooks for board management
   const {
@@ -192,6 +206,54 @@ export function BoardPageContent({
   const handleFilterClick = React.useCallback((filter: string) => {
     setActiveFilter(filter as typeof activeFilter);
   }, []);
+
+  // Transform SavedPost to SavePostData for saving functionality
+  const transformPostForSaving = React.useCallback(
+    (post: SavedPost): SavePostData => {
+      return {
+        id: post.id,
+        platformPostId: post.platformPostId || post.id, // Use platformPostId if available
+        platform: post.platform,
+        embedUrl: post.embedUrl,
+        caption: post.caption,
+        originalUrl: post.originalUrl || post.embedUrl,
+        metrics: {
+          views: post.metrics?.views || 0,
+          likes: post.metrics?.likes || 0,
+          comments: post.metrics?.comments || 0,
+          shares: post.metrics?.shares || 0,
+        },
+        datePosted: post.datePosted,
+        handle: post.profile?.handle || "",
+        displayName: post.profile?.displayName || post.profile?.handle || "",
+        bio: post.profile?.bio || "",
+        followers: post.profile?.followers || 0,
+        avatarUrl: post.profile?.avatarUrl || "",
+        verified: post.profile?.verified || false,
+        // Instagram-specific fields
+        thumbnail: post.thumbnail,
+        isVideo: post.isVideo,
+        isCarousel: post.isCarousel,
+        carouselMedia: post.carouselMedia || [],
+        carouselCount: post.carouselCount || 0,
+        videoUrl: post.videoUrl,
+        displayUrl: post.displayUrl,
+        shortcode: post.shortcode,
+        dimensions: post.dimensions,
+        transcript: post.transcript,
+      };
+    },
+    []
+  );
+
+  const handleSavePost = React.useCallback(
+    (post: SavedPost) => {
+      const savePostData = transformPostForSaving(post);
+      setPostToSave(savePostData);
+      setShowSaveModal(true);
+    },
+    [transformPostForSaving]
+  );
 
   /**
    * Memoized filter button configuration to prevent recreation
@@ -335,6 +397,7 @@ export function BoardPageContent({
           isLoading={false}
           activeFilter={activeFilter}
           onPostClick={handlePostClick}
+          onSavePost={handleSavePost}
         />
       </div>
 
@@ -434,6 +497,27 @@ export function BoardPageContent({
                             {formatDate(selectedPost.datePosted)}
                           </div>
                         </div>
+
+                        {/* Copy to Board Button - Only show for non-shared views */}
+                        {!isSharedView && (
+                          <div className="flex gap-3 pt-4 border-t">
+                            <Button
+                              className="flex-1"
+                              onClick={() => {
+                                // Find the original SavedPost to pass to handleSavePost
+                                const originalPost = posts.find(
+                                  p => p.id === selectedPost.id
+                                );
+                                if (originalPost) {
+                                  handleSavePost(originalPost);
+                                }
+                              }}
+                            >
+                              <Bookmark className="w-4 h-4 mr-2" />
+                              Copy to Board
+                            </Button>
+                          </div>
+                        )}
                       </>
                     )}
 
@@ -490,6 +574,20 @@ export function BoardPageContent({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Save Post Modal - Only for non-shared views */}
+      {!isSharedView && postToSave && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <SavePostModal
+            isOpen={showSaveModal}
+            onClose={() => {
+              setShowSaveModal(false);
+              setPostToSave(null);
+            }}
+            post={postToSave}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
