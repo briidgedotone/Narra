@@ -167,4 +167,10 @@ export type SortOption =
   | "most-viewed"
   | "most-liked"
   | "most-commented";
+export type DateFilter =
+  | "last-30-days"
+  | "last-60-days"
+  | "last-90-days"
+  | "last-180-days"
+  | "last-365-days";
 export type ActiveTab = "overview" | "transcript";

@@ -8,7 +8,13 @@ import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ExternalLink, Users, TikTok, Instagram } from "@/components/ui/icons";
+import {
+  ExternalLink,
+  Users,
+  TikTok,
+  Instagram,
+  Calendar,
+} from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
   Select,
@@ -17,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { SortOption } from "@/types/discovery";
+import type { SortOption, DateFilter } from "@/types/discovery";
 
 import { FollowingSkeleton } from "./following-skeleton";
 
@@ -59,10 +65,12 @@ interface FollowingContentProps {
   isLoadingMore?: boolean;
   hasMorePosts?: boolean;
   sortOption?: SortOption;
+  dateFilter?: DateFilter;
   onLoadMore?: () => void;
   onPostClick?: (post: FollowedPost) => void;
   onSavePost?: (post: FollowedPost) => void;
   onSortChange?: (value: SortOption) => void;
+  onDateFilterChange?: (value: DateFilter) => void;
 }
 
 export function FollowingContent({
@@ -74,10 +82,12 @@ export function FollowingContent({
   isLoadingMore = false,
   hasMorePosts = false,
   sortOption = "most-recent",
+  dateFilter = "last-30-days",
   onLoadMore,
   onPostClick,
   onSavePost,
   onSortChange,
+  onDateFilterChange,
 }: FollowingContentProps) {
   const router = useRouter();
 
@@ -175,19 +185,43 @@ export function FollowingContent({
             )}
           </div>
 
-          {onSortChange && (
+          {(onSortChange || onDateFilterChange) && (
             <div className="flex items-center gap-4">
-              <Select value={sortOption} onValueChange={onSortChange}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="most-recent">Most Recent</SelectItem>
-                  <SelectItem value="most-viewed">Most Viewed</SelectItem>
-                  <SelectItem value="most-liked">Most Liked</SelectItem>
-                  <SelectItem value="most-commented">Most Commented</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Date Filter */}
+              {onDateFilterChange && (
+                <Select value={dateFilter} onValueChange={onDateFilterChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <SelectValue placeholder="Filter by date" />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+                    <SelectItem value="last-60-days">Last 60 Days</SelectItem>
+                    <SelectItem value="last-90-days">Last 90 Days</SelectItem>
+                    <SelectItem value="last-180-days">Last 180 Days</SelectItem>
+                    <SelectItem value="last-365-days">Last 365 Days</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+
+              {/* Sort Filter */}
+              {onSortChange && (
+                <Select value={sortOption} onValueChange={onSortChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="most-recent">Most Recent</SelectItem>
+                    <SelectItem value="most-viewed">Most Viewed</SelectItem>
+                    <SelectItem value="most-liked">Most Liked</SelectItem>
+                    <SelectItem value="most-commented">
+                      Most Commented
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
           )}
         </div>

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  useCallback,
+  useMemo,
+} from "react";
 
 import { getAllUserSavedPosts } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -17,12 +23,19 @@ import {
   Bookmark,
 } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { parseWebVTT } from "@/lib/utils/format";
 import { formatDate, formatNumber } from "@/lib/utils/format";
 import type { SavedPost } from "@/types/board";
-import type { SavePostData } from "@/types/discovery";
+import type { SavePostData, SortOption, DateFilter } from "@/types/discovery";
 
 import { SavedPostGrid } from "./SavedPostGrid";
 
@@ -41,6 +54,10 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Filter states
+  const [sortOption, setSortOption] = useState<SortOption>("most-recent");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -159,6 +176,70 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     [transformPostForSaving]
   );
 
+  const handleSortChange = useCallback((value: SortOption) => {
+    setSortOption(value);
+  }, []);
+
+  const handleDateFilterChange = useCallback((value: DateFilter) => {
+    setDateFilter(value);
+  }, []);
+
+  // Filter and sort posts based on selected options
+  const filteredAndSortedPosts = useMemo(() => {
+    // First apply date filter
+    const now = new Date();
+    let daysToFilter = 30; // default
+
+    switch (dateFilter) {
+      case "last-30-days":
+        daysToFilter = 30;
+        break;
+      case "last-60-days":
+        daysToFilter = 60;
+        break;
+      case "last-90-days":
+        daysToFilter = 90;
+        break;
+      case "last-180-days":
+        daysToFilter = 180;
+        break;
+      case "last-365-days":
+        daysToFilter = 365;
+        break;
+    }
+
+    const cutoffDate = new Date();
+    cutoffDate.setDate(now.getDate() - daysToFilter);
+
+    const filteredPosts = posts.filter(post => {
+      const postDate = new Date(post.datePosted);
+      return postDate >= cutoffDate;
+    });
+
+    // Then apply sorting
+    switch (sortOption) {
+      case "most-recent":
+        return filteredPosts.sort(
+          (a, b) =>
+            new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()
+        );
+      case "most-viewed":
+        return filteredPosts.sort(
+          (a, b) => (b.metrics?.views || 0) - (a.metrics?.views || 0)
+        );
+      case "most-liked":
+        return filteredPosts.sort(
+          (a, b) => (b.metrics?.likes || 0) - (a.metrics?.likes || 0)
+        );
+      case "most-commented":
+        return filteredPosts.sort(
+          (a, b) => (b.metrics?.comments || 0) - (a.metrics?.comments || 0)
+        );
+      default:
+        return filteredPosts;
+    }
+  }, [posts, sortOption, dateFilter]);
+
   if (error) {
     return (
       <div className="bg-card rounded-lg border p-8">
@@ -189,14 +270,49 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
   return (
     <div className="space-y-6">
-      {/* Posts Count */}
-      <div className="text-sm text-muted-foreground">
-        {posts.length} saved posts
+      {/* Header with filters and count */}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {filteredAndSortedPosts.length} of {posts.length} saved posts
+        </div>
+
+        {/* Date and Sort Filters */}
+        <div className="flex items-center gap-4">
+          {/* Date Filter */}
+          <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+            <SelectTrigger className="w-[180px]">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <SelectValue placeholder="Filter by date" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+              <SelectItem value="last-60-days">Last 60 Days</SelectItem>
+              <SelectItem value="last-90-days">Last 90 Days</SelectItem>
+              <SelectItem value="last-180-days">Last 180 Days</SelectItem>
+              <SelectItem value="last-365-days">Last 365 Days</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Sort Filter */}
+          <Select value={sortOption} onValueChange={handleSortChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="most-recent">Most Recent</SelectItem>
+              <SelectItem value="most-viewed">Most Viewed</SelectItem>
+              <SelectItem value="most-liked">Most Liked</SelectItem>
+              <SelectItem value="most-commented">Most Commented</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Posts Grid */}
       <SavedPostGrid
-        posts={posts}
+        posts={filteredAndSortedPosts}
         isLoading={isLoading}
         onPostClick={handlePostClick}
         onSavePost={handleSavePost}
