@@ -31,7 +31,7 @@ import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
 import type { SavedPost } from "@/types/board";
-import type { SortOption, SavePostData } from "@/types/discovery";
+import type { SortOption, DateFilter, SavePostData } from "@/types/discovery";
 
 // Lazy load the SavePostModal component to reduce initial bundle size
 const SavePostModal = React.lazy(() =>
@@ -87,6 +87,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -237,6 +238,10 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     setSortOption(value);
   }, []);
 
+  const handleDateFilterChange = useCallback((value: DateFilter) => {
+    setDateFilter(value);
+  }, []);
+
   // Transform FollowedPost to SavePostData for saving functionality
   const transformPostForSaving = useCallback(
     (post: FollowedPost): SavePostData => {
@@ -281,33 +286,64 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     [transformPostForSaving]
   );
 
-  // Sort posts based on selected option
-  const sortedPosts = useMemo(() => {
-    const postsCopy = [...posts];
+  // Filter and sort posts based on selected options
+  const filteredAndSortedPosts = useMemo(() => {
+    // First apply date filter
+    const now = new Date();
+    let daysToFilter = 30; // default
+
+    switch (dateFilter) {
+      case "last-30-days":
+        daysToFilter = 30;
+        break;
+      case "last-60-days":
+        daysToFilter = 60;
+        break;
+      case "last-90-days":
+        daysToFilter = 90;
+        break;
+      case "last-180-days":
+        daysToFilter = 180;
+        break;
+      case "last-365-days":
+        daysToFilter = 365;
+        break;
+    }
+
+    const cutoffDate = new Date();
+    cutoffDate.setDate(now.getDate() - daysToFilter);
+
+    const filteredPosts = posts.filter(post => {
+      const postDate = new Date(post.date_posted);
+      return postDate >= cutoffDate;
+    });
+
+    // Then apply sorting
+    const sortedPosts = [...filteredPosts];
 
     switch (sortOption) {
       case "most-recent":
-        return postsCopy.sort(
+        return sortedPosts.sort(
           (a, b) =>
             new Date(b.date_posted).getTime() -
             new Date(a.date_posted).getTime()
         );
       case "most-viewed":
-        return postsCopy.sort(
+        return sortedPosts.sort(
           (a, b) => (b.metrics?.views || 0) - (a.metrics?.views || 0)
         );
       case "most-liked":
-        return postsCopy.sort(
+        return sortedPosts.sort(
           (a, b) => (b.metrics?.likes || 0) - (a.metrics?.likes || 0)
         );
       case "most-commented":
-        return postsCopy.sort(
+        return sortedPosts.sort(
           (a, b) => (b.metrics?.comments || 0) - (a.metrics?.comments || 0)
         );
       default:
-        return postsCopy;
+        return sortedPosts;
     }
-  }, [posts, sortOption]);
+  }, [posts, sortOption, dateFilter]);
 
   // Load followed profiles on mount
   useEffect(() => {
@@ -335,17 +371,19 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     <>
       <FollowingContent
         profiles={profiles}
-        posts={sortedPosts}
+        posts={filteredAndSortedPosts}
         lastRefreshTime={lastRefreshTime}
         isLoadingProfiles={isLoadingProfiles}
         isLoadingPosts={isLoadingPosts}
         isLoadingMore={isLoadingMore}
         hasMorePosts={hasMorePosts}
         sortOption={sortOption}
+        dateFilter={dateFilter}
         onLoadMore={handleLoadMore}
         onPostClick={handleFollowingPostClick}
         onSavePost={handleSavePost}
         onSortChange={handleSortChange}
+        onDateFilterChange={handleDateFilterChange}
       />
 
       <Dialog open={!!selectedPost} onOpenChange={() => closeModal()}>
