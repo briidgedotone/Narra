@@ -60,23 +60,18 @@ export function usePostModal() {
     (tab: "overview" | "transcript") => {
       setActiveTab(tab);
 
-      // Use transcript from database if available, otherwise fall back to API
+      // Always call API for transcript (like discovery page approach)
       if (
         tab === "transcript" &&
         selectedPost &&
         (selectedPost.platform === "tiktok" ||
           (selectedPost.platform === "instagram" && selectedPost.isVideo))
       ) {
-        if (selectedPost.transcript) {
-          // Use transcript from database
-          setTranscript({ text: selectedPost.transcript });
-          setTranscriptError(null);
-          setCurrentTranscriptPostId(selectedPost.id);
-        } else if (
+        if (
           !isLoadingTranscript &&
           currentTranscriptPostId !== selectedPost.id
         ) {
-          // Fall back to API if no transcript in database
+          // Always fetch fresh transcript from API
           loadTranscript(selectedPost);
         }
       }

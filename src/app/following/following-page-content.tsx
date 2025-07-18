@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/icons";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
-import { formatDate, formatNumber } from "@/lib/utils/format";
+import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
 import type { SavedPost } from "@/types/board";
 import type { SortOption } from "@/types/discovery";
 
@@ -204,7 +204,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
       addedAt: new Date().toISOString(), // Not available in FollowedPost
       // Instagram-specific fields
       thumbnail: post.thumbnail_url || "",
-      isVideo: false, // Will be determined by platform
+      isVideo: post.platform === "instagram" ? true : false, // Assume Instagram posts could be videos
       isCarousel: false, // Not available in FollowedPost
       carouselMedia: [], // Not available in FollowedPost
       carouselCount: 0, // Not available in FollowedPost
@@ -430,7 +430,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
-                            {transcript.text}
+                            {parseWebVTT(transcript.text)}
                           </div>
                         )}
                       </div>
