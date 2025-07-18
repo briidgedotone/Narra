@@ -104,7 +104,7 @@ export function FollowingContent({
       </div>
 
       {/* Profiles Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
         {profiles.map(profile => (
           <Link
             key={profile.id}
