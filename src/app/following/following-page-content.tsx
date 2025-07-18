@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 
 import {
@@ -10,7 +10,19 @@ import {
 } from "@/app/actions/following";
 import { FollowingContent } from "@/components/following";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Eye,
+  Heart,
+  MessageCircle,
+  Share,
+  Calendar,
+} from "@/components/ui/icons";
+import { usePostModal } from "@/hooks/usePostModal";
+import { cn } from "@/lib/utils";
+import { formatDate, formatNumber } from "@/lib/utils/format";
+import type { SavedPost } from "@/types/board";
 import type { SortOption } from "@/types/discovery";
 
 interface FollowedProfile {
@@ -59,9 +71,20 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [selectedPost, setSelectedPost] = useState<FollowedPost | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
+
+  // Post modal functionality
+  const {
+    selectedPost,
+    activeTab,
+    transcript,
+    isLoadingTranscript,
+    transcriptError,
+    handlePostClick,
+    handleTabChange,
+    handleCopyTranscript,
+    closeModal,
+  } = usePostModal();
 
   const loadFollowedProfiles = useCallback(async () => {
     try {
@@ -151,15 +174,54 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     }
   }, [isLoadingMore, hasMorePosts, posts.length, loadFollowedPosts]);
 
-  const handlePostClick = useCallback((post: FollowedPost) => {
-    setSelectedPost(post);
-    setIsModalOpen(true);
+  // Transform FollowedPost to SavedPost for modal compatibility
+  const transformPostForModal = useCallback((post: FollowedPost): SavedPost => {
+    return {
+      id: post.id,
+      platform: post.platform,
+      platformPostId: post.platform_post_id,
+      embedUrl: post.embed_url,
+      originalUrl: post.embed_url, // Use embed_url as fallback
+      caption: post.caption || "",
+      transcript: post.transcript || "",
+      metrics: {
+        views: post.metrics?.views || 0,
+        likes: post.metrics?.likes || 0,
+        comments: post.metrics?.comments || 0,
+        shares: post.metrics?.shares || 0,
+      },
+      datePosted: post.date_posted,
+      profile: {
+        id: post.profiles.handle, // Use handle as fallback ID
+        handle: post.profiles.handle,
+        platform: post.platform,
+        displayName: post.profiles.display_name || post.profiles.handle,
+        bio: "", // Not available in FollowedPost
+        followers: 0, // Not available in FollowedPost
+        avatarUrl: post.profiles.avatar_url || "",
+        verified: false, // Not available in FollowedPost
+      },
+      addedAt: new Date().toISOString(), // Not available in FollowedPost
+      // Instagram-specific fields
+      thumbnail: post.thumbnail_url || "",
+      isVideo: false, // Will be determined by platform
+      isCarousel: false, // Not available in FollowedPost
+      carouselMedia: [], // Not available in FollowedPost
+      carouselCount: 0, // Not available in FollowedPost
+      shortcode: "", // Not available in FollowedPost
+      dimensions: undefined, // Not available in FollowedPost
+      videoUrl: undefined, // Not available in FollowedPost
+      displayUrl: undefined, // Not available in FollowedPost
+    };
   }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
-    setSelectedPost(null);
-  }, []);
+  const handleFollowingPostClick = useCallback(
+    (post: FollowedPost) => {
+      const transformedPost = transformPostForModal(post);
+      handlePostClick(transformedPost);
+    },
+    [transformPostForModal, handlePostClick]
+  );
 
   const handleSortChange = useCallback((value: SortOption) => {
     setSortOption(value);
@@ -204,6 +266,21 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     loadLastRefreshTime();
   }, [loadFollowedPosts, loadLastRefreshTime]);
 
+  // Memoized embed component to prevent reloading on tab switches
+  const embedComponent = React.useMemo(() => {
+    if (!selectedPost) return null;
+
+    return selectedPost.platform === "tiktok" ? (
+      <TikTokEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
+    ) : (
+      <InstagramEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
+    );
+  }, [
+    selectedPost?.platform,
+    selectedPost?.originalUrl,
+    selectedPost?.embedUrl,
+  ]);
+
   return (
     <>
       <FollowingContent
@@ -216,64 +293,152 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
         hasMorePosts={hasMorePosts}
         sortOption={sortOption}
         onLoadMore={handleLoadMore}
-        onPostClick={handlePostClick}
+        onPostClick={handleFollowingPostClick}
         onSortChange={handleSortChange}
       />
 
-      <Dialog open={isModalOpen} onOpenChange={() => handleCloseModal()}>
-        <DialogContent className="w-fit max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+      <Dialog open={!!selectedPost} onOpenChange={() => closeModal()}>
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
           {selectedPost && (
-            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-              {/* Left: Embed Component */}
-              <div className="space-y-4">
-                <div className="w-fit mx-auto lg:mx-0">
-                  {selectedPost.platform === "tiktok" ? (
-                    <TikTokEmbed url={selectedPost.embed_url} />
-                  ) : (
-                    <InstagramEmbed url={selectedPost.embed_url} />
-                  )}
-                </div>
-              </div>
-
-              {/* Right: Content */}
-              <div className="space-y-4 flex-1 min-w-0">
-                {/* Caption */}
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Caption</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {selectedPost.caption}
-                  </p>
+            <>
+              <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+                {/* Left: Embed Component - Memoized to prevent reloading */}
+                <div className="space-y-4">
+                  <div className="w-fit mx-auto lg:mx-0">{embedComponent}</div>
                 </div>
 
-                {/* Metrics */}
-                <div>
-                  <h3 className="text-sm font-medium mb-3">Performance</h3>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    {selectedPost.metrics?.views && (
-                      <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                        <span className="font-semibold text-base text-green-800">
-                          {selectedPost.metrics.views} views
-                        </span>
-                      </div>
+                {/* Right: Tabbed Content */}
+                <div className="space-y-4 flex-1 min-w-0">
+                  {/* Tab Navigation */}
+                  <div className="flex border-b border-gray-200">
+                    <button
+                      onClick={() => handleTabChange("overview")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "overview"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      Overview
+                    </button>
+                    <button
+                      onClick={() => handleTabChange("transcript")}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                        activeTab === "transcript"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      )}
+                    >
+                      Transcript
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="space-y-6">
+                    {activeTab === "overview" && (
+                      <>
+                        {/* Caption */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-2">Caption</h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {selectedPost.caption}
+                          </p>
+                        </div>
+
+                        {/* Metrics */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-3">
+                            Performance
+                          </h3>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {selectedPost.metrics.views && (
+                              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                                <Eye className="h-4 w-4 text-green-600" />
+                                <span className="font-semibold text-base text-green-800">
+                                  {formatNumber(selectedPost.metrics.views)}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                              <Heart className="h-4 w-4 text-red-600" />
+                              <span className="font-semibold text-base text-red-800">
+                                {formatNumber(selectedPost.metrics.likes)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                              <MessageCircle className="h-4 w-4 text-blue-600" />
+                              <span className="font-semibold text-base text-blue-800">
+                                {formatNumber(selectedPost.metrics.comments)}
+                              </span>
+                            </div>
+                            {selectedPost.metrics.shares && (
+                              <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                                <Share className="h-4 w-4 text-purple-600" />
+                                <span className="font-semibold text-base text-purple-800">
+                                  {formatNumber(selectedPost.metrics.shares)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Post Date */}
+                        <div>
+                          <h3 className="text-sm font-medium mb-2">Posted</h3>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(selectedPost.datePosted)}
+                          </div>
+                        </div>
+                      </>
                     )}
-                    {selectedPost.metrics?.likes && (
-                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                        <span className="font-semibold text-base text-red-800">
-                          {selectedPost.metrics.likes} likes
-                        </span>
-                      </div>
-                    )}
-                    {selectedPost.metrics?.comments && (
-                      <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                        <span className="font-semibold text-base text-blue-800">
-                          {selectedPost.metrics.comments} comments
-                        </span>
+
+                    {activeTab === "transcript" && (
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-medium">Transcript</h3>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleCopyTranscript}
+                            disabled={
+                              !transcript?.text ||
+                              isLoadingTranscript ||
+                              selectedPost.platform !== "tiktok"
+                            }
+                          >
+                            Copy Transcript
+                          </Button>
+                        </div>
+                        {isLoadingTranscript ? (
+                          <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+                          </div>
+                        ) : transcriptError ? (
+                          <div className="text-sm text-red-600">
+                            {transcriptError}
+                          </div>
+                        ) : !transcript?.text ? (
+                          <div className="text-sm text-muted-foreground">
+                            {selectedPost.platform === "tiktok" ||
+                            (selectedPost.platform === "instagram" &&
+                              selectedPost.isVideo)
+                              ? "Loading transcript..."
+                              : "Transcript not available for this content."}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
+                            {transcript.text}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
