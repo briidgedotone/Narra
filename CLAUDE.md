@@ -144,6 +144,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Always handle failed embeds gracefully with fallback content
 - Store original URLs alongside embed URLs for reliability
 
+### Following System
+
+- **Automatic Post Fetching**: When users follow profiles, 20 latest posts are automatically fetched and stored
+- **Async Performance**: Follow actions complete instantly, post fetching happens in background
+- **Two Follow Actions**:
+  - `followProfile` in `actions/following.ts` - for existing profiles
+  - `createAndFollowProfile` in `actions/discovery.ts` - creates profile first, then follows
+- **Async Refresh Pattern**: Both actions use dynamic imports for non-blocking refresh calls
+- **Error Handling**: Refresh failures don't prevent successful follows
+- **Cache Revalidation**: Following pages are revalidated after follow actions
+
 ### Testing Strategy
 
 - Jest configuration includes coverage thresholds (70% minimum)
@@ -167,3 +178,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 5. Implement proper loading and error states
 6. Add cache revalidation after mutations
 7. Include proper authentication checks
+
+### Following System Patterns
+
+1. **For follow actions**: Use async refresh pattern to avoid blocking the follow operation
+
+   ```typescript
+   // ✅ Correct: Async refresh (non-blocking)
+   import("@/lib/refresh-profile")
+     .then(({ refreshProfileForUser }) => {
+       refreshProfileForUser(userId, profileId).catch(() => {});
+     })
+     .catch(() => {});
+
+   // ❌ Incorrect: Synchronous refresh (blocking)
+   await refreshProfileForUser(userId, profileId);
+   ```
+
+2. **Performance**: Follow actions complete instantly (~1 second), posts appear in background (10-15 seconds)
+3. **Error isolation**: Always wrap refresh calls with `.catch(() => {})` to prevent follow failures
+4. **Post limits**: Fetch 20 posts from API, process all 20 posts
+5. **Instagram posts**: Ensure valid shortcode exists before creating embed URLs
+6. **Revalidation**: Always revalidate `/following` and `/discovery` paths after follow actions

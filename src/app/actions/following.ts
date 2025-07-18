@@ -49,6 +49,17 @@ export async function followProfile(profileId: string) {
 
     const result = await db.followProfile(userId, profileId);
 
+    // Trigger async refresh in background (fire-and-forget)
+    import("@/lib/refresh-profile")
+      .then(({ refreshProfileForUser }) => {
+        refreshProfileForUser(userId, profileId).catch(() => {
+          // Silently fail - refresh is optional
+        });
+      })
+      .catch(() => {
+        // Silently fail - refresh is optional
+      });
+
     // Revalidate relevant pages
     revalidatePath("/following");
     revalidatePath("/discovery");
