@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
@@ -9,6 +10,14 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ExternalLink, Users, TikTok, Instagram } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { SortOption } from "@/types/discovery";
 
 import { FollowingSkeleton } from "./following-skeleton";
 
@@ -49,8 +58,10 @@ interface FollowingContentProps {
   isLoadingPosts?: boolean;
   isLoadingMore?: boolean;
   hasMorePosts?: boolean;
+  sortOption?: SortOption;
   onLoadMore?: () => void;
   onPostClick?: (post: FollowedPost) => void;
+  onSortChange?: (value: SortOption) => void;
 }
 
 export function FollowingContent({
@@ -61,10 +72,21 @@ export function FollowingContent({
   isLoadingPosts = false,
   isLoadingMore = false,
   hasMorePosts = false,
+  sortOption = "most-recent",
   onLoadMore,
   onPostClick,
+  onSortChange,
 }: FollowingContentProps) {
   const router = useRouter();
+
+  // Masonry breakpoints - matches our responsive grid
+  const breakpointColumnsObj = {
+    default: 4, // xl:columns-4
+    1280: 4, // xl
+    1024: 3, // lg:columns-3
+    640: 2, // sm:columns-2
+    0: 1, // columns-1
+  };
 
   if (isLoadingProfiles) {
     return <FollowingSkeleton />;
@@ -150,6 +172,22 @@ export function FollowingContent({
               </p>
             )}
           </div>
+
+          {onSortChange && (
+            <div className="flex items-center gap-4">
+              <Select value={sortOption} onValueChange={onSortChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="most-recent">Most Recent</SelectItem>
+                  <SelectItem value="most-viewed">Most Viewed</SelectItem>
+                  <SelectItem value="most-liked">Most Liked</SelectItem>
+                  <SelectItem value="most-commented">Most Commented</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {isLoadingPosts ? (
@@ -171,13 +209,14 @@ export function FollowingContent({
           />
         ) : (
           <>
-            {/* Posts Grid */}
-            <div className="masonry-container columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 max-w-full">
+            {/* Posts Masonry */}
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="flex w-auto -ml-4"
+              columnClassName="pl-4 bg-clip-padding"
+            >
               {posts.map(post => (
-                <div
-                  key={post.id}
-                  className="masonry-item mb-6 flex justify-center"
-                >
+                <div key={post.id} className="mb-4 flex justify-center">
                   {post.platform === "instagram" ? (
                     <InstagramEmbed
                       url={post.embed_url}
@@ -223,7 +262,7 @@ export function FollowingContent({
                   )}
                 </div>
               ))}
-            </div>
+            </Masonry>
 
             {/* Load More Button */}
             {hasMorePosts && (

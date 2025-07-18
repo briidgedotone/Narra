@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 
 import {
@@ -11,6 +11,7 @@ import {
 import { FollowingContent } from "@/components/following";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import type { SortOption } from "@/types/discovery";
 
 interface FollowedProfile {
   id: string;
@@ -60,6 +61,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [selectedPost, setSelectedPost] = useState<FollowedPost | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>("most-recent");
 
   const loadFollowedProfiles = useCallback(async () => {
     try {
@@ -159,6 +161,38 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     setSelectedPost(null);
   }, []);
 
+  const handleSortChange = useCallback((value: SortOption) => {
+    setSortOption(value);
+  }, []);
+
+  // Sort posts based on selected option
+  const sortedPosts = useMemo(() => {
+    const postsCopy = [...posts];
+
+    switch (sortOption) {
+      case "most-recent":
+        return postsCopy.sort(
+          (a, b) =>
+            new Date(b.date_posted).getTime() -
+            new Date(a.date_posted).getTime()
+        );
+      case "most-viewed":
+        return postsCopy.sort(
+          (a, b) => (b.metrics?.views || 0) - (a.metrics?.views || 0)
+        );
+      case "most-liked":
+        return postsCopy.sort(
+          (a, b) => (b.metrics?.likes || 0) - (a.metrics?.likes || 0)
+        );
+      case "most-commented":
+        return postsCopy.sort(
+          (a, b) => (b.metrics?.comments || 0) - (a.metrics?.comments || 0)
+        );
+      default:
+        return postsCopy;
+    }
+  }, [posts, sortOption]);
+
   // Load followed profiles on mount
   useEffect(() => {
     loadFollowedProfiles();
@@ -170,33 +204,20 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     loadLastRefreshTime();
   }, [loadFollowedPosts, loadLastRefreshTime]);
 
-  // Refresh when coming back to the page (after following someone)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        // Page became visible again, refresh data
-        loadFollowedProfiles();
-        loadFollowedPosts();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () =>
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [loadFollowedProfiles, loadFollowedPosts]);
-
   return (
     <>
       <FollowingContent
         profiles={profiles}
-        posts={posts}
+        posts={sortedPosts}
         lastRefreshTime={lastRefreshTime}
         isLoadingProfiles={isLoadingProfiles}
         isLoadingPosts={isLoadingPosts}
         isLoadingMore={isLoadingMore}
         hasMorePosts={hasMorePosts}
+        sortOption={sortOption}
         onLoadMore={handleLoadMore}
         onPostClick={handlePostClick}
+        onSortChange={handleSortChange}
       />
 
       <Dialog open={isModalOpen} onOpenChange={() => handleCloseModal()}>
