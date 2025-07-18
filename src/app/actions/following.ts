@@ -4,7 +4,6 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/database";
-import { refreshProfileForUser } from "@/lib/refresh-profile";
 
 export async function followProfile(profileId: string) {
   try {
@@ -50,23 +49,16 @@ export async function followProfile(profileId: string) {
 
     const result = await db.followProfile(userId, profileId);
 
-    // Trigger immediate refresh for the new follow (direct function call)
-    try {
-      console.log(`🔄 Triggering immediate refresh for profile: ${profileId}`);
-
-      const refreshResult = await refreshProfileForUser(userId, profileId);
-
-      if (refreshResult.success) {
-        console.log(
-          `✅ Successfully refreshed profile: ${refreshResult.newPosts} new posts`
-        );
-      } else {
-        console.error(`❌ Refresh failed: ${refreshResult.message}`);
-      }
-    } catch (error) {
-      // Don't let refresh failures affect the follow action
-      console.error("Failed to trigger immediate refresh:", error);
-    }
+    // Trigger async refresh in background (fire-and-forget)
+    import("@/lib/refresh-profile")
+      .then(({ refreshProfileForUser }) => {
+        refreshProfileForUser(userId, profileId).catch(() => {
+          // Silently fail - refresh is optional
+        });
+      })
+      .catch(() => {
+        // Silently fail - refresh is optional
+      });
 
     // Revalidate relevant pages
     revalidatePath("/following");

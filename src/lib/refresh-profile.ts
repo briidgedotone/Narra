@@ -106,6 +106,9 @@ export async function refreshProfileForUser(
           if (!post.id && !post.code) continue;
 
           postId = post.id || post.code;
+          const shortcode = post.code || post.shortcode;
+          if (!shortcode) continue; // Skip if no shortcode for embed URL
+
           const caption = post.caption?.text || "";
 
           transformedPost = {
@@ -113,7 +116,7 @@ export async function refreshProfileForUser(
             profile_id: profileId,
             platform: "instagram",
             platform_post_id: postId,
-            embed_url: `https://www.instagram.com/p/${post.code}/`,
+            embed_url: `https://www.instagram.com/p/${shortcode}/`,
             caption: caption,
             transcript: "",
             thumbnail_url: post.image_versions2?.candidates?.[0]?.url || null,
