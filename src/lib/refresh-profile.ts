@@ -121,7 +121,7 @@ export async function refreshProfileForUser(
             transcript: "",
             thumbnail_url: post.image_versions2?.candidates?.[0]?.url || null,
             metrics: {
-              views: post.video_view_count || post.view_count || 0,
+              views: post.play_count || post.ig_play_count || post.video_view_count || post.view_count || 0,
               likes: post.like_count || 0,
               comments: post.comment_count || 0,
               shares: 0,

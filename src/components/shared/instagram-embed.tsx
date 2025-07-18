@@ -147,11 +147,11 @@ export function InstagramEmbed({
                   </span>
                 </div>
               )}
-              {metrics.views !== undefined && metrics.views > 0 && (
+              {metrics.views !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <Eye className="h-4 w-4 text-green-500" />
                   <span className="font-medium text-sm">
-                    {formatNumber(metrics.views)}
+                    {formatNumber(metrics.views || 0)}
                   </span>
                 </div>
               )}
