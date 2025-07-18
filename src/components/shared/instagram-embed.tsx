@@ -2,7 +2,13 @@
 
 import { useEffect } from "react";
 
-import { Heart, MessageCircle, Eye, Share } from "@/components/ui/icons";
+import {
+  Heart,
+  MessageCircle,
+  Eye,
+  Share,
+  Bookmark,
+} from "@/components/ui/icons";
 import { formatNumber } from "@/lib/utils/format";
 
 interface InstagramEmbedProps {
@@ -17,6 +23,7 @@ interface InstagramEmbedProps {
   };
   showMetrics?: boolean;
   onDetailsClick?: () => void;
+  onSaveClick?: () => void;
 }
 
 export function InstagramEmbed({
@@ -26,6 +33,7 @@ export function InstagramEmbed({
   metrics,
   showMetrics = false,
   onDetailsClick,
+  onSaveClick,
 }: InstagramEmbedProps) {
   useEffect(() => {
     const script = document.createElement("script");
@@ -86,11 +94,28 @@ export function InstagramEmbed({
   const embedHtml = generateInstagramEmbed(url);
 
   return (
-    <div className={`instagram-embed max-w-full mx-auto ${className || ""}`}>
+    <div
+      className={`instagram-embed max-w-full mx-auto relative group ${className || ""}`}
+    >
       <div
         className="flex justify-center"
         dangerouslySetInnerHTML={{ __html: embedHtml }}
       />
+
+      {/* Save Button - Shows on hover like discovery page */}
+      {onSaveClick && (
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              onSaveClick();
+            }}
+            className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors"
+          >
+            <Bookmark className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Optional caption and metrics */}
       {showMetrics && (caption || metrics) && (
