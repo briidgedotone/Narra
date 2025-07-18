@@ -198,7 +198,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     return {
       id: post.id,
       platform: post.platform,
-      platformPostId: post.platform_post_id,
+      platformPostId: post.id,
       embedUrl: post.embed_url,
       originalUrl: post.embed_url, // Use embed_url as fallback
       caption: post.caption || "",
@@ -211,26 +211,17 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
       },
       datePosted: post.date_posted,
       profile: {
-        id: post.profiles.handle, // Use handle as fallback ID
         handle: post.profiles.handle,
-        platform: post.platform,
         displayName: post.profiles.display_name || post.profiles.handle,
-        bio: "", // Not available in FollowedPost
-        followers: 0, // Not available in FollowedPost
         avatarUrl: post.profiles.avatar_url || "",
         verified: false, // Not available in FollowedPost
       },
-      addedAt: new Date().toISOString(), // Not available in FollowedPost
       // Instagram-specific fields
       thumbnail: post.thumbnail_url || "",
       isVideo: post.platform === "instagram" ? true : false, // Assume Instagram posts could be videos
       isCarousel: false, // Not available in FollowedPost
       carouselMedia: [], // Not available in FollowedPost
       carouselCount: 0, // Not available in FollowedPost
-      shortcode: "", // Not available in FollowedPost
-      dimensions: undefined, // Not available in FollowedPost
-      videoUrl: undefined, // Not available in FollowedPost
-      displayUrl: undefined, // Not available in FollowedPost
     };
   }, []);
 
@@ -254,7 +245,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
         platformPostId: post.id, // Use the post id as platform post id
         platform: post.platform,
         embedUrl: post.embed_url,
-        caption: post.caption,
+        ...(post.caption && { caption: post.caption }),
         originalUrl: post.embed_url, // Use embed_url as fallback for originalUrl
         metrics: {
           views: post.metrics?.views || 0,
@@ -270,16 +261,12 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
         avatarUrl: post.profiles.avatar_url || "",
         verified: false, // Not available in FollowedPost
         // Instagram-specific fields
-        thumbnail: post.thumbnail_url,
+        ...(post.thumbnail_url && { thumbnail: post.thumbnail_url }),
         isVideo: post.platform === "instagram" ? true : false, // Assume Instagram posts could be videos
         isCarousel: false, // Not available in FollowedPost
         carouselMedia: [], // Not available in FollowedPost
         carouselCount: 0, // Not available in FollowedPost
-        videoUrl: undefined, // Not available in FollowedPost
-        displayUrl: undefined, // Not available in FollowedPost
-        shortcode: "", // Not available in FollowedPost
-        dimensions: undefined, // Not available in FollowedPost
-        transcript: post.transcript, // Include transcript if available
+        ...(post.transcript && { transcript: post.transcript }),
       };
     },
     []
@@ -342,11 +329,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     ) : (
       <InstagramEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
     );
-  }, [
-    selectedPost?.platform,
-    selectedPost?.originalUrl,
-    selectedPost?.embedUrl,
-  ]);
+  }, [selectedPost]);
 
   return (
     <>
