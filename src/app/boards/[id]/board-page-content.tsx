@@ -24,7 +24,7 @@ import {
 import { useBoard } from "@/hooks/useBoard";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
-import { formatDate, formatNumber } from "@/lib/utils/format";
+import { formatDate, formatNumber, parseWebVTT } from "@/lib/utils/format";
 import type { BoardPageContentProps } from "@/types/board";
 
 // Global timeout declarations for board name and description auto-save
@@ -78,9 +78,39 @@ export function BoardPageContent({
     transcriptError,
     handlePostClick,
     handleTabChange,
-    handleCopyTranscript,
     closeModal,
   } = usePostModal();
+
+  // Override transcript with database value for boards posts
+  const displayTranscript = React.useMemo(() => {
+    if (!selectedPost) return transcript;
+
+    // For boards posts, check if we have transcript in the post data
+    const boardPost = selectedPost;
+    if (boardPost.transcript) {
+      return {
+        text: parseWebVTT(boardPost.transcript),
+        id: boardPost.id,
+      };
+    }
+
+    // Fallback to API transcript from usePostModal
+    return transcript;
+  }, [selectedPost, transcript]);
+
+  // Override loading state for boards posts with database transcripts
+  const displayIsLoadingTranscript = React.useMemo(() => {
+    if (!selectedPost) return isLoadingTranscript;
+
+    const boardPost = selectedPost;
+    // If we have database transcript, don't show loading
+    if (boardPost.transcript) {
+      return false;
+    }
+
+    // Otherwise use the API loading state
+    return isLoadingTranscript;
+  }, [selectedPost, isLoadingTranscript]);
 
   // Centralized Instagram script loading and processing for board pages
   useEffect(() => {
@@ -208,11 +238,7 @@ export function BoardPageContent({
     ) : (
       <InstagramEmbed url={selectedPost.originalUrl || selectedPost.embedUrl} />
     );
-  }, [
-    selectedPost?.platform,
-    selectedPost?.originalUrl,
-    selectedPost?.embedUrl,
-  ]);
+  }, [selectedPost]);
 
   // Loading state
   if (isLoading) {
@@ -418,17 +444,23 @@ export function BoardPageContent({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={handleCopyTranscript}
+                            onClick={() => {
+                              if (displayTranscript?.text) {
+                                navigator.clipboard.writeText(
+                                  displayTranscript.text
+                                );
+                              }
+                            }}
                             disabled={
-                              !transcript?.text ||
-                              isLoadingTranscript ||
+                              !displayTranscript?.text ||
+                              displayIsLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
-                        {isLoadingTranscript ? (
+                        {displayIsLoadingTranscript ? (
                           <div className="flex items-center justify-center py-8">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
                           </div>
@@ -436,7 +468,7 @@ export function BoardPageContent({
                           <div className="text-sm text-red-600">
                             {transcriptError}
                           </div>
-                        ) : !transcript?.text ? (
+                        ) : !displayTranscript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok" ||
                             (selectedPost.platform === "instagram" &&
@@ -446,7 +478,7 @@ export function BoardPageContent({
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
-                            {transcript.text}
+                            {displayTranscript.text}
                           </div>
                         )}
                       </div>
