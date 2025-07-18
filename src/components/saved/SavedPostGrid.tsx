@@ -1,4 +1,5 @@
 import React from "react";
+import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -43,14 +44,26 @@ interface SavedPostGridProps {
  */
 export const SavedPostGrid = React.memo<SavedPostGridProps>(
   function SavedPostGrid({ posts, isLoading, onPostClick }) {
+    // Masonry breakpoints - matches following page
+    const breakpointColumnsObj = {
+      default: 4, // xl:columns-4
+      1280: 4, // xl
+      1024: 3, // lg:columns-3
+      640: 2, // sm:columns-2
+      0: 1, // columns-1
+    };
     // Loading state
     if (isLoading) {
       return (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-6">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="flex w-auto -ml-4"
+          columnClassName="pl-4 bg-clip-padding"
+        >
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 break-inside-avoid mb-6"
+              className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4"
               role="status"
               aria-label="Loading post"
             >
@@ -66,7 +79,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
               </div>
             </div>
           ))}
-        </div>
+        </Masonry>
       );
     }
 
@@ -83,13 +96,15 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
 
     // Main grid render
     return (
-      <div
-        className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 masonry-container max-w-full"
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="flex w-auto -ml-4"
+        columnClassName="pl-4 bg-clip-padding"
         role="grid"
         aria-label={`${posts.length} saved posts`}
       >
         {posts.map(post => (
-          <div key={post.id} className="masonry-item mb-6">
+          <div key={post.id} className="mb-4 flex justify-center">
             {post.platform === "instagram" ? (
               <InstagramEmbed
                 url={post.originalUrl || post.embedUrl}
@@ -109,7 +124,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
             )}
           </div>
         ))}
-      </div>
+      </Masonry>
     );
   }
 );
