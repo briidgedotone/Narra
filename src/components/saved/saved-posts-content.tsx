@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { getAllUserSavedPosts } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/icons";
 import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
+import { parseWebVTT } from "@/lib/utils/format";
 import { formatDate, formatNumber } from "@/lib/utils/format";
+import type { SavedPost } from "@/types/board";
 
 import { SavedPostGrid } from "./SavedPostGrid";
 
@@ -25,33 +27,12 @@ interface SavedPostsContentProps {
   userId: string;
 }
 
-interface SavedPost {
-  id: string;
-  embedUrl: string;
-  originalUrl?: string;
-  caption: string;
-  metrics: {
-    views?: number;
-    likes: number;
-    comments: number;
-    shares?: number;
-  };
-  datePosted: string;
-  platform: "instagram" | "tiktok";
-  profile: {
-    handle: string;
-    displayName: string;
-    avatarUrl: string;
-    verified: boolean;
-  };
-}
-
 export function SavedPostsContent({}: SavedPostsContentProps) {
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Custom hooks for post modal management
+  // Custom hooks for post modal management with database-first transcript loading
   const {
     selectedPost,
     activeTab,
@@ -60,9 +41,39 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     transcriptError,
     handlePostClick,
     handleTabChange,
-    handleCopyTranscript,
     closeModal,
   } = usePostModal();
+
+  // Override transcript with database value for saved posts
+  const displayTranscript = React.useMemo(() => {
+    if (!selectedPost) return transcript;
+
+    // For saved posts, check if we have transcript in the post data
+    const savedPost = selectedPost as SavedPost;
+    if (savedPost.transcript) {
+      return {
+        text: parseWebVTT(savedPost.transcript),
+        id: savedPost.id,
+      };
+    }
+
+    // Fallback to API transcript from usePostModal
+    return transcript;
+  }, [selectedPost, transcript]);
+
+  // Override loading state for saved posts with database transcripts
+  const displayIsLoadingTranscript = React.useMemo(() => {
+    if (!selectedPost) return isLoadingTranscript;
+
+    const savedPost = selectedPost as SavedPost;
+    // If we have database transcript, don't show loading
+    if (savedPost.transcript) {
+      return false;
+    }
+
+    // Otherwise use the API loading state
+    return isLoadingTranscript;
+  }, [selectedPost, isLoadingTranscript]);
 
   useEffect(() => {
     loadSavedPosts();
@@ -244,17 +255,23 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={handleCopyTranscript}
+                            onClick={() => {
+                              if (displayTranscript?.text) {
+                                navigator.clipboard.writeText(
+                                  displayTranscript.text
+                                );
+                              }
+                            }}
                             disabled={
-                              !transcript?.text ||
-                              isLoadingTranscript ||
+                              !displayTranscript?.text ||
+                              displayIsLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
-                        {isLoadingTranscript ? (
+                        {displayIsLoadingTranscript ? (
                           <div className="flex items-center justify-center py-8">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
                           </div>
@@ -262,7 +279,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           <div className="text-sm text-red-600">
                             {transcriptError}
                           </div>
-                        ) : !transcript?.text ? (
+                        ) : !displayTranscript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok" ||
                             (selectedPost.platform === "instagram" &&
@@ -272,7 +289,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground whitespace-pre-wrap max-h-[400px] overflow-y-auto pr-2">
-                            {transcript.text}
+                            {displayTranscript.text}
                           </div>
                         )}
                       </div>

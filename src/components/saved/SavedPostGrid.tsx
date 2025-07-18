@@ -5,27 +5,7 @@ import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Folder } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface SavedPost {
-  id: string;
-  embedUrl: string;
-  originalUrl?: string;
-  caption: string;
-  metrics: {
-    views?: number;
-    likes: number;
-    comments: number;
-    shares?: number;
-  };
-  datePosted: string;
-  platform: "instagram" | "tiktok";
-  profile: {
-    handle: string;
-    displayName: string;
-    avatarUrl: string;
-    verified: boolean;
-  };
-}
+import type { SavedPost } from "@/types/board";
 
 interface SavedPostGridProps {
   posts: SavedPost[];

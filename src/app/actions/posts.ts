@@ -391,6 +391,20 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
         embedUrl: post.embedUrl as string,
         ...(post.originalUrl && { originalUrl: post.originalUrl as string }),
         caption: post.caption as string,
+        ...(post.transcript && { transcript: post.transcript as string }),
+        ...(post.isVideo !== undefined && { isVideo: post.isVideo as boolean }),
+        ...(post.isCarousel !== undefined && {
+          isCarousel: post.isCarousel as boolean,
+        }),
+        ...(post.carouselMedia && { carouselMedia: post.carouselMedia }),
+        ...(post.carouselCount !== undefined && {
+          carouselCount: post.carouselCount as number,
+        }),
+        ...(post.platformPostId && {
+          platformPostId: post.platformPostId as string,
+        }),
+        ...(post.thumbnail && { thumbnail: post.thumbnail as string }),
+        ...(post.shortcode && { shortcode: post.shortcode as string }),
         metrics: post.metrics as {
           views?: number;
           likes: number;
@@ -400,10 +414,10 @@ export async function getAllUserSavedPosts(limit = 50, offset = 0) {
         datePosted: post.datePosted as string,
         platform: post.platform as "instagram" | "tiktok",
         profile: {
-          handle: (post.profile as any).handle,
-          displayName: (post.profile as any).displayName,
-          avatarUrl: (post.profile as any).avatarUrl,
-          verified: (post.profile as any).verified,
+          handle: (post.profile as { handle: string }).handle,
+          displayName: (post.profile as { displayName: string }).displayName,
+          avatarUrl: (post.profile as { avatarUrl: string }).avatarUrl,
+          verified: (post.profile as { verified: boolean }).verified,
         },
       }));
 
