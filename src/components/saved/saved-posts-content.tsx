@@ -23,6 +23,9 @@ import {
   Share,
   Calendar,
   Bookmark,
+  SearchList,
+  TikTok,
+  Instagram,
 } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
@@ -57,6 +60,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Filter states
+  const [activeFilter, setActiveFilter] = useState<"all" | "tiktok" | "instagram">("all");
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
   const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
 
@@ -96,6 +100,48 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const closeModal = React.useCallback(() => {
     setSelectedPost(null);
   }, []);
+
+  // Memoized filter counts
+  const filterCounts = React.useMemo(() => {
+    const tiktokCount = posts.filter(p => p.platform === "tiktok").length;
+    const instagramCount = posts.filter(p => p.platform === "instagram").length;
+
+    return {
+      all: posts.length,
+      tiktok: tiktokCount,
+      instagram: instagramCount,
+    };
+  }, [posts]);
+
+  // Memoized filter click handler
+  const handleFilterClick = React.useCallback((filter: string) => {
+    setActiveFilter(filter as typeof activeFilter);
+  }, []);
+
+  // Memoized filter button configuration
+  const filterButtons = React.useMemo(
+    () => [
+      {
+        key: "all",
+        icon: SearchList,
+        label: `All Posts (${filterCounts.all})`,
+        filter: "all",
+      },
+      {
+        key: "tiktok",
+        icon: TikTok,
+        label: `TikTok (${filterCounts.tiktok})`,
+        filter: "tiktok",
+      },
+      {
+        key: "instagram",
+        icon: Instagram,
+        label: `Instagram (${filterCounts.instagram})`,
+        filter: "instagram",
+      },
+    ],
+    [filterCounts]
+  );
 
   useEffect(() => {
     loadSavedPosts();
@@ -212,7 +258,18 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
   // Filter and sort posts based on selected options
   const filteredAndSortedPosts = useMemo(() => {
-    // First apply date filter
+    // First apply platform filter
+    let filteredPosts = [...posts];
+
+    if (activeFilter !== "all") {
+      if (activeFilter === "tiktok") {
+        filteredPosts = filteredPosts.filter(p => p.platform === "tiktok");
+      } else if (activeFilter === "instagram") {
+        filteredPosts = filteredPosts.filter(p => p.platform === "instagram");
+      }
+    }
+
+    // Then apply date filter
     const now = new Date();
     let daysToFilter = 30; // default
 
@@ -237,7 +294,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     const cutoffDate = new Date();
     cutoffDate.setDate(now.getDate() - daysToFilter);
 
-    const filteredPosts = posts.filter(post => {
+    filteredPosts = filteredPosts.filter(post => {
       const postDate = new Date(post.datePosted);
       return postDate >= cutoffDate;
     });
@@ -264,7 +321,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
       default:
         return filteredPosts;
     }
-  }, [posts, sortOption, dateFilter]);
+  }, [posts, activeFilter, sortOption, dateFilter]);
 
   if (error) {
     return (
@@ -294,8 +351,97 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     );
   }
 
+  if (filteredAndSortedPosts.length === 0) {
+    const getEmptyMessage = () => {
+      if (activeFilter === "all") {
+        return "No posts found for the selected date range.";
+      }
+      return `No ${activeFilter} posts found for the selected date range.`;
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Platform Filter buttons */}
+        <div className="flex flex-wrap gap-2">
+          {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+            <Button
+              key={key}
+              variant={activeFilter === filter ? "default" : "outline"}
+              onClick={() => handleFilterClick(filter)}
+              className="flex items-center gap-2"
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Header with filters and count */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            {filteredAndSortedPosts.length} of {posts.length} saved posts
+          </div>
+
+          {/* Date and Sort Filters */}
+          <div className="flex items-center gap-4">
+            {/* Date Filter */}
+            <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+              <SelectTrigger className="w-[180px]">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <SelectValue placeholder="Filter by date" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+                <SelectItem value="last-60-days">Last 60 Days</SelectItem>
+                <SelectItem value="last-90-days">Last 90 Days</SelectItem>
+                <SelectItem value="last-180-days">Last 180 Days</SelectItem>
+                <SelectItem value="last-365-days">Last 365 Days</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Sort Filter */}
+            <Select value={sortOption} onValueChange={handleSortChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="most-recent">Most Recent</SelectItem>
+                <SelectItem value="most-viewed">Most Viewed</SelectItem>
+                <SelectItem value="most-liked">Most Liked</SelectItem>
+                <SelectItem value="most-commented">Most Commented</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <EmptyState
+          icons={[SearchList]}
+          title="No posts found"
+          description={getEmptyMessage()}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* Platform Filter buttons */}
+      <div className="flex flex-wrap gap-2">
+        {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+          <Button
+            key={key}
+            variant={activeFilter === filter ? "default" : "outline"}
+            onClick={() => handleFilterClick(filter)}
+            className="flex items-center gap-2"
+          >
+            <Icon className="w-4 h-4" />
+            {label}
+          </Button>
+        ))}
+      </div>
+
       {/* Header with filters and count */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
