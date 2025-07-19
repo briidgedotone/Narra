@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
-import { sendEmail } from "@/lib/email";
+import { sendTemplateEmail } from "@/lib/email";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -84,10 +84,8 @@ export async function POST(req: Request) {
 
     // Send welcome email for new users only
     if (eventType === "user.created") {
-      await sendEmail({
-        to: email,
-        subject: "Welcome to Narra!",
-        text: "Welcome to Narra! We're excited to have you on board. Start discovering and organizing amazing social media content today!"
+      await sendTemplateEmail('welcome', {
+        userEmail: email,
       });
     }
   }
