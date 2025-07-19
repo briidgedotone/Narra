@@ -125,7 +125,7 @@ function normalizeInstagramId(platformPostId: string, embedUrl: string): string 
   
   // Try to extract shortcode from URL
   const shortcodeMatch = embedUrl.match(/\/p\/([A-Za-z0-9_-]+)/);
-  if (shortcodeMatch) {
+  if (shortcodeMatch && shortcodeMatch[1]) {
     return shortcodeMatch[1];
   }
   
