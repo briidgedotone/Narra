@@ -216,7 +216,7 @@ export class DatabaseService {
     postId: string,
     updates: Database["public"]["Tables"]["posts"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("posts")
       .update(updates)
       .eq("id", postId)
@@ -1064,7 +1064,7 @@ export class DatabaseService {
     stripe_event_id: string;
     event_type: string;
   }) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("webhook_events")
       .insert(eventData)
       .select()
@@ -1087,7 +1087,7 @@ export class DatabaseService {
   }
 
   async createSubscription(subscriptionData: any) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("subscriptions")
       .insert(subscriptionData)
       .select()
@@ -1098,7 +1098,7 @@ export class DatabaseService {
   }
 
   async updateSubscription(subscriptionId: string, updates: any) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("subscriptions")
       .update(updates)
       .eq("stripe_subscription_id", subscriptionId)

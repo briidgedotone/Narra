@@ -268,11 +268,19 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
           }
 
           // Update post with fetched data if any
-          if (Object.keys(updates).length > 0) {
-            await db.updatePost(post.id, updates);
+          if (Object.keys(updates).length > 0 && post?.id) {
+            try {
+              await db.updatePost(post.id, updates);
+            } catch (updateError: any) {
+              // If update fails due to post not found, it might be a timing issue
+              // Log but don't throw - this is a non-critical background operation
+              if (updateError?.code !== 'PGRST116') {
+                console.error("Failed to update post with embed/transcript:", updateError);
+              }
+            }
           }
         } catch (error) {
-          console.error("Failed to update post with embed/transcript:", error);
+          console.error("Failed to fetch embed/transcript data:", error);
         }
       });
 
