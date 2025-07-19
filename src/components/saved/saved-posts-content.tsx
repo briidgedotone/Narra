@@ -361,25 +361,21 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
     return (
       <div className="space-y-6">
-        {/* Platform Filter buttons */}
-        <div className="flex flex-wrap gap-2">
-          {filterButtons.map(({ key, icon: Icon, label, filter }) => (
-            <Button
-              key={key}
-              variant={activeFilter === filter ? "default" : "outline"}
-              onClick={() => handleFilterClick(filter)}
-              className="flex items-center gap-2"
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Header with filters and count */}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {filteredAndSortedPosts.length} of {posts.length} saved posts
+        {/* Filters Section - All filters aligned horizontally */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          {/* Platform Filter buttons */}
+          <div className="flex flex-wrap gap-2">
+            {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+              <Button
+                key={key}
+                variant={activeFilter === filter ? "default" : "outline"}
+                onClick={() => handleFilterClick(filter)}
+                className="flex items-center gap-2"
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </Button>
+            ))}
           </div>
 
           {/* Date and Sort Filters */}
@@ -427,25 +423,21 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
   return (
     <div className="space-y-6">
-      {/* Platform Filter buttons */}
-      <div className="flex flex-wrap gap-2">
-        {filterButtons.map(({ key, icon: Icon, label, filter }) => (
-          <Button
-            key={key}
-            variant={activeFilter === filter ? "default" : "outline"}
-            onClick={() => handleFilterClick(filter)}
-            className="flex items-center gap-2"
-          >
-            <Icon className="w-4 h-4" />
-            {label}
-          </Button>
-        ))}
-      </div>
-
-      {/* Header with filters and count */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {filteredAndSortedPosts.length} of {posts.length} saved posts
+      {/* Filters Section - All filters aligned horizontally */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Platform Filter buttons */}
+        <div className="flex flex-wrap gap-2">
+          {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+            <Button
+              key={key}
+              variant={activeFilter === filter ? "default" : "outline"}
+              onClick={() => handleFilterClick(filter)}
+              className="flex items-center gap-2"
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Button>
+          ))}
         </div>
 
         {/* Date and Sort Filters */}
