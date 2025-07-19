@@ -94,7 +94,7 @@ function InstagramEmbedComponent({
                   e.stopPropagation();
                   onRemoveClick();
                 }}
-                className="w-8 h-8 bg-red-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-500 shadow-sm transition-colors"
+                className="w-8 h-8 bg-red-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-500 shadow-sm transition-colors cursor-pointer"
                 title="Remove from board"
               >
                 <X className="h-4 w-4 text-white" />
@@ -106,7 +106,7 @@ function InstagramEmbedComponent({
                   e.stopPropagation();
                   onSaveClick();
                 }}
-                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors"
+                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors cursor-pointer"
                 title="Save to board"
               >
                 <Bookmark className="h-4 w-4" />
