@@ -38,6 +38,7 @@ interface FollowedProfile {
 
 interface FollowedPost {
   id: string;
+  platform_post_id: string;
   embed_url: string;
   caption?: string;
   transcript?: string;

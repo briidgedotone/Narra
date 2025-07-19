@@ -116,6 +116,23 @@ interface SavePostData {
   transcript?: string;
 }
 
+// Normalize Instagram platform post ID to shortcode format
+function normalizeInstagramId(platformPostId: string, embedUrl: string): string {
+  // If it's already a shortcode format (no underscores, reasonable length), use it
+  if (!/\d+_\d+/.test(platformPostId) && platformPostId.length < 20) {
+    return platformPostId;
+  }
+  
+  // Try to extract shortcode from URL
+  const shortcodeMatch = embedUrl.match(/\/p\/([A-Za-z0-9_-]+)/);
+  if (shortcodeMatch) {
+    return shortcodeMatch[1];
+  }
+  
+  // If all else fails, use the original ID
+  return platformPostId;
+}
+
 export async function savePostToBoard(postData: SavePostData, boardId: string) {
   const { userId } = await auth();
 
@@ -124,6 +141,10 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
   }
 
   try {
+    // Normalize platform post ID for Instagram to ensure consistency
+    const normalizedPlatformPostId = postData.platform === "instagram" 
+      ? normalizeInstagramId(postData.platformPostId, postData.embedUrl)
+      : postData.platformPostId;
     // First, ensure the profile exists
     let profile = await db.getProfileByHandle(
       postData.handle,
@@ -143,9 +164,9 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
       });
     }
 
-    // Check if post already exists
+    // Check if post already exists using normalized ID
     let post = await db.getPostByPlatformId(
-      postData.platformPostId,
+      normalizedPlatformPostId,
       postData.platform
     );
 
@@ -154,7 +175,7 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
       const postCreateData: Database["public"]["Tables"]["posts"]["Insert"] = {
         profile_id: profile.id,
         platform: postData.platform,
-        platform_post_id: postData.platformPostId,
+        platform_post_id: normalizedPlatformPostId,
         embed_url: postData.embedUrl,
         caption: postData.caption || "",
         ...(postData.transcript ? { transcript: postData.transcript } : {}),
@@ -453,11 +474,44 @@ export async function checkPostInUserBoards(
   }
 
   try {
-    const boardsWithPost = await db.getBoardsContainingPlatformPost(
-      platformPostId,
-      platform,
-      userId
-    );
+    // For Instagram, check both possible ID formats due to historical inconsistency
+    let boardsWithPost: any[] = [];
+    
+    if (platform === "instagram") {
+      // First try with the provided ID
+      boardsWithPost = await db.getBoardsContainingPlatformPost(
+        platformPostId,
+        platform,
+        userId
+      );
+      
+      // If not found, we need to check for alternate ID formats
+      // Instagram posts can be stored with either shortcode or numeric_userid format
+      if (boardsWithPost.length === 0) {
+        // For numeric IDs, also check if there's a post with matching shortcode
+        // This handles the case where Following has numeric ID but post was saved with shortcode
+        const normalizedId = normalizeInstagramId(platformPostId, "");
+        if (normalizedId !== platformPostId) {
+          try {
+            const alternativeResult = await db.getBoardsContainingPlatformPost(
+              normalizedId,
+              platform,
+              userId!
+            );
+            boardsWithPost = alternativeResult;
+          } catch {
+            // Ignore errors from alternative check
+          }
+        }
+      }
+    } else {
+      boardsWithPost = await db.getBoardsContainingPlatformPost(
+        platformPostId,
+        platform,
+        userId
+      );
+    }
+    
     return { success: true, data: boardsWithPost };
   } catch (error) {
     console.error("Failed to check post in boards:", error);

@@ -282,14 +282,15 @@ export function SavePostModal({ isOpen, onClose, post }: SavePostModalProps) {
                     return (
                       <button
                         key={board.id}
-                        onClick={() => setSelectedBoardId(board.id)}
+                        onClick={() => !isAlreadySaved && setSelectedBoardId(board.id)}
+                        disabled={isAlreadySaved}
                         className={cn(
                           "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors",
                           selectedBoardId === board.id
                             ? "bg-primary/5 border-primary"
                             : isAlreadySaved
-                              ? "bg-muted/30 border-muted hover:bg-muted/50"
-                              : "hover:bg-muted/50"
+                              ? "bg-muted/30 border-muted cursor-not-allowed opacity-60"
+                              : "hover:bg-muted/50 cursor-pointer"
                         )}
                       >
                         <div className="w-8 h-8 bg-muted rounded flex items-center justify-center flex-shrink-0">

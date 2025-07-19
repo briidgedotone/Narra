@@ -242,12 +242,13 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
     setDateFilter(value);
   }, []);
 
+
   // Transform FollowedPost to SavePostData for saving functionality
   const transformPostForSaving = useCallback(
     (post: FollowedPost): SavePostData => {
       return {
         id: post.id,
-        platformPostId: post.id, // Use the post id as platform post id
+        platformPostId: post.platform_post_id, // Use database platform post ID directly
         platform: post.platform,
         embedUrl: post.embed_url,
         ...(post.caption && { caption: post.caption }),
