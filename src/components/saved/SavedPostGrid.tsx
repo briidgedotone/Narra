@@ -12,6 +12,7 @@ interface SavedPostGridProps {
   isLoading: boolean;
   onPostClick?: (post: SavedPost) => void;
   onSavePost?: (post: SavedPost) => void;
+  onRemovePost?: (post: SavedPost) => void;
 }
 
 /**
@@ -24,7 +25,7 @@ interface SavedPostGridProps {
  * - Handles loading and empty states
  */
 export const SavedPostGrid = React.memo<SavedPostGridProps>(
-  function SavedPostGrid({ posts, isLoading, onPostClick, onSavePost }) {
+  function SavedPostGrid({ posts, isLoading, onPostClick, onSavePost, onRemovePost }) {
     // Masonry breakpoints - matches following page
     const breakpointColumnsObj = {
       default: 4, // xl:columns-4
@@ -94,6 +95,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
                 showMetrics={true}
                 onDetailsClick={() => onPostClick?.(post)}
                 onSaveClick={() => onSavePost?.(post)}
+                onRemoveClick={() => onRemovePost?.(post)}
               />
             ) : (
               <TikTokEmbed
@@ -103,6 +105,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
                 showMetrics={true}
                 onDetailsClick={() => onPostClick?.(post)}
                 onSaveClick={() => onSavePost?.(post)}
+                onRemoveClick={() => onRemovePost?.(post)}
               />
             )}
           </div>

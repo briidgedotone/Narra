@@ -7,8 +7,9 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { toast } from "sonner";
 
-import { getAllUserSavedPosts } from "@/app/actions/posts";
+import { getAllUserSavedPosts, removePostFromBoard } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -176,6 +177,30 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     [transformPostForSaving]
   );
 
+  const handleRemovePost = React.useCallback(
+    async (post: SavedPost) => {
+      if (!confirm('Are you sure you want to remove this post from all boards?')) {
+        return;
+      }
+
+      try {
+        // For now, we'll need to get board information to remove the post
+        // Since we don't have board info in SavedPost, we'll need to implement
+        // a more sophisticated solution later. For now, show a message.
+        toast.error('Remove functionality needs board information. This will be implemented with a board selection modal.');
+        
+        // TODO: Implement proper removal by:
+        // 1. Getting all boards that contain this post
+        // 2. Showing a modal to select which boards to remove from
+        // 3. Calling removePostFromBoard for each selected board
+      } catch (error) {
+        console.error('Failed to remove post:', error);
+        toast.error('Failed to remove post');
+      }
+    },
+    []
+  );
+
   const handleSortChange = useCallback((value: SortOption) => {
     setSortOption(value);
   }, []);
@@ -316,6 +341,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         isLoading={isLoading}
         onPostClick={handlePostClick}
         onSavePost={handleSavePost}
+        onRemovePost={handleRemovePost}
       />
 
       {/* Post detail modal */}

@@ -92,6 +92,7 @@ export function BoardPageContent({
     textareaRef,
     handleNameChange,
     handleDescriptionChange,
+    handleRemovePost,
   } = useBoard(boardId, isSharedView);
 
   // Custom hooks for post modal management
@@ -347,6 +348,13 @@ export function BoardPageContent({
     [transformPostForSaving]
   );
 
+  const handleRemovePostFromBoard = React.useCallback(
+    (post: SavedPost) => {
+      handleRemovePost(post.id);
+    },
+    [handleRemovePost]
+  );
+
   /**
    * Memoized filter button configuration to prevent recreation
    * Creates button data with icons, labels, and counts
@@ -528,6 +536,7 @@ export function BoardPageContent({
           activeFilter={activeFilter}
           onPostClick={handlePostClick}
           onSavePost={handleSavePost}
+          onRemovePost={handleRemovePostFromBoard}
         />
       </div>
 
