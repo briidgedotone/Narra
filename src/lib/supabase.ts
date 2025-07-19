@@ -32,6 +32,7 @@ export const createAdminClient = () => {
 // Database utility functions
 export const getSupabaseClient = () => supabase;
 
+
 // Helper to check if Supabase is properly configured
 export const isSupabaseConfigured = () => {
   return (

@@ -32,7 +32,7 @@ export class DatabaseService {
   }
 
   async getUserById(id: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("users")
       .select("*")
       .eq("id", id)
@@ -46,10 +46,21 @@ export class DatabaseService {
     id: string,
     updates: Database["public"]["Tables"]["users"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("users")
       .update(updates)
       .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async upsertUser(userData: Database["public"]["Tables"]["users"]["Insert"]) {
+    const { data, error } = await this.adminClient
+      .from("users")
+      .upsert(userData, { onConflict: "id" })
       .select()
       .single();
 
@@ -61,7 +72,7 @@ export class DatabaseService {
   async createProfile(
     profileData: Database["public"]["Tables"]["profiles"]["Insert"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("profiles")
       .insert(profileData)
       .select()
@@ -129,7 +140,7 @@ export class DatabaseService {
 
   // Posts
   async createPost(postData: Database["public"]["Tables"]["posts"]["Insert"]) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("posts")
       .insert(postData)
       .select()
@@ -196,7 +207,7 @@ export class DatabaseService {
   async createFolder(
     folderData: Database["public"]["Tables"]["folders"]["Insert"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("folders")
       .insert(folderData)
       .select()
@@ -207,7 +218,7 @@ export class DatabaseService {
   }
 
   async getFoldersByUser(userId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("folders")
       .select(
         `
@@ -262,7 +273,7 @@ export class DatabaseService {
   async createBoard(
     boardData: Database["public"]["Tables"]["boards"]["Insert"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .insert(boardData)
       .select()
@@ -273,7 +284,7 @@ export class DatabaseService {
   }
 
   async getBoardById(id: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .select("*, folders(*)")
       .eq("id", id)
@@ -405,7 +416,7 @@ export class DatabaseService {
 
   // Board Posts
   async addPostToBoard(boardId: string, postId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("board_posts")
       .insert({ board_id: boardId, post_id: postId })
       .select()
@@ -427,7 +438,7 @@ export class DatabaseService {
   }
 
   async getPostsInBoard(boardId: string, limit = 20, offset = 0) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("board_posts")
       .select(
         `
@@ -515,7 +526,7 @@ export class DatabaseService {
 
   // Follows
   async followProfile(userId: string, profileId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("follows")
       .insert({ user_id: userId, profile_id: profileId })
       .select()
@@ -537,7 +548,7 @@ export class DatabaseService {
   }
 
   async getFollowedProfiles(userId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("follows")
       .select("created_at, profiles(*)")
       .eq("user_id", userId)
@@ -564,7 +575,7 @@ export class DatabaseService {
 
   async getFollowedPosts(userId: string, limit = 50, offset = 0) {
     // Get posts directly from followed_posts table for this user
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("followed_posts")
       .select(
         `
@@ -585,7 +596,7 @@ export class DatabaseService {
   }
 
   async isFollowing(userId: string, profileId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("follows")
       .select("id")
       .eq("user_id", userId)
@@ -597,7 +608,7 @@ export class DatabaseService {
   }
 
   async getLastRefreshTime(userId: string) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("follows")
       .select("last_refresh")
       .eq("user_id", userId)
@@ -612,7 +623,7 @@ export class DatabaseService {
   // User Statistics
   async getUserStats(userId: string) {
     // Get folder and board counts
-    const { data: folderData, error: folderError } = await this.client
+    const { data: folderData, error: folderError } = await this.adminClient
       .from("folders")
       .select("id, boards(id)")
       .eq("user_id", userId);
@@ -620,7 +631,7 @@ export class DatabaseService {
     if (folderError) throw folderError;
 
     // Get following count
-    const { count: followingCount, error: followingError } = await this.client
+    const { count: followingCount, error: followingError } = await this.adminClient
       .from("follows")
       .select("id", { count: "exact" })
       .eq("user_id", userId);
@@ -628,7 +639,7 @@ export class DatabaseService {
     if (followingError) throw followingError;
 
     // Get saved posts count (posts in user's boards)
-    const { count: savedPostsCount, error: savedPostsError } = await this.client
+    const { count: savedPostsCount, error: savedPostsError } = await this.adminClient
       .from("board_posts")
       .select("id", { count: "exact" })
       .in(
@@ -675,7 +686,7 @@ export class DatabaseService {
         ) || [];
 
       if (userBoardIds.length > 0) {
-        const { data: recentSaves } = await this.client
+        const { data: recentSaves } = await this.adminClient
           .from("board_posts")
           .select("added_at, boards(name), posts(platform)")
           .in("board_id", userBoardIds)
@@ -700,7 +711,7 @@ export class DatabaseService {
       }
 
       // Get recent follows
-      const { data: recentFollows } = await this.client
+      const { data: recentFollows } = await this.adminClient
         .from("follows")
         .select("created_at, profiles(handle, platform)")
         .eq("user_id", userId)
@@ -723,7 +734,7 @@ export class DatabaseService {
       });
 
       // Get recent boards
-      const { data: recentBoards } = await this.client
+      const { data: recentBoards } = await this.adminClient
         .from("boards")
         .select("created_at, name, folders(name)")
         .in("folder_id", userFolders?.map(f => f.id) || [])
@@ -746,7 +757,7 @@ export class DatabaseService {
       });
 
       // Get recent folders
-      const { data: recentFolders } = await this.client
+      const { data: recentFolders } = await this.adminClient
         .from("folders")
         .select("created_at, name")
         .eq("user_id", userId)
