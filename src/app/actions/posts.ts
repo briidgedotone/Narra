@@ -145,75 +145,60 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
     const normalizedPlatformPostId = postData.platform === "instagram" 
       ? normalizeInstagramId(postData.platformPostId, postData.embedUrl)
       : postData.platformPostId;
-    // First, ensure the profile exists
-    let profile = await db.getProfileByHandle(
-      postData.handle,
-      postData.platform
-    );
+    // Upsert profile (create or update if exists)
+    const profile = await db.upsertProfile({
+      handle: postData.handle,
+      platform: postData.platform,
+      display_name: postData.displayName || postData.handle,
+      bio: postData.bio || "",
+      followers_count: postData.followers || 0,
+      avatar_url: postData.avatarUrl || "",
+      verified: postData.verified || false,
+    });
 
-    if (!profile) {
-      // Create profile if it doesn't exist
-      profile = await db.createProfile({
-        handle: postData.handle,
-        platform: postData.platform,
-        display_name: postData.displayName || postData.handle,
-        bio: postData.bio || "",
-        followers_count: postData.followers || 0,
-        avatar_url: postData.avatarUrl || "",
-        verified: postData.verified || false,
-      });
-    }
+    // Upsert post (create or update if exists using normalized ID)
+    const postCreateData: Database["public"]["Tables"]["posts"]["Insert"] = {
+      profile_id: profile.id,
+      platform: postData.platform,
+      platform_post_id: normalizedPlatformPostId,
+      embed_url: postData.embedUrl,
+      caption: postData.caption || "",
+      ...(postData.transcript ? { transcript: postData.transcript } : {}),
+      ...(postData.originalUrl ? { original_url: postData.originalUrl } : {}),
+      metrics: postData.metrics || {},
+      date_posted: postData.datePosted,
+      // Instagram-specific fields
+      ...(postData.thumbnail ? { thumbnail: postData.thumbnail } : {}),
+      ...(postData.isVideo !== undefined
+        ? { is_video: postData.isVideo }
+        : {}),
+      ...(postData.isCarousel !== undefined
+        ? { is_carousel: postData.isCarousel }
+        : {}),
+      ...(postData.carouselMedia
+        ? {
+            carousel_media: postData.carouselMedia.map(item => ({
+              id: item.id,
+              type: item.type,
+              url: item.url,
+              thumbnail: item.thumbnail,
+              is_video: item.isVideo,
+            })),
+          }
+        : {}),
+      ...(postData.carouselCount !== undefined
+        ? { carousel_count: postData.carouselCount }
+        : {}),
+      ...(postData.videoUrl ? { video_url: postData.videoUrl } : {}),
+      ...(postData.displayUrl ? { display_url: postData.displayUrl } : {}),
+      ...(postData.shortcode ? { shortcode: postData.shortcode } : {}),
+      ...(postData.dimensions ? { dimensions: postData.dimensions } : {}),
+    };
 
-    // Check if post already exists using normalized ID
-    let post = await db.getPostByPlatformId(
-      normalizedPlatformPostId,
-      postData.platform
-    );
+    const post = await db.upsertPost(postCreateData);
 
-    if (!post) {
-      // Create post immediately without slow operations
-      const postCreateData: Database["public"]["Tables"]["posts"]["Insert"] = {
-        profile_id: profile.id,
-        platform: postData.platform,
-        platform_post_id: normalizedPlatformPostId,
-        embed_url: postData.embedUrl,
-        caption: postData.caption || "",
-        ...(postData.transcript ? { transcript: postData.transcript } : {}),
-        ...(postData.originalUrl ? { original_url: postData.originalUrl } : {}),
-        metrics: postData.metrics || {},
-        date_posted: postData.datePosted,
-        // Instagram-specific fields
-        ...(postData.thumbnail ? { thumbnail: postData.thumbnail } : {}),
-        ...(postData.isVideo !== undefined
-          ? { is_video: postData.isVideo }
-          : {}),
-        ...(postData.isCarousel !== undefined
-          ? { is_carousel: postData.isCarousel }
-          : {}),
-        ...(postData.carouselMedia
-          ? {
-              carousel_media: postData.carouselMedia.map(item => ({
-                id: item.id,
-                type: item.type,
-                url: item.url,
-                thumbnail: item.thumbnail,
-                is_video: item.isVideo,
-              })),
-            }
-          : {}),
-        ...(postData.carouselCount !== undefined
-          ? { carousel_count: postData.carouselCount }
-          : {}),
-        ...(postData.videoUrl ? { video_url: postData.videoUrl } : {}),
-        ...(postData.displayUrl ? { display_url: postData.displayUrl } : {}),
-        ...(postData.shortcode ? { shortcode: postData.shortcode } : {}),
-        ...(postData.dimensions ? { dimensions: postData.dimensions } : {}),
-      };
-
-      post = await db.createPost(postCreateData);
-
-      // Update post with embed/transcript in background (don't await)
-      Promise.resolve().then(async () => {
+    // Update post with embed/transcript in background (don't await)
+    Promise.resolve().then(async () => {
         try {
           const updates: Partial<
             Database["public"]["Tables"]["posts"]["Update"]
@@ -283,14 +268,21 @@ export async function savePostToBoard(postData: SavePostData, boardId: string) {
           }
 
           // Update post with fetched data if any
-          if (Object.keys(updates).length > 0) {
-            await db.updatePost(post.id, updates);
+          if (Object.keys(updates).length > 0 && post?.id) {
+            try {
+              await db.updatePost(post.id, updates);
+            } catch (updateError: any) {
+              // If update fails due to post not found, it might be a timing issue
+              // Log but don't throw - this is a non-critical background operation
+              if (updateError?.code !== 'PGRST116') {
+                console.error("Failed to update post with embed/transcript:", updateError);
+              }
+            }
           }
         } catch (error) {
-          console.error("Failed to update post with embed/transcript:", error);
+          console.error("Failed to fetch embed/transcript data:", error);
         }
       });
-    }
 
     // Add post to board (this will handle duplicates via unique constraint)
     await db.addPostToBoard(boardId, post.id);

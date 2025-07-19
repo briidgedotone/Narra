@@ -11,15 +11,6 @@ export async function syncUserToDatabase(
   clerkUser: User
 ): Promise<Database["public"]["Tables"]["users"]["Row"]> {
   try {
-    // Check if user already exists in our database
-    let dbUser;
-    try {
-      dbUser = await db.getUserById(clerkUser.id);
-    } catch {
-      // User doesn't exist, we'll create them
-      dbUser = null;
-    }
-
     // Extract user data from Clerk
     const userData: Database["public"]["Tables"]["users"]["Insert"] = {
       id: clerkUser.id,
@@ -28,18 +19,9 @@ export async function syncUserToDatabase(
       subscription_status: "inactive", // Default subscription status
     };
 
-    if (dbUser) {
-      // User exists, update their information
-      const updatedUser = await db.updateUser(clerkUser.id, {
-        email: userData.email,
-        // Don't update role or subscription_status on sync
-      });
-      return updatedUser;
-    } else {
-      // User doesn't exist, create them
-      const newUser = await db.createUser(userData);
-      return newUser;
-    }
+    // Use upsert to handle both create and update cases
+    const user = await db.upsertUser(userData);
+    return user;
   } catch (error) {
     console.error("Error syncing user to database:", error);
     throw new Error("Failed to sync user to database");
