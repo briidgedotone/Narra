@@ -99,9 +99,8 @@ function InstagramEmbedComponent({
           src={embedUrl}
           width="320"
           height="500"
-          frameBorder="0"
+          style={{ border: 'none' }}
           scrolling="no"
-          allowTransparency={true}
           className="rounded-lg"
           title="Instagram embed"
         />

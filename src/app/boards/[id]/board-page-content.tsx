@@ -143,56 +143,6 @@ export function BoardPageContent({
     return isLoadingTranscript;
   }, [selectedPost, isLoadingTranscript]);
 
-  // Centralized Instagram script loading and processing for board pages
-  useEffect(() => {
-    const instagramPosts = posts.filter(p => p.platform === "instagram");
-    const hasInstagramPosts = instagramPosts.length > 0;
-
-    if (hasInstagramPosts && posts.length > 0) {
-      const loadAndProcessInstagram = () => {
-        // Load Instagram embed script if not already loaded
-        if (!document.querySelector('script[src*="instagram.com/embed.js"]')) {
-          console.log("Board page: Loading Instagram embed script...");
-          const script = document.createElement("script");
-          script.src = "https://www.instagram.com/embed.js";
-          script.async = true;
-          script.onload = () => {
-            console.log(
-              "Board page: Instagram script loaded, processing embeds..."
-            );
-            // Process all embeds on the page after script loads
-            setTimeout(() => {
-              if (window.instgrm && window.instgrm.Embeds) {
-                console.log("Board page: Processing all Instagram embeds...");
-                window.instgrm.Embeds.process();
-              }
-            }, 300);
-          };
-          script.onerror = () => {
-            console.error("Board page: Failed to load Instagram embed script");
-          };
-          document.head.appendChild(script);
-        } else {
-          // If script is already loaded, process embeds
-          console.log(
-            "Board page: Instagram script already loaded, processing embeds..."
-          );
-          setTimeout(() => {
-            if (window.instgrm && window.instgrm.Embeds) {
-              console.log(
-                "Board page: Processing existing Instagram embeds..."
-              );
-              window.instgrm.Embeds.process();
-            }
-          }, 300);
-        }
-      };
-
-      // Wait for posts to be rendered, then load and process Instagram embeds
-      // Use a longer timeout to ensure all DOM elements are ready
-      setTimeout(loadAndProcessInstagram, 500);
-    }
-  }, [posts]);
 
   /**
    * Memoized filter counts to prevent recalculation on every render
