@@ -61,34 +61,16 @@ export async function createAndFollowProfile(profileData: {
       );
     }
 
-    // First, check if profile already exists
-    let profile = await db.getProfileByHandle(
-      profileData.handle,
-      profileData.platform
-    );
-
-    if (!profile) {
-      // Create the profile if it doesn't exist
-      profile = await db.createProfile({
-        handle: profileData.handle,
-        platform: profileData.platform,
-        display_name: profileData.displayName,
-        bio: profileData.bio,
-        followers_count: profileData.followers,
-        avatar_url: profileData.avatarUrl,
-        verified: profileData.verified,
-      });
-    } else {
-      // Update existing profile with latest data
-      await db.updateProfile(profile.id, {
-        display_name: profileData.displayName,
-        bio: profileData.bio,
-        followers_count: profileData.followers,
-        avatar_url: profileData.avatarUrl,
-        verified: profileData.verified,
-        last_updated: new Date().toISOString(),
-      });
-    }
+    // Upsert profile (create or update if exists)
+    const profile = await db.upsertProfile({
+      handle: profileData.handle,
+      platform: profileData.platform,
+      display_name: profileData.displayName,
+      bio: profileData.bio,
+      followers_count: profileData.followers,
+      avatar_url: profileData.avatarUrl,
+      verified: profileData.verified,
+    });
 
     // Now follow the profile
     const followResult = await db.followProfile(userId, profile.id);

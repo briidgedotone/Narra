@@ -120,6 +120,19 @@ export class DatabaseService {
     return data;
   }
 
+  async upsertProfile(
+    profileData: Database["public"]["Tables"]["profiles"]["Insert"]
+  ) {
+    const { data, error } = await this.adminClient
+      .from("profiles")
+      .upsert(profileData, { onConflict: "handle,platform" })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async searchProfiles(query: string, platform?: "tiktok" | "instagram") {
     let queryBuilder = this.client
       .from("profiles")
