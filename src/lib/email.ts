@@ -15,7 +15,7 @@ export async function sendEmail({
 }) {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'noreply@resend.dev', // Using resend.dev for testing
+      from: 'Narra <noreply@mail.usenarra.com>', // Using your verified domain
       to,
       subject,
       text,
