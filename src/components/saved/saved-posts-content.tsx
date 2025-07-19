@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { parseWebVTT } from "@/lib/utils/format";
 import { formatDate, formatNumber } from "@/lib/utils/format";
@@ -70,48 +69,33 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-  // Custom hooks for post modal management with database-first transcript loading
-  const {
-    selectedPost,
-    activeTab,
-    transcript,
-    isLoadingTranscript,
-    transcriptError,
-    handlePostClick,
-    handleTabChange,
-    closeModal,
-  } = usePostModal();
+  // Post modal state - database-only approach for saved posts
+  const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "transcript">("overview");
 
-  // Override transcript with database value for saved posts
+  // Database-only transcript for saved posts
   const displayTranscript = React.useMemo(() => {
-    if (!selectedPost) return transcript;
+    if (!selectedPost?.transcript) return null;
 
-    // For saved posts, check if we have transcript in the post data
-    const savedPost = selectedPost as SavedPost;
-    if (savedPost.transcript) {
-      return {
-        text: parseWebVTT(savedPost.transcript),
-        id: savedPost.id,
-      };
-    }
+    return {
+      text: parseWebVTT(selectedPost.transcript),
+      id: selectedPost.id,
+    };
+  }, [selectedPost?.transcript, selectedPost?.id]);
 
-    // Fallback to API transcript from usePostModal
-    return transcript;
-  }, [selectedPost, transcript]);
+  // Database-only handlers
+  const handlePostClick = React.useCallback((post: SavedPost) => {
+    setSelectedPost(post);
+    setActiveTab("overview");
+  }, []);
 
-  // Override loading state for saved posts with database transcripts
-  const displayIsLoadingTranscript = React.useMemo(() => {
-    if (!selectedPost) return isLoadingTranscript;
+  const handleTabChange = React.useCallback((tab: "overview" | "transcript") => {
+    setActiveTab(tab);
+  }, []);
 
-    const savedPost = selectedPost as SavedPost;
-    // If we have database transcript, don't show loading
-    if (savedPost.transcript) {
-      return false;
-    }
-
-    // Otherwise use the API loading state
-    return isLoadingTranscript;
-  }, [selectedPost, isLoadingTranscript]);
+  const closeModal = React.useCallback(() => {
+    setSelectedPost(null);
+  }, []);
 
   useEffect(() => {
     loadSavedPosts();
@@ -505,27 +489,18 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                             }}
                             disabled={
                               !displayTranscript?.text ||
-                              displayIsLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
-                        {displayIsLoadingTranscript ? (
-                          <div className="flex items-center justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-                          </div>
-                        ) : transcriptError ? (
-                          <div className="text-sm text-red-600">
-                            {transcriptError}
-                          </div>
-                        ) : !displayTranscript?.text ? (
+                        {!displayTranscript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok" ||
                             (selectedPost.platform === "instagram" &&
                               selectedPost.isVideo)
-                              ? "Loading transcript..."
+                              ? "No transcript available for this content."
                               : "Transcript not available for this content."}
                           </div>
                         ) : (
