@@ -115,20 +115,14 @@ export async function POST(request: NextRequest) {
 
             // Send payment confirmation email
             try {
-              console.log("Looking up user with ID:", userId);
               const user = await db.getUserById(userId);
-              console.log("User found:", user ? { id: user.id, email: user.email } : "null");
-              
               if (user?.email) {
-                console.log("Sending payment confirmation email to:", user.email);
-                const emailResult = await sendTemplateEmail('payment-success', {
+                await sendTemplateEmail('payment-success', {
                   userEmail: user.email,
                   planName: planId || 'Pro Plan',
                   billingPeriod: (billingPeriod as 'monthly' | 'yearly') || 'monthly'
                 });
-                console.log("Email result:", emailResult);
-              } else {
-                console.log("No user or email found for userId:", userId);
+                console.log("Payment confirmation email sent to:", user.email);
               }
             } catch (emailError) {
               console.error("Failed to send payment confirmation email:", emailError);

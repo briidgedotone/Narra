@@ -82,6 +82,11 @@ export const PaymentFailedEmail = ({
             <Text style={footer}>
               Having trouble? Our support team is here to help. Reply to this email or visit our help center.
             </Text>
+            
+            <Text style={unsubscribe}>
+              This email was sent to {userEmail} regarding your Narra subscription. 
+              If you need assistance, contact us at support@usenarra.com
+            </Text>
           </Section>
         </Container>
       </Body>
@@ -245,6 +250,14 @@ const footer = {
   color: "#8898aa",
   textAlign: "center" as const,
   margin: "32px 0 0",
+};
+
+const unsubscribe = {
+  fontSize: "12px",
+  color: "#8898aa",
+  textAlign: "center" as const,
+  margin: "16px 0 0",
+  lineHeight: "1.4",
 };
 
 export default PaymentFailedEmail;

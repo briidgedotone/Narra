@@ -100,7 +100,6 @@ export async function sendTemplateEmail(
     }
 
     // Send the email
-    console.log(`Sending ${template} email to: ${data.userEmail}, subject: ${subject}`);
     const resendClient = getResendClient();
     
     let emailResult = await resendClient.emails.send({
@@ -111,7 +110,7 @@ export async function sendTemplateEmail(
     });
 
     // If first attempt fails with domain/verification error, try with default sender
-    if (emailResult.error && emailResult.error.statusCode === 403) {
+    if (emailResult.error && (emailResult.error as any).statusCode === 403) {
       console.log('Domain verification issue, trying with default sender...');
       emailResult = await resendClient.emails.send({
         from: 'onboarding@resend.dev',
