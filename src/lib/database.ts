@@ -1086,6 +1086,17 @@ export class DatabaseService {
     return data;
   }
 
+  async getSubscriptionByStripeId(stripeSubscriptionId: string) {
+    const { data, error } = await this.adminClient
+      .from("subscriptions")
+      .select("*")
+      .eq("stripe_subscription_id", stripeSubscriptionId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found
+    return data;
+  }
+
   async createSubscription(subscriptionData: any) {
     const { data, error } = await this.adminClient
       .from("subscriptions")

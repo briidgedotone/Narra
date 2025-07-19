@@ -170,8 +170,39 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        // Handle failed payment
-        console.log("Payment failed:", event.id);
+        const invoice = event.data.object as Stripe.Invoice;
+        console.log("Payment failed for invoice:", invoice.id);
+        
+        // Update subscription status if we can find it
+        const subscriptionId = (invoice as any).subscription;
+        if (subscriptionId) {
+          try {
+            // Get the subscription to find the user
+            const subscription = await stripe.subscriptions.retrieve(
+              subscriptionId as string
+            );
+            
+            // Update subscription status in database
+            await db.updateSubscription(subscription.id, {
+              status: "past_due",
+            });
+            
+            // Find user by customer ID and update their status
+            const { data: subscriptionRecord } = await db.getSubscriptionByStripeId(
+              subscription.id
+            );
+            
+            if (subscriptionRecord?.user_id) {
+              await db.updateUser(subscriptionRecord.user_id, {
+                subscription_status: "past_due",
+              });
+              
+              console.log(`Updated user ${subscriptionRecord.user_id} status to past_due`);
+            }
+          } catch (error) {
+            console.error("Error handling payment failure:", error);
+          }
+        }
         break;
       }
 
