@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -145,6 +145,43 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     return `No ${activeFilter} posts found in this board.`;
   }, [activeFilter]);
 
+  /**
+   * Memoized post items with stable callback references
+   */
+  const postItems = React.useMemo(() => {
+    return filteredPosts.map(post => {
+      const handleDetailsClick = () => onPostClick?.(post);
+      const handleSaveClick = () => onSavePost?.(post);
+      const handleRemoveClick = () => onRemovePost?.(post);
+
+      return (
+        <div key={post.id} className="mb-4 flex justify-center">
+          {post.platform === "instagram" ? (
+            <InstagramEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+              onRemoveClick={handleRemoveClick}
+            />
+          ) : (
+            <TikTokEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+              onRemoveClick={handleRemoveClick}
+            />
+          )}
+        </div>
+      );
+    });
+  }, [filteredPosts, onPostClick, onSavePost, onRemovePost]);
+
   // Loading state
   if (isLoading) {
     return loadingSkeleton;
@@ -170,31 +207,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
-      {filteredPosts.map(post => (
-        <div key={post.id} className="mb-4 flex justify-center">
-          {post.platform === "instagram" ? (
-            <InstagramEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={() => onPostClick?.(post)}
-              onSaveClick={() => onSavePost?.(post)}
-              onRemoveClick={() => onRemovePost?.(post)}
-            />
-          ) : (
-            <TikTokEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={() => onPostClick?.(post)}
-              onSaveClick={() => onSavePost?.(post)}
-              onRemoveClick={() => onRemovePost?.(post)}
-            />
-          )}
-        </div>
-      ))}
+      {postItems}
     </Masonry>
   );
 });

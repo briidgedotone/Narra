@@ -27,13 +27,48 @@ interface SavedPostGridProps {
 export const SavedPostGrid = React.memo<SavedPostGridProps>(
   function SavedPostGrid({ posts, isLoading, onPostClick, onSavePost, onRemovePost }) {
     // Masonry breakpoints - matches following page
-    const breakpointColumnsObj = {
+    const breakpointColumnsObj = React.useMemo(() => ({
       default: 4, // xl:columns-4
       1280: 4, // xl
       1024: 3, // lg:columns-3
       640: 2, // sm:columns-2
       0: 1, // columns-1
-    };
+    }), []);
+
+    // Memoized post items with stable callback references
+    const postItems = React.useMemo(() => {
+      return posts.map(post => {
+        const handleDetailsClick = () => onPostClick?.(post);
+        const handleSaveClick = () => onSavePost?.(post);
+        const handleRemoveClick = () => onRemovePost?.(post);
+
+        return (
+          <div key={post.id} className="mb-4 flex justify-center">
+            {post.platform === "instagram" ? (
+              <InstagramEmbed
+                url={post.originalUrl || post.embedUrl}
+                caption={post.caption}
+                metrics={post.metrics}
+                showMetrics={true}
+                onDetailsClick={handleDetailsClick}
+                onSaveClick={handleSaveClick}
+                onRemoveClick={handleRemoveClick}
+              />
+            ) : (
+              <TikTokEmbed
+                url={post.originalUrl || post.embedUrl}
+                caption={post.caption}
+                metrics={post.metrics}
+                showMetrics={true}
+                onDetailsClick={handleDetailsClick}
+                onSaveClick={handleSaveClick}
+                onRemoveClick={handleRemoveClick}
+              />
+            )}
+          </div>
+        );
+      });
+    }, [posts, onPostClick, onSavePost, onRemovePost]);
     // Loading state
     if (isLoading) {
       return (
@@ -85,31 +120,7 @@ export const SavedPostGrid = React.memo<SavedPostGridProps>(
         role="grid"
         aria-label={`${posts.length} saved posts`}
       >
-        {posts.map(post => (
-          <div key={post.id} className="mb-4 flex justify-center">
-            {post.platform === "instagram" ? (
-              <InstagramEmbed
-                url={post.originalUrl || post.embedUrl}
-                caption={post.caption}
-                metrics={post.metrics}
-                showMetrics={true}
-                onDetailsClick={() => onPostClick?.(post)}
-                onSaveClick={() => onSavePost?.(post)}
-                onRemoveClick={() => onRemovePost?.(post)}
-              />
-            ) : (
-              <TikTokEmbed
-                url={post.originalUrl || post.embedUrl}
-                caption={post.caption}
-                metrics={post.metrics}
-                showMetrics={true}
-                onDetailsClick={() => onPostClick?.(post)}
-                onSaveClick={() => onSavePost?.(post)}
-                onRemoveClick={() => onRemovePost?.(post)}
-              />
-            )}
-          </div>
-        ))}
+        {postItems}
       </Masonry>
     );
   }

@@ -94,13 +94,60 @@ export function FollowingContent({
   const router = useRouter();
 
   // Masonry breakpoints - matches our responsive grid
-  const breakpointColumnsObj = {
+  const breakpointColumnsObj = useMemo(() => ({
     default: 4, // xl:columns-4
     1280: 4, // xl
     1024: 3, // lg:columns-3
     640: 2, // sm:columns-2
     0: 1, // columns-1
-  };
+  }), []);
+
+  // Memoized post items with stable callback references
+  const postItems = useMemo(() => {
+    return posts.map(post => {
+      const postMetrics = {
+        ...(post.metrics?.views !== undefined
+          ? { views: post.metrics.views }
+          : {}),
+        ...(post.metrics?.likes !== undefined
+          ? { likes: post.metrics.likes }
+          : {}),
+        ...(post.metrics?.comments !== undefined
+          ? { comments: post.metrics.comments }
+          : {}),
+        ...(post.metrics?.shares !== undefined
+          ? { shares: post.metrics.shares }
+          : {}),
+      };
+
+      const handleDetailsClick = () => onPostClick?.(post);
+      const handleSaveClick = () => onSavePost?.(post);
+
+      return (
+        <div key={post.id} className="mb-4 flex justify-center">
+          {post.platform === "instagram" ? (
+            <InstagramEmbed
+              url={post.embed_url}
+              {...(post.caption ? { caption: post.caption } : {})}
+              metrics={postMetrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+            />
+          ) : (
+            <TikTokEmbed
+              url={post.embed_url}
+              {...(post.caption ? { caption: post.caption } : {})}
+              metrics={postMetrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+            />
+          )}
+        </div>
+      );
+    });
+  }, [posts, onPostClick, onSavePost]);
 
   if (isLoadingProfiles) {
     return <FollowingSkeleton />;
@@ -253,49 +300,7 @@ export function FollowingContent({
               className="flex w-auto -ml-4"
               columnClassName="pl-4 bg-clip-padding"
             >
-              {posts.map(post => {
-                const postMetrics = useMemo(() => ({
-                  ...(post.metrics?.views !== undefined
-                    ? { views: post.metrics.views }
-                    : {}),
-                  ...(post.metrics?.likes !== undefined
-                    ? { likes: post.metrics.likes }
-                    : {}),
-                  ...(post.metrics?.comments !== undefined
-                    ? { comments: post.metrics.comments }
-                    : {}),
-                  ...(post.metrics?.shares !== undefined
-                    ? { shares: post.metrics.shares }
-                    : {}),
-                }), [post.metrics]);
-
-                const handleDetailsClick = useCallback(() => onPostClick?.(post), [onPostClick, post]);
-                const handleSaveClick = useCallback(() => onSavePost?.(post), [onSavePost, post]);
-
-                return (
-                  <div key={post.id} className="mb-4 flex justify-center">
-                    {post.platform === "instagram" ? (
-                      <InstagramEmbed
-                        url={post.embed_url}
-                        {...(post.caption ? { caption: post.caption } : {})}
-                        metrics={postMetrics}
-                        showMetrics={true}
-                        onDetailsClick={handleDetailsClick}
-                        onSaveClick={handleSaveClick}
-                      />
-                    ) : (
-                      <TikTokEmbed
-                        url={post.embed_url}
-                        {...(post.caption ? { caption: post.caption } : {})}
-                        metrics={postMetrics}
-                        showMetrics={true}
-                        onDetailsClick={handleDetailsClick}
-                        onSaveClick={handleSaveClick}
-                      />
-                    )}
-                  </div>
-                );
-              })}
+              {postItems}
             </Masonry>
 
             {/* Load More Button */}
