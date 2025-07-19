@@ -42,6 +42,7 @@ import type { SavedPost } from "@/types/board";
 import type { SavePostData, SortOption, DateFilter } from "@/types/discovery";
 
 import { SavedPostGrid } from "./SavedPostGrid";
+import { SavedPostsSkeleton } from "./saved-posts-skeleton";
 
 // Lazy load the SavePostModal component to reduce initial bundle size
 const SavePostModal = React.lazy(() =>
@@ -335,6 +336,10 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         </div>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <SavedPostsSkeleton />;
   }
 
   if (posts.length === 0) {
