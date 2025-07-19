@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -12,12 +12,14 @@ interface PostGridProps {
   posts: SavedPost[];
   /** Whether posts are currently loading */
   isLoading: boolean;
-  /** Active filter for posts ("all" | "tiktok" | "instagram" | "recent") */
+  /** Active filter for posts ("all" | "tiktok" | "instagram") */
   activeFilter: string;
   /** Callback when post details are clicked */
   onPostClick?: (post: SavedPost) => void;
   /** Callback when post save is clicked */
   onSavePost?: (post: SavedPost) => void;
+  /** Callback when post remove is clicked */
+  onRemovePost?: (post: SavedPost) => void;
 }
 
 /**
@@ -26,7 +28,7 @@ interface PostGridProps {
  * Features:
  * - Pinterest-style masonry layout using react-masonry-css (1-4 columns based on screen size)
  * - Direct Instagram and TikTok embed display
- * - Post filtering by platform and recency
+ * - Post filtering by platform
  * - Loading skeleton states
  * - Empty state handling
  * - Optimized rendering with React.memo
@@ -41,7 +43,6 @@ interface PostGridProps {
  * - Memoized filtered posts calculation
  * - Memoized loading skeleton with masonry layout
  * - Memoized empty state messages
- * - Recent filter with 30-day cutoff
  * - JavaScript-based masonry for optimal distribution
  */
 export const PostGrid = React.memo<PostGridProps>(function PostGrid({
@@ -50,6 +51,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   activeFilter,
   onPostClick,
   onSavePost,
+  onRemovePost,
 }) {
   /**
    * Masonry breakpoints - matches saved posts and following pages
@@ -67,19 +69,13 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
 
   /**
    * Memoized filtered posts to prevent unnecessary recalculations
-   * Filters posts based on platform or recency
+   * Filters posts based on platform
    */
   const filteredPosts = React.useMemo(() => {
     return posts.filter(post => {
       if (activeFilter === "all") return true;
       if (activeFilter === "instagram") return post.platform === "instagram";
       if (activeFilter === "tiktok") return post.platform === "tiktok";
-      if (activeFilter === "recent") {
-        // Show posts from last 30 days
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return new Date(post.datePosted) >= thirtyDaysAgo;
-      }
       return true;
     });
   }, [posts, activeFilter]);
@@ -136,11 +132,45 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
     if (activeFilter === "all") {
       return "This board doesn't have any posts yet. Start adding posts to see them here.";
     }
-    if (activeFilter === "recent") {
-      return "No recent posts found in this board.";
-    }
     return `No ${activeFilter} posts found in this board.`;
   }, [activeFilter]);
+
+  /**
+   * Memoized post items with stable callback references
+   */
+  const postItems = React.useMemo(() => {
+    return filteredPosts.map(post => {
+      const handleDetailsClick = () => onPostClick?.(post);
+      const handleSaveClick = () => onSavePost?.(post);
+      const handleRemoveClick = () => onRemovePost?.(post);
+
+      return (
+        <div key={post.id} className="mb-4 flex justify-center">
+          {post.platform === "instagram" ? (
+            <InstagramEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+              onRemoveClick={handleRemoveClick}
+            />
+          ) : (
+            <TikTokEmbed
+              url={post.originalUrl || post.embedUrl}
+              caption={post.caption}
+              metrics={post.metrics}
+              showMetrics={true}
+              onDetailsClick={handleDetailsClick}
+              onSaveClick={handleSaveClick}
+              onRemoveClick={handleRemoveClick}
+            />
+          )}
+        </div>
+      );
+    });
+  }, [filteredPosts, onPostClick, onSavePost, onRemovePost]);
 
   // Loading state
   if (isLoading) {
@@ -167,29 +197,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
       role="grid"
       aria-label={`${filteredPosts.length} posts in ${activeFilter} filter`}
     >
-      {filteredPosts.map(post => (
-        <div key={post.id} className="mb-4 flex justify-center">
-          {post.platform === "instagram" ? (
-            <InstagramEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={() => onPostClick?.(post)}
-              onSaveClick={() => onSavePost?.(post)}
-            />
-          ) : (
-            <TikTokEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={() => onPostClick?.(post)}
-              onSaveClick={() => onSavePost?.(post)}
-            />
-          )}
-        </div>
-      ))}
+      {postItems}
     </Masonry>
   );
 });

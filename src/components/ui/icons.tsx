@@ -3,7 +3,7 @@
 
 import {
   Home01Icon,
-  AiSearchIcon,
+  Search01Icon,
   AllBookmarkIcon,
   UserGroupIcon,
   AccountSetting01Icon,
@@ -63,7 +63,7 @@ import {
 
 // Export all icons with their original Lucide names for compatibility
 export const Home = Home01Icon;
-export const Search = AiSearchIcon;
+export const Search = Search01Icon;
 export const Bookmark = AllBookmarkIcon;
 export const Users = UserGroupIcon;
 export const Settings = AccountSetting01Icon;
@@ -113,7 +113,7 @@ export const UserPlus = UserAdd01Icon;
 export const FileText = AiBookIcon; // Using book icon as alternative to file text
 export const Link = LinkSquare01Icon; // Using existing link icon
 export const Files = AiFolder01Icon; // Using folder icon as alternative to files
-export const Search02 = AiSearchIcon; // Using existing search icon
+export const Search02 = Search01Icon; // Using existing search icon
 export const MessageSquare = MessageMultiple01Icon; // Using existing message icon
 export const Mail = MessageMultiple01Icon; // Using message icon as alternative to mail
 export const Image = ViewIcon; // Using view icon as alternative to image

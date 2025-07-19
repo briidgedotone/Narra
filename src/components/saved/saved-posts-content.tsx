@@ -7,10 +7,12 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { toast } from "sonner";
 
-import { getAllUserSavedPosts } from "@/app/actions/posts";
+import { getAllUserSavedPosts, removePostFromAllUserBoards } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -21,6 +23,9 @@ import {
   Share,
   Calendar,
   Bookmark,
+  SearchList,
+  TikTok,
+  Instagram,
 } from "@/components/ui/icons";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
@@ -30,7 +35,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePostModal } from "@/hooks/usePostModal";
 import { cn } from "@/lib/utils";
 import { parseWebVTT } from "@/lib/utils/format";
 import { formatDate, formatNumber } from "@/lib/utils/format";
@@ -38,6 +42,7 @@ import type { SavedPost } from "@/types/board";
 import type { SavePostData, SortOption, DateFilter } from "@/types/discovery";
 
 import { SavedPostGrid } from "./SavedPostGrid";
+import { SavedPostsSkeleton } from "./saved-posts-skeleton";
 
 // Lazy load the SavePostModal component to reduce initial bundle size
 const SavePostModal = React.lazy(() =>
@@ -56,6 +61,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Filter states
+  const [activeFilter, setActiveFilter] = useState<"all" | "tiktok" | "instagram">("all");
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
   const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
 
@@ -63,48 +69,80 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
-  // Custom hooks for post modal management with database-first transcript loading
-  const {
-    selectedPost,
-    activeTab,
-    transcript,
-    isLoadingTranscript,
-    transcriptError,
-    handlePostClick,
-    handleTabChange,
-    closeModal,
-  } = usePostModal();
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
-  // Override transcript with database value for saved posts
+  // Post modal state - database-only approach for saved posts
+  const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "transcript">("overview");
+
+  // Database-only transcript for saved posts
   const displayTranscript = React.useMemo(() => {
-    if (!selectedPost) return transcript;
+    if (!selectedPost?.transcript) return null;
 
-    // For saved posts, check if we have transcript in the post data
-    const savedPost = selectedPost as SavedPost;
-    if (savedPost.transcript) {
-      return {
-        text: parseWebVTT(savedPost.transcript),
-        id: savedPost.id,
-      };
-    }
+    return {
+      text: parseWebVTT(selectedPost.transcript),
+      id: selectedPost.id,
+    };
+  }, [selectedPost?.transcript, selectedPost?.id]);
 
-    // Fallback to API transcript from usePostModal
-    return transcript;
-  }, [selectedPost, transcript]);
+  // Database-only handlers
+  const handlePostClick = React.useCallback((post: SavedPost) => {
+    setSelectedPost(post);
+    setActiveTab("overview");
+  }, []);
 
-  // Override loading state for saved posts with database transcripts
-  const displayIsLoadingTranscript = React.useMemo(() => {
-    if (!selectedPost) return isLoadingTranscript;
+  const handleTabChange = React.useCallback((tab: "overview" | "transcript") => {
+    setActiveTab(tab);
+  }, []);
 
-    const savedPost = selectedPost as SavedPost;
-    // If we have database transcript, don't show loading
-    if (savedPost.transcript) {
-      return false;
-    }
+  const closeModal = React.useCallback(() => {
+    setSelectedPost(null);
+  }, []);
 
-    // Otherwise use the API loading state
-    return isLoadingTranscript;
-  }, [selectedPost, isLoadingTranscript]);
+  // Memoized filter counts
+  const filterCounts = React.useMemo(() => {
+    const tiktokCount = posts.filter(p => p.platform === "tiktok").length;
+    const instagramCount = posts.filter(p => p.platform === "instagram").length;
+
+    return {
+      all: posts.length,
+      tiktok: tiktokCount,
+      instagram: instagramCount,
+    };
+  }, [posts]);
+
+  // Memoized filter click handler
+  const handleFilterClick = React.useCallback((filter: string) => {
+    setActiveFilter(filter as typeof activeFilter);
+  }, []);
+
+  // Memoized filter button configuration
+  const filterButtons = React.useMemo(
+    () => [
+      {
+        key: "all",
+        icon: SearchList,
+        label: `All Posts (${filterCounts.all})`,
+        filter: "all",
+      },
+      {
+        key: "tiktok",
+        icon: TikTok,
+        label: `TikTok (${filterCounts.tiktok})`,
+        filter: "tiktok",
+      },
+      {
+        key: "instagram",
+        icon: Instagram,
+        label: `Instagram (${filterCounts.instagram})`,
+        filter: "instagram",
+      },
+    ],
+    [filterCounts]
+  );
 
   useEffect(() => {
     loadSavedPosts();
@@ -176,6 +214,41 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     [transformPostForSaving]
   );
 
+  const handleRemovePost = React.useCallback(
+    (post: SavedPost) => {
+      setPostToRemove(post);
+      setShowConfirmModal(true);
+    },
+    []
+  );
+
+  const confirmRemovePost = React.useCallback(
+    async () => {
+      if (!postToRemove) return;
+
+      setIsRemoving(true);
+      try {
+        const result = await removePostFromAllUserBoards(postToRemove.id);
+        
+        if (result.success) {
+          // Remove post from local state to update UI immediately
+          setPosts(prevPosts => prevPosts.filter(p => p.id !== postToRemove.id));
+          toast.success(result.message || 'Post removed from all boards');
+          setShowConfirmModal(false);
+          setPostToRemove(null);
+        } else {
+          toast.error(result.error || 'Failed to remove post');
+        }
+      } catch (error) {
+        console.error('Failed to remove post:', error);
+        toast.error('Failed to remove post');
+      } finally {
+        setIsRemoving(false);
+      }
+    },
+    [postToRemove]
+  );
+
   const handleSortChange = useCallback((value: SortOption) => {
     setSortOption(value);
   }, []);
@@ -186,7 +259,18 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
   // Filter and sort posts based on selected options
   const filteredAndSortedPosts = useMemo(() => {
-    // First apply date filter
+    // First apply platform filter
+    let filteredPosts = [...posts];
+
+    if (activeFilter !== "all") {
+      if (activeFilter === "tiktok") {
+        filteredPosts = filteredPosts.filter(p => p.platform === "tiktok");
+      } else if (activeFilter === "instagram") {
+        filteredPosts = filteredPosts.filter(p => p.platform === "instagram");
+      }
+    }
+
+    // Then apply date filter
     const now = new Date();
     let daysToFilter = 30; // default
 
@@ -211,7 +295,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     const cutoffDate = new Date();
     cutoffDate.setDate(now.getDate() - daysToFilter);
 
-    const filteredPosts = posts.filter(post => {
+    filteredPosts = filteredPosts.filter(post => {
       const postDate = new Date(post.datePosted);
       return postDate >= cutoffDate;
     });
@@ -238,7 +322,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
       default:
         return filteredPosts;
     }
-  }, [posts, sortOption, dateFilter]);
+  }, [posts, activeFilter, sortOption, dateFilter]);
 
   if (error) {
     return (
@@ -252,6 +336,10 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         </div>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <SavedPostsSkeleton />;
   }
 
   if (posts.length === 0) {
@@ -268,19 +356,100 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     );
   }
 
+  if (filteredAndSortedPosts.length === 0) {
+    const getEmptyMessage = () => {
+      if (activeFilter === "all") {
+        return "No posts found for the selected date range.";
+      }
+      return `No ${activeFilter} posts found for the selected date range.`;
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Filters Section - All filters aligned horizontally */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          {/* Platform Filter buttons */}
+          <div className="flex flex-wrap gap-2">
+            {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+              <Button
+                key={key}
+                variant={activeFilter === filter ? "default" : "outline"}
+                onClick={() => handleFilterClick(filter)}
+                className="flex items-center gap-2"
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </Button>
+            ))}
+          </div>
+
+          {/* Date and Sort Filters */}
+          <div className="flex items-center gap-4">
+            {/* Date Filter */}
+            <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+              <SelectTrigger className="w-[180px] h-10">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <SelectValue placeholder="Filter by date" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+                <SelectItem value="last-60-days">Last 60 Days</SelectItem>
+                <SelectItem value="last-90-days">Last 90 Days</SelectItem>
+                <SelectItem value="last-180-days">Last 180 Days</SelectItem>
+                <SelectItem value="last-365-days">Last 365 Days</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Sort Filter */}
+            <Select value={sortOption} onValueChange={handleSortChange}>
+              <SelectTrigger className="w-[180px] h-10">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="most-recent">Most Recent</SelectItem>
+                <SelectItem value="most-viewed">Most Viewed</SelectItem>
+                <SelectItem value="most-liked">Most Liked</SelectItem>
+                <SelectItem value="most-commented">Most Commented</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <EmptyState
+          icons={[SearchList]}
+          title="No posts found"
+          description={getEmptyMessage()}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header with filters and count */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {filteredAndSortedPosts.length} of {posts.length} saved posts
+      {/* Filters Section - All filters aligned horizontally */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Platform Filter buttons */}
+        <div className="flex flex-wrap gap-2">
+          {filterButtons.map(({ key, icon: Icon, label, filter }) => (
+            <Button
+              key={key}
+              variant={activeFilter === filter ? "default" : "outline"}
+              onClick={() => handleFilterClick(filter)}
+              className="flex items-center gap-2"
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Button>
+          ))}
         </div>
 
         {/* Date and Sort Filters */}
         <div className="flex items-center gap-4">
           {/* Date Filter */}
           <Select value={dateFilter} onValueChange={handleDateFilterChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-10">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 <SelectValue placeholder="Filter by date" />
@@ -297,7 +466,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
           {/* Sort Filter */}
           <Select value={sortOption} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-10">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -316,6 +485,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         isLoading={isLoading}
         onPostClick={handlePostClick}
         onSavePost={handleSavePost}
+        onRemovePost={handleRemovePost}
       />
 
       {/* Post detail modal */}
@@ -462,27 +632,18 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                             }}
                             disabled={
                               !displayTranscript?.text ||
-                              displayIsLoadingTranscript ||
                               selectedPost.platform !== "tiktok"
                             }
                           >
                             Copy Transcript
                           </Button>
                         </div>
-                        {displayIsLoadingTranscript ? (
-                          <div className="flex items-center justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-                          </div>
-                        ) : transcriptError ? (
-                          <div className="text-sm text-red-600">
-                            {transcriptError}
-                          </div>
-                        ) : !displayTranscript?.text ? (
+                        {!displayTranscript?.text ? (
                           <div className="text-sm text-muted-foreground">
                             {selectedPost.platform === "tiktok" ||
                             (selectedPost.platform === "instagram" &&
                               selectedPost.isVideo)
-                              ? "Loading transcript..."
+                              ? "No transcript available for this content."
                               : "Transcript not available for this content."}
                           </div>
                         ) : (
@@ -513,6 +674,22 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
           />
         </Suspense>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setPostToRemove(null);
+        }}
+        onConfirm={confirmRemovePost}
+        title="Remove Post"
+        description="Are you sure you want to remove this post from all your boards? This action cannot be undone."
+        confirmText="Remove"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={isRemoving}
+      />
     </div>
   );
 }

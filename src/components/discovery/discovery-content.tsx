@@ -118,9 +118,12 @@ export function DiscoveryContent({}: DiscoveryContentProps) {
   };
 
   const handleSavePost = (post: Post) => {
+    // Use shortcode for Instagram, post.id for TikTok
+    const platformPostId = post.platform === "instagram" ? post.shortcode : post.id;
+    
     setPostToSave({
       id: post.id,
-      platformPostId: post.id,
+      platformPostId: platformPostId,
       platform: post.platform,
       embedUrl: post.embedUrl,
       caption: post.caption,

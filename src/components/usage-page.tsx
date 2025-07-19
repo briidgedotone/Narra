@@ -38,10 +38,13 @@ export function UsagePage() {
 
   const fetchData = async () => {
     try {
-      const usageResponse = await fetch("/api/user/usage");
-      const usageData = await usageResponse.json();
+      // Fetch usage and follows data in parallel
+      const [usageResponse, followsResponse] = await Promise.all([
+        fetch("/api/user/usage"),
+        fetch("/api/user/follows")
+      ]);
 
-      const followsResponse = await fetch("/api/user/follows");
+      const usageData = await usageResponse.json();
       const followsData = await followsResponse.json();
 
       const combinedUsage = {

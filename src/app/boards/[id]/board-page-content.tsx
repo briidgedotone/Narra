@@ -8,13 +8,13 @@ import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Clipboard,
   SearchList,
   TikTok,
   Instagram,
-  TimeQuarter,
   Eye,
   Heart,
   MessageCircle,
@@ -72,7 +72,7 @@ export function BoardPageContent({
 }: BoardPageContentProps) {
   // Local state for active filter
   const [activeFilter, setActiveFilter] = useState<
-    "all" | "tiktok" | "instagram" | "recent"
+    "all" | "tiktok" | "instagram"
   >("all");
 
   // Sort and date filter states
@@ -83,6 +83,11 @@ export function BoardPageContent({
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
 
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+
   // Custom hooks for board management
   const {
     board,
@@ -92,6 +97,7 @@ export function BoardPageContent({
     textareaRef,
     handleNameChange,
     handleDescriptionChange,
+    handleRemovePost,
   } = useBoard(boardId, isSharedView);
 
   // Custom hooks for post modal management
@@ -137,56 +143,6 @@ export function BoardPageContent({
     return isLoadingTranscript;
   }, [selectedPost, isLoadingTranscript]);
 
-  // Centralized Instagram script loading and processing for board pages
-  useEffect(() => {
-    const instagramPosts = posts.filter(p => p.platform === "instagram");
-    const hasInstagramPosts = instagramPosts.length > 0;
-
-    if (hasInstagramPosts && posts.length > 0) {
-      const loadAndProcessInstagram = () => {
-        // Load Instagram embed script if not already loaded
-        if (!document.querySelector('script[src*="instagram.com/embed.js"]')) {
-          console.log("Board page: Loading Instagram embed script...");
-          const script = document.createElement("script");
-          script.src = "https://www.instagram.com/embed.js";
-          script.async = true;
-          script.onload = () => {
-            console.log(
-              "Board page: Instagram script loaded, processing embeds..."
-            );
-            // Process all embeds on the page after script loads
-            setTimeout(() => {
-              if (window.instgrm && window.instgrm.Embeds) {
-                console.log("Board page: Processing all Instagram embeds...");
-                window.instgrm.Embeds.process();
-              }
-            }, 300);
-          };
-          script.onerror = () => {
-            console.error("Board page: Failed to load Instagram embed script");
-          };
-          document.head.appendChild(script);
-        } else {
-          // If script is already loaded, process embeds
-          console.log(
-            "Board page: Instagram script already loaded, processing embeds..."
-          );
-          setTimeout(() => {
-            if (window.instgrm && window.instgrm.Embeds) {
-              console.log(
-                "Board page: Processing existing Instagram embeds..."
-              );
-              window.instgrm.Embeds.process();
-            }
-          }, 300);
-        }
-      };
-
-      // Wait for posts to be rendered, then load and process Instagram embeds
-      // Use a longer timeout to ensure all DOM elements are ready
-      setTimeout(loadAndProcessInstagram, 500);
-    }
-  }, [posts]);
 
   /**
    * Memoized filter counts to prevent recalculation on every render
@@ -196,18 +152,10 @@ export function BoardPageContent({
     const tiktokCount = posts.filter(p => p.platform === "tiktok").length;
     const instagramCount = posts.filter(p => p.platform === "instagram").length;
 
-    // Recent posts are from the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentCount = posts.filter(
-      p => new Date(p.datePosted) >= thirtyDaysAgo
-    ).length;
-
     return {
       all: posts.length,
       tiktok: tiktokCount,
       instagram: instagramCount,
-      recent: recentCount,
     };
   }, [posts]);
 
@@ -236,12 +184,6 @@ export function BoardPageContent({
         filteredPosts = filteredPosts.filter(p => p.platform === "tiktok");
       } else if (activeFilter === "instagram") {
         filteredPosts = filteredPosts.filter(p => p.platform === "instagram");
-      } else if (activeFilter === "recent") {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        filteredPosts = filteredPosts.filter(
-          p => new Date(p.datePosted) >= thirtyDaysAgo
-        );
       }
     }
 
@@ -347,6 +289,32 @@ export function BoardPageContent({
     [transformPostForSaving]
   );
 
+  const handleRemovePostFromBoard = React.useCallback(
+    (post: SavedPost) => {
+      setPostToRemove(post);
+      setShowConfirmModal(true);
+    },
+    []
+  );
+
+  const confirmRemovePost = React.useCallback(
+    async () => {
+      if (!postToRemove) return;
+
+      setIsRemoving(true);
+      try {
+        await handleRemovePost(postToRemove.id);
+        setShowConfirmModal(false);
+        setPostToRemove(null);
+      } catch (error) {
+        console.error('Failed to remove post:', error);
+      } finally {
+        setIsRemoving(false);
+      }
+    },
+    [postToRemove, handleRemovePost]
+  );
+
   /**
    * Memoized filter button configuration to prevent recreation
    * Creates button data with icons, labels, and counts
@@ -370,12 +338,6 @@ export function BoardPageContent({
         icon: Instagram,
         label: `Instagram (${filterCounts.instagram})`,
         filter: "instagram",
-      },
-      {
-        key: "recent",
-        icon: TimeQuarter,
-        label: `Recent (${filterCounts.recent})`,
-        filter: "recent",
       },
     ],
     [filterCounts]
@@ -528,6 +490,7 @@ export function BoardPageContent({
           activeFilter={activeFilter}
           onPostClick={handlePostClick}
           onSavePost={handleSavePost}
+          onRemovePost={handleRemovePostFromBoard}
         />
       </div>
 
@@ -717,6 +680,24 @@ export function BoardPageContent({
             post={postToSave}
           />
         </Suspense>
+      )}
+
+      {/* Confirmation Modal - Only for non-shared views */}
+      {!isSharedView && (
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          onClose={() => {
+            setShowConfirmModal(false);
+            setPostToRemove(null);
+          }}
+          onConfirm={confirmRemovePost}
+          title="Remove Post"
+          description="Are you sure you want to remove this post from this board? This action cannot be undone."
+          confirmText="Remove"
+          cancelText="Cancel"
+          variant="destructive"
+          isLoading={isRemoving}
+        />
       )}
     </div>
   );

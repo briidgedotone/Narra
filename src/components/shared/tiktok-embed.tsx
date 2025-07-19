@@ -8,6 +8,7 @@ import {
   Eye,
   Share,
   Bookmark,
+  X,
 } from "@/components/ui/icons";
 import { formatNumber } from "@/lib/utils/format";
 
@@ -24,6 +25,7 @@ interface TikTokEmbedProps {
   showMetrics?: boolean;
   onDetailsClick?: () => void;
   onSaveClick?: () => void;
+  onRemoveClick?: () => void;
 }
 
 export function TikTokEmbed({
@@ -34,6 +36,7 @@ export function TikTokEmbed({
   showMetrics = false,
   onDetailsClick,
   onSaveClick,
+  onRemoveClick,
 }: TikTokEmbedProps) {
   const [error, setError] = useState<string | null>(null);
 
@@ -94,18 +97,35 @@ export function TikTokEmbed({
         dangerouslySetInnerHTML={{ __html: embedHtml }}
       />
 
-      {/* Save Button - Shows on hover like discovery page */}
-      {onSaveClick && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              onSaveClick();
-            }}
-            className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors"
-          >
-            <Bookmark className="h-4 w-4" />
-          </button>
+      {/* Action Buttons - Shows on hover */}
+      {(onSaveClick || onRemoveClick) && (
+        <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity" style={{ top: '60px' }}>
+          <div className="flex gap-1">
+            {onRemoveClick && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  onRemoveClick();
+                }}
+                className="w-8 h-8 bg-red-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-500 shadow-sm transition-colors cursor-pointer"
+                title="Remove from board"
+              >
+                <X className="h-4 w-4 text-white" />
+              </button>
+            )}
+            {onSaveClick && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  onSaveClick();
+                }}
+                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors cursor-pointer"
+                title="Save to board"
+              >
+                <Bookmark className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
       )}
 
