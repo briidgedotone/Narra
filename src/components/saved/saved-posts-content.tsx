@@ -9,9 +9,10 @@ import React, {
 } from "react";
 import { toast } from "sonner";
 
-import { getAllUserSavedPosts, removePostFromBoard } from "@/app/actions/posts";
+import { getAllUserSavedPosts, removePostFromAllUserBoards } from "@/app/actions/posts";
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -63,6 +64,11 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
+
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   // Custom hooks for post modal management with database-first transcript loading
   const {
@@ -178,27 +184,38 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   );
 
   const handleRemovePost = React.useCallback(
-    async (post: SavedPost) => {
-      if (!confirm('Are you sure you want to remove this post from all boards?')) {
-        return;
-      }
+    (post: SavedPost) => {
+      setPostToRemove(post);
+      setShowConfirmModal(true);
+    },
+    []
+  );
 
+  const confirmRemovePost = React.useCallback(
+    async () => {
+      if (!postToRemove) return;
+
+      setIsRemoving(true);
       try {
-        // For now, we'll need to get board information to remove the post
-        // Since we don't have board info in SavedPost, we'll need to implement
-        // a more sophisticated solution later. For now, show a message.
-        toast.error('Remove functionality needs board information. This will be implemented with a board selection modal.');
+        const result = await removePostFromAllUserBoards(postToRemove.id);
         
-        // TODO: Implement proper removal by:
-        // 1. Getting all boards that contain this post
-        // 2. Showing a modal to select which boards to remove from
-        // 3. Calling removePostFromBoard for each selected board
+        if (result.success) {
+          // Remove post from local state to update UI immediately
+          setPosts(prevPosts => prevPosts.filter(p => p.id !== postToRemove.id));
+          toast.success(result.message || 'Post removed from all boards');
+          setShowConfirmModal(false);
+          setPostToRemove(null);
+        } else {
+          toast.error(result.error || 'Failed to remove post');
+        }
       } catch (error) {
         console.error('Failed to remove post:', error);
         toast.error('Failed to remove post');
+      } finally {
+        setIsRemoving(false);
       }
     },
-    []
+    [postToRemove]
   );
 
   const handleSortChange = useCallback((value: SortOption) => {
@@ -539,6 +556,22 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
           />
         </Suspense>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setPostToRemove(null);
+        }}
+        onConfirm={confirmRemovePost}
+        title="Remove Post"
+        description="Are you sure you want to remove this post from all your boards? This action cannot be undone."
+        confirmText="Remove"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={isRemoving}
+      />
     </div>
   );
 }

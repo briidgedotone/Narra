@@ -341,6 +341,59 @@ export async function removePostFromBoard(postId: string, boardId: string) {
   }
 }
 
+export async function removePostFromAllUserBoards(postId: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    // Get all boards that contain this post for this user
+    const userFolders = await db.getFoldersByUser(userId);
+    const userBoardIds = userFolders?.flatMap(f => f.boards?.map((b: { id: string }) => b.id) || []) || [];
+    
+    if (userBoardIds.length === 0) {
+      return { success: true, message: "No boards found" };
+    }
+
+    // Get all board-post relationships for this post in user's boards
+    const boardsWithPost: any[] = [];
+    for (const boardId of userBoardIds) {
+      try {
+        const postsInBoard = await db.getPostsInBoard(boardId);
+        if (postsInBoard?.some((p: any) => p.id === postId)) {
+          boardsWithPost.push(boardId);
+        }
+      } catch (error) {
+        // Skip this board if there's an error
+        continue;
+      }
+    }
+
+    if (boardsWithPost.length === 0) {
+      return { success: true, message: "Post not found in any boards" };
+    }
+
+    // Remove post from all boards where it exists
+    for (const boardId of boardsWithPost) {
+      await db.removePostFromBoard(boardId, postId);
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/boards");
+    revalidatePath("/saved");
+
+    return { 
+      success: true, 
+      message: `Post removed from ${boardsWithPost.length} board${boardsWithPost.length !== 1 ? 's' : ''}` 
+    };
+  } catch (error) {
+    console.error("Failed to remove post from boards:", error);
+    return { success: false, error: "Failed to remove post" };
+  }
+}
+
 export async function getPostsInBoard(boardId: string, limit = 20, offset = 0) {
   const { userId } = await auth();
 

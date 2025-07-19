@@ -8,6 +8,7 @@ import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
 import { BoardContentSkeleton } from "@/components/shared/board-content-skeleton";
 import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Clipboard,
@@ -82,6 +83,11 @@ export function BoardPageContent({
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [postToSave, setPostToSave] = useState<SavePostData | null>(null);
+
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   // Custom hooks for board management
   const {
@@ -350,9 +356,28 @@ export function BoardPageContent({
 
   const handleRemovePostFromBoard = React.useCallback(
     (post: SavedPost) => {
-      handleRemovePost(post.id);
+      setPostToRemove(post);
+      setShowConfirmModal(true);
     },
-    [handleRemovePost]
+    []
+  );
+
+  const confirmRemovePost = React.useCallback(
+    async () => {
+      if (!postToRemove) return;
+
+      setIsRemoving(true);
+      try {
+        await handleRemovePost(postToRemove.id);
+        setShowConfirmModal(false);
+        setPostToRemove(null);
+      } catch (error) {
+        console.error('Failed to remove post:', error);
+      } finally {
+        setIsRemoving(false);
+      }
+    },
+    [postToRemove, handleRemovePost]
   );
 
   /**
@@ -726,6 +751,24 @@ export function BoardPageContent({
             post={postToSave}
           />
         </Suspense>
+      )}
+
+      {/* Confirmation Modal - Only for non-shared views */}
+      {!isSharedView && (
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          onClose={() => {
+            setShowConfirmModal(false);
+            setPostToRemove(null);
+          }}
+          onConfirm={confirmRemovePost}
+          title="Remove Post"
+          description="Are you sure you want to remove this post from this board? This action cannot be undone."
+          confirmText="Remove"
+          cancelText="Cancel"
+          variant="destructive"
+          isLoading={isRemoving}
+        />
       )}
     </div>
   );
