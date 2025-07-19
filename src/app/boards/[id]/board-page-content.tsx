@@ -15,7 +15,6 @@ import {
   SearchList,
   TikTok,
   Instagram,
-  TimeQuarter,
   Eye,
   Heart,
   MessageCircle,
@@ -73,7 +72,7 @@ export function BoardPageContent({
 }: BoardPageContentProps) {
   // Local state for active filter
   const [activeFilter, setActiveFilter] = useState<
-    "all" | "tiktok" | "instagram" | "recent"
+    "all" | "tiktok" | "instagram"
   >("all");
 
   // Sort and date filter states
@@ -203,18 +202,10 @@ export function BoardPageContent({
     const tiktokCount = posts.filter(p => p.platform === "tiktok").length;
     const instagramCount = posts.filter(p => p.platform === "instagram").length;
 
-    // Recent posts are from the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentCount = posts.filter(
-      p => new Date(p.datePosted) >= thirtyDaysAgo
-    ).length;
-
     return {
       all: posts.length,
       tiktok: tiktokCount,
       instagram: instagramCount,
-      recent: recentCount,
     };
   }, [posts]);
 
@@ -243,12 +234,6 @@ export function BoardPageContent({
         filteredPosts = filteredPosts.filter(p => p.platform === "tiktok");
       } else if (activeFilter === "instagram") {
         filteredPosts = filteredPosts.filter(p => p.platform === "instagram");
-      } else if (activeFilter === "recent") {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        filteredPosts = filteredPosts.filter(
-          p => new Date(p.datePosted) >= thirtyDaysAgo
-        );
       }
     }
 
@@ -403,12 +388,6 @@ export function BoardPageContent({
         icon: Instagram,
         label: `Instagram (${filterCounts.instagram})`,
         filter: "instagram",
-      },
-      {
-        key: "recent",
-        icon: TimeQuarter,
-        label: `Recent (${filterCounts.recent})`,
-        filter: "recent",
       },
     ],
     [filterCounts]
