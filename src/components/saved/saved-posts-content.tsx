@@ -382,7 +382,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
           <div className="flex items-center gap-4">
             {/* Date Filter */}
             <Select value={dateFilter} onValueChange={handleDateFilterChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] h-10">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   <SelectValue placeholder="Filter by date" />
@@ -399,7 +399,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
             {/* Sort Filter */}
             <Select value={sortOption} onValueChange={handleSortChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] h-10">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -444,7 +444,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
         <div className="flex items-center gap-4">
           {/* Date Filter */}
           <Select value={dateFilter} onValueChange={handleDateFilterChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-10">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 <SelectValue placeholder="Filter by date" />
@@ -461,7 +461,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
 
           {/* Sort Filter */}
           <Select value={sortOption} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-10">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
