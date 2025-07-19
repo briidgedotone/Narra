@@ -43,9 +43,8 @@ function logSection(title: string) {
   console.log(`${colors.blue}${'='.repeat(50)}${colors.reset}\n`);
 }
 
-// Email images to upload
+// Email images to upload (logo is now text-based, no image needed)
 const emailImages = [
-  { file: '1_Narra Logo.svg', bucket: 'email-assets', path: 'logo.svg' },
   { file: '2_main_referral_1.png', bucket: 'email-assets', path: 'hero.png' },
   { file: '3_1_point.png', bucket: 'email-assets', path: 'discover.png' },
   { file: '4_2-point.png', bucket: 'email-assets', path: 'organize.png' },

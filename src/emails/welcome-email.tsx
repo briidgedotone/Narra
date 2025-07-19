@@ -12,7 +12,7 @@ import {
   Row,
   Column,
 } from "@react-email/components";
-import { EMAIL_IMAGES } from "@/config/email-images";
+import { EMAIL_IMAGES, EMAIL_LOGO } from "@/config/email-images";
 
 interface WelcomeEmailProps {
   userEmail?: string;
@@ -37,13 +37,9 @@ export const WelcomeEmail = ({
         <Container style={container}>
           {/* Logo Section */}
           <Section style={logoSection}>
-            <Img
-              src={EMAIL_IMAGES.LOGO}
-              width="170"
-              height="auto"
-              alt="Narra Logo"
-              style={logoImg}
-            />
+            <Text style={EMAIL_LOGO.STYLES}>
+              {EMAIL_LOGO.TEXT}
+            </Text>
           </Section>
 
           {/* Hero Image Section */}
@@ -192,10 +188,6 @@ const logoSection = {
   textAlign: "center" as const,
 };
 
-const logoImg = {
-  display: "block",
-  margin: "0 auto",
-};
 
 const heroSection = {
   backgroundColor: "#0d0b0e",
