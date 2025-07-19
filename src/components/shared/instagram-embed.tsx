@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 
 import {
   Heart,
@@ -26,7 +26,7 @@ interface InstagramEmbedProps {
   onSaveClick?: () => void;
 }
 
-export function InstagramEmbed({
+function InstagramEmbedComponent({
   url,
   className,
   caption,
@@ -36,33 +36,12 @@ export function InstagramEmbed({
   onSaveClick,
 }: InstagramEmbedProps) {
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://www.instagram.com/embed.js";
-    script.async = true;
-    script.onload = () => {
-      if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
-      }
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      const existingScript = document.querySelector(
-        'script[src="https://www.instagram.com/embed.js"]'
-      );
-      if (existingScript) {
-        existingScript.remove();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     if (url && window.instgrm?.Embeds) {
       setTimeout(() => {
         window.instgrm!.Embeds.process();
       }, 100);
     }
-  }, [url]);
+  }, []);
 
   const isValidInstagramUrl = (url: string): boolean => {
     const patterns = [
@@ -170,3 +149,5 @@ export function InstagramEmbed({
     </div>
   );
 }
+
+export const InstagramEmbed = memo(InstagramEmbedComponent);

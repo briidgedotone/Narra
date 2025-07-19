@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMemo, useCallback } from "react";
 import Masonry from "react-masonry-css";
 
 import { InstagramEmbed, TikTokEmbed } from "@/components/shared";
@@ -251,55 +252,49 @@ export function FollowingContent({
               className="flex w-auto -ml-4"
               columnClassName="pl-4 bg-clip-padding"
             >
-              {posts.map(post => (
-                <div key={post.id} className="mb-4 flex justify-center">
-                  {post.platform === "instagram" ? (
-                    <InstagramEmbed
-                      url={post.embed_url}
-                      {...(post.caption ? { caption: post.caption } : {})}
-                      metrics={{
-                        ...(post.metrics?.views !== undefined
-                          ? { views: post.metrics.views }
-                          : {}),
-                        ...(post.metrics?.likes !== undefined
-                          ? { likes: post.metrics.likes }
-                          : {}),
-                        ...(post.metrics?.comments !== undefined
-                          ? { comments: post.metrics.comments }
-                          : {}),
-                        ...(post.metrics?.shares !== undefined
-                          ? { shares: post.metrics.shares }
-                          : {}),
-                      }}
-                      showMetrics={true}
-                      onDetailsClick={() => onPostClick?.(post)}
-                      onSaveClick={() => onSavePost?.(post)}
-                    />
-                  ) : (
-                    <TikTokEmbed
-                      url={post.embed_url}
-                      {...(post.caption ? { caption: post.caption } : {})}
-                      metrics={{
-                        ...(post.metrics?.views !== undefined
-                          ? { views: post.metrics.views }
-                          : {}),
-                        ...(post.metrics?.likes !== undefined
-                          ? { likes: post.metrics.likes }
-                          : {}),
-                        ...(post.metrics?.comments !== undefined
-                          ? { comments: post.metrics.comments }
-                          : {}),
-                        ...(post.metrics?.shares !== undefined
-                          ? { shares: post.metrics.shares }
-                          : {}),
-                      }}
-                      showMetrics={true}
-                      onDetailsClick={() => onPostClick?.(post)}
-                      onSaveClick={() => onSavePost?.(post)}
-                    />
-                  )}
-                </div>
-              ))}
+              {posts.map(post => {
+                const postMetrics = useMemo(() => ({
+                  ...(post.metrics?.views !== undefined
+                    ? { views: post.metrics.views }
+                    : {}),
+                  ...(post.metrics?.likes !== undefined
+                    ? { likes: post.metrics.likes }
+                    : {}),
+                  ...(post.metrics?.comments !== undefined
+                    ? { comments: post.metrics.comments }
+                    : {}),
+                  ...(post.metrics?.shares !== undefined
+                    ? { shares: post.metrics.shares }
+                    : {}),
+                }), [post.metrics]);
+
+                const handleDetailsClick = useCallback(() => onPostClick?.(post), [onPostClick, post]);
+                const handleSaveClick = useCallback(() => onSavePost?.(post), [onSavePost, post]);
+
+                return (
+                  <div key={post.id} className="mb-4 flex justify-center">
+                    {post.platform === "instagram" ? (
+                      <InstagramEmbed
+                        url={post.embed_url}
+                        {...(post.caption ? { caption: post.caption } : {})}
+                        metrics={postMetrics}
+                        showMetrics={true}
+                        onDetailsClick={handleDetailsClick}
+                        onSaveClick={handleSaveClick}
+                      />
+                    ) : (
+                      <TikTokEmbed
+                        url={post.embed_url}
+                        {...(post.caption ? { caption: post.caption } : {})}
+                        metrics={postMetrics}
+                        showMetrics={true}
+                        onDetailsClick={handleDetailsClick}
+                        onSaveClick={handleSaveClick}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </Masonry>
 
             {/* Load More Button */}
