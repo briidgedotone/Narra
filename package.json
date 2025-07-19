@@ -19,6 +19,8 @@
     "clean": "rm -rf .next out dist",
     "reset": "npm run clean && rm -rf node_modules package-lock.json && npm install",
     "test:webhooks": "tsx scripts/test-webhooks.ts",
+    "test:email": "tsx scripts/test-email.ts",
+    "upload:email-images": "tsx scripts/upload-email-images.ts",
     "prepare": "husky"
   },
   "dependencies": {
