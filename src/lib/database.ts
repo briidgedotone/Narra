@@ -163,6 +163,17 @@ export class DatabaseService {
     return data;
   }
 
+  async upsertPost(postData: Database["public"]["Tables"]["posts"]["Insert"]) {
+    const { data, error } = await this.adminClient
+      .from("posts")
+      .upsert(postData, { onConflict: "platform_post_id,platform" })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async getPostsByProfile(profileId: string, limit = 20, offset = 0) {
     const { data, error } = await this.client
       .from("posts")
