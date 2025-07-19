@@ -94,27 +94,27 @@ export function PostsGrid({
               variant={selectedPlatform === "tiktok" ? "default" : "outline"}
               onClick={() => onPlatformChange("tiktok")}
               className={cn(
-                "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
+                "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center cursor-pointer",
                 selectedPlatform === "tiktok"
                   ? "bg-black text-white border-0 shadow-lg hover:bg-gray-800"
                   : "border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-50"
               )}
             >
               <TiktokIcon className="w-7 h-7" />
-              TikTok ✨
+              TikTok
             </Button>
             <Button
               variant={selectedPlatform === "instagram" ? "default" : "outline"}
               onClick={() => onPlatformChange("instagram")}
               className={cn(
-                "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center",
+                "flex items-center gap-4 px-12 py-6 text-lg font-semibold w-48 justify-center cursor-pointer",
                 selectedPlatform === "instagram"
                   ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg"
                   : "border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
               )}
             >
               <InstagramIcon className="w-7 h-7" />
-              Instagram ✨
+              Instagram
             </Button>
           </div>
         </div>
