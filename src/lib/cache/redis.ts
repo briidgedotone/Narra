@@ -58,6 +58,18 @@ export const cacheKeys = {
   tiktokProfile: (handle: string) => `tiktok:profile:${handle}`,
   tiktokVideos: (handle: string, count: number) =>
     `tiktok:videos:${handle}:${count}`,
+  tiktokVideo: (videoUrl: string) => {
+    // Create a simple hash from the full URL to ensure uniqueness
+    let hash = 0;
+    for (let i = 0; i < videoUrl.length; i++) {
+      const char = videoUrl.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    // Convert to positive number and add URL length for extra uniqueness
+    const uniqueId = Math.abs(hash).toString(36) + videoUrl.length.toString(36);
+    return `tiktok:video:${uniqueId}`;
+  },
   tiktokTranscript: (videoUrl: string) => {
     // Create a simple hash from the full URL to ensure uniqueness
     let hash = 0;

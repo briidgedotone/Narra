@@ -25,8 +25,8 @@ interface FeaturedBoard {
   board_id: string;
   display_order: number;
   cover_image_url: string | null;
-  custom_title: string | null;
-  custom_description: string | null;
+  title: string | null;
+  description: string | null;
   boards: {
     id: string;
     name: string;
@@ -115,9 +115,9 @@ export function DashboardContent({
       const colors = ["#FDA02C", "#E87BD1", "#EE97DB", "#B078F9"];
 
       return {
-        title: boardData?.name || `Featured Collection ${board.display_order}`,
+        title: board.title || boardData?.name || `Featured Collection ${board.display_order}`,
         description:
-          boardData?.description || "A curated collection of inspiring content",
+          board.description || boardData?.description || "A curated collection of inspiring content",
         username: "", // Remove username for featured boards
         authorInitial: "", // Remove profile initial for featured boards
         authorBadgeColor: "", // Remove badge color for featured boards

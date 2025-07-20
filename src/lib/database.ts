@@ -868,15 +868,15 @@ export class DatabaseService {
     board_id: string;
     display_order: number;
     cover_image_url?: string;
-    custom_title?: string;
-    custom_description?: string;
+    title?: string;
+    description?: string;
   }) {
-    // Temporarily only insert core fields to avoid schema cache issues
-    // TODO: Re-enable custom_title and custom_description once schema cache is refreshed
     const insertData = {
       board_id: featuredBoardData.board_id,
       display_order: featuredBoardData.display_order,
       cover_image_url: featuredBoardData.cover_image_url,
+      title: featuredBoardData.title,
+      description: featuredBoardData.description,
     };
 
     const { data, error } = await this.adminClient
