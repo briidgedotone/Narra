@@ -45,7 +45,7 @@ const PostItem = React.memo<PostItemProps>(function PostItem({
           showMetrics={true}
           onDetailsClick={handleDetailsClick}
           onSaveClick={handleSaveClick}
-          onRemoveClick={onRemovePost ? handleRemoveClick : undefined}
+          {...(onRemovePost && { onRemoveClick: handleRemoveClick })}
         />
       ) : (
         <TikTokEmbed
@@ -55,7 +55,7 @@ const PostItem = React.memo<PostItemProps>(function PostItem({
           showMetrics={true}
           onDetailsClick={handleDetailsClick}
           onSaveClick={handleSaveClick}
-          onRemoveClick={onRemovePost ? handleRemoveClick : undefined}
+          {...(onRemovePost && { onRemoveClick: handleRemoveClick })}
         />
       )}
     </div>
@@ -218,7 +218,7 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
         post={post}
         onPostClick={handlePostClick}
         onSavePost={handleSaveClick}
-        onRemovePost={conditionalHandleRemoveClick}
+        {...(conditionalHandleRemoveClick && { onRemovePost: conditionalHandleRemoveClick })}
       />
     ));
   }, [filteredPosts, handlePostClick, handleSaveClick, conditionalHandleRemoveClick]);

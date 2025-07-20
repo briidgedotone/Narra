@@ -114,7 +114,7 @@ class BulkScrapeProcessor {
         return {
           success: false,
           error: response.error || 'Failed to fetch post data',
-          cached: response.cached 
+          cached: response.cached || false
         };
       }
 
@@ -164,7 +164,7 @@ class BulkScrapeProcessor {
           transformed: transformedPost,
           raw: rawData,
         },
-        cached: response.cached,
+        cached: response.cached || false,
         shortcode: postData.shortcode,
       };
 
@@ -188,7 +188,7 @@ class BulkScrapeProcessor {
       platform: "instagram",
       displayName: post.owner.fullName,
       bio: "", // We don't get bio from individual post endpoint
-      followers: post.owner.followers,
+      followers: post.owner.followers || 0,
       avatarUrl: post.owner.profilePicUrl,
       verified: post.owner.isVerified,
       platformPostId: post.shortcode,
@@ -203,10 +203,10 @@ class BulkScrapeProcessor {
       datePosted: post.takenAt,
       thumbnail: post.thumbnail,
       isVideo: post.isVideo,
-      videoUrl: post.videoUrl,
+      videoUrl: post.videoUrl || "",
       displayUrl: post.displayUrl,
       shortcode: post.shortcode,
-      dimensions: post.dimensions,
+      dimensions: post.dimensions || { width: 0, height: 0 },
     };
   }
 
