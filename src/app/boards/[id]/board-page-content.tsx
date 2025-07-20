@@ -94,10 +94,13 @@ export function BoardPageContent({
     posts,
     isLoading,
     isUpdating,
+    isLoadingMore,
+    hasMorePosts,
     textareaRef,
     handleNameChange,
     handleDescriptionChange,
     handleRemovePost,
+    handleLoadMore,
   } = useBoard(boardId, isSharedView);
 
   // Custom hooks for post modal management
@@ -492,6 +495,27 @@ export function BoardPageContent({
           onSavePost={handleSavePost}
           onRemovePost={handleRemovePostFromBoard}
         />
+
+        {/* Load More Button */}
+        {hasMorePosts && (
+          <div className="flex justify-center mt-8">
+            <Button
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              variant="outline"
+              size="lg"
+            >
+              {isLoadingMore ? (
+                <>
+                  <LoadingSpinner className="h-4 w-4 mr-2" />
+                  Loading...
+                </>
+              ) : (
+                "Load More Posts"
+              )}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Post detail modal */}
