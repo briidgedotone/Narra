@@ -4,87 +4,120 @@ import {
   Container,
   Head,
   Html,
+  Img,
   Preview,
   Section,
   Text,
   Button,
-  Hr,
+  Row,
+  Column,
 } from "@react-email/components";
+import { EMAIL_LOGO, EMAIL_IMAGES } from "@/config/email-images";
 
 interface PaymentFailedEmailProps {
   userEmail?: string;
   planName?: string;
   amount?: string;
+  baseUrl?: string;
 }
 
 export const PaymentFailedEmail = ({ 
   userEmail = "user@example.com",
   planName = "Pro Plan",
-  amount = "$9.99"
+  amount = "$9.99",
+  baseUrl = "https://app.usenarra.com"
 }: PaymentFailedEmailProps) => {
   return (
     <Html>
-      <Head />
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;300;400;500;600;700;800;900"
+          rel="stylesheet"
+          type="text/css"
+        />
+      </Head>
       <Preview>Payment failed - Update your payment method</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Section style={header}>
-            <Text style={logo}>Narra</Text>
+          {/* Logo Section */}
+          <Section style={logoSection}>
+            <Text style={EMAIL_LOGO.STYLES}>
+              {EMAIL_LOGO.TEXT}
+            </Text>
           </Section>
-          
-          <Section style={content}>
-            <Section style={alertBadge}>
-              <Text style={alertIcon}>⚠️</Text>
-            </Section>
-            
+
+          {/* Failed Icon Section */}
+          <Section style={failedSection}>
+            <Img
+              src={EMAIL_IMAGES.FAILED_ICON}
+              width="80"
+              height="80"
+              alt="Payment Failed"
+              style={failedIcon}
+            />
+          </Section>
+
+          {/* Failed Heading */}
+          <Section style={headingSection}>
             <Text style={heading}>Payment Failed</Text>
-            
-            <Text style={paragraph}>
-              We were unable to process your payment for your <strong>{planName}</strong> subscription. Your account is currently past due.
+            <Text style={subHeading}>
+              We were unable to process your payment for your <strong>{planName}</strong> subscription.<br />
+              Your account is currently past due.
             </Text>
+          </Section>
+
+          {/* Payment Details Section */}
+          <Section style={detailsSection}>
+            <Text style={detailsHeading}>Payment Details</Text>
             
-            <Section style={detailsBox}>
-              <Text style={detailsHeading}>Payment Details</Text>
-              <Section style={detailsItem}>
-                <Text style={detailsLabel}>Plan:</Text>
-                <Text style={detailsValue}>{planName}</Text>
-              </Section>
-              <Section style={detailsItem}>
-                <Text style={detailsLabel}>Amount:</Text>
-                <Text style={detailsValue}>{amount}</Text>
-              </Section>
-              <Section style={detailsItem}>
-                <Text style={detailsLabel}>Status:</Text>
-                <Text style={detailsStatus}>Past Due</Text>
-              </Section>
-            </Section>
-            
-            <Text style={paragraph}>
-              To continue using your Narra subscription and avoid service interruption, please update your payment method or retry the payment.
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Plan:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={detailValue}>{planName}</Text>
+              </Column>
+            </Row>
+
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Amount:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={detailValue}>{amount}</Text>
+              </Column>
+            </Row>
+
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Status:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={statusValue}>Past Due</Text>
+              </Column>
+            </Row>
+
+          </Section>
+
+          {/* Action Buttons */}
+          <Section style={actionsSection}>
+            <Button style={secondaryButton} href={`${baseUrl}/support`}>
+              Contact Support
+            </Button>
+          </Section>
+
+          {/* Help Section */}
+          <Section style={helpSection}>
+            <Text style={helpHeading}>Need Help?</Text>
+            <Text style={helpText}>
+              Having trouble with your <strong>Narra</strong> subscription? Our support team is here to help you resolve any payment issues.
             </Text>
-            
-            <Section style={actionsContainer}>
-              <Button style={primaryButton} href="https://app.usenarra.com/billing">
-                Update Payment Method
-              </Button>
-              
-              <Button style={secondaryButton} href="https://app.usenarra.com/support">
-                Contact Support
-              </Button>
-            </Section>
-            
-            <Text style={urgentText}>
-              Your subscription will be cancelled automatically if payment is not received within 7 days.
-            </Text>
-            
-            <Hr style={hr} />
-            
-            <Text style={footer}>
-              Having trouble? Our support team is here to help. Reply to this email or visit our help center.
-            </Text>
-            
-            <Text style={unsubscribe}>
-              This email was sent to {userEmail} regarding your Narra subscription. 
+          </Section>
+
+          {/* Footer */}
+          <Section style={footerSection}>
+            <Text style={footerText}>
+              This email was sent to {userEmail} regarding your Narra subscription.
               If you need assistance, contact us at support@usenarra.com
             </Text>
           </Section>
@@ -94,170 +127,203 @@ export const PaymentFailedEmail = ({
   );
 };
 
-// Styles
+// Styles (matching welcome email design)
 const main = {
-  backgroundColor: "#f6f9fc",
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  backgroundColor: "#f7f3ec",
+  fontFamily: '"Fira Sans", "Lucida Sans Unicode", "Lucida Grande", sans-serif',
+  margin: "0",
+  padding: "0",
 };
 
 const container = {
-  backgroundColor: "#ffffff",
+  backgroundColor: "#f7f3ec",
   margin: "0 auto",
-  padding: "20px 0 48px",
-  marginBottom: "64px",
-  maxWidth: "600px",
+  maxWidth: "680px",
+  width: "100%",
 };
 
-const header = {
-  padding: "20px 30px",
+const logoSection = {
+  padding: "10px",
   textAlign: "center" as const,
 };
 
-const logo = {
-  fontSize: "32px",
-  fontWeight: "bold",
-  color: "#1a1a1a",
-  margin: "0",
-};
-
-const content = {
-  padding: "0 30px",
-};
-
-const alertBadge = {
+const failedSection = {
+  backgroundColor: "transparent",
+  borderRadius: "20px",
+  padding: "30px 0",
   textAlign: "center" as const,
-  margin: "20px 0",
+  margin: "0 0 20px 0",
 };
 
-const alertIcon = {
-  fontSize: "48px",
-  margin: "0",
+const failedIcon = {
+  display: "block",
+  margin: "0 auto",
+};
+
+const headingSection = {
+  padding: "20px 10px 35px",
+  textAlign: "center" as const,
 };
 
 const heading = {
-  fontSize: "28px",
-  fontWeight: "bold",
   color: "#dc2626",
-  margin: "20px 0",
+  fontSize: "50px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 20px 0",
   textAlign: "center" as const,
 };
 
-const paragraph = {
-  fontSize: "16px",
-  lineHeight: "1.6",
-  color: "#4a4a4a",
-  margin: "16px 0",
+const subHeading = {
+  color: "#101010",
+  fontSize: "17px",
+  fontWeight: "400",
+  lineHeight: "1.5",
+  margin: "0",
+  padding: "0 10px",
 };
 
-const detailsBox = {
-  backgroundColor: "#fef2f2",
-  borderRadius: "8px",
-  padding: "24px",
-  margin: "24px 0",
-  border: "1px solid #fecaca",
+const detailsSection = {
+  backgroundColor: "#0d0b0e",
+  padding: "30px 20px",
+  borderRadius: "0",
 };
 
 const detailsHeading = {
-  fontSize: "18px",
-  fontWeight: "600",
-  color: "#1a1a1a",
-  margin: "0 0 16px 0",
-};
-
-const detailsItem = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  margin: "12px 0",
-};
-
-const detailsLabel = {
-  fontSize: "16px",
-  color: "#4a4a4a",
-  margin: "0",
-  width: "50%",
-};
-
-const detailsValue = {
-  fontSize: "16px",
-  fontWeight: "600",
-  color: "#1a1a1a",
-  margin: "0",
-  textAlign: "right" as const,
-  width: "50%",
-};
-
-const detailsStatus = {
-  fontSize: "16px",
-  fontWeight: "600",
-  color: "#dc2626",
-  margin: "0",
-  textAlign: "right" as const,
-  width: "50%",
-};
-
-const actionsContainer = {
+  color: "#ffffff",
+  fontSize: "42px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 25px 0",
   textAlign: "center" as const,
-  margin: "32px 0",
+};
+
+const detailRow = {
+  padding: "8px 0",
+};
+
+const detailLabelColumn = {
+  width: "50%",
+  verticalAlign: "middle" as const,
+};
+
+const detailValueColumn = {
+  width: "50%",
+  verticalAlign: "middle" as const,
+  textAlign: "right" as const,
+};
+
+const detailLabel = {
+  color: "#ffffff",
+  fontSize: "18px",
+  fontWeight: "300",
+  margin: "0",
+};
+
+const detailValue = {
+  color: "#ffffff",
+  fontSize: "18px",
+  fontWeight: "700",
+  margin: "0",
+};
+
+const statusValue = {
+  color: "#dc2626",
+  fontSize: "18px",
+  fontWeight: "700",
+  margin: "0",
+  backgroundColor: "#ffffff",
+  padding: "4px 8px",
+  borderRadius: "4px",
+  display: "inline-block",
+};
+
+const urgentSection = {
+  backgroundColor: "#dc2626",
+  borderRadius: "12px",
+  padding: "20px",
+  margin: "25px 0 0 0",
+};
+
+const urgentText = {
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "600",
+  lineHeight: "1.5",
+  margin: "0",
+  textAlign: "center" as const,
+};
+
+const actionsSection = {
+  textAlign: "center" as const,
+  padding: "20px 0",
+  margin: "10px 0",
 };
 
 const primaryButton = {
   backgroundColor: "#dc2626",
-  borderRadius: "8px",
+  borderRadius: "60px",
   color: "#ffffff",
   fontSize: "16px",
-  fontWeight: "600",
+  fontWeight: "400",
+  padding: "12px 30px",
   textDecoration: "none",
-  textAlign: "center" as const,
   display: "inline-block",
-  padding: "14px 32px",
-  margin: "8px 8px",
+  lineHeight: "32px",
+  margin: "5px 5px",
 };
 
 const secondaryButton = {
-  backgroundColor: "transparent",
-  borderRadius: "8px",
-  color: "#374151",
+  backgroundColor: "#e7c5f8",
+  borderRadius: "60px",
+  color: "#0d0b0e",
   fontSize: "16px",
-  fontWeight: "600",
+  fontWeight: "400",
+  padding: "12px 30px",
   textDecoration: "none",
-  textAlign: "center" as const,
   display: "inline-block",
-  padding: "14px 32px",
-  margin: "8px 8px",
-  border: "2px solid #d1d5db",
+  lineHeight: "32px",
+  margin: "5px 5px",
 };
 
-const urgentText = {
-  fontSize: "14px",
-  lineHeight: "1.6",
-  color: "#dc2626",
-  margin: "24px 0",
+const helpSection = {
+  backgroundColor: "#e7c5f8",
+  borderRadius: "17px",
+  padding: "30px 20px",
+  margin: "15px 0",
   textAlign: "center" as const,
-  fontWeight: "600",
-  backgroundColor: "#fef2f2",
-  padding: "12px",
-  borderRadius: "6px",
 };
 
-const hr = {
-  borderColor: "#e6ebf1",
-  margin: "32px 0",
+const helpHeading = {
+  color: "#0d0b0e",
+  fontSize: "38px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 15px 0",
+  textAlign: "center" as const,
 };
 
-const footer = {
-  fontSize: "14px",
+const helpText = {
+  color: "#0d0b0e",
+  fontSize: "16px",
+  fontWeight: "300",
+  lineHeight: "1.5",
+  margin: "0",
+  textAlign: "center" as const,
+};
+
+const footerSection = {
+  backgroundColor: "#ffffff",
+  padding: "20px",
+  textAlign: "center" as const,
+};
+
+const footerText = {
   color: "#8898aa",
-  textAlign: "center" as const,
-  margin: "32px 0 0",
-};
-
-const unsubscribe = {
   fontSize: "12px",
-  color: "#8898aa",
-  textAlign: "center" as const,
-  margin: "16px 0 0",
   lineHeight: "1.4",
+  margin: "0",
+  textAlign: "center" as const,
 };
 
 export default PaymentFailedEmail;
