@@ -11,6 +11,26 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
+// Map Stripe subscription status to our database enum
+function mapStripeStatusToDbStatus(stripeStatus: string): "active" | "inactive" | "trialing" | "past_due" | "canceled" {
+  switch (stripeStatus) {
+    case "active":
+      return "active";
+    case "trialing":
+      return "trialing";
+    case "past_due":
+      return "past_due";
+    case "canceled":
+    case "unpaid":
+    case "incomplete_expired":
+      return "canceled";
+    case "incomplete":
+    case "paused":
+    default:
+      return "inactive";
+  }
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text();
   const sig = (await headers()).get("stripe-signature");
@@ -132,11 +152,22 @@ export async function POST(request: NextRequest) {
             console.error("Subscription object:", subscription);
           }
 
-          // Update user's subscription status
-          await db.updateUser(userId, {
-            subscription_status: subscription.status as any,
-            plan_id: planId,
-          } as any);
+          // Update user's subscription status - CRITICAL: wrap in try-catch
+          try {
+            // Map Stripe subscription status to our database enum
+            const mappedStatus = mapStripeStatusToDbStatus(subscription.status);
+            
+            await db.updateUser(userId, {
+              subscription_status: mappedStatus,
+              plan_id: planId,
+            });
+            console.log(`Updated user ${userId} status to ${mappedStatus} (from Stripe: ${subscription.status}) with plan ${planId}`);
+          } catch (userUpdateError) {
+            console.error("Error updating user subscription status:", userUpdateError);
+            console.error("User ID:", userId);
+            console.error("Subscription status:", subscription.status);
+            console.error("Plan ID:", planId);
+          }
         }
         break;
       }
@@ -157,6 +188,16 @@ export async function POST(request: NextRequest) {
             ).toISOString(),
             cancel_at_period_end: (stripeSubscription as any).cancel_at_period_end,
           });
+
+          // CRITICAL FIX: Also update user's subscription status
+          const subscriptionRecord = await db.getSubscriptionByStripeId(stripeSubscription.id);
+          if (subscriptionRecord?.user_id) {
+            const mappedStatus = mapStripeStatusToDbStatus(stripeSubscription.status);
+            await db.updateUser(subscriptionRecord.user_id, {
+              subscription_status: mappedStatus,
+            });
+            console.log(`Updated user ${subscriptionRecord.user_id} status to ${mappedStatus} (from Stripe: ${stripeSubscription.status})`);
+          }
         } catch (error) {
           console.error("Error updating subscription:", error);
         }
@@ -172,6 +213,15 @@ export async function POST(request: NextRequest) {
             status: "canceled",
             cancel_at_period_end: false,
           });
+
+          // CRITICAL FIX: Also update user's subscription status
+          const subscriptionRecord = await db.getSubscriptionByStripeId(stripeSubscription.id);
+          if (subscriptionRecord?.user_id) {
+            await db.updateUser(subscriptionRecord.user_id, {
+              subscription_status: "canceled",
+            });
+            console.log(`Updated user ${subscriptionRecord.user_id} status to canceled`);
+          }
         } catch (error) {
           console.error("Error cancelling subscription:", error);
         }

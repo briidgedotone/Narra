@@ -24,22 +24,6 @@ export default async function DashboardPage({
     redirect("/sign-in");
   }
 
-  // Check user's subscription status
-  const { data: userData } = await supabase
-    .from("users")
-    .select("subscription_status")
-    .eq("id", userId)
-    .single();
-
-  // Redirect to plan selection if user doesn't have active or trialing subscription
-  if (
-    !userData ||
-    (userData.subscription_status !== "active" &&
-      userData.subscription_status !== "trialing")
-  ) {
-    redirect("/select-plan");
-  }
-
   // Get search params to check for successful payment redirect
   const params = await searchParams;
   const sessionId = params.session_id;
@@ -52,7 +36,52 @@ export default async function DashboardPage({
     );
   }
 
-  // Sync user to database only if not in cache (new user or cache miss)
+  // Ensure user exists in database BEFORE checking subscription
+  // This fixes the race condition where subscription check happens before user sync
+  let userData;
+  try {
+    // First try to get user from database
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("subscription_status")
+      .eq("id", userId)
+      .single();
+    
+    userData = existingUser;
+  } catch (error) {
+    // User doesn't exist in database, sync from Clerk first
+    console.log(`User ${userId} not found in database, syncing from Clerk...`);
+    try {
+      const clerkUser = await currentUser();
+      if (clerkUser) {
+        await syncUserToDatabase(clerkUser);
+        // Clear cache to ensure fresh data
+        clearUserCache(userId);
+        // Query again after sync
+        const { data: syncedUser } = await supabase
+          .from("users")
+          .select("subscription_status")
+          .eq("id", userId)
+          .single();
+        userData = syncedUser;
+      }
+    } catch (syncError) {
+      console.error("Error syncing user to database:", syncError);
+      // If sync fails, redirect to sign-in to retry the flow
+      redirect("/sign-in");
+    }
+  }
+
+  // Now check subscription status with guaranteed user data
+  if (
+    !userData ||
+    (userData.subscription_status !== "active" &&
+      userData.subscription_status !== "trialing")
+  ) {
+    redirect("/select-plan");
+  }
+
+  // Additional sync for cache optimization (only if not already synced above)
   if (!isUserInCache(userId)) {
     try {
       const clerkUser = await currentUser();
@@ -60,7 +89,8 @@ export default async function DashboardPage({
         await syncUserToDatabase(clerkUser);
       }
     } catch (error) {
-      console.error("Error syncing user to database:", error);
+      console.error("Error with additional user sync:", error);
+      // Don't fail here as user is already validated above
     }
   }
 
