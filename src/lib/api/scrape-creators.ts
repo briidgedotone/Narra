@@ -287,6 +287,15 @@ export const scrapeCreatorsApi = {
         cacheTTL.transcript
       );
     },
+
+    async getIndividualPost(postUrl: string) {
+      const cacheKey = cacheKeys.instagramPost(postUrl);
+      return await makeRequest(
+        `/v1/instagram/post?url=${encodeURIComponent(postUrl)}`,
+        cacheKey,
+        cacheTTL.posts
+      );
+    },
   },
 };
 

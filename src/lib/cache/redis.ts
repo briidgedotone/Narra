@@ -85,6 +85,18 @@ export const cacheKeys = {
     const uniqueId = Math.abs(hash).toString(36) + postUrl.length.toString(36);
     return `instagram:transcript:${uniqueId}`;
   },
+  instagramPost: (postUrl: string) => {
+    // Create a simple hash from the full URL to ensure uniqueness
+    let hash = 0;
+    for (let i = 0; i < postUrl.length; i++) {
+      const char = postUrl.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    // Convert to positive number and add URL length for extra uniqueness
+    const uniqueId = Math.abs(hash).toString(36) + postUrl.length.toString(36);
+    return `instagram:post:${uniqueId}`;
+  },
 };
 
 // Cache TTL constants (in seconds)
