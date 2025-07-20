@@ -17,7 +17,7 @@ async function main() {
   console.log('================================\n');
 
   // Get arguments
-  const startIndex = parseInt(process.argv[2]) || 0;
+  const startIndex = parseInt(process.argv[2] || "0") || 0;
   const collectionType = process.argv[3] || 'viral-hooks';
   
   // Determine file path

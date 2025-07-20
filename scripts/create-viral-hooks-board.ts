@@ -13,7 +13,7 @@ async function createViralHooksBoard() {
   
   try {
     // Get the existing featured board to find the folder
-    const { data: existingBoard, error: boardError } = await client
+    let { data: existingBoard, error: boardError } = await client
       .from('boards')
       .select('folder_id')
       .eq('id', '877a7dde-74ce-42c8-901b-20db491662b1')

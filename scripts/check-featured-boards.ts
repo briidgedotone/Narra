@@ -47,7 +47,7 @@ async function checkFeaturedBoards() {
     
     for (let i = 0; i < knownBoardIds.length; i++) {
       try {
-        const board = await db.getBoardById(knownBoardIds[i]);
+        const board = await db.getBoardById(knownBoardIds[i]!);
         console.log(`✅ Found board: "${board.name}" (ID: ${board.id})`);
         
         // Check if this board is already featured

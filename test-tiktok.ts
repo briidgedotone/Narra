@@ -24,7 +24,7 @@ async function testTikTokAPI() {
       console.log('  📥 Fetching video data...');
 
       try {
-        const response = await scrapeCreatorsApi.tiktok.getIndividualVideo(url);
+        const response = await scrapeCreatorsApi.tiktok.getIndividualVideo(url!);
         
         if (!response.success) {
           console.log(`  ❌ API Error: ${response.error}`);

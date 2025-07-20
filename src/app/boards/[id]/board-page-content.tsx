@@ -191,7 +191,7 @@ export function BoardPageContent({
       try {
         const result = await isBoardFeatured(boardId);
         if (result.success) {
-          setIsFeaturedBoard(result.data);
+          setIsFeaturedBoard(result.data || false);
         }
       } catch (error) {
         console.error("Error checking if board is featured:", error);
@@ -570,7 +570,7 @@ export function BoardPageContent({
           activeFilter={activeFilter}
           onPostClick={stableHandlePostClick}
           onSavePost={stableHandleSavePost}
-          onRemovePost={conditionalRemoveHandler}
+          {...(conditionalRemoveHandler && { onRemovePost: conditionalRemoveHandler })}
         />
 
         {/* Load More Button */}
