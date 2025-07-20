@@ -11,6 +11,10 @@ export interface User {
     | "trialing"
     | "past_due"
     | "canceled";
+  plan_id?: string | null;
+  monthly_profile_discoveries?: number;
+  monthly_transcripts_viewed?: number;
+  usage_reset_date?: string;
   created_at: string;
   updated_at: string;
 }

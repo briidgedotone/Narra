@@ -63,16 +63,26 @@ export default clerkMiddleware(async (auth, req) => {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const { data: user } = await supabase
+    const { data: user, error } = await supabase
       .from("users")
       .select("role")
       .eq("id", userId)
       .single();
 
-    isAdmin = user?.role === "admin";
-
-    // Cache the result (no plan data needed anymore)
-    setCachedUserData(userId, null, isAdmin);
+    if (error && error.code === "PGRST116") {
+      // User not found in database - don't cache anything
+      // Let the page components handle user creation
+      console.log(`User ${userId} not found in database during middleware`);
+      isAdmin = false;
+    } else if (error) {
+      // Other database error - log but don't fail
+      console.error("Database error in middleware:", error);
+      isAdmin = false;
+    } else {
+      // User found - cache the result
+      isAdmin = user?.role === "admin";
+      setCachedUserData(userId, null, isAdmin);
+    }
   }
 
   // Additional admin route protection

@@ -11,13 +11,29 @@ export async function syncUserToDatabase(
   clerkUser: User
 ): Promise<Database["public"]["Tables"]["users"]["Row"]> {
   try {
+    // Check if user already exists
+    let existingUser;
+    try {
+      existingUser = await db.getUserById(clerkUser.id);
+    } catch (error) {
+      // User doesn't exist yet
+      existingUser = null;
+    }
+
     // Extract user data from Clerk
     const userData: Database["public"]["Tables"]["users"]["Insert"] = {
       id: clerkUser.id,
       email: clerkUser.primaryEmailAddress?.emailAddress || "",
       role: "user", // Default role
-      subscription_status: "inactive", // Default subscription status
+      subscription_status: existingUser?.subscription_status || "inactive", // Preserve existing status or default to inactive
     };
+
+    // Log the action
+    if (!existingUser) {
+      console.log(`[Auth Sync] Creating new user ${clerkUser.id} with inactive status`);
+    } else {
+      console.log(`[Auth Sync] Syncing existing user ${clerkUser.id}, preserving subscription status: ${existingUser.subscription_status}`);
+    }
 
     // Use upsert to handle both create and update cases
     const user = await db.upsertUser(userData);

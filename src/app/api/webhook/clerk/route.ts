@@ -65,16 +65,33 @@ export async function POST(req: Request) {
       return new Response("No email found", { status: 400 });
     }
 
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("subscription_status")
+      .eq("id", id)
+      .single();
+
+    // Prepare user data
+    const userData: any = {
+      id: id,
+      email: email,
+      role: "user",
+      updated_at: new Date().toISOString(),
+    };
+
+    // Only set subscription_status for new users
+    if (!existingUser) {
+      userData.subscription_status = "inactive";
+      console.log(`[Clerk Webhook] Creating new user ${id} with inactive status`);
+    } else {
+      console.log(`[Clerk Webhook] Updating existing user ${id}, preserving subscription status: ${existingUser.subscription_status}`);
+    }
+
     // Upsert user in Supabase
     const { error } = await supabase
       .from("users")
-      .upsert({
-        id: id,
-        email: email,
-        role: "user",
-        subscription_status: "inactive",
-        updated_at: new Date().toISOString(),
-      })
+      .upsert(userData)
       .eq("id", id);
 
     if (error) {
