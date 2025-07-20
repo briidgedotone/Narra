@@ -76,7 +76,7 @@ export async function getAdminStats() {
     console.error("[Admin Stats] Error:", error);
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : "Unknown error",
       stats: {
         totalUsers: 0,
         newUsersThisMonth: 0,

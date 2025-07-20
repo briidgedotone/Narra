@@ -348,7 +348,7 @@ export function DataTable<T extends Record<string, any>>({
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
               Previous
             </button>
@@ -368,7 +368,7 @@ export function DataTable<T extends Record<string, any>>({
                     key={pageNumber}
                     onClick={() => setCurrentPage(pageNumber)}
                     className={cn(
-                      "px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted transition-colors",
+                      "px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted cursor-pointer transition-colors",
                       currentPage === pageNumber &&
                         "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
                     )}
@@ -383,7 +383,7 @@ export function DataTable<T extends Record<string, any>>({
                 setCurrentPage(prev => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
-              className="px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-2 text-sm border border-input rounded-2xl hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
             >
               Next
             </button>

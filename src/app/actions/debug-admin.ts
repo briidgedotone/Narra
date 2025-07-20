@@ -51,7 +51,7 @@ export async function debugAdminAccess() {
   } catch (error) {
     console.error(`[Debug Admin] Error:`, error);
     return {
-      error: error.message,
+      error: error instanceof Error ? error.message : "Unknown error",
       timestamp: new Date().toISOString()
     };
   }

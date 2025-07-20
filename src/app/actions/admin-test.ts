@@ -43,7 +43,7 @@ export async function ensureAdminAccess() {
     console.error(`[Admin Test] Error ensuring admin access:`, error);
     return {
       success: false,
-      message: `Error: ${error.message}`,
+      message: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
       userId: adminUserId,
       role: null
     };

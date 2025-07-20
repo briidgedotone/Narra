@@ -33,7 +33,7 @@ export async function checkCurrentUserAdmin() {
     return {
       success: false,
       isAdmin: false,
-      error: error.message
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }

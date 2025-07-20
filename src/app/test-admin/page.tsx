@@ -6,7 +6,7 @@ import { forceAdminCache } from "@/app/actions/force-admin-cache";
 import { useEffect, useState } from "react";
 
 export default function TestAdminPage() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
