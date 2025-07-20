@@ -21,6 +21,10 @@
     "test:webhooks": "tsx scripts/test-webhooks.ts",
     "test:email": "tsx scripts/test-email.ts",
     "upload:email-images": "tsx scripts/upload-email-images.ts",
+    "bulk-scrape-ecommerce": "tsx scripts/bulk-scrape-ecommerce.ts",
+    "test:bulk-scrape": "tsx scripts/test-bulk-scrape.ts",
+    "test:direct-scrape": "tsx scripts/test-direct-scrape.ts",
+    "test:single-post": "tsx scripts/test-single-post.ts",
     "prepare": "husky"
   },
   "dependencies": {

@@ -77,7 +77,7 @@ export function BoardPageContent({
 
   // Sort and date filter states
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
-  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("last-365-days");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);

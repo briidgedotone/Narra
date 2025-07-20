@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the response to a more usable format
-    const rawData = response.data;
+    const rawData = response.data as any;
     const postData = rawData?.data?.xdt_shortcode_media;
 
     if (!postData) {
