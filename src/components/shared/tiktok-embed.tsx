@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 
 import {
   Heart,
@@ -28,7 +28,7 @@ interface TikTokEmbedProps {
   onRemoveClick?: () => void;
 }
 
-export function TikTokEmbed({
+export const TikTokEmbed = memo(function TikTokEmbed({
   url,
   className,
   caption,
@@ -181,4 +181,4 @@ export function TikTokEmbed({
       )}
     </div>
   );
-}
+});

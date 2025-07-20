@@ -231,6 +231,17 @@ export async function getFeaturedBoards() {
   }
 }
 
+export async function isBoardFeatured(boardId: string) {
+  try {
+    const featuredBoards = await db.getFeaturedBoards();
+    const isFeatured = featuredBoards?.some(featured => featured.board_id === boardId) || false;
+    return { success: true, data: isFeatured };
+  } catch (error) {
+    console.error("Failed to check if board is featured:", error);
+    return { success: false, error: "Failed to check featured status" };
+  }
+}
+
 export async function setFeaturedBoard(
   boardId: string,
   displayOrder: number,
@@ -259,8 +270,8 @@ export async function setFeaturedBoard(
       board_id: string;
       display_order: number;
       cover_image_url?: string;
-      custom_title?: string;
-      custom_description?: string;
+      title?: string;
+      description?: string;
     } = {
       board_id: boardId,
       display_order: displayOrder,
@@ -270,10 +281,10 @@ export async function setFeaturedBoard(
       featuredBoardData.cover_image_url = coverImageUrl;
     }
     if (title) {
-      featuredBoardData.custom_title = title;
+      featuredBoardData.title = title;
     }
     if (description) {
-      featuredBoardData.custom_description = description;
+      featuredBoardData.description = description;
     }
 
     const data = await db.createFeaturedBoard(featuredBoardData);

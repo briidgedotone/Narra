@@ -19,6 +19,8 @@ export function useBoard(boardId: string, isSharedView = false) {
   const [posts, setPosts] = useState<SavedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const loadBoardData = useCallback(async () => {
@@ -38,19 +40,58 @@ export function useBoard(boardId: string, isSharedView = false) {
     }
   }, [boardId, isSharedView]);
 
-  const loadBoardPosts = useCallback(async () => {
+  const loadBoardPosts = useCallback(async (offset = 0, append = false) => {
     try {
+      if (offset === 0) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+
       const result = isSharedView
         ? await getPublicBoardPosts(boardId)
-        : await getPostsInBoard(boardId, 50, 0);
+        : await getPostsInBoard(boardId, 20, offset);
+      
       if (result.success && result.data) {
-        setPosts(result.data as unknown as SavedPost[]);
+        const newPosts = result.data as unknown as SavedPost[];
+        
+        if (append) {
+          // Only update if we actually have new posts to avoid unnecessary re-renders
+          if (newPosts.length > 0) {
+            setPosts(prev => {
+              // Create a new array only when we have new posts to add
+              const existingIds = new Set(prev.map(p => p.id));
+              const uniqueNewPosts = newPosts.filter(post => !existingIds.has(post.id));
+              
+              if (uniqueNewPosts.length > 0) {
+                return [...prev, ...uniqueNewPosts];
+              }
+              // Return the same array reference if no new unique posts
+              return prev;
+            });
+          }
+        } else {
+          setPosts(newPosts);
+        }
+
+        // Check if we have more posts (if we got less than the limit, no more posts)
+        setHasMorePosts(newPosts.length === 20);
       } else {
-        setPosts([]);
+        if (!append) {
+          setPosts([]);
+        }
       }
     } catch (error) {
       console.error("Failed to load board posts:", error);
-      setPosts([]);
+      if (!append) {
+        setPosts([]);
+      }
+    } finally {
+      if (offset === 0) {
+        setIsLoading(false);
+      } else {
+        setIsLoadingMore(false);
+      }
     }
   }, [boardId, isSharedView]);
 
@@ -130,6 +171,12 @@ export function useBoard(boardId: string, isSharedView = false) {
     [boardId]
   );
 
+  const handleLoadMore = useCallback(() => {
+    if (!isLoadingMore && hasMorePosts) {
+      loadBoardPosts(posts.length, true);
+    }
+  }, [isLoadingMore, hasMorePosts, posts.length, loadBoardPosts]);
+
   // Auto-resize textarea when description changes
   useEffect(() => {
     if (textareaRef.current) {
@@ -141,11 +188,11 @@ export function useBoard(boardId: string, isSharedView = false) {
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
       try {
-        await Promise.all([loadBoardData(), loadBoardPosts()]);
-      } finally {
-        setIsLoading(false);
+        await loadBoardData();
+        await loadBoardPosts(0, false); // Initial load with offset 0
+      } catch (error) {
+        console.error("Failed to load board data:", error);
       }
     };
     loadData();
@@ -156,11 +203,14 @@ export function useBoard(boardId: string, isSharedView = false) {
     posts,
     isLoading,
     isUpdating,
+    isLoadingMore,
+    hasMorePosts,
     textareaRef,
     handleNameChange,
     handleDescriptionChange,
     handleRemovePost,
+    handleLoadMore,
     refreshBoard: loadBoardData,
-    refreshPosts: loadBoardPosts,
+    refreshPosts: () => loadBoardPosts(0, false),
   };
 }

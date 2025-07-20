@@ -212,6 +212,15 @@ export const scrapeCreatorsApi = {
         cacheTTL.transcript
       );
     },
+
+    async getIndividualVideo(videoUrl: string) {
+      const cacheKey = cacheKeys.tiktokVideo(videoUrl);
+      return await makeRequest(
+        `/v2/tiktok/video?url=${encodeURIComponent(videoUrl)}`,
+        cacheKey,
+        cacheTTL.posts
+      );
+    },
   },
 
   // Instagram API endpoints - Updated to match official documentation
@@ -285,6 +294,15 @@ export const scrapeCreatorsApi = {
         `/v2/instagram/media/transcript?url=${encodeURIComponent(postUrl)}`,
         cacheKey,
         cacheTTL.transcript
+      );
+    },
+
+    async getIndividualPost(postUrl: string) {
+      const cacheKey = cacheKeys.instagramPost(postUrl);
+      return await makeRequest(
+        `/v1/instagram/post?url=${encodeURIComponent(postUrl)}`,
+        cacheKey,
+        cacheTTL.posts
       );
     },
   },
@@ -438,6 +456,41 @@ export const transformers = {
         avatarUrl:
           user.avatarLarger || user.avatarMedium || user.avatarThumb || "",
         verified: user.verified || false,
+      };
+    },
+
+    // Transform TikTok individual video data to our application format
+    videoToAppFormat(apiResponse: any) {
+      const awemeDetail = apiResponse?.aweme_detail;
+      if (!awemeDetail) return null;
+
+      const author = awemeDetail.author;
+      const statistics = awemeDetail.statistics;
+      const video = awemeDetail.video;
+
+      return {
+        handle: `@${author?.unique_id || ''}`,
+        platform: "tiktok" as const,
+        displayName: author?.nickname || author?.unique_id || '',
+        bio: author?.signature || '',
+        followers: author?.follower_count || 0,
+        avatarUrl: author?.avatar_larger?.url_list?.[0] || author?.avatar_medium?.url_list?.[0] || '',
+        verified: author?.verification_type === 1,
+        platformPostId: awemeDetail.aweme_id,
+        embedUrl: awemeDetail.url || '',
+        caption: awemeDetail.desc || '',
+        originalUrl: awemeDetail.url || '',
+        metrics: {
+          likes: statistics?.digg_count || 0,
+          comments: statistics?.comment_count || 0,
+          views: statistics?.play_count || 0,
+          shares: statistics?.share_count || 0,
+        },
+        datePosted: new Date((awemeDetail.create_time || 0) * 1000).toISOString(),
+        isVideo: true,
+        videoUrl: video?.play_addr?.url_list?.[0] || video?.play_addr_h264?.url_list?.[0] || '',
+        thumbnail: video?.cover?.url_list?.[0] || video?.dynamic_cover?.url_list?.[0] || '',
+        duration: video?.duration || 0,
       };
     },
   },

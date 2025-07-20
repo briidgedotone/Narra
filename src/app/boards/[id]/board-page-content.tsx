@@ -10,6 +10,8 @@ import { BoardHeader } from "@/components/shared/board-header";
 import { Button } from "@/components/ui/button";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useAdmin } from "@/hooks/useAdmin";
+import { isBoardFeatured } from "@/app/actions/folders";
 import {
   Clipboard,
   SearchList,
@@ -77,7 +79,7 @@ export function BoardPageContent({
 
   // Sort and date filter states
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
-  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("last-365-days");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -88,16 +90,24 @@ export function BoardPageContent({
   const [postToRemove, setPostToRemove] = useState<SavedPost | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
+  // Admin status checking
+  const { isAdmin, isLoading: isAdminLoading } = useAdmin();
+  const [isFeaturedBoard, setIsFeaturedBoard] = useState(false);
+  const [isFeaturedBoardLoading, setIsFeaturedBoardLoading] = useState(true);
+
   // Custom hooks for board management
   const {
     board,
     posts,
     isLoading,
     isUpdating,
+    isLoadingMore,
+    hasMorePosts,
     textareaRef,
     handleNameChange,
     handleDescriptionChange,
     handleRemovePost,
+    handleLoadMore,
   } = useBoard(boardId, isSharedView);
 
   // Custom hooks for post modal management
@@ -173,6 +183,27 @@ export function BoardPageContent({
   const handleDateFilterChange = React.useCallback((value: DateFilter) => {
     setDateFilter(value);
   }, []);
+
+  // Check if board is featured
+  useEffect(() => {
+    const checkIfFeatured = async () => {
+      setIsFeaturedBoardLoading(true);
+      try {
+        const result = await isBoardFeatured(boardId);
+        if (result.success) {
+          setIsFeaturedBoard(result.data);
+        }
+      } catch (error) {
+        console.error("Error checking if board is featured:", error);
+        // On error, assume it's not featured for safety
+        setIsFeaturedBoard(false);
+      } finally {
+        setIsFeaturedBoardLoading(false);
+      }
+    };
+
+    checkIfFeatured();
+  }, [boardId]);
 
   // Filter and sort posts based on selected options
   const filteredAndSortedPosts = React.useMemo(() => {
@@ -296,6 +327,55 @@ export function BoardPageContent({
     },
     []
   );
+
+  // Stable callback references for PostGrid to prevent unnecessary re-renders
+  const stableHandlePostClick = React.useCallback(
+    (post: SavedPost) => {
+      handlePostClick(post);
+    },
+    [handlePostClick]
+  );
+
+  const stableHandleSavePost = React.useCallback(
+    (post: SavedPost) => {
+      handleSavePost(post);
+    },
+    [handleSavePost]
+  );
+
+  const stableHandleRemovePost = React.useCallback(
+    (post: SavedPost) => {
+      handleRemovePostFromBoard(post);
+    },
+    [handleRemovePostFromBoard]
+  );
+
+  // Conditional remove handler - only allow remove if user is admin on featured boards
+  const shouldShowRemoveButton = React.useMemo(() => {
+    // Conservative approach: wait for all async data before showing remove buttons
+    if (isAdminLoading || isFeaturedBoardLoading) return false;
+    if (isSharedView) return false; // Never show remove on public shared views
+    if (!isFeaturedBoard) return true; // Always show remove on non-featured boards (user's own boards)
+    return isAdmin; // Only show remove on featured boards if user is admin
+  }, [isSharedView, isFeaturedBoard, isAdmin, isAdminLoading, isFeaturedBoardLoading]);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Board Page Debug:', {
+      boardId,
+      isSharedView,
+      isFeaturedBoard,
+      isFeaturedBoardLoading,
+      isAdmin,
+      isAdminLoading,
+      shouldShowRemoveButton
+    });
+  }, [boardId, isSharedView, isFeaturedBoard, isFeaturedBoardLoading, isAdmin, isAdminLoading, shouldShowRemoveButton]);
+
+  // Conditional remove handler - only pass remove handler if user should be able to remove
+  const conditionalRemoveHandler = React.useMemo(() => {
+    return shouldShowRemoveButton ? stableHandleRemovePost : undefined;
+  }, [shouldShowRemoveButton, stableHandleRemovePost]);
 
   const confirmRemovePost = React.useCallback(
     async () => {
@@ -488,10 +568,31 @@ export function BoardPageContent({
           posts={filteredAndSortedPosts}
           isLoading={false}
           activeFilter={activeFilter}
-          onPostClick={handlePostClick}
-          onSavePost={handleSavePost}
-          onRemovePost={handleRemovePostFromBoard}
+          onPostClick={stableHandlePostClick}
+          onSavePost={stableHandleSavePost}
+          onRemovePost={conditionalRemoveHandler}
         />
+
+        {/* Load More Button */}
+        {hasMorePosts && (
+          <div className="flex justify-center mt-8">
+            <Button
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              variant="outline"
+              size="lg"
+            >
+              {isLoadingMore ? (
+                <>
+                  <LoadingSpinner className="h-4 w-4 mr-2" />
+                  Loading...
+                </>
+              ) : (
+                "Load More Posts"
+              )}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Post detail modal */}

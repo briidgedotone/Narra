@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { enableBoardSharing } from "@/app/actions/folders";
 import { Button } from "@/components/ui/button";
-import { Link, Menu } from "@/components/ui/icons";
+import { Link } from "@/components/ui/icons";
 
 import { CopyBoardButton } from "./copy-board-button";
 
@@ -49,9 +49,6 @@ export function BoardHeader({
     }
   };
 
-  const handleMenuClick = () => {
-    toast.info("Board menu functionality coming soon!");
-  };
 
   return (
     <div className="h-14 sticky top-0 z-10">
@@ -85,17 +82,6 @@ export function BoardHeader({
               >
                 <Link className="w-4 h-4 mr-2" />
                 Copy Link
-              </Button>
-
-              {/* Three Dots Menu */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={handleMenuClick}
-              >
-                <Menu className="w-4 h-4" />
-                <span className="sr-only">Open menu</span>
               </Button>
             </>
           )}
