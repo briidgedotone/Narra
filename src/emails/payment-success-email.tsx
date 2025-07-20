@@ -4,81 +4,135 @@ import {
   Container,
   Head,
   Html,
+  Img,
   Preview,
   Section,
   Text,
   Button,
-  Hr,
+  Row,
+  Column,
 } from "@react-email/components";
+import { EMAIL_LOGO, EMAIL_IMAGES } from "@/config/email-images";
 
 interface PaymentSuccessEmailProps {
   userEmail?: string;
   planName?: string;
   amount?: string;
   billingPeriod?: "monthly" | "yearly";
+  baseUrl?: string;
 }
 
 export const PaymentSuccessEmail = ({ 
   userEmail = "user@example.com",
   planName = "Pro Plan",
   amount = "$9.99",
-  billingPeriod = "monthly"
+  billingPeriod = "monthly",
+  baseUrl = "https://app.usenarra.com"
 }: PaymentSuccessEmailProps) => {
   return (
     <Html>
-      <Head />
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;300;400;500;600;700;800;900"
+          rel="stylesheet"
+          type="text/css"
+        />
+      </Head>
       <Preview>Payment confirmed - Your {planName} is now active!</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Section style={header}>
-            <Text style={logo}>Narra</Text>
+          {/* Logo Section */}
+          <Section style={logoSection}>
+            <Text style={EMAIL_LOGO.STYLES}>
+              {EMAIL_LOGO.TEXT}
+            </Text>
           </Section>
-          
-          <Section style={content}>
-            <Section style={successBadge}>
-              <Text style={successIcon}>✅</Text>
-            </Section>
-            
+
+          {/* Success Icon Section */}
+          <Section style={successSection}>
+            <Img
+              src={EMAIL_IMAGES.SUCCESS_ICON}
+              width="80"
+              height="80"
+              alt="Payment Success"
+              style={successIcon}
+            />
+          </Section>
+
+          {/* Success Heading */}
+          <Section style={headingSection}>
             <Text style={heading}>Payment Confirmed!</Text>
-            
-            <Text style={paragraph}>
-              Thank you for subscribing to {planName}! Your account has been activated and you can now access all premium features.
+            <Text style={subHeading}>
+              Thank you for subscribing to <strong>{planName}</strong>!<br />
+              Your account has been activated and you can now access all premium features.
             </Text>
+          </Section>
+
+          {/* Payment Details Section */}
+          <Section style={detailsSection}>
+            <Text style={detailsHeading}>Payment Details</Text>
             
-            <Section style={receiptBox}>
-              <Text style={receiptHeading}>Payment Details</Text>
-              <Section style={receiptItem}>
-                <Text style={receiptLabel}>Plan:</Text>
-                <Text style={receiptValue}>{planName}</Text>
-              </Section>
-              <Section style={receiptItem}>
-                <Text style={receiptLabel}>Amount:</Text>
-                <Text style={receiptValue}>{amount}</Text>
-              </Section>
-              <Section style={receiptItem}>
-                <Text style={receiptLabel}>Billing:</Text>
-                <Text style={receiptValue}>{billingPeriod === "yearly" ? "Yearly" : "Monthly"}</Text>
-              </Section>
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Plan:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={detailValue}>{planName}</Text>
+              </Column>
+            </Row>
+
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Amount:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={detailValue}>{amount}</Text>
+              </Column>
+            </Row>
+
+            <Row style={detailRow}>
+              <Column style={detailLabelColumn}>
+                <Text style={detailLabel}>Billing:</Text>
+              </Column>
+              <Column style={detailValueColumn}>
+                <Text style={detailValue}>{billingPeriod === "yearly" ? "Yearly" : "Monthly"}</Text>
+              </Column>
+            </Row>
+
+            {/* Features List */}
+            <Section style={featuresSection}>
+              <Text style={featuresHeading}>Your Premium Features</Text>
+              <Text style={featureItem}>• Unlimited boards and collections</Text>
+              <Text style={featureItem}>• Advanced search capabilities</Text>
+              <Text style={featureItem}>• Priority customer support</Text>
+              <Text style={featureItem}>• Early access to new features</Text>
             </Section>
-            
-            <Text style={paragraph}>
-              Your premium account includes unlimited boards, advanced search capabilities, and priority customer support.
+          </Section>
+
+          {/* CTA Section */}
+          <Section style={ctaSection}>
+            <Button style={ctaButton} href={`${baseUrl}/dashboard`}>
+              Start Using Your Plan
+            </Button>
+          </Section>
+
+          {/* Get Started Section */}
+          <Section style={getStartedSection}>
+            <Text style={getStartedHeading}>Ready to Explore?</Text>
+            <Text style={getStartedText}>
+              Jump into <strong>Narra</strong> and start discovering amazing content with your new premium features.
             </Text>
-            
-            <Section style={buttonContainer}>
-              <Button style={button} href="https://app.usenarra.com/dashboard">
-                Start Using Your Plan
+            <Section style={ctaSection}>
+              <Button style={getStartedButton} href={`${baseUrl}/discovery`}>
+                Explore Premium Content
               </Button>
             </Section>
-            
-            <Hr style={hr} />
-            
-            <Text style={footer}>
-              Questions about your subscription? Reply to this email or visit your billing settings.
-            </Text>
-            
-            <Text style={unsubscribe}>
-              This email was sent to {userEmail} regarding your Narra account. 
+          </Section>
+
+          {/* Footer */}
+          <Section style={footerSection}>
+            <Text style={footerText}>
+              This email was sent to {userEmail} regarding your Narra subscription.
               If you need assistance, contact us at support@usenarra.com
             </Text>
           </Section>
@@ -88,134 +142,195 @@ export const PaymentSuccessEmail = ({
   );
 };
 
-// Styles
+// Styles (matching welcome email design)
 const main = {
-  backgroundColor: "#f6f9fc",
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  backgroundColor: "#f7f3ec",
+  fontFamily: '"Fira Sans", "Lucida Sans Unicode", "Lucida Grande", sans-serif',
+  margin: "0",
+  padding: "0",
 };
 
 const container = {
-  backgroundColor: "#ffffff",
+  backgroundColor: "#f7f3ec",
   margin: "0 auto",
-  padding: "20px 0 48px",
-  marginBottom: "64px",
-  maxWidth: "600px",
+  maxWidth: "680px",
+  width: "100%",
 };
 
-const header = {
-  padding: "20px 30px",
+const logoSection = {
+  padding: "10px",
   textAlign: "center" as const,
 };
 
-const logo = {
-  fontSize: "32px",
-  fontWeight: "bold",
-  color: "#1a1a1a",
-  margin: "0",
-};
-
-const content = {
-  padding: "0 30px",
-};
-
-const successBadge = {
+const successSection = {
+  backgroundColor: "transparent",
+  borderRadius: "20px",
+  padding: "30px 0",
   textAlign: "center" as const,
-  margin: "20px 0",
+  margin: "0 0 20px 0",
 };
 
 const successIcon = {
-  fontSize: "48px",
-  margin: "0",
+  display: "block",
+  margin: "0 auto",
+};
+
+const headingSection = {
+  padding: "20px 10px 35px",
+  textAlign: "center" as const,
 };
 
 const heading = {
-  fontSize: "28px",
-  fontWeight: "bold",
-  color: "#1a1a1a",
-  margin: "20px 0",
+  color: "#101010",
+  fontSize: "50px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 20px 0",
   textAlign: "center" as const,
 };
 
-const paragraph = {
-  fontSize: "16px",
-  lineHeight: "1.6",
-  color: "#4a4a4a",
-  margin: "16px 0",
-};
-
-const receiptBox = {
-  backgroundColor: "#f8fafc",
-  borderRadius: "8px",
-  padding: "24px",
-  margin: "24px 0",
-  border: "1px solid #e6ebf1",
-};
-
-const receiptHeading = {
-  fontSize: "18px",
-  fontWeight: "600",
-  color: "#1a1a1a",
-  margin: "0 0 16px 0",
-};
-
-const receiptItem = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  margin: "12px 0",
-};
-
-const receiptLabel = {
-  fontSize: "16px",
-  color: "#4a4a4a",
+const subHeading = {
+  color: "#101010",
+  fontSize: "17px",
+  fontWeight: "400",
+  lineHeight: "1.5",
   margin: "0",
+  padding: "0 10px",
+};
+
+const detailsSection = {
+  backgroundColor: "#0d0b0e",
+  padding: "30px 20px",
+  borderRadius: "0",
+};
+
+const detailsHeading = {
+  color: "#ffffff",
+  fontSize: "42px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 25px 0",
+  textAlign: "center" as const,
+};
+
+const detailRow = {
+  padding: "8px 0",
+};
+
+const detailLabelColumn = {
   width: "50%",
+  verticalAlign: "middle" as const,
 };
 
-const receiptValue = {
-  fontSize: "16px",
-  fontWeight: "600",
-  color: "#1a1a1a",
-  margin: "0",
+const detailValueColumn = {
+  width: "50%",
+  verticalAlign: "middle" as const,
   textAlign: "right" as const,
-  width: "50%",
 };
 
-const buttonContainer = {
+const detailLabel = {
+  color: "#ffffff",
+  fontSize: "18px",
+  fontWeight: "300",
+  margin: "0",
+};
+
+const detailValue = {
+  color: "#ffffff",
+  fontSize: "18px",
+  fontWeight: "700",
+  margin: "0",
+};
+
+const featuresSection = {
+  padding: "30px 0 0 0",
+};
+
+const featuresHeading = {
+  color: "#ffffff",
+  fontSize: "24px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 15px 0",
   textAlign: "center" as const,
-  margin: "32px 0",
 };
 
-const button = {
-  backgroundColor: "#22c55e",
-  borderRadius: "8px",
+const featureItem = {
   color: "#ffffff",
   fontSize: "16px",
-  fontWeight: "600",
+  fontWeight: "300",
+  lineHeight: "1.5",
+  margin: "8px 0",
+  paddingLeft: "10px",
+};
+
+const ctaSection = {
+  textAlign: "center" as const,
+  padding: "10px 0",
+};
+
+const ctaButton = {
+  backgroundColor: "#e7c5f8",
+  borderRadius: "60px",
+  color: "#0d0b0e",
+  fontSize: "16px",
+  fontWeight: "400",
+  padding: "5px 20px",
   textDecoration: "none",
-  textAlign: "center" as const,
   display: "inline-block",
-  padding: "14px 32px",
+  lineHeight: "32px",
 };
 
-const hr = {
-  borderColor: "#e6ebf1",
-  margin: "32px 0",
-};
-
-const footer = {
-  fontSize: "14px",
-  color: "#8898aa",
+const getStartedSection = {
+  backgroundColor: "#e7c5f8",
+  borderRadius: "17px",
+  padding: "30px 20px",
+  margin: "15px 0",
   textAlign: "center" as const,
-  margin: "32px 0 0",
 };
 
-const unsubscribe = {
+const getStartedHeading = {
+  color: "#0d0b0e",
+  fontSize: "38px",
+  fontWeight: "700",
+  lineHeight: "1.2",
+  margin: "0 0 15px 0",
+  textAlign: "center" as const,
+};
+
+const getStartedText = {
+  color: "#0d0b0e",
+  fontSize: "16px",
+  fontWeight: "300",
+  lineHeight: "1.5",
+  margin: "0 0 25px 0",
+  textAlign: "center" as const,
+};
+
+const getStartedButton = {
+  backgroundColor: "#0d0b0e",
+  borderRadius: "60px",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "400",
+  padding: "12px 30px",
+  textDecoration: "none",
+  display: "inline-block",
+  lineHeight: "32px",
+};
+
+const footerSection = {
+  backgroundColor: "#ffffff",
+  padding: "20px",
+  textAlign: "center" as const,
+};
+
+const footerText = {
+  color: "#8898aa",
   fontSize: "12px",
-  color: "#8898aa",
-  textAlign: "center" as const,
-  margin: "16px 0 0",
   lineHeight: "1.4",
+  margin: "0",
+  textAlign: "center" as const,
 };
 
 export default PaymentSuccessEmail;
