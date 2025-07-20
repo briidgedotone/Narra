@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 import { db } from "@/lib/database";
+import { sendTemplateEmail } from "@/lib/email";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
@@ -56,9 +57,9 @@ export async function POST(request: NextRequest) {
           try {
             const periodStart = (subscription as any).current_period_start;
             const periodEnd = (subscription as any).current_period_end;
-            const cancelAtPeriodEnd = (subscription as any)
-              .cancel_at_period_end;
+            const cancelAtPeriodEnd = (subscription as any).cancel_at_period_end;
 
+            console.log("Raw subscription object:", subscription);
             console.log("Subscription data:", {
               id: subscription.id,
               customer: subscription.customer,
@@ -111,6 +112,21 @@ export async function POST(request: NextRequest) {
             });
 
             console.log("Subscription record created successfully");
+
+            // Send payment confirmation email
+            try {
+              const user = await db.getUserById(userId);
+              if (user?.email) {
+                await sendTemplateEmail('payment-success', {
+                  userEmail: user.email,
+                  planName: planId || 'Pro Plan',
+                  billingPeriod: (billingPeriod as 'monthly' | 'yearly') || 'monthly'
+                });
+                console.log("Payment confirmation email sent to:", user.email);
+              }
+            } catch (emailError) {
+              console.error("Failed to send payment confirmation email:", emailError);
+            }
           } catch (error) {
             console.error("Error creating subscription record:", error);
             console.error("Subscription object:", subscription);
@@ -139,8 +155,7 @@ export async function POST(request: NextRequest) {
             current_period_end: new Date(
               (stripeSubscription as any).current_period_end * 1000
             ).toISOString(),
-            cancel_at_period_end: (stripeSubscription as any)
-              .cancel_at_period_end,
+            cancel_at_period_end: (stripeSubscription as any).cancel_at_period_end,
           });
         } catch (error) {
           console.error("Error updating subscription:", error);
@@ -170,8 +185,52 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        // Handle failed payment
-        console.log("Payment failed:", event.id);
+        const invoice = event.data.object as Stripe.Invoice;
+        console.log("Payment failed for invoice:", invoice.id);
+        
+        // Update subscription status if we can find it
+        const subscriptionId = (invoice as any).subscription;
+        if (subscriptionId) {
+          try {
+            // Get the subscription to find the user
+            const subscription = await stripe.subscriptions.retrieve(
+              subscriptionId as string
+            );
+            
+            // Update subscription status in database
+            await db.updateSubscription(subscription.id, {
+              status: "past_due",
+            });
+            
+            // Find user by customer ID and update their status
+            const { data: subscriptionRecord } = await db.getSubscriptionByStripeId(
+              subscription.id
+            );
+            
+            if (subscriptionRecord?.user_id) {
+              await db.updateUser(subscriptionRecord.user_id, {
+                subscription_status: "past_due",
+              });
+              
+              console.log(`Updated user ${subscriptionRecord.user_id} status to past_due`);
+
+              // Send payment failed email
+              try {
+                const user = await db.getUserById(subscriptionRecord.user_id);
+                if (user?.email) {
+                  await sendTemplateEmail('payment-failed', {
+                    userEmail: user.email,
+                    planName: subscriptionRecord.plan_id || 'Pro Plan'
+                  });
+                }
+              } catch (emailError) {
+                console.error("Failed to send payment failed email:", emailError);
+              }
+            }
+          } catch (error) {
+            console.error("Error handling payment failure:", error);
+          }
+        }
         break;
       }
 

@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
+import { sendTemplateEmail } from "@/lib/email";
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -78,6 +80,13 @@ export async function POST(req: Request) {
     if (error) {
       console.error("Error upserting user:", error);
       return new Response("Error creating user", { status: 500 });
+    }
+
+    // Send welcome email for new users only
+    if (eventType === "user.created") {
+      await sendTemplateEmail('welcome', {
+        userEmail: email,
+      });
     }
   }
 
