@@ -7,6 +7,61 @@ import { SearchList } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SavedPost } from "@/types/board";
 
+interface PostItemProps {
+  post: SavedPost;
+  onPostClick: (post: SavedPost) => void;
+  onSavePost: (post: SavedPost) => void;
+  onRemovePost?: (post: SavedPost) => void;
+}
+
+/**
+ * Memoized PostItem component to prevent unnecessary re-renders
+ */
+const PostItem = React.memo<PostItemProps>(function PostItem({
+  post,
+  onPostClick,
+  onSavePost,
+  onRemovePost,
+}) {
+  const handleDetailsClick = useCallback(() => {
+    onPostClick(post);
+  }, [post, onPostClick]);
+
+  const handleSaveClick = useCallback(() => {
+    onSavePost(post);
+  }, [post, onSavePost]);
+
+  const handleRemoveClick = useCallback(() => {
+    onRemovePost?.(post);
+  }, [post, onRemovePost]);
+
+  return (
+    <div className="mb-4 flex justify-center">
+      {post.platform === "instagram" ? (
+        <InstagramEmbed
+          url={post.originalUrl || post.embedUrl}
+          caption={post.caption}
+          metrics={post.metrics}
+          showMetrics={true}
+          onDetailsClick={handleDetailsClick}
+          onSaveClick={handleSaveClick}
+          onRemoveClick={onRemovePost ? handleRemoveClick : undefined}
+        />
+      ) : (
+        <TikTokEmbed
+          url={post.originalUrl || post.embedUrl}
+          caption={post.caption}
+          metrics={post.metrics}
+          showMetrics={true}
+          onDetailsClick={handleDetailsClick}
+          onSaveClick={handleSaveClick}
+          onRemoveClick={onRemovePost ? handleRemoveClick : undefined}
+        />
+      )}
+    </div>
+  );
+});
+
 interface PostGridProps {
   /** Array of posts to display */
   posts: SavedPost[];
@@ -136,41 +191,37 @@ export const PostGrid = React.memo<PostGridProps>(function PostGrid({
   }, [activeFilter]);
 
   /**
+   * Stable callback references to prevent unnecessary re-renders
+   */
+  const handlePostClick = useCallback((post: SavedPost) => {
+    onPostClick?.(post);
+  }, [onPostClick]);
+
+  const handleSaveClick = useCallback((post: SavedPost) => {
+    onSavePost?.(post);
+  }, [onSavePost]);
+
+  const handleRemoveClick = useCallback((post: SavedPost) => {
+    onRemovePost?.(post);
+  }, [onRemovePost]);
+
+  // Only pass handleRemoveClick to PostItem if onRemovePost is defined
+  const conditionalHandleRemoveClick = onRemovePost ? handleRemoveClick : undefined;
+
+  /**
    * Memoized post items with stable callback references
    */
   const postItems = React.useMemo(() => {
-    return filteredPosts.map(post => {
-      const handleDetailsClick = () => onPostClick?.(post);
-      const handleSaveClick = () => onSavePost?.(post);
-      const handleRemoveClick = () => onRemovePost?.(post);
-
-      return (
-        <div key={post.id} className="mb-4 flex justify-center">
-          {post.platform === "instagram" ? (
-            <InstagramEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={handleDetailsClick}
-              onSaveClick={handleSaveClick}
-              onRemoveClick={handleRemoveClick}
-            />
-          ) : (
-            <TikTokEmbed
-              url={post.originalUrl || post.embedUrl}
-              caption={post.caption}
-              metrics={post.metrics}
-              showMetrics={true}
-              onDetailsClick={handleDetailsClick}
-              onSaveClick={handleSaveClick}
-              onRemoveClick={handleRemoveClick}
-            />
-          )}
-        </div>
-      );
-    });
-  }, [filteredPosts, onPostClick, onSavePost, onRemovePost]);
+    return filteredPosts.map(post => (
+      <PostItem
+        key={post.id}
+        post={post}
+        onPostClick={handlePostClick}
+        onSavePost={handleSaveClick}
+        onRemovePost={conditionalHandleRemoveClick}
+      />
+    ));
+  }, [filteredPosts, handlePostClick, handleSaveClick, conditionalHandleRemoveClick]);
 
   // Loading state
   if (isLoading) {

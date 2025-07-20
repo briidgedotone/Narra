@@ -231,6 +231,17 @@ export async function getFeaturedBoards() {
   }
 }
 
+export async function isBoardFeatured(boardId: string) {
+  try {
+    const featuredBoards = await db.getFeaturedBoards();
+    const isFeatured = featuredBoards?.some(featured => featured.board_id === boardId) || false;
+    return { success: true, data: isFeatured };
+  } catch (error) {
+    console.error("Failed to check if board is featured:", error);
+    return { success: false, error: "Failed to check featured status" };
+  }
+}
+
 export async function setFeaturedBoard(
   boardId: string,
   displayOrder: number,

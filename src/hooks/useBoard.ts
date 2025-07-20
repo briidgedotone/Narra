@@ -56,7 +56,20 @@ export function useBoard(boardId: string, isSharedView = false) {
         const newPosts = result.data as unknown as SavedPost[];
         
         if (append) {
-          setPosts(prev => [...prev, ...newPosts]);
+          // Only update if we actually have new posts to avoid unnecessary re-renders
+          if (newPosts.length > 0) {
+            setPosts(prev => {
+              // Create a new array only when we have new posts to add
+              const existingIds = new Set(prev.map(p => p.id));
+              const uniqueNewPosts = newPosts.filter(post => !existingIds.has(post.id));
+              
+              if (uniqueNewPosts.length > 0) {
+                return [...prev, ...uniqueNewPosts];
+              }
+              // Return the same array reference if no new unique posts
+              return prev;
+            });
+          }
         } else {
           setPosts(newPosts);
         }
