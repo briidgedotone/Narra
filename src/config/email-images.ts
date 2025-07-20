@@ -6,8 +6,8 @@ export const EMAIL_IMAGES = {
   HERO: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/hero.png',
   DISCOVER: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/discover.png',
   ORGANIZE: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/organize.png',
-  SHARE: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/share.png',
-  REFERRAL: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/referral.png'
+  SHARE: 'https://cvkqgduefcvkeagfvvgr.supabase.co/storage/v1/object/public/email-assets/share.png'
+  // REFERRAL: Removed - not using referral functionality
 } as const;
 
 // Text logo configuration for email compatibility

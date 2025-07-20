@@ -130,29 +130,18 @@ export const WelcomeEmail = ({
             </Section>
           </Section>
 
-          {/* Referral Section */}
-          <Section style={referralSection}>
-            <Row>
-              <Column style={referralTextColumn}>
-                <Text style={referralHeading}>Start Sharing, Start Earning</Text>
-                <Text style={referralText}>
-                  Love <strong>Narra</strong>? Don't keep it to yourself.<br />
-                  Refer your friends, teammates, or fellow pros—and enjoy exclusive rewards every time they join.
-                </Text>
-                <Button style={referralButton} href={`${baseUrl}/referral`}>
-                  Start Referring Now
-                </Button>
-              </Column>
-              <Column style={referralImageColumn}>
-                <Img
-                  src={EMAIL_IMAGES.REFERRAL}
-                  width="255"
-                  height="auto"
-                  alt="Start Earning"
-                  style={referralImg}
-                />
-              </Column>
-            </Row>
+          {/* Get Started Section */}
+          <Section style={getStartedSection}>
+            <Text style={getStartedHeading}>Ready to Get Started?</Text>
+            <Text style={getStartedText}>
+              Jump into <strong>Narra</strong> and start discovering amazing content today.<br />
+              Follow your favorite creators, save inspiring posts, and build your content library.
+            </Text>
+            <Section style={ctaSection}>
+              <Button style={getStartedButton} href={`${baseUrl}/discovery`}>
+                Explore Content Now
+              </Button>
+            </Section>
           </Section>
 
           {/* Footer */}
@@ -295,59 +284,42 @@ const ctaButton = {
   lineHeight: "32px",
 };
 
-const referralSection = {
+const getStartedSection = {
   backgroundColor: "#e7c5f8",
   borderRadius: "17px",
-  padding: "10px",
+  padding: "30px 20px",
   margin: "15px 0",
-};
-
-const referralTextColumn = {
-  width: "58.33%",
-  verticalAlign: "middle" as const,
-  padding: "10px",
-};
-
-const referralImageColumn = {
-  width: "41.67%",
-  verticalAlign: "middle" as const,
-  padding: "10px",
   textAlign: "center" as const,
 };
 
-const referralHeading = {
+const getStartedHeading = {
   color: "#0d0b0e",
   fontSize: "38px",
   fontWeight: "700",
   lineHeight: "1.2",
-  margin: "0 0 10px 0",
+  margin: "0 0 15px 0",
+  textAlign: "center" as const,
 };
 
-const referralText = {
+const getStartedText = {
   color: "#0d0b0e",
   fontSize: "16px",
   fontWeight: "300",
   lineHeight: "1.5",
-  margin: "0 0 10px 0",
+  margin: "0 0 25px 0",
+  textAlign: "center" as const,
 };
 
-const referralButton = {
+const getStartedButton = {
   backgroundColor: "#0d0b0e",
   borderRadius: "60px",
   color: "#ffffff",
   fontSize: "16px",
   fontWeight: "400",
-  padding: "5px 20px",
+  padding: "12px 30px",
   textDecoration: "none",
   display: "inline-block",
   lineHeight: "32px",
-};
-
-const referralImg = {
-  display: "block",
-  margin: "0 auto",
-  maxWidth: "255px",
-  width: "100%",
 };
 
 const footerSection = {
