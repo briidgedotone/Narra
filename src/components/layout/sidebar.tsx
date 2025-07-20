@@ -427,7 +427,7 @@ export function Sidebar() {
                   <div className="group w-full flex items-center px-2 py-1.5 rounded-md text-sm font-medium hover:bg-[var(--sidebar-hover-bg)] transition-colors">
                     <div
                       onClick={() => toggleFolder(folder.id)}
-                      className="flex items-center flex-1 text-left cursor-pointer"
+                      className="flex items-center flex-1 min-w-0 text-left cursor-pointer"
                     >
                       {isExpanded ? (
                         <FolderOpen className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -500,7 +500,7 @@ export function Sidebar() {
                           >
                             <Link
                               href={`/boards/${board.id}`}
-                              className="flex items-center flex-1"
+                              className="flex items-center flex-1 min-w-0"
                               onMouseEnter={() => preloadRoute("/boards")}
                             >
                               <Clipboard className="mr-2 h-5 w-5 flex-shrink-0 opacity-60" />
