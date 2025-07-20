@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
 import { sendTemplateEmail } from "@/lib/email";
+import { invalidateUserCache } from "@/lib/auth/cache";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
     // Check if user already exists
     const { data: existingUser } = await supabase
       .from("users")
-      .select("subscription_status")
+      .select("subscription_status, role")
       .eq("id", id)
       .single();
 
@@ -76,16 +77,16 @@ export async function POST(req: Request) {
     const userData: any = {
       id: id,
       email: email,
-      role: "user",
+      role: existingUser?.role || "user", // Preserve existing role or default to user
       updated_at: new Date().toISOString(),
     };
 
     // Only set subscription_status for new users
     if (!existingUser) {
       userData.subscription_status = "inactive";
-      console.log(`[Clerk Webhook] Creating new user ${id} with inactive status`);
+      console.log(`[Clerk Webhook] Creating new user ${id} with role: ${userData.role}, status: ${userData.subscription_status}`);
     } else {
-      console.log(`[Clerk Webhook] Updating existing user ${id}, preserving subscription status: ${existingUser.subscription_status}`);
+      console.log(`[Clerk Webhook] Updating existing user ${id}, preserving role: ${existingUser.role} -> ${userData.role}, status: ${existingUser.subscription_status}`);
     }
 
     // Upsert user in Supabase
@@ -98,6 +99,9 @@ export async function POST(req: Request) {
       console.error("Error upserting user:", error);
       return new Response("Error creating user", { status: 500 });
     }
+
+    // Clear cache to ensure middleware picks up any role changes immediately
+    invalidateUserCache(id, "Clerk webhook");
 
     // Send welcome email for new users only
     if (eventType === "user.created") {

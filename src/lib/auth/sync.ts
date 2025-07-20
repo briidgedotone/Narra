@@ -2,6 +2,7 @@ import { User } from "@clerk/nextjs/server";
 
 import { db } from "@/lib/database";
 import type { Database } from "@/types/database";
+import { invalidateUserCache } from "@/lib/auth/cache";
 
 /**
  * Sync a Clerk user to our database
@@ -24,19 +25,23 @@ export async function syncUserToDatabase(
     const userData: Database["public"]["Tables"]["users"]["Insert"] = {
       id: clerkUser.id,
       email: clerkUser.primaryEmailAddress?.emailAddress || "",
-      role: "user", // Default role
+      role: existingUser?.role || "user", // Preserve existing role or default to user
       subscription_status: existingUser?.subscription_status || "inactive", // Preserve existing status or default to inactive
     };
 
     // Log the action
     if (!existingUser) {
-      console.log(`[Auth Sync] Creating new user ${clerkUser.id} with inactive status`);
+      console.log(`[Auth Sync] Creating new user ${clerkUser.id} with role: ${userData.role}, status: ${userData.subscription_status}`);
     } else {
-      console.log(`[Auth Sync] Syncing existing user ${clerkUser.id}, preserving subscription status: ${existingUser.subscription_status}`);
+      console.log(`[Auth Sync] Syncing existing user ${clerkUser.id}, preserving role: ${existingUser.role} -> ${userData.role}, status: ${existingUser.subscription_status} -> ${userData.subscription_status}`);
     }
 
     // Use upsert to handle both create and update cases
     const user = await db.upsertUser(userData);
+    
+    // Clear cache to ensure middleware picks up any role changes immediately
+    invalidateUserCache(clerkUser.id, "user sync");
+    
     return user;
   } catch (error) {
     console.error("Error syncing user to database:", error);
