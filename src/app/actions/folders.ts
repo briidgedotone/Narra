@@ -170,7 +170,26 @@ export async function getBoardById(boardId: string) {
 }
 
 export async function enableBoardSharing(boardId: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   try {
+    // First verify the board exists and user owns it
+    const board = await db.getBoardById(boardId);
+    if (!board) {
+      return { success: false, error: "Board not found" };
+    }
+
+    // Get the folder to check user ownership
+    const folder = await db.getFolderById(board.folder_id);
+    if (!folder || folder.user_id !== userId) {
+      return { success: false, error: "Unauthorized to share this board" };
+    }
+
+    // Enable sharing
     const result = await db.enableBoardSharing(boardId);
     return { success: true, data: result };
   } catch (error) {
