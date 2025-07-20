@@ -1,11 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/basic-data-table";
+import { getAdminUsers } from "@/app/actions/admin-users";
 
 type User = {
   id: string;
-  name: string;
   email: string;
   role: "user" | "admin";
   joinedAt: string;
@@ -13,61 +14,35 @@ type User = {
   boardsCount: number;
 };
 
-const mockUsers: User[] = [
-  {
-    id: "1",
-    name: "Olivia Martin",
-    email: "olivia@example.com",
-    role: "user",
-    joinedAt: "2024-01-15",
-    postsCount: 156,
-    boardsCount: 12,
-  },
-  {
-    id: "2",
-    name: "Jackson Lee",
-    email: "jackson@example.com",
-    role: "admin",
-    joinedAt: "2023-12-01",
-    postsCount: 432,
-    boardsCount: 28,
-  },
-  {
-    id: "3",
-    name: "Isabella Nguyen",
-    email: "isabella@example.com",
-    role: "user",
-    joinedAt: "2024-02-10",
-    postsCount: 89,
-    boardsCount: 5,
-  },
-  {
-    id: "4",
-    name: "William Kim",
-    email: "william@example.com",
-    role: "user",
-    joinedAt: "2024-01-20",
-    postsCount: 267,
-    boardsCount: 15,
-  },
-  {
-    id: "5",
-    name: "Sofia Davis",
-    email: "sofia@example.com",
-    role: "user",
-    joinedAt: "2023-11-15",
-    postsCount: 543,
-    boardsCount: 31,
-  },
-];
-
 export function UsersTab() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await getAdminUsers();
+      
+      if (result.success) {
+        setUsers(result.users);
+      } else {
+        setError(result.error || "Failed to load users");
+        console.error("Failed to load users:", result.error);
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+      console.error("Error loading users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const columns = [
-    {
-      key: "name" as const,
-      header: "Name",
-      sortable: true,
-    },
     {
       key: "email" as const,
       header: "Email",
@@ -77,7 +52,11 @@ export function UsersTab() {
       key: "role" as const,
       header: "Role",
       sortable: true,
-      render: (value: string) => <Badge variant="outline">{value}</Badge>,
+      render: (value: string) => (
+        <Badge variant={value === "admin" ? "default" : "outline"}>
+          {value}
+        </Badge>
+      ),
     },
     {
       key: "postsCount" as const,
@@ -110,6 +89,45 @@ export function UsersTab() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div>
+        <h2 className="text-lg font-medium">Users</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Manage and monitor user accounts across the platform.
+        </p>
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-blue-500 mx-auto mb-2"></div>
+            <p className="text-sm text-muted-foreground">Loading users...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <h2 className="text-lg font-medium">Users</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Manage and monitor user accounts across the platform.
+        </p>
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <p className="text-sm text-red-600 mb-2">Error loading users: {error}</p>
+            <button
+              onClick={loadUsers}
+              className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2 className="text-lg font-medium">Users</h2>
@@ -117,7 +135,7 @@ export function UsersTab() {
         Manage and monitor user accounts across the platform.
       </p>
       <DataTable
-        data={mockUsers}
+        data={users}
         columns={columns}
         searchable
         itemsPerPage={10}

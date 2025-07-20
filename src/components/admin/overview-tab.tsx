@@ -7,53 +7,8 @@ import {
   getAdminBoards,
   setFeaturedBoard,
 } from "@/app/actions/folders";
+import { getAdminStats } from "@/app/actions/admin-stats";
 import { PlusCircle } from "@/components/ui/icons";
-import { supabase } from "@/lib/supabase";
-
-// Function to fetch real admin stats
-async function getAdminStats() {
-  try {
-    // Get total users count
-    const { count: totalUsers } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true });
-
-    // Get new users this month
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
-
-    const { count: newUsersThisMonth } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .gte("created_at", startOfMonth.toISOString());
-
-    // Get total boards count (collections)
-    const { count: totalCollections } = await supabase
-      .from("boards")
-      .select("*", { count: "exact", head: true });
-
-    // Get total posts count
-    const { count: totalPosts } = await supabase
-      .from("posts")
-      .select("*", { count: "exact", head: true });
-
-    return {
-      totalUsers: totalUsers || 0,
-      newUsersThisMonth: newUsersThisMonth || 0,
-      totalCollections: totalCollections || 0,
-      totalPosts: totalPosts || 0,
-    };
-  } catch (error) {
-    console.error("Error fetching admin stats:", error);
-    return {
-      totalUsers: 0,
-      newUsersThisMonth: 0,
-      totalCollections: 0,
-      totalPosts: 0,
-    };
-  }
-}
 
 interface Board {
   id: string;
@@ -120,8 +75,18 @@ export function OverviewTab() {
   }, [openDropdown]);
 
   const loadStats = async () => {
-    const adminStats = await getAdminStats();
-    setStats(adminStats);
+    try {
+      const result = await getAdminStats();
+      if (result.success) {
+        setStats(result.stats);
+      } else {
+        console.error("Failed to load admin stats:", result.error);
+        // Keep default stats if failed
+      }
+    } catch (error) {
+      console.error("Error loading admin stats:", error);
+      // Keep default stats if error
+    }
   };
 
   const loadFeaturedBoards = async () => {

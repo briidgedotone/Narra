@@ -56,6 +56,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (cachedData) {
     // Use cached data
     isAdmin = cachedData.isAdmin;
+    console.log(`[Middleware] Using cached admin status for ${userId}: ${isAdmin}`);
   } else {
     // Cache miss - query database
     const supabase = createClient(
@@ -81,15 +82,19 @@ export default clerkMiddleware(async (auth, req) => {
     } else {
       // User found - cache the result
       isAdmin = user?.role === "admin";
+      console.log(`[Middleware] Database query result for ${userId}: role=${user?.role}, isAdmin=${isAdmin}`);
       setCachedUserData(userId, null, isAdmin);
     }
   }
 
   // Additional admin route protection
   if (isAdminRoute(req)) {
+    console.log(`[Middleware] Admin route accessed by ${userId}, isAdmin: ${isAdmin}`);
     if (!isAdmin) {
+      console.log(`[Middleware] Access denied for ${userId}, redirecting to dashboard`);
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
+    console.log(`[Middleware] Admin access granted for ${userId}`);
   }
 
   // Allow the request to continue

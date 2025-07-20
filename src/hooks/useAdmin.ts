@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 
-import { isUserAdmin } from "@/lib/auth/admin";
+import { checkCurrentUserAdmin } from "@/app/actions/check-admin";
 
 /**
  * Hook to check if current user is admin
@@ -23,8 +23,13 @@ export function useAdmin() {
       }
 
       try {
-        const adminStatus = await isUserAdmin(user.id);
-        setIsAdmin(adminStatus);
+        const result = await checkCurrentUserAdmin();
+        if (result.success) {
+          setIsAdmin(result.isAdmin);
+        } else {
+          console.error("Error checking admin status:", result.error);
+          setIsAdmin(false);
+        }
       } catch (error) {
         console.error("Error checking admin status:", error);
         setIsAdmin(false);

@@ -7,10 +7,14 @@ import { db } from "@/lib/database";
  */
 export async function isUserAdmin(userId: string): Promise<boolean> {
   try {
+    console.log(`[isUserAdmin] Checking admin status for user: ${userId}`);
     const user = await db.getUserById(userId);
-    return user.role === "admin";
+    console.log(`[isUserAdmin] Found user: ${JSON.stringify({ id: user.id, email: user.email, role: user.role })}`);
+    const isAdmin = user.role === "admin";
+    console.log(`[isUserAdmin] Admin check result: ${isAdmin}`);
+    return isAdmin;
   } catch (error) {
-    console.error("Error checking admin status:", error);
+    console.error(`[isUserAdmin] Error checking admin status for ${userId}:`, error);
     return false;
   }
 }
