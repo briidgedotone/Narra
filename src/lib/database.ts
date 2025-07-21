@@ -293,6 +293,16 @@ export class DatabaseService {
     return true;
   }
 
+  async getFolderById(folderId: string) {
+    const { data, error } = await this.adminClient
+      .from("folders")
+      .select("*")
+      .eq("id", folderId)
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
   // Boards
   async createBoard(
     boardData: Database["public"]["Tables"]["boards"]["Insert"]
@@ -417,15 +427,37 @@ export class DatabaseService {
   }
 
   async enableBoardSharing(boardId: string) {
+    // First check if board already has a public_id
+    const { data: existingBoard, error: fetchError } = await this.client
+      .from("boards")
+      .select("public_id, is_shared")
+      .eq("id", boardId)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    // If already shared, return existing public_id
+    if (existingBoard?.is_shared && existingBoard?.public_id) {
+      return { public_id: existingBoard.public_id };
+    }
+    
+    // Generate a new public_id if needed
+    const public_id = existingBoard?.public_id || this.generatePublicId();
+    
     const { data, error } = await this.client
       .from("boards")
-      .update({ is_shared: true })
+      .update({ is_shared: true, public_id })
       .eq("id", boardId)
       .select("public_id")
       .single();
-
+    
     if (error) throw error;
     return data;
+  }
+  
+  private generatePublicId(): string {
+    // Generate a unique public ID
+    return `board_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
 
   async deleteBoard(boardId: string) {
