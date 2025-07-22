@@ -1,0 +1,658 @@
+[dotenv@17.2.0] injecting env (24) from .env.local (tip: ⚙️  suppress all logs with { quiet: true })
+🚀 Starting transcript backfill for Best of SaaS Apps collection...
+📋 Mode: FULL COLLECTION
+
+📊 Fetching posts from Best of SaaS Apps board...
+✅ Found 67 posts to process
+⏱️ Estimated runtime: ~4 minutes
+
+
+🔍 Processing post 1/67 (1.5%)
+📌 Post ID: 0ad051a3-95c3-4135-8c8d-cb3fb158554f
+🔗 URL: https://www.tiktok.com/@liftoff_app/photo/7384828141245713669
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40liftoff_app%2Fphoto%2F7384828141245713669&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 2/67 (3.0%)
+📌 Post ID: 1483e0aa-deec-4132-ac36-d2fffe31433c
+🔗 URL: https://www.tiktok.com/@musacycle/video/7470271141622451511
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40musacycle%2Fvideo%2F7470271141622451511&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 3/67 (4.5%)
+📌 Post ID: 16361994-b8d4-48af-9ec8-b854e318f1a6
+🔗 URL: https://www.tiktok.com/@bepresentbros/photo/7438695454541483295
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40bepresentbros%2Fphoto%2F7438695454541483295&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 4/67 (6.0%)
+📌 Post ID: 18a40919-c382-4a9b-a824-4c75a5f16649
+🔗 URL: https://www.tiktok.com/@adaffyxo/video/7486588358605425963
+📱 Platform: tiktok
+ℹ️ Post already has transcript (1783 chars), skipping...
+
+🔍 Processing post 5/67 (7.5%)
+📌 Post ID: 1bff60da-58c3-4b70-9048-e4915864383b
+🔗 URL: https://www.tiktok.com/@chiaraking/video/7047953644108434693
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40chiaraking%2Fvideo%2F7047953644108434693&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 6/67 (9.0%)
+📌 Post ID: 1fd6227a-3a95-48e7-8b0f-9fc7ff5e7397
+🔗 URL: https://www.tiktok.com/@nedatheastrologer/video/7468720532507118894
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nedatheastrologer%2Fvideo%2F7468720532507118894&language=en
+✅ Transcript found (2443 chars)
+📝 Sample: "Here's what you should and should not do during this extremely rare and potent alignment. Today, Feb..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 7/67 (10.4%)
+📌 Post ID: 23c2315c-3c32-4622-98b5-a3bd15d2488e
+🔗 URL: https://www.tiktok.com/@nessa.biblechat/video/7447690758359928095
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nessa.biblechat%2Fvideo%2F7447690758359928095&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 8/67 (11.9%)
+📌 Post ID: 2794cc17-cd05-47f9-9e07-c4193b009f08
+🔗 URL: https://www.tiktok.com/@heillyraices/video/7450578973089778990
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40heillyraices%2Fvideo%2F7450578973089778990&language=en
+✅ Transcript found (870 chars)
+📝 Sample: "I found a way to take over someone's home screen with a widget, but the thing is, they're taking ove..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 9/67 (13.4%)
+📌 Post ID: 2a0c5559-e670-4566-9db8-2107036e396f
+🔗 URL: https://www.tiktok.com/@starr.ila/video/7371243180697619758
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40starr.ila%2Fvideo%2F7371243180697619758&language=en
+✅ Transcript found (4178 chars)
+📝 Sample: "{"utterances":[{"text":"so I have a problem","start_time":120,"end_time":2200,"words":null,"text_siz..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 10/67 (14.9%)
+📌 Post ID: 2ba16b83-1972-4283-a805-78f6002d8cd0
+🔗 URL: https://www.tiktok.com/@dittolists/video/7382306032237677830
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40dittolists%2Fvideo%2F7382306032237677830&language=en
+✅ Transcript found (347 chars)
+📝 Sample: "The question is never will there be a list. It's always how many lists will I be making? What are th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 10/67 (14.9%)
+   ✅ New transcripts added: 4
+   ❌ Failed: 5
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 11/67 (16.4%)
+📌 Post ID: 2ba2484e-bd3a-4308-8dec-3f605aac50b5
+🔗 URL: https://www.tiktok.com/@studyingwithisabella/video/7497673066298772766
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40studyingwithisabella%2Fvideo%2F7497673066298772766&language=en
+✅ Transcript found (257 chars)
+📝 Sample: "diva I see passing your exams diva the lock card coming in strong I see locking in diva we need to u..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 12/67 (17.9%)
+📌 Post ID: 3045c6e1-f4c3-43dd-93d8-81d91c666158
+🔗 URL: https://www.tiktok.com/@mybirdbuddy/video/7504635251554127126
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40mybirdbuddy%2Fvideo%2F7504635251554127126&language=en
+✅ Transcript found (34 chars)
+📝 Sample: "Oh, God, look at it. It's perfect...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 13/67 (19.4%)
+📌 Post ID: 309404e2-2c47-4fc5-adec-de243bc24883
+🔗 URL: https://www.tiktok.com/@flamingo.cards/photo/7345522732827708715
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40flamingo.cards%2Fphoto%2F7345522732827708715&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 14/67 (20.9%)
+📌 Post ID: 34b8b75e-743f-415e-8124-f452468c5f23
+🔗 URL: https://www.tiktok.com/@brainly444/video/7460225413130865953
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40brainly444%2Fvideo%2F7460225413130865953&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 15/67 (22.4%)
+📌 Post ID: 391355ad-71ce-4579-becc-764a00960e07
+🔗 URL: https://www.tiktok.com/@oasis.app/video/7406781978994937131
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40oasis.app%2Fvideo%2F7406781978994937131&language=en
+✅ Transcript found (359 chars)
+📝 Sample: "isn't it kind of bizarre that a water company would call itself Liquid Death when water is literally..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 16/67 (23.9%)
+📌 Post ID: 3bafdeef-cbdb-40a9-96bc-06594e3185d4
+🔗 URL: https://www.tiktok.com/@oasis.app/video/7344458023001230622
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40oasis.app%2Fvideo%2F7344458023001230622&language=en
+✅ Transcript found (387 chars)
+📝 Sample: "This is what it looks like when you start to prioritize your health and stop filling your fridge wit..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 17/67 (25.4%)
+📌 Post ID: 3c830c21-8b2a-4c42-bcff-bc9da0558b7e
+🔗 URL: https://www.tiktok.com/@flamingo.cards/photo/7241425465481776427
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40flamingo.cards%2Fphoto%2F7241425465481776427&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 18/67 (26.9%)
+📌 Post ID: 42076f9f-d956-4c14-bb52-192080b9ab20
+🔗 URL: https://www.tiktok.com/@reverserizzler/photo/7392393343268883717
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40reverserizzler%2Fphoto%2F7392393343268883717&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 19/67 (28.4%)
+📌 Post ID: 4262d0b7-37af-4b67-bfd3-96054ced5e9e
+🔗 URL: https://www.tiktok.com/@innertune.affirmations/video/7492130358981397782
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40innertune.affirmations%2Fvideo%2F7492130358981397782&language=en
+✅ Transcript found (1169 chars)
+📝 Sample: "What if the mental health crisis exists because we followed the wrong guy? In modern psychology, the..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 20/67 (29.9%)
+📌 Post ID: 46cb624b-1cb0-468e-acc9-44f6161024dd
+🔗 URL: https://www.tiktok.com/@bepresentbros/photo/7421558001049406750
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40bepresentbros%2Fphoto%2F7421558001049406750&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 20/67 (29.9%)
+   ✅ New transcripts added: 9
+   ❌ Failed: 10
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 21/67 (31.3%)
+📌 Post ID: 4706410c-004b-45e6-aa0b-051faa055d38
+🔗 URL: https://www.tiktok.com/@dittolists/video/7375234506925608197
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40dittolists%2Fvideo%2F7375234506925608197&language=en
+✅ Transcript found (2623 chars)
+📝 Sample: "it recently occurred to me that apparently guys don't know what to do for their girlfriend's birthda..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 22/67 (32.8%)
+📌 Post ID: 4bce2e80-dd59-4eea-8535-8a0cca2063ce
+🔗 URL: https://www.tiktok.com/@flamingo.cards/photo/7254250109674868011
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40flamingo.cards%2Fphoto%2F7254250109674868011&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 23/67 (34.3%)
+📌 Post ID: 529196ff-bea9-4082-a97d-a60624c96453
+🔗 URL: https://www.tiktok.com/@locketcamera/video/7047999951283997998
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40locketcamera%2Fvideo%2F7047999951283997998&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 24/67 (35.8%)
+📌 Post ID: 549a859c-ee84-411a-a4f7-09594fc6e71e
+🔗 URL: https://www.tiktok.com/@manifest.copia/video/7479213219320483114
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40manifest.copia%2Fvideo%2F7479213219320483114&language=en
+✅ Transcript found (603 chars)
+📝 Sample: "ugh I don't know who needs to hear this right now but if you are seeing this stop it is a sign that ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 25/67 (37.3%)
+📌 Post ID: 6083b01c-4e33-4038-9788-ab14040d0629
+🔗 URL: https://www.tiktok.com/@liftoff_app/photo/7315584552959790341
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40liftoff_app%2Fphoto%2F7315584552959790341&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 26/67 (38.8%)
+📌 Post ID: 62023a8d-d8ec-4a9b-b0e5-70025c91d11f
+🔗 URL: https://www.tiktok.com/@manifest.copia/photo/7426932571981827359
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40manifest.copia%2Fphoto%2F7426932571981827359&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 27/67 (40.3%)
+📌 Post ID: 65cbc884-72c7-4245-bf28-88a623843697
+🔗 URL: https://www.tiktok.com/@innertune.affirmations/video/7498432882457840918
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40innertune.affirmations%2Fvideo%2F7498432882457840918&language=en
+✅ Transcript found (836 chars)
+📝 Sample: "Your lips are actually a magnet. Every word you speak pulls energy into your life. Every time you sp..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 28/67 (41.8%)
+📌 Post ID: 6c17817f-1860-462e-87ef-c377defa88fd
+🔗 URL: https://www.tiktok.com/@nedatheastrologer/video/7494653720391699758
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nedatheastrologer%2Fvideo%2F7494653720391699758&language=en
+✅ Transcript found (4833 chars)
+📝 Sample: "2025 is the most abundant and lucky year for literally everyone. And I know you haven't been seeing ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 29/67 (43.3%)
+📌 Post ID: 6e56a7cc-e2db-411c-9983-b2b8389d0fc7
+🔗 URL: https://www.tiktok.com/@nutritionbros_/photo/7458853443835301126
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nutritionbros_%2Fphoto%2F7458853443835301126&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 30/67 (44.8%)
+📌 Post ID: 6fa992c4-cc3a-487d-82ba-47412a9d3afc
+🔗 URL: https://www.tiktok.com/@locketcamera/photo/7433504734645931307
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40locketcamera%2Fphoto%2F7433504734645931307&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 30/67 (44.8%)
+   ✅ New transcripts added: 13
+   ❌ Failed: 16
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 31/67 (46.3%)
+📌 Post ID: 731e0d46-bfbe-4c7d-b2c1-4dcd81b2668f
+🔗 URL: https://www.tiktok.com/@nedatheastrologer/video/7450872841521728814
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nedatheastrologer%2Fvideo%2F7450872841521728814&language=en
+✅ Transcript found (4964 chars)
+📝 Sample: "There is an insane amount of powerful astrology happening in the first half of 2025. When I say powe..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 32/67 (47.8%)
+📌 Post ID: 74405db6-b37f-4f39-a9d3-8300ce861043
+🔗 URL: https://www.tiktok.com/@dittolists/video/7377821834680503558
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40dittolists%2Fvideo%2F7377821834680503558&language=en
+✅ Transcript found (743 chars)
+📝 Sample: "This is day 1 of trying to get our app to blow up so our co founder doesn't kill us. Just got microp..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 33/67 (49.3%)
+📌 Post ID: 767f4a28-6482-47b0-91d9-8a024734985f
+🔗 URL: https://www.tiktok.com/@bepresentbros/photo/7432430177017203999
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40bepresentbros%2Fphoto%2F7432430177017203999&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 34/67 (50.7%)
+📌 Post ID: 895da6dc-d842-408b-8c8f-5fde9cfe7649
+🔗 URL: https://www.tiktok.com/@adaffyxo/video/7479233737830468906
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40adaffyxo%2Fvideo%2F7479233737830468906&language=en
+✅ Transcript found (3783 chars)
+📝 Sample: "I am 27 years old, no babies, drowning in credit card debt, including for student loans, for a degre..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 35/67 (52.2%)
+📌 Post ID: 8ab2caa1-dd1c-4d15-a0e2-a66af76feee1
+🔗 URL: https://www.tiktok.com/@samsulekdailyrank/video/7457938066519493893
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40samsulekdailyrank%2Fvideo%2F7457938066519493893&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 36/67 (53.7%)
+📌 Post ID: 96a7d9d5-f3d9-4e60-9542-a0d0418f10e6
+🔗 URL: https://www.tiktok.com/@just_eliias/video/7439542825609366802
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40just_eliias%2Fvideo%2F7439542825609366802&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 37/67 (55.2%)
+📌 Post ID: 9f77ec4f-2f0c-4a76-b7cc-30f379bd6ad5
+🔗 URL: https://www.tiktok.com/@musadragon/video/7480641875628592430
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40musadragon%2Fvideo%2F7480641875628592430&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 38/67 (56.7%)
+📌 Post ID: 9fe0d09d-e2c6-4a4e-bc05-19c319e10d43
+🔗 URL: https://www.tiktok.com/@studywlieu/video/7498844118194343173
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40studywlieu%2Fvideo%2F7498844118194343173&language=en
+✅ Transcript found (358 chars)
+📝 Sample: "If you skip this video, you're failing your finals. I see you passing your finals. Diva. Let's lock ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 39/67 (58.2%)
+📌 Post ID: a9dc1af8-7ec4-420c-af9e-ebda0078aceb
+🔗 URL: https://www.tiktok.com/@thatspecialwedding/video/7435786005313047850
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40thatspecialwedding%2Fvideo%2F7435786005313047850&language=en
+✅ Transcript found (396 chars)
+📝 Sample: "My sister spent over 50,000 on her wedding, but this one cheap wedding idea stood out the most. As h..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 40/67 (59.7%)
+📌 Post ID: ab00da15-e25b-468d-8ac7-0acc99266669
+🔗 URL: https://www.tiktok.com/@ericacorreaaa/video/7491375284642401582
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40ericacorreaaa%2Fvideo%2F7491375284642401582&language=en
+✅ Transcript found (103 chars)
+📝 Sample: "Nevertheless, as if they knew how much they would need each other, Milo and notice became best frien..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 40/67 (59.7%)
+   ✅ New transcripts added: 19
+   ❌ Failed: 20
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 41/67 (61.2%)
+📌 Post ID: ada7aa37-b489-4b7d-8642-eecc2ba6cdf4
+🔗 URL: https://www.tiktok.com/@getbrainly/video/7466828441933925637
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40getbrainly%2Fvideo%2F7466828441933925637&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 42/67 (62.7%)
+📌 Post ID: b0a37c2d-827b-48bf-99b0-03fb0272a9c2
+🔗 URL: https://www.tiktok.com/@studywlieu/video/7493674660744154374
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40studywlieu%2Fvideo%2F7493674660744154374&language=en
+✅ Transcript found (925 chars)
+📝 Sample: "why is it that the laziest people always do the best in school my best friend she never studies I've..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 43/67 (64.2%)
+📌 Post ID: b29844a2-52b0-4974-97af-5a6e5765e5ed
+🔗 URL: https://www.tiktok.com/@fatherdooki/photo/7265001624890953006
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40fatherdooki%2Fphoto%2F7265001624890953006&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 44/67 (65.7%)
+📌 Post ID: b2b781cc-b32b-4e6b-b7b9-72bb40798c42
+🔗 URL: https://www.tiktok.com/@liftoff_app/photo/7384896121098767622
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40liftoff_app%2Fphoto%2F7384896121098767622&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 45/67 (67.2%)
+📌 Post ID: b429e092-5e25-41b0-bac2-a030e6ff5ba5
+🔗 URL: https://www.tiktok.com/@lingolooper/video/7486459794740579606
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40lingolooper%2Fvideo%2F7486459794740579606&language=en
+✅ Transcript found (87 chars)
+📝 Sample: "Hi, how are you? It's going great thanks! And you, what is your first name? I am Sacha...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 46/67 (68.7%)
+📌 Post ID: bb8cd03b-8f82-47e2-a8aa-8802e06d402c
+🔗 URL: https://www.tiktok.com/@kingrizzleroffici/photo/7470396532760562974
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40kingrizzleroffici%2Fphoto%2F7470396532760562974&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 47/67 (70.1%)
+📌 Post ID: bcca36bb-01a9-413c-a8a1-67b5d58f5d19
+🔗 URL: https://www.tiktok.com/@oasis.app/video/7398674160718794030
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40oasis.app%2Fvideo%2F7398674160718794030&language=en
+✅ Transcript found (1070 chars)
+📝 Sample: "To everyone that drinks Walmart water out there, it might not be as clean as you think. Turns out th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 48/67 (71.6%)
+📌 Post ID: c59a2f41-7dee-4f80-a9da-e4130c7a7135
+🔗 URL: https://www.tiktok.com/@tohaveandtohold24/video/7429694326566833439
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40tohaveandtohold24%2Fvideo%2F7429694326566833439&language=en
+✅ Transcript found (2034 chars)
+📝 Sample: "{"utterances":[{"text":"I went to a wedding that still has people talking about it nine months later..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 49/67 (73.1%)
+📌 Post ID: c8f89a2d-6110-4663-923c-b1c036818acb
+🔗 URL: https://www.tiktok.com/@nedatheastrologer/video/7495795818591489310
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nedatheastrologer%2Fvideo%2F7495795818591489310&language=en
+✅ Transcript found (5218 chars)
+📝 Sample: "The next six weeks are going to be a time that you never forget. It will be the best month and a hal..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 50/67 (74.6%)
+📌 Post ID: cd0a6959-f220-43a9-9d1a-90fdbed54783
+🔗 URL: https://www.tiktok.com/@weddinghubs/video/7306602237302754593
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40weddinghubs%2Fvideo%2F7306602237302754593&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 50/67 (74.6%)
+   ✅ New transcripts added: 24
+   ❌ Failed: 25
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 51/67 (76.1%)
+📌 Post ID: cec1220a-7f17-4ab8-93ed-2e20ff39c35f
+🔗 URL: https://www.tiktok.com/@getpandaextract/video/7497181889485098247
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40getpandaextract%2Fvideo%2F7497181889485098247&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 52/67 (77.6%)
+📌 Post ID: cf523726-668f-419f-b14d-74c41794867a
+🔗 URL: https://www.tiktok.com/@supplesense/photo/7462718298963168534
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40supplesense%2Fphoto%2F7462718298963168534&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 53/67 (79.1%)
+📌 Post ID: d5705132-5ef5-49a5-8c42-e066541af867
+🔗 URL: https://www.tiktok.com/@mybirdbuddy/video/7494967990027390230
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40mybirdbuddy%2Fvideo%2F7494967990027390230&language=en
+✅ Transcript found (164 chars)
+📝 Sample: "If you ever feeling sads, just be happy. Sends this to someone's to make them happy. And if they don..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 54/67 (80.6%)
+📌 Post ID: d60eed9d-1acd-44c5-8ef2-b12c44ea6e46
+🔗 URL: https://www.tiktok.com/@getbrainly/video/7461899167175167238
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40getbrainly%2Fvideo%2F7461899167175167238&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 55/67 (82.1%)
+📌 Post ID: d940ba61-af42-4250-bf01-7baa59b4863e
+🔗 URL: https://www.tiktok.com/@adaffyxo/video/7503732314380455214
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40adaffyxo%2Fvideo%2F7503732314380455214&language=en
+✅ Transcript found (1783 chars)
+📝 Sample: "Hi, my name is Alexa. I'm 28 years old, and I'm the girl who quit her job to build a cooking app tha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 56/67 (83.6%)
+📌 Post ID: e309a729-df4f-455c-af6c-a57a76eed19a
+🔗 URL: https://www.tiktok.com/@locketcamera/video/7331071674336415018
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40locketcamera%2Fvideo%2F7331071674336415018&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 57/67 (85.1%)
+📌 Post ID: e44eaa16-005e-4a77-8023-b083c57848da
+🔗 URL: https://www.tiktok.com/@kaias_lensss/video/7375273082308726062
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40kaias_lensss%2Fvideo%2F7375273082308726062&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 58/67 (86.6%)
+📌 Post ID: e48dafd9-83bb-44c1-9e80-030864607a02
+🔗 URL: https://www.tiktok.com/@mybirdbuddy/photo/7324823998703865120
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40mybirdbuddy%2Fphoto%2F7324823998703865120&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 59/67 (88.1%)
+📌 Post ID: e4f7930c-d2d0-4702-9957-3213dc24935f
+🔗 URL: https://www.tiktok.com/@liftoff30/video/7455420910011534623
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40liftoff30%2Fvideo%2F7455420910011534623&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 60/67 (89.6%)
+📌 Post ID: e56586ea-22b8-49fa-bf64-4131899b7bba
+🔗 URL: https://www.tiktok.com/@daterightstuff/video/7318873036088741128
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40daterightstuff%2Fvideo%2F7318873036088741128&language=en
+✅ Transcript found (82 chars)
+📝 Sample: "to anyone I offended in 2023 try to improve so I don't have to do it again in 2024..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 60/67 (89.6%)
+   ✅ New transcripts added: 27
+   ❌ Failed: 32
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok: 0
+
+🔍 Processing post 61/67 (91.0%)
+📌 Post ID: ec7b804e-dc66-4580-ae00-7a517372ebd4
+🔗 URL: https://www.tiktok.com/@nicole.studywme/video/7496881075298389253
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40nicole.studywme%2Fvideo%2F7496881075298389253&language=en
+✅ Transcript found (429 chars)
+📝 Sample: "What's your GPA? What's your GPA? 3.8. What do you used to study? Amazing. What's your GPA? What's y..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 62/67 (92.5%)
+📌 Post ID: ee2df01c-8417-4873-be06-fae3b3dcbc88
+🔗 URL: https://www.tiktok.com/@adaffyxo/video/7482231966520134958
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40adaffyxo%2Fvideo%2F7482231966520134958&language=en
+✅ Transcript found (1224 chars)
+📝 Sample: "Hi, my name is Alexa. I'm 27 years old and I just quit my job to build a cooking app that I believe ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 63/67 (94.0%)
+📌 Post ID: f079db78-3aa1-4402-b442-5ad0c364d045
+🔗 URL: https://www.tiktok.com/@turbolearn.ai101/video/7404352074466561296
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40turbolearn.ai101%2Fvideo%2F7404352074466561296&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 64/67 (95.5%)
+📌 Post ID: f48cb051-1f45-41af-aae5-f944283f71e2
+🔗 URL: https://www.tiktok.com/@c.rnne/video/7480185254565743888
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40c.rnne%2Fvideo%2F7480185254565743888&language=en
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 65/67 (97.0%)
+📌 Post ID: f5c6afd4-9fbf-4762-91da-6673e67d3531
+🔗 URL: https://www.tiktok.com/@innertune.affirmations/video/7499546602768436502
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40innertune.affirmations%2Fvideo%2F7499546602768436502&language=en
+✅ Transcript found (550 chars)
+📝 Sample: "Five minutes before you fall asleep at night, you need to call your power back to you. Say this mant..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 66/67 (98.5%)
+📌 Post ID: fd205ff2-b310-4258-bb12-ac6071642a77
+🔗 URL: https://www.tiktok.com/@bhaddieb_03/video/7366502177176554794
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40bhaddieb_03%2Fvideo%2F7366502177176554794&language=en
+✅ Transcript found (156 chars)
+📝 Sample: "What? Let me take a look at this. Are you joking me? Hold on. Barack Obama said no. Lady Gaga said n..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 67/67 (100.0%)
+📌 Post ID: ffcc4248-f5ee-43e1-ae6c-0516ab0b888b
+🔗 URL: https://www.tiktok.com/@manifest.copia/video/7475193356298177838
+📱 Platform: tiktok
+📡 Calling: https://api.scrapecreators.com/v1/tiktok/video/transcript?url=https%3A%2F%2Fwww.tiktok.com%2F%40manifest.copia%2Fvideo%2F7475193356298177838&language=en
+✅ Transcript found (645 chars)
+📝 Sample: "if you're seeing this on the 24th or 25th of February stop it is a sign you are about to see the mos..."
+💾 Database updated successfully
+
+🎉 Best of SaaS Apps backfill completed!
+
+📊 FINAL SUMMARY:
+   Total posts processed: 67
+   ✅ Successfully added transcripts: 32
+   ❌ Failed to get transcripts: 34
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-TikTok posts: 0
+   📈 Success rate: 48.5%
+   📊 Total transcript coverage: 49.3%

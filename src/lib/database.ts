@@ -415,7 +415,7 @@ export class DatabaseService {
     boardId: string,
     updates: Database["public"]["Tables"]["boards"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .update(updates)
       .eq("id", boardId)

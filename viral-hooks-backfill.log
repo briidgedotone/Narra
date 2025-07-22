@@ -1,0 +1,3071 @@
+[dotenv@17.2.0] injecting env (24) from .env.local (tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] })
+🚀 Starting transcript backfill for Best of Viral Hooks collection...
+
+📊 Fetching posts from Best of Viral Hooks board...
+✅ Found 954 posts to process
+⏱️ Estimated runtime: ~48 minutes
+
+
+🔍 Processing post 1/954 (0.1%)
+📌 Post ID: 5f4ee4c6-d374-4497-a2ee-0d87062c54d4
+🔗 URL: https://www.instagram.com/p/C9vqgHxuz1E/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9vqgHxuz1E%2F
+✅ Transcript found (1216 chars)
+📝 Sample: "Exactly how many crumblcookies you need to eat to gain one pound of fat. I've been seeing a lot of c..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 2/954 (0.2%)
+📌 Post ID: 233ec59f-8c47-4cac-9a0b-3c6cdb7ba530
+🔗 URL: https://www.instagram.com/p/C7WV9_TI5dT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC7WV9_TI5dT%2F
+✅ Transcript found (1193 chars)
+📝 Sample: "Going to tell you how you can get drunk in under 600 calories this summer. I've said it before, I'll..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 3/954 (0.3%)
+📌 Post ID: 2f9782bd-f961-48ff-9ffb-3d935bdefcb0
+🔗 URL: https://www.instagram.com/p/C8rJipAy8I8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8rJipAy8I8%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 4/954 (0.4%)
+📌 Post ID: 2102db6d-3b0a-4d45-80ec-534a95280cdc
+🔗 URL: https://www.instagram.com/p/C_-u411xe4m/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_-u411xe4m%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 5/954 (0.5%)
+📌 Post ID: 3a6d09ac-5e03-4c40-b109-f8626ab67b56
+🔗 URL: https://www.instagram.com/p/DGOZZYhS1cj/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGOZZYhS1cj%2F
+✅ Transcript found (1101 chars)
+📝 Sample: "I woke up 30 pounds overweight tomorrow and want to lose it all by summer. Here's exactly what I do...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 6/954 (0.6%)
+📌 Post ID: fb2b41a2-e986-4550-9150-8c562918e9b4
+🔗 URL: https://www.instagram.com/p/DBZT2Q5RJ2W/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBZT2Q5RJ2W%2F
+✅ Transcript found (1272 chars)
+📝 Sample: "As a financially responsible 2five year old with a goal to retire in my thirties, there are three th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 7/954 (0.7%)
+📌 Post ID: 56451a17-fa2e-4115-9fe4-078a8213eab4
+🔗 URL: https://www.instagram.com/p/C4YY12SxuRo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC4YY12SxuRo%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 8/954 (0.8%)
+📌 Post ID: cea450ec-1527-4f63-8c2e-618abdae86b0
+🔗 URL: https://www.instagram.com/p/DBfqo-0zxTb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBfqo-0zxTb%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 9/954 (0.9%)
+📌 Post ID: e6137987-5bc2-4c66-a49d-479586b70b8a
+🔗 URL: https://www.instagram.com/p/DB6kCMQR0oX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDB6kCMQR0oX%2F
+✅ Transcript found (1043 chars)
+📝 Sample: "Seriously think I just found the biggest personal branding cheat code in 20 twenty-four. Hear me out..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 10/954 (1.0%)
+📌 Post ID: b5a08b9d-9f90-4bae-b316-c5aed97b9310
+🔗 URL: https://www.instagram.com/p/C9atuV6s3J0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9atuV6s3J0%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 11/954 (1.2%)
+📌 Post ID: 8ee77951-a0e6-4c87-b44e-1aa10f5bea73
+🔗 URL: https://www.instagram.com/p/DC5P-_EMzFm/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC5P-_EMzFm%2F
+✅ Transcript found (2024 chars)
+📝 Sample: "Exactly how you're going to lock in if you want to move out of your parent's house. First of all, si..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 12/954 (1.3%)
+📌 Post ID: bab181db-0c2c-41d0-9f4f-6bd2650bec7b
+🔗 URL: https://www.instagram.com/p/C3spnM9IOKG/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC3spnM9IOKG%2F
+✅ Transcript found (1822 chars)
+📝 Sample: "Is how you lose weight by eating McDonalds and don't worry, I'm not about to tell you to swap your b..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 13/954 (1.4%)
+📌 Post ID: 46bde4b9-ce86-4462-8fea-5f89a4c29654
+🔗 URL: https://www.instagram.com/p/DIaTxoIJvRL/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIaTxoIJvRL%2F
+✅ Transcript found (2161 chars)
+📝 Sample: "Upside down cake pops look like this and like this. Pay attention. Cake pops. You need your chocolat..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 14/954 (1.5%)
+📌 Post ID: 42e23fba-0eab-4f06-9ab0-6245fa458e9e
+🔗 URL: https://www.instagram.com/p/DFQmtK9x_w_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFQmtK9x_w_%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 15/954 (1.6%)
+📌 Post ID: 7f4a8657-5243-466f-80e7-6eb4f4317c17
+🔗 URL: https://www.instagram.com/p/DEgLL4XOMGi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEgLL4XOMGi%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 16/954 (1.7%)
+📌 Post ID: cb679344-d284-451d-9012-23ddb299461a
+🔗 URL: https://www.instagram.com/p/DDKn9iXPSOS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDKn9iXPSOS%2F
+✅ Transcript found (1074 chars)
+📝 Sample: "Anyone ever noticed how some people seem naturally skinny without doing anything crazy? Like they do..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 17/954 (1.8%)
+📌 Post ID: 6c722d45-b0a3-48b6-8f9a-820ee2444df7
+🔗 URL: https://www.instagram.com/p/DIFlyqrtHSg/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIFlyqrtHSg%2F
+✅ Transcript found (1809 chars)
+📝 Sample: "This is your first time being poor, I'm Kiki and I'm trying to make it affordable to eat by using de..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 18/954 (1.9%)
+📌 Post ID: 53610c08-7425-4f49-befa-4f461c6b37f5
+🔗 URL: https://www.instagram.com/p/DGg2PpYpPsD/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGg2PpYpPsD%2F
+✅ Transcript found (1476 chars)
+📝 Sample: "Four ways to make fried chicken. Your basic fried chicken formula is a dip in egg followed by a dip ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 19/954 (2.0%)
+📌 Post ID: ab8a1173-f1b4-4ded-a79c-4d5009db40f2
+🔗 URL: https://www.instagram.com/p/DHGaZL2uwW0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHGaZL2uwW0%2F
+✅ Transcript found (851 chars)
+📝 Sample: "Hair goes straight when you brush it while it's wet but it dries really puffy and frizzy. By now you..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 20/954 (2.1%)
+📌 Post ID: eda37637-6dca-435a-aa8c-216fd0bda043
+🔗 URL: https://www.instagram.com/p/DHRrPveSTcg/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHRrPveSTcg%2F
+✅ Transcript found (475 chars)
+📝 Sample: "Did you know this tip? It's going to blow your mind. If you cut your store-bought flowers underwater..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 21/954 (2.2%)
+📌 Post ID: 75a4e981-6a25-4c4b-a27d-6bb46502b736
+🔗 URL: https://www.instagram.com/p/DHMtL1GSsy-/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHMtL1GSsy-%2F
+✅ Transcript found (873 chars)
+📝 Sample: "It actually matter which type of flour you choose? To show you the difference that flour choice can ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 22/954 (2.3%)
+📌 Post ID: 857de79b-5303-4c1f-bd36-bf1221269f81
+🔗 URL: https://www.instagram.com/p/C8FTNDKualt/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8FTNDKualt%2F
+✅ Transcript found (148 chars)
+📝 Sample: "Is what you would cook for girls if you weren't terrified to talk to them. Episode 15, Brown Butter ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 23/954 (2.4%)
+📌 Post ID: 1abee9c0-2725-410c-bc53-07ccf0e68ecb
+🔗 URL: https://www.instagram.com/p/DFpcFScJxjW/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFpcFScJxjW%2F
+✅ Transcript found (715 chars)
+📝 Sample: "This is so nerdy but it's the coolest thing I've ever done with my pasta. So if you take two pieces ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 24/954 (2.5%)
+📌 Post ID: 467eb215-e0bb-4c43-8632-b38783713626
+🔗 URL: https://www.instagram.com/p/DGojr4HBH4d/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGojr4HBH4d%2F
+✅ Transcript found (1331 chars)
+📝 Sample: "Way too many green sauces in the world that sort of all look the same but are they? If you mix toget..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 25/954 (2.6%)
+📌 Post ID: 7b9d1257-93f5-42a2-a6f8-ddf7e6dbd3b7
+🔗 URL: https://www.instagram.com/p/DF9FMnIJpNJ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDF9FMnIJpNJ%2F
+✅ Transcript found (1226 chars)
+📝 Sample: "Are the three most common mistakes I see people making when making chocolate covered strawberries so..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 26/954 (2.7%)
+📌 Post ID: e0e54156-0c37-440a-a52d-5857f5f05f8e
+🔗 URL: https://www.instagram.com/p/DD-sH_PPLJ4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDD-sH_PPLJ4%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 27/954 (2.8%)
+📌 Post ID: 498fbe3f-5217-4adf-bf9d-1c8b132339ea
+🔗 URL: https://www.instagram.com/p/DFfX1XQTzfP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFfX1XQTzfP%2F
+✅ Transcript found (919 chars)
+📝 Sample: "English is my second language so here are the seven tongue twisters that I used to do a lot and I re..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 28/954 (2.9%)
+📌 Post ID: 41f70cc5-52c0-4803-bb23-02a64adcff9c
+🔗 URL: https://www.instagram.com/p/DIhOAUAPRMo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIhOAUAPRMo%2F
+✅ Transcript found (738 chars)
+📝 Sample: "The person that told me this I could kiss you right now because it literally saved my life. I didn't..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 29/954 (3.0%)
+📌 Post ID: 6054e91a-7f3f-4bed-af59-4892b7de18ac
+🔗 URL: https://www.instagram.com/p/DIANQRkyYLb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIANQRkyYLb%2F
+✅ Transcript found (1017 chars)
+📝 Sample: "Did you know that there's six types of readers? So many people when they think about what kind of re..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 30/954 (3.1%)
+📌 Post ID: 919eb51d-de91-4466-9b01-8518ef451ef3
+🔗 URL: https://www.instagram.com/p/C-k_-Yev6DU/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-k_-Yev6DU%2F
+✅ Transcript found (960 chars)
+📝 Sample: "I teach makeup to people like they're in kindergarten and it's time for class. Look at your lips. Fi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 31/954 (3.2%)
+📌 Post ID: 39315d98-c830-4222-8f61-3990c697294f
+🔗 URL: https://www.instagram.com/p/DGcvCDdvEZ2/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGcvCDdvEZ2%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 32/954 (3.4%)
+📌 Post ID: c1f94fb2-b5d9-4559-b523-3597866beac3
+🔗 URL: https://www.instagram.com/p/DFGDnHYg6hf/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFGDnHYg6hf%2F
+✅ Transcript found (1909 chars)
+📝 Sample: "If you ate this one slice of bread, this is the amount of water that your body would store. By eatin..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 33/954 (3.5%)
+📌 Post ID: 0225dc57-742b-418f-a7a6-980d2f6797b1
+🔗 URL: https://www.instagram.com/p/DFqGUjORxG4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFqGUjORxG4%2F
+✅ Transcript found (1265 chars)
+📝 Sample: "$2 62 000 dollars in cash to build this house from start to finish and it only took me 60 days. This..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 34/954 (3.6%)
+📌 Post ID: 204e17e3-e3ac-464a-b879-9145197526be
+🔗 URL: https://www.instagram.com/p/DGN72MwpsAB/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGN72MwpsAB%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 35/954 (3.7%)
+📌 Post ID: e0e4116b-ef3b-4008-bf63-ddad7975cdef
+🔗 URL: https://www.instagram.com/p/DB4lAAPPbYZ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDB4lAAPPbYZ%2F
+✅ Transcript found (1601 chars)
+📝 Sample: "Is the exact order in which you should be applying for all of your credit cards. First, start with a..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 36/954 (3.8%)
+📌 Post ID: 719b9feb-9e6e-4ea2-8730-45faa5260844
+🔗 URL: https://www.instagram.com/p/DGMg-VPtL98/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGMg-VPtL98%2F
+✅ Transcript found (643 chars)
+📝 Sample: "Are five things I like to do when I buy a new house. First, change out the air filter, the filter bi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 37/954 (3.9%)
+📌 Post ID: dcda5d83-bcb5-462a-9ba6-4f708d3743c2
+🔗 URL: https://www.instagram.com/p/DFbZEG2yJ1k/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFbZEG2yJ1k%2F
+✅ Transcript found (540 chars)
+📝 Sample: "Things everyone needs to know how to fix in an apartment. Clean the dishwasher filter to prevent sme..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 38/954 (4.0%)
+📌 Post ID: 05e5ca84-0abe-4be8-95f3-b17a58050df5
+🔗 URL: https://www.instagram.com/p/CyB9bKLOoyp/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FCyB9bKLOoyp%2F
+✅ Transcript found (844 chars)
+📝 Sample: "Three deadliest foods that can kill your dog in one bite. Starting with number three, chocolate. You..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 39/954 (4.1%)
+📌 Post ID: 38560ea6-bd3f-4d8c-b2c3-3eb30008768d
+🔗 URL: https://www.instagram.com/p/DDP6BaYxh8v/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDP6BaYxh8v%2F
+✅ Transcript found (615 chars)
+📝 Sample: "So the easiest way to keep your home or apartment clean is to set a timer every week and pretend tha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 40/954 (4.2%)
+📌 Post ID: eff1f1f3-5bb9-4c5b-b87a-6692e608feb9
+🔗 URL: https://www.instagram.com/p/DDQwKwgx4iX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDQwKwgx4iX%2F
+✅ Transcript found (356 chars)
+📝 Sample: "Did you know you can raise a year's worth of chicken for your family in just eight weeks? Meat chick..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 41/954 (4.3%)
+📌 Post ID: ff568f60-e1c9-4f5f-b996-ca1148e5536c
+🔗 URL: https://www.instagram.com/p/DGMiUGoPLmU/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGMiUGoPLmU%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 42/954 (4.4%)
+📌 Post ID: 897cae4c-9de0-40e2-8d2b-cb32fb6774aa
+🔗 URL: https://www.instagram.com/p/DHe4tCOyyJP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHe4tCOyyJP%2F
+✅ Transcript found (1334 chars)
+📝 Sample: "If you have a newborn in your house and a high drive shadow dog like Bowie right here, I'm going to ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 43/954 (4.5%)
+📌 Post ID: 5cf366d1-044f-478e-8d7e-d87fa8e40778
+🔗 URL: https://www.instagram.com/p/DEKxvNauJNa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEKxvNauJNa%2F
+✅ Transcript found (518 chars)
+📝 Sample: "Kibble is too dry and boring. Here are four budget-friendly toppers to help your dog live longer. St..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 44/954 (4.6%)
+📌 Post ID: ed2bcfa4-9e6b-4ff2-9a14-2ee9d5bbc8e0
+🔗 URL: https://www.instagram.com/p/DF82wujO17l/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDF82wujO17l%2F
+✅ Transcript found (2691 chars)
+📝 Sample: "If you want to add ducks to your homestead in 2025 and you don't know what breed to get, I got you. ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 45/954 (4.7%)
+📌 Post ID: 983a947b-bc24-4900-8acb-998e95ecb755
+🔗 URL: https://www.instagram.com/p/DDkR4liv0sV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDkR4liv0sV%2F
+✅ Transcript found (737 chars)
+📝 Sample: "Always ask me, Healthy Dad Brad, you have 10 kids? How much does it cost to feed them breakfast from..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 46/954 (4.8%)
+📌 Post ID: 0e12b98f-ab9f-411c-b14f-89891843154e
+🔗 URL: https://www.instagram.com/p/DGyTRjPs-tM/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGyTRjPs-tM%2F
+✅ Transcript found (1451 chars)
+📝 Sample: "Sick of hearing this term screen time. As a child therapist and technology expert you might be surpr..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 47/954 (4.9%)
+📌 Post ID: e3a055b6-4e38-49c7-8ada-a85a87f5dd98
+🔗 URL: https://www.instagram.com/p/DEKcWm2Ipy-/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEKcWm2Ipy-%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 48/954 (5.0%)
+📌 Post ID: 686b109c-6f4d-40e9-835e-50f9d8dee696
+🔗 URL: https://www.instagram.com/p/DIqAW_ARP4Y/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIqAW_ARP4Y%2F
+✅ Transcript found (1140 chars)
+📝 Sample: "2 00five, the NBA introduced a dress code. No chains, no durags, no oversized tees. Straight busines..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 49/954 (5.1%)
+📌 Post ID: 971feee2-68c8-40bc-b4f6-988307163d33
+🔗 URL: https://www.instagram.com/p/DFD6TSypE2P/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFD6TSypE2P%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 50/954 (5.2%)
+📌 Post ID: 9a47f6f5-2f89-4152-98f4-844956d9c71d
+🔗 URL: https://www.instagram.com/p/C-ta_pvhfvK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-ta_pvhfvK%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 50/954 (5.2%)
+   ✅ New transcripts added: 36
+   ❌ Failed: 14
+   ℹ️ Already had transcripts: 0
+   ⚠️ Skipped non-Instagram: 0
+
+🔍 Processing post 51/954 (5.3%)
+📌 Post ID: 6cf27ffe-acf3-49de-b98e-3bb31d1c1c93
+🔗 URL: https://www.instagram.com/p/C4tAzeYL8yA/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC4tAzeYL8yA%2F
+✅ Transcript found (1932 chars)
+📝 Sample: "This is what your muscles look like when you're taking creatine and this is what your muscles look l..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 52/954 (5.5%)
+📌 Post ID: 0d0fe6e2-b30e-46fa-8ac6-6ffbb5b2f814
+🔗 URL: https://www.instagram.com/p/C9bUq2CtvUv/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9bUq2CtvUv%2F
+✅ Transcript found (1224 chars)
+📝 Sample: "Just picked up the keys to your next house or apartment. Here's the things you gotta do right away. ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 53/954 (5.6%)
+📌 Post ID: d47a21e6-d0f9-47b3-ae58-8dc544dc86f6
+🔗 URL: https://www.instagram.com/p/DBkvHncxD2t/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBkvHncxD2t%2F
+✅ Transcript found (1089 chars)
+📝 Sample: "Money can buy you pretty but it cannot buy you brand. How did a mistake in branding delay Sabrina Ca..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 54/954 (5.7%)
+📌 Post ID: 905a82ac-6f70-4814-9430-ff54b51474b2
+🔗 URL: https://www.instagram.com/p/C60q1FPPrLW/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC60q1FPPrLW%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 55/954 (5.8%)
+📌 Post ID: c358a4ee-c4a5-4f72-af6f-7b58320bb024
+🔗 URL: https://www.instagram.com/p/DE9tW4dyxlJ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE9tW4dyxlJ%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 56/954 (5.9%)
+📌 Post ID: f219affd-4839-45ec-b872-c3f700bd3431
+🔗 URL: https://www.instagram.com/p/DAtNQtAxUNQ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAtNQtAxUNQ%2F
+✅ Transcript found (1261 chars)
+📝 Sample: "Is what your muscles look like when you're taking creatine and this is what your muscles look like w..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 57/954 (6.0%)
+📌 Post ID: 58725240-6d00-4dbe-b905-8d82dad7d3d3
+🔗 URL: https://www.instagram.com/p/DC2pqKUpy7C/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC2pqKUpy7C%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 58/954 (6.1%)
+📌 Post ID: a853c9b8-8f75-423f-8545-82b8329e6c01
+🔗 URL: https://www.instagram.com/p/DDmz346s6x2/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDmz346s6x2%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 59/954 (6.2%)
+📌 Post ID: 47016e0c-e547-4c91-b256-b55fc72f796c
+🔗 URL: https://www.instagram.com/p/DFMzB5sO4TF/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFMzB5sO4TF%2F
+✅ Transcript found (2419 chars)
+📝 Sample: "I'm going to show you how to make the perfect macarons because I want to paste your skull so you don..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 60/954 (6.3%)
+📌 Post ID: 3aa99a97-fe57-4860-9dad-22e3347e2bba
+🔗 URL: https://www.instagram.com/p/DHl84zXOnWK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHl84zXOnWK%2F
+✅ Transcript found (1004 chars)
+📝 Sample: "Posture from this to this. Look at that jawline that just magically appeared. First you will shrug y..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 61/954 (6.4%)
+📌 Post ID: a741e068-4038-44c2-bcd4-895f40a4363c
+🔗 URL: https://www.instagram.com/p/DGsHot9xC6R/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGsHot9xC6R%2F
+✅ Transcript found (804 chars)
+📝 Sample: "10 seconds and I'll let you know which one suits you best. Now this has nothing to do with your heig..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 62/954 (6.5%)
+📌 Post ID: b65a4df6-c7bc-4d45-91ff-dbb4574264ad
+🔗 URL: https://www.instagram.com/p/DIUEhBYOica/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIUEhBYOica%2F
+✅ Transcript found (1397 chars)
+📝 Sample: "If you've ever secretly unbuttoned your jeans at dinner and hope noone noticed, this is for you. Wel..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 63/954 (6.6%)
+📌 Post ID: 8c47c716-dbe1-46dc-af0f-f673b18ca279
+🔗 URL: https://www.instagram.com/p/DBeJWwWOtMw/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBeJWwWOtMw%2F
+✅ Transcript found (668 chars)
+📝 Sample: "Curls never start curling at my roots no matter what I do. I can assume you're not shampooing twice...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 64/954 (6.7%)
+📌 Post ID: 443fc492-6b54-42f3-aaaa-cd92edaf92ac
+🔗 URL: https://www.instagram.com/p/DGrS_7YRUo7/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGrS_7YRUo7%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 65/954 (6.8%)
+📌 Post ID: 8eaaad6b-25dc-4021-897a-299d39754499
+🔗 URL: https://www.instagram.com/p/DAbxF7ZSHq0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAbxF7ZSHq0%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 66/954 (6.9%)
+📌 Post ID: 958d84df-2c37-45df-bb51-56fd35e0c785
+🔗 URL: https://www.instagram.com/p/DCcIsddvdu-/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCcIsddvdu-%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 67/954 (7.0%)
+📌 Post ID: 9d71868a-623a-4f43-a3fc-342419cf4cbf
+🔗 URL: https://www.instagram.com/p/DC4dQVdPuUS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC4dQVdPuUS%2F
+✅ Transcript found (1708 chars)
+📝 Sample: "You would need to eat eight oranges today to get the same amount of vitamin A that your grandparents..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 68/954 (7.1%)
+📌 Post ID: 4b28834d-ac41-4532-a1d6-efbb1730482b
+🔗 URL: https://www.instagram.com/p/DDz9y_yyCkz/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDz9y_yyCkz%2F
+✅ Transcript found (1050 chars)
+📝 Sample: "Making brownies, the mixing method is just as important as the ingredients. The creaming method star..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 69/954 (7.2%)
+📌 Post ID: 8e1e2264-e628-4e55-bbb8-73fdce24f54a
+🔗 URL: https://www.instagram.com/p/DGB30hXBY7K/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGB30hXBY7K%2F
+✅ Transcript found (1239 chars)
+📝 Sample: "Bread, cheese, and ham makes a ham and cheese sandwich. Adding grier cheese and bechamel makes it a ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 70/954 (7.3%)
+📌 Post ID: 826246bb-16de-445c-b1bf-2f3614425686
+🔗 URL: https://www.instagram.com/p/DFJYlNVIzSa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFJYlNVIzSa%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 71/954 (7.4%)
+📌 Post ID: 66608957-5e72-460d-ba3d-d446975c9a18
+🔗 URL: https://www.instagram.com/p/DCPkRMtodQd/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCPkRMtodQd%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 72/954 (7.5%)
+📌 Post ID: 5e317752-8aec-4136-a90c-7754dee780cd
+🔗 URL: https://www.instagram.com/p/DGRrGUKPoZb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGRrGUKPoZb%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 73/954 (7.7%)
+📌 Post ID: 74673e53-b153-426b-adb4-4b0ca286ec6f
+🔗 URL: https://www.instagram.com/p/DHAewSpJVWu/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHAewSpJVWu%2F
+✅ Transcript found (1888 chars)
+📝 Sample: "If you gave me six months to get a job as a data analyst, this is what I would do. For context, I cu..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 74/954 (7.8%)
+📌 Post ID: 995c8617-06b2-4026-b6f9-5aadf7bb7598
+🔗 URL: https://www.instagram.com/p/DFtu2nnyrTW/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFtu2nnyrTW%2F
+✅ Transcript found (637 chars)
+📝 Sample: "I bought all the markers to find out which are the best in every category and which are not worth yo..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 75/954 (7.9%)
+📌 Post ID: 60f3bb51-f049-411a-b7c1-2a465727da16
+🔗 URL: https://www.instagram.com/p/DEDbAV7tpX5/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEDbAV7tpX5%2F
+✅ Transcript found (895 chars)
+📝 Sample: "Here's a way you could guess an almost perfect number every single time. The trick with these is you..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 76/954 (8.0%)
+📌 Post ID: 804df7a9-9260-4c2a-805e-70d93e2521cf
+🔗 URL: https://www.instagram.com/p/DG9UDAUShLs/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG9UDAUShLs%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 77/954 (8.1%)
+📌 Post ID: b44b7e54-2132-44d6-bfca-729722bc5e5b
+🔗 URL: https://www.instagram.com/p/DGYjc0dxhU-/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGYjc0dxhU-%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 78/954 (8.2%)
+📌 Post ID: 57f66804-a898-46d0-88bc-95ef946e245c
+🔗 URL: https://www.instagram.com/p/DGPLBgRtX_g/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGPLBgRtX_g%2F
+✅ Transcript found (822 chars)
+📝 Sample: "The worst material you will regret buying for your shower is right here. But before I show you the w..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 79/954 (8.3%)
+📌 Post ID: a5a39cb7-f687-4b56-a766-18758b24830b
+🔗 URL: https://www.instagram.com/p/DDfdDshTsXK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDfdDshTsXK%2F
+✅ Transcript found (1371 chars)
+📝 Sample: "Told you that you would gain weight from eating all of this you probably believe me right okay well ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 80/954 (8.4%)
+📌 Post ID: 86b4ecde-50d0-45df-86da-5dd744ee4e42
+🔗 URL: https://www.instagram.com/p/DDmhkgqO1FN/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDmhkgqO1FN%2F
+✅ Transcript found (844 chars)
+📝 Sample: "Is a quick way to shelter 66% of your income legally. I'm Tyler. I'm a former financial advisor and ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 81/954 (8.5%)
+📌 Post ID: daf8331f-5a1b-43de-88c6-1ca18c29d0e8
+🔗 URL: https://www.instagram.com/p/DFtSk25uUH_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFtSk25uUH_%2F
+✅ Transcript found (3009 chars)
+📝 Sample: "Why is it that we are also stressed out about the cost of living but also we all have seventy-inch T..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 82/954 (8.6%)
+📌 Post ID: 5517185b-d9f6-4111-87c9-793bb6abfa44
+🔗 URL: https://www.instagram.com/p/DEd9agVJsuO/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEd9agVJsuO%2F
+✅ Transcript found (1197 chars)
+📝 Sample: "Are four things that you've been putting off around the house that you can get done in five minutes ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 83/954 (8.7%)
+📌 Post ID: 959afa71-bdcc-4deb-be33-5785bdd6cc5f
+🔗 URL: https://www.instagram.com/p/DIbM_TgS5se/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIbM_TgS5se%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 84/954 (8.8%)
+📌 Post ID: 9b765c42-cf0d-4b8b-93eb-99595ebecb4a
+🔗 URL: https://www.instagram.com/p/DFhtYRTynQA/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFhtYRTynQA%2F
+✅ Transcript found (303 chars)
+📝 Sample: "This is 30 grams of cheese. If I feed that to a cat, what is that in equivalent to humans eating don..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 85/954 (8.9%)
+📌 Post ID: a11cfffe-1762-422d-a1c4-8a710730c204
+🔗 URL: https://www.instagram.com/p/DEAzDZxS0EH/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEAzDZxS0EH%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 86/954 (9.0%)
+📌 Post ID: 3096fe1b-e5d9-4b65-95b8-66eb24eaf06c
+🔗 URL: https://www.instagram.com/p/DEluu94R-dc/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEluu94R-dc%2F
+✅ Transcript found (607 chars)
+📝 Sample: "That is crazy. We need to do a full cradlecap removal. Her head is covered in these thick scales. Lo..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 87/954 (9.1%)
+📌 Post ID: 0a751e9c-74a5-4424-a331-147baed1e8a3
+🔗 URL: https://www.instagram.com/p/Cx568_TA6DP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FCx568_TA6DP%2F
+✅ Transcript found (1863 chars)
+📝 Sample: "Mom to four boys, this is how I treat being a stay-at-home mom like a job. If you do the math, stay ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 88/954 (9.2%)
+📌 Post ID: a313dc9e-7d1d-43a8-98f7-b30283c8aa70
+🔗 URL: https://www.instagram.com/p/DFBFcSLSgHL/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFBFcSLSgHL%2F
+✅ Transcript found (641 chars)
+📝 Sample: "If I could suggest any tip to any new mom out there, it would be this. Line your baby's mattress wit..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 89/954 (9.3%)
+📌 Post ID: ff41e4c4-9114-4125-b1fe-16df0d091de9
+🔗 URL: https://www.instagram.com/p/DDxwEtsyLDo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDxwEtsyLDo%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 90/954 (9.4%)
+📌 Post ID: d441553b-aee9-49a6-a3c9-88fcc64e3ca1
+🔗 URL: https://www.instagram.com/p/DE0ZdAMpZpp/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE0ZdAMpZpp%2F
+✅ Transcript found (709 chars)
+📝 Sample: "If you're storing your cheese in plastic bags, stop what you're doing and watch this video. Cheese i..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 91/954 (9.5%)
+📌 Post ID: 672df749-42a4-42c4-bfd9-96226a0c0b81
+🔗 URL: https://www.instagram.com/p/DEbPfOAs0Jj/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEbPfOAs0Jj%2F
+✅ Transcript found (997 chars)
+📝 Sample: "If you're wondering why when you let your puppy outside to go potty, they don't actually go to the b..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 92/954 (9.6%)
+📌 Post ID: 32fc7a75-9926-441f-9a48-f5c9751c9503
+🔗 URL: https://www.instagram.com/p/DC8xcCbJVSw/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC8xcCbJVSw%2F
+✅ Transcript found (169 chars)
+📝 Sample: "It starts off like this. Then you get this. And because you do this You start seeing more of this. W..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 93/954 (9.7%)
+📌 Post ID: c00ca0be-9392-4db0-8e12-1bc8a9e03f00
+🔗 URL: https://www.instagram.com/p/DGqD6D4hoJq/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGqD6D4hoJq%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 94/954 (9.9%)
+📌 Post ID: 25bacebd-f91b-43e4-ac6c-52ff8678db19
+🔗 URL: https://www.instagram.com/p/DIrAzqmhy1k/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIrAzqmhy1k%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 95/954 (10.0%)
+📌 Post ID: 061140d0-e808-495c-acd2-d2a990c651e1
+🔗 URL: https://www.instagram.com/p/DCkHvJ1z-al/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCkHvJ1z-al%2F
+✅ Transcript found (494 chars)
+📝 Sample: "Didn't sponsor me this year so here's how to make their garlic Parmesan bread bites at home. Start w..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 96/954 (10.1%)
+📌 Post ID: 05d2398e-5731-4d23-8b67-40d2bfd1150f
+🔗 URL: https://www.instagram.com/p/DDprbmqSyib/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDprbmqSyib%2F
+✅ Transcript found (507 chars)
+📝 Sample: "Favorite kitchen hacks from 2000 twenty-four. A reminder to dip clean your wooden cutting boards. Sp..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 97/954 (10.2%)
+📌 Post ID: 3fdd0337-17f8-451e-9309-fd777476ef65
+🔗 URL: https://www.instagram.com/p/DB34v2osmcT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDB34v2osmcT%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 98/954 (10.3%)
+📌 Post ID: c606714a-e455-4f92-b16e-c275aabf01c5
+🔗 URL: https://www.instagram.com/p/DCvxgmazwDW/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCvxgmazwDW%2F
+✅ Transcript found (793 chars)
+📝 Sample: "Does garlic really kill dogs? I'm Doctor Will Levett and I feed my five dogs garlic every single wee..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 99/954 (10.4%)
+📌 Post ID: f7ef12c5-331c-44be-8143-95944be486f2
+🔗 URL: https://www.instagram.com/p/DA9e_qHyahV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDA9e_qHyahV%2F
+✅ Transcript found (1414 chars)
+📝 Sample: "Almost everyone thinks that they know how to clean. Just grab a few paper towels, a bunch of cleanin..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 100/954 (10.5%)
+📌 Post ID: c719a706-c603-4ef6-b254-a4edc7425831
+🔗 URL: https://www.instagram.com/p/DGwAia_yWQT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGwAia_yWQT%2F
+✅ Transcript found (660 chars)
+📝 Sample: "Was walking past this record store and I saw they had a basket of old cassette tapes they were throw..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 100/954 (10.5%)
+   ✅ New transcripts added: 68
+   ❌ Failed: 32
+   ℹ️ Already had transcripts: 0
+   ⚠️ Skipped non-Instagram: 0
+
+🔍 Processing post 101/954 (10.6%)
+📌 Post ID: a02a7974-2485-474a-9905-3cc4882891b5
+🔗 URL: https://www.instagram.com/p/DGNL0Buyid_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGNL0Buyid_%2F
+✅ Transcript found (1378 chars)
+📝 Sample: "Unfortunately my fiance and I have a tendency to be a little impulsive and this is definitely one of..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 102/954 (10.7%)
+📌 Post ID: 2ff60f0a-9f30-46eb-ad83-5aaf4673b206
+🔗 URL: https://www.instagram.com/p/DJAIpU1N7b0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJAIpU1N7b0%2F
+✅ Transcript found (1627 chars)
+📝 Sample: "Today, I ran the London Marathon in two hours and 30 minutes. That's what this chafe is from. It rea..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 103/954 (10.8%)
+📌 Post ID: 59ebb4af-a541-4a3d-bf9e-cfb23601bac8
+🔗 URL: https://www.instagram.com/p/DDxL49LJwSV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDxL49LJwSV%2F
+❌ API Error: 500 Internal Server Error
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 104/954 (10.9%)
+📌 Post ID: 3611c0a0-af2f-446c-b981-94186535c741
+🔗 URL: https://www.instagram.com/p/DIIU8EuRq_H/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIIU8EuRq_H%2F
+✅ Transcript found (1064 chars)
+📝 Sample: "Long does it take to catch a thousand fish? My name is Nick. I like to pretend that I fish for a liv..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 105/954 (11.0%)
+📌 Post ID: 532ac707-30b3-4ecd-999d-4875a7e4f58a
+🔗 URL: https://www.instagram.com/p/DHO0BEavIkr/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHO0BEavIkr%2F
+✅ Transcript found (1885 chars)
+📝 Sample: "We got an insane deal on our first home a year ago because it needed to be gutted. We spent our free..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 106/954 (11.1%)
+📌 Post ID: 30233ebf-e322-4401-b8a4-8b2db5910ca6
+🔗 URL: https://www.instagram.com/p/DGc_8U7i-yF/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGc_8U7i-yF%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 107/954 (11.2%)
+📌 Post ID: f3bc12af-7206-42f0-8897-a1b9557e9c50
+🔗 URL: https://www.instagram.com/p/DCtwyViukxT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCtwyViukxT%2F
+✅ Transcript found (1562 chars)
+📝 Sample: "Buying homes that need a lot of work can work out in your favor. Let's see the before of our 1970s h..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 108/954 (11.3%)
+📌 Post ID: de9ad484-4ce8-46b6-883a-7e9dee642363
+🔗 URL: https://www.instagram.com/p/DCimp5XxA7o/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCimp5XxA7o%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 109/954 (11.4%)
+📌 Post ID: fe1c4e0d-9c6c-4eca-bf37-45e328ed24b8
+🔗 URL: https://www.instagram.com/p/DHWAUjrROF4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHWAUjrROF4%2F
+✅ Transcript found (955 chars)
+📝 Sample: "I think of my basement as my own personal grocery store. Every summer, we stock our basement shelves..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 110/954 (11.5%)
+📌 Post ID: 06b84d73-775b-467f-8190-2224b1c47c27
+🔗 URL: https://www.instagram.com/p/DFlD6AYyyHm/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFlD6AYyyHm%2F
+✅ Transcript found (2400 chars)
+📝 Sample: "Been one year since I bought my dream home and I want to take you through what the last year has bee..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 111/954 (11.6%)
+📌 Post ID: 2b2a0f58-0e67-4ca2-b236-67a0d1e1e550
+🔗 URL: https://www.instagram.com/p/DEydm_GP0B8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEydm_GP0B8%2F
+✅ Transcript found (1186 chars)
+📝 Sample: "With me to clean the places the cleaners didn't clean in the Move Out Clean starting with the bathro..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 112/954 (11.7%)
+📌 Post ID: f9e7c0f0-07c2-4821-8eb1-0fff4b2593bb
+🔗 URL: https://www.instagram.com/p/DAXBKELOkLP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAXBKELOkLP%2F
+✅ Transcript found (1622 chars)
+📝 Sample: "I'm removing all of my renterfriendly upgrades before I move out and today we're removing this peel ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 113/954 (11.8%)
+📌 Post ID: 94460557-4833-4d15-a080-d61124c01212
+🔗 URL: https://www.instagram.com/p/DGUOKrcRFKT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGUOKrcRFKT%2F
+✅ Transcript found (1454 chars)
+📝 Sample: "Let's try to unclog a kitchen sink. This customer's home is only four years old and the kitchen sink..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 114/954 (11.9%)
+📌 Post ID: c409aab5-ad5e-4e6b-9467-79fbab1025c5
+🔗 URL: https://www.instagram.com/p/DExrL91JUcS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDExrL91JUcS%2F
+✅ Transcript found (1691 chars)
+📝 Sample: "This is what my morning looks like fostering three medical pug puppies. First I let everybody out an..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 115/954 (12.1%)
+📌 Post ID: d44dcbaf-82a2-47a8-b5c5-2fc57acbfc7b
+🔗 URL: https://www.instagram.com/p/DGludzMRqVt/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGludzMRqVt%2F
+✅ Transcript found (1416 chars)
+📝 Sample: "Last night at around 6 PM, Mama Tara began textbook stage 1 labor. She had discharge, was panting, k..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 116/954 (12.2%)
+📌 Post ID: b8fcc631-f0c3-4737-930a-fbd3ca8e3801
+🔗 URL: https://www.instagram.com/p/DFTWF7opT4B/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFTWF7opT4B%2F
+✅ Transcript found (2005 chars)
+📝 Sample: "After many years of total neglect, my basement laundry room is finally getting some much needed TLC...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 117/954 (12.3%)
+📌 Post ID: 9183fb5e-870b-427f-aa57-ae0f1aa55be7
+🔗 URL: https://www.instagram.com/p/DG6_U-JxKtt/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG6_U-JxKtt%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 118/954 (12.4%)
+📌 Post ID: 3fd71d11-dd95-49a5-8e35-876db0202e19
+🔗 URL: https://www.instagram.com/p/DEOTavZx5TX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEOTavZx5TX%2F
+✅ Transcript found (1849 chars)
+📝 Sample: "Customer called me out because they had red water in the toilet and wanted it replaced immediately. ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 119/954 (12.5%)
+📌 Post ID: 9899d3c1-7761-4844-8560-c4ac5a857c1b
+🔗 URL: https://www.instagram.com/p/DE3A6-up1Nd/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE3A6-up1Nd%2F
+✅ Transcript found (1470 chars)
+📝 Sample: "My kids were taking a nap. I went downstairs to do a quick load of laundry when I realized I cannot ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 120/954 (12.6%)
+📌 Post ID: 2e37cfd0-e00c-4797-bf6b-52ae50d92230
+🔗 URL: https://www.instagram.com/p/DEDVhdrSfbP/
+📱 Platform: instagram
+ℹ️ Post already has transcript (629 chars), skipping...
+
+🔍 Processing post 121/954 (12.7%)
+📌 Post ID: 56ae42a7-c6bc-4ec1-bf5c-868e517479a6
+🔗 URL: https://www.instagram.com/p/DBWgXXAvUh3/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBWgXXAvUh3%2F
+✅ Transcript found (979 chars)
+📝 Sample: "I don't usually cry but yesterday I did and it wasn't because my stress levels were through the roof..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 122/954 (12.8%)
+📌 Post ID: e486bcfa-0962-419e-86ff-efefcff9cb1e
+🔗 URL: https://www.instagram.com/p/DJANvPCTbH_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJANvPCTbH_%2F
+✅ Transcript found (2959 chars)
+📝 Sample: "When I started making tree flavored ice creams I should have known this day would come the day when ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 123/954 (12.9%)
+📌 Post ID: 2dfbc9c5-3f54-436c-8101-5c86e22f7f68
+🔗 URL: https://www.instagram.com/p/DHCVNTcy1NM/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHCVNTcy1NM%2F
+✅ Transcript found (1414 chars)
+📝 Sample: "I got a second dog and it did not turn out to be what I expected. Like a lot of dog owners, I wanted..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 124/954 (13.0%)
+📌 Post ID: b596fb88-c381-4369-97c6-acc3c3d173cf
+🔗 URL: https://www.instagram.com/p/DB9kycqyic8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDB9kycqyic8%2F
+✅ Transcript found (1230 chars)
+📝 Sample: "About a month ago I got in trouble for having too many cars and I was forced to get rid of one. But ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 125/954 (13.1%)
+📌 Post ID: 5ccda1ee-a1a2-461e-92b5-c00d9436f033
+🔗 URL: https://www.instagram.com/p/C8dJXv1PjzF/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8dJXv1PjzF%2F
+✅ Transcript found (1294 chars)
+📝 Sample: "Tell me how to buy a house in 60 seconds. You ever drive down the street, you see the one that's run..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 126/954 (13.2%)
+📌 Post ID: 61603964-dc21-44e7-9ba3-8314e9b16549
+🔗 URL: https://www.instagram.com/p/C-sSyDpoyMX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-sSyDpoyMX%2F
+✅ Transcript found (765 chars)
+📝 Sample: "Me 10 years to learn this but I'll teach it to you in less than one minute become rich you need mult..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 127/954 (13.3%)
+📌 Post ID: c6470519-d470-4e94-8960-fc93b4706837
+🔗 URL: https://www.instagram.com/p/C-CPzwMReyb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-CPzwMReyb%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 128/954 (13.4%)
+📌 Post ID: 386ca262-be3f-4ba4-8d24-dcde02afec5a
+🔗 URL: https://www.instagram.com/p/C9uwXS_uJJ6/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9uwXS_uJJ6%2F
+✅ Transcript found (855 chars)
+📝 Sample: "Three people who will make you a better creator. First up, Joey Edits. This guy is a cap cut wizard...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 129/954 (13.5%)
+📌 Post ID: 22f2e4ea-53f2-4f74-ac4c-893d3a88bdc6
+🔗 URL: https://www.instagram.com/p/DEVCeefOF08/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEVCeefOF08%2F
+✅ Transcript found (1153 chars)
+📝 Sample: "Wanna be the first millionaire in your family? Then 2025 is the year you learn how to strip. Now tha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 130/954 (13.6%)
+📌 Post ID: d8e43e92-132d-48a2-ba55-61b88d53ee3e
+🔗 URL: https://www.instagram.com/p/C-8RO71JxRv/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-8RO71JxRv%2F
+✅ Transcript found (818 chars)
+📝 Sample: "Slightly unethical resume hacks that I feel like everyone should know whether you're looking for a j..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 131/954 (13.7%)
+📌 Post ID: fd151cd0-77f6-415f-8695-4fedd61996e9
+🔗 URL: https://www.instagram.com/p/C8BpxhQNKCj/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8BpxhQNKCj%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 132/954 (13.8%)
+📌 Post ID: 623ff33d-728c-4191-8873-e289fe86a228
+🔗 URL: https://www.instagram.com/p/DEPpiQkobO7/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEPpiQkobO7%2F
+✅ Transcript found (706 chars)
+📝 Sample: "Really a millionaire. Why aren't we flying first class? I'd rather take the train. It's cheaper and ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 133/954 (13.9%)
+📌 Post ID: c0bb8ac1-da79-4cd1-824f-0e6fffb6889d
+🔗 URL: https://www.instagram.com/p/C27sCLIxGIu/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC27sCLIxGIu%2F
+✅ Transcript found (763 chars)
+📝 Sample: "This cinnamon roll, you could have all these strawberries with sugar-free chocolate sauce. For this ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 134/954 (14.0%)
+📌 Post ID: 519238cd-9e72-4628-99f2-803fdfa22a7e
+🔗 URL: https://www.instagram.com/p/C_s9bBHxACz/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_s9bBHxACz%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 135/954 (14.2%)
+📌 Post ID: 1e8830be-eb7a-4cd8-8fe0-6add8c29ccbd
+🔗 URL: https://www.instagram.com/p/DEnNQCEv0S6/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEnNQCEv0S6%2F
+✅ Transcript found (151 chars)
+📝 Sample: "I have to ask, how do you always smell so good? Girl, have you ever been on shower TikTok? No. Those..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 136/954 (14.3%)
+📌 Post ID: 4f5a881e-f432-47c5-bd82-e3b1726c2883
+🔗 URL: https://www.instagram.com/p/DH-d8R2xUkT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDH-d8R2xUkT%2F
+✅ Transcript found (692 chars)
+📝 Sample: "Give me 10 seconds and I'll let you know if you have a long torso or short torso by knowing which ty..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 137/954 (14.4%)
+📌 Post ID: 381b25df-1a5b-4f6b-90ed-8633ec173f86
+🔗 URL: https://www.instagram.com/p/DDsm8Cny941/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDsm8Cny941%2F
+✅ Transcript found (624 chars)
+📝 Sample: "We're going to play did you know cleaning edition. Did you know that you should be rotating your mat..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 138/954 (14.5%)
+📌 Post ID: 5289b99d-9c5c-4ed7-8d98-9a9de269aa05
+🔗 URL: https://www.instagram.com/p/DFvT9fMIoE6/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFvT9fMIoE6%2F
+✅ Transcript found (37 chars)
+📝 Sample: "Coquilles la rôtie. Quand il lève au...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 139/954 (14.6%)
+📌 Post ID: cf3cb405-4c68-40f0-b988-7a8ad966fc4a
+🔗 URL: https://www.instagram.com/p/DHLps0HiJ2L/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHLps0HiJ2L%2F
+✅ Transcript found (1702 chars)
+📝 Sample: "Want to know why it takes so long for salon washed hair to get oily again? It is well unbelievable h..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 140/954 (14.7%)
+📌 Post ID: f148f6d1-0880-4c66-a587-b6af7831c225
+🔗 URL: https://www.instagram.com/p/DE5ONXRsxs3/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE5ONXRsxs3%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 141/954 (14.8%)
+📌 Post ID: b0e59a37-46b3-478a-9b4a-8893b29f8415
+🔗 URL: https://www.instagram.com/p/DEnW3Mmvswc/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEnW3Mmvswc%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 142/954 (14.9%)
+📌 Post ID: 3205a518-f280-4d23-86f1-7682981db9d4
+🔗 URL: https://www.instagram.com/p/DHvgHMqRVWI/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHvgHMqRVWI%2F
+✅ Transcript found (1483 chars)
+📝 Sample: "Let's unify our palette. I start by laying out all of the major colors all need for this painting an..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 143/954 (15.0%)
+📌 Post ID: e950f1c6-a64d-46c8-8f3d-7fd75e7768c6
+🔗 URL: https://www.instagram.com/p/DD9tTgdCq_N/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDD9tTgdCq_N%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 144/954 (15.1%)
+📌 Post ID: a9bae6bc-2ca2-4874-8cff-7712aa245377
+🔗 URL: https://www.instagram.com/p/DG39EdnJxuK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG39EdnJxuK%2F
+✅ Transcript found (1762 chars)
+📝 Sample: "Eight barbecue sauces from around the world. Let's break them down to their core components. If we u..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 145/954 (15.2%)
+📌 Post ID: 0d8f4420-96cc-49ec-8fbf-7a34a096514c
+🔗 URL: https://www.instagram.com/p/DIloBsPuj-B/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIloBsPuj-B%2F
+✅ Transcript found (1118 chars)
+📝 Sample: "A little mango 1014 is when you're shopping for mangoes this is what you're going to look for most o..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 146/954 (15.3%)
+📌 Post ID: fd690576-9f3f-40a8-af97-c15c549c9103
+🔗 URL: https://www.instagram.com/p/DETUL1KR3U_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDETUL1KR3U_%2F
+✅ Transcript found (1150 chars)
+📝 Sample: "I see so many people using their piping bags just like this or maybe like this even if you tie it li..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 147/954 (15.4%)
+📌 Post ID: 3c478320-d853-49bc-aac7-dd2918e773ef
+🔗 URL: https://www.instagram.com/p/DGTqgBAxh3d/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGTqgBAxh3d%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 148/954 (15.5%)
+📌 Post ID: b08eb42a-b86b-4dd8-81fa-bfe6555ad14e
+🔗 URL: https://www.instagram.com/p/DGiv5Q0M1-Q/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGiv5Q0M1-Q%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 149/954 (15.6%)
+📌 Post ID: fe561277-27be-4e22-8478-b94176923a0e
+🔗 URL: https://www.instagram.com/p/DIhq7P8PguS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIhq7P8PguS%2F
+✅ Transcript found (2536 chars)
+📝 Sample: "Here's how I get people to their best price on Facebook marketplace. You do not want to miss number ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 150/954 (15.7%)
+📌 Post ID: f8359df2-11b7-44f3-abcf-fdf0e04dee8f
+🔗 URL: https://www.instagram.com/p/DG_4uqYOrJ_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG_4uqYOrJ_%2F
+✅ Transcript found (2211 chars)
+📝 Sample: "Here's how I make my dog food. That last me three to 4 months. It only cost me $35. And let me tell ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 150/954 (15.7%)
+   ✅ New transcripts added: 105
+   ❌ Failed: 44
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-Instagram: 0
+
+🔍 Processing post 151/954 (15.8%)
+📌 Post ID: a197de25-08bd-4a9a-8a58-476785bd4995
+🔗 URL: https://www.instagram.com/p/DFFuLlcK9j4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFFuLlcK9j4%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 152/954 (15.9%)
+📌 Post ID: 3d595143-6614-4586-b8ec-b4f1dde0f872
+🔗 URL: https://www.instagram.com/p/DFTappzSSBa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFTappzSSBa%2F
+✅ Transcript found (1309 chars)
+📝 Sample: "Average person would have to run for 30 minutes to burn the 300 calories in this cosmic brownie. Tha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 153/954 (16.0%)
+📌 Post ID: e9b42c79-3bb1-4d3c-b590-9aadff246065
+🔗 URL: https://www.instagram.com/p/ChGIhcPPogC/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FChGIhcPPogC%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 154/954 (16.1%)
+📌 Post ID: 634e8e9a-1bc8-4f9b-bd4d-a186ad9cb94a
+🔗 URL: https://www.instagram.com/p/DDU0jMMN-gr/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDU0jMMN-gr%2F
+✅ Transcript found (593 chars)
+📝 Sample: "A budget with a $2, 500 a month salary using this special 702010 budgeting technique so you want to ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 155/954 (16.2%)
+📌 Post ID: 23e76027-a587-4bfd-b21c-ffd586148af9
+🔗 URL: https://www.instagram.com/p/DGOENqwSVC6/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGOENqwSVC6%2F
+✅ Transcript found (486 chars)
+📝 Sample: "People don't get this but hopefully you will. Poor people spend all their money on these things whic..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 156/954 (16.4%)
+📌 Post ID: 871d3267-4e19-40dd-8f86-fae0984c5c89
+🔗 URL: https://www.instagram.com/p/DEEFWvqttJd/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEEFWvqttJd%2F
+✅ Transcript found (1022 chars)
+📝 Sample: "My kids rent is due so let's collect their payment each week they earn $5 for the chores they do aro..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 157/954 (16.5%)
+📌 Post ID: 56f9cc00-af90-4d04-9993-8cf39cedaa0b
+🔗 URL: https://www.instagram.com/p/DHxc_kEuDBo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHxc_kEuDBo%2F
+✅ Transcript found (573 chars)
+📝 Sample: "Alright so show me the method of the best way to never get an extension cord tangled again yeah. So ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 158/954 (16.6%)
+📌 Post ID: ccba9fe4-05d6-47ea-bab8-ff0f612a579f
+🔗 URL: https://www.instagram.com/p/DDqCq5hpH56/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDqCq5hpH56%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 159/954 (16.7%)
+📌 Post ID: dbe81b8e-75b7-4238-b6ac-5f9157523bc5
+🔗 URL: https://www.instagram.com/p/DDm0s8rsNV0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDm0s8rsNV0%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 160/954 (16.8%)
+📌 Post ID: 0e97f300-8fc9-4d19-9f9f-624321eadca8
+🔗 URL: https://www.instagram.com/p/DGZSeEvvepa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGZSeEvvepa%2F
+✅ Transcript found (973 chars)
+📝 Sample: "How many steaks we can get out of this. This is called a Chuck Roll. I got it at Sam's Club for 1 86..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 161/954 (16.9%)
+📌 Post ID: 6350855b-bd74-43e8-8fad-badf4255c2a3
+🔗 URL: https://www.instagram.com/p/DC8EmdBPqWT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC8EmdBPqWT%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 162/954 (17.0%)
+📌 Post ID: ef3865b8-f95e-4999-aae5-d64bf2e644ff
+🔗 URL: https://www.instagram.com/p/DFp0aJjuEqW/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFp0aJjuEqW%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 163/954 (17.1%)
+📌 Post ID: f857873c-df5d-4fcc-8f49-fc692663821c
+🔗 URL: https://www.instagram.com/p/DEX6xCiPIqQ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEX6xCiPIqQ%2F
+✅ Transcript found (1811 chars)
+📝 Sample: "You want to do this in twenty twenty-five. If you want a barn, if you want land, if you want to be o..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 164/954 (17.2%)
+📌 Post ID: 419b5345-3a25-4933-96e6-81c0a46aa7fc
+🔗 URL: https://www.instagram.com/p/DFhLiCCRCxz/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFhLiCCRCxz%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 165/954 (17.3%)
+📌 Post ID: 4686b67e-7d3b-435a-a595-fa169dca0bbb
+🔗 URL: https://www.instagram.com/p/DGPAOVtgP2p/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGPAOVtgP2p%2F
+✅ Transcript found (1210 chars)
+📝 Sample: "We spent $1500 on half of a beef for a family of six and this will last us over a year. No, it sound..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 166/954 (17.4%)
+📌 Post ID: 416c1b57-8d27-49b9-a08c-9318161abf06
+🔗 URL: https://www.instagram.com/p/DFvEpXyMsWi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFvEpXyMsWi%2F
+✅ Transcript found (651 chars)
+📝 Sample: "Ever you do, do not let your children run around barefoot. Consider this your warning that if they d..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 167/954 (17.5%)
+📌 Post ID: 7862ba3c-8894-4fac-bc98-b58d10bc6c54
+🔗 URL: https://www.instagram.com/p/DDcNdiARaeE/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDcNdiARaeE%2F
+✅ Transcript found (901 chars)
+📝 Sample: "After six months of research, here's why I choose icorn flour and started milling my icon is one of ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 168/954 (17.6%)
+📌 Post ID: 2625441e-aaf1-4f05-ac64-db056c9d7937
+🔗 URL: https://www.instagram.com/p/DDANx1BxN_O/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDANx1BxN_O%2F
+✅ Transcript found (929 chars)
+📝 Sample: "I built this house for $165, 000 and this is the total cost breakdown. The plans and the permits wer..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 169/954 (17.7%)
+📌 Post ID: 0089c904-463f-4b2b-9b69-96d3341d0c3e
+🔗 URL: https://www.instagram.com/p/DElNzz_u22g/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDElNzz_u22g%2F
+✅ Transcript found (1065 chars)
+📝 Sample: "So, I spent $725 at Costco at my last trip and I only go to Costco maybe once every six to eight wee..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 170/954 (17.8%)
+📌 Post ID: 088809b7-19e5-44ac-820d-0569549d1241
+🔗 URL: https://www.instagram.com/p/DGhCeDQPmKV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGhCeDQPmKV%2F
+✅ Transcript found (915 chars)
+📝 Sample: "Want a dog who comes when called every time regardless of whether or not you've got food on you? Fol..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 171/954 (17.9%)
+📌 Post ID: 2c96dbfc-a85e-4018-9156-57bced823f84
+🔗 URL: https://www.instagram.com/p/DFV58iERvGm/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFV58iERvGm%2F
+✅ Transcript found (1369 chars)
+📝 Sample: "Wild to think that pet stores sell hordeworms for other animals to eat but not everyone knows that t..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 172/954 (18.0%)
+📌 Post ID: ad41a421-0cf6-49f5-8d3d-383117eba4c7
+🔗 URL: https://www.instagram.com/p/C15ByRUp1Rv/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC15ByRUp1Rv%2F
+✅ Transcript found (2018 chars)
+📝 Sample: "How to stop barking? Extremely easy. You're just inconsistent. You mark association and ignore it. I..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 173/954 (18.1%)
+📌 Post ID: d28a6e73-b53c-47bf-a18b-e575c47f8687
+🔗 URL: https://www.instagram.com/p/DGWHu_rSbku/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGWHu_rSbku%2F
+✅ Transcript found (1015 chars)
+📝 Sample: "Going to show you how to cook your eggs on a stainless steel pan so that they don't stick and so tha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 174/954 (18.2%)
+📌 Post ID: 410d3350-132b-4c43-9572-9499786c9674
+🔗 URL: https://www.instagram.com/p/DDLA77-SKTM/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDLA77-SKTM%2F
+✅ Transcript found (1199 chars)
+📝 Sample: "Baited this 4. 6 star mechanic with this car in excellent condition to see if they ripped me off. A ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 175/954 (18.3%)
+📌 Post ID: b344a2ac-2660-49fe-9ba5-24cf2cf610f0
+🔗 URL: https://www.instagram.com/p/DFG8vSONo9f/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFG8vSONo9f%2F
+✅ Transcript found (1797 chars)
+📝 Sample: "Took my boyfriend to London to get a futuristic body scan and the AI it uses actually caught somethi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 176/954 (18.4%)
+📌 Post ID: 8d03acf5-10b4-4aab-8445-595b50de3471
+🔗 URL: https://www.instagram.com/p/DDr63MGOLsK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDr63MGOLsK%2F
+✅ Transcript found (605 chars)
+📝 Sample: "Opened up a hot chocolate stand in the middle of New York City and could not believe how much I made..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 177/954 (18.6%)
+📌 Post ID: d52ecdcc-2bdd-4089-97d4-d2e1e0d643aa
+🔗 URL: https://www.instagram.com/p/DCke9dGx-7G/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCke9dGx-7G%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 178/954 (18.7%)
+📌 Post ID: ad60dc10-7296-4afd-87ca-e2368fde0af9
+🔗 URL: https://www.instagram.com/p/DGOH0THOBSl/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGOH0THOBSl%2F
+✅ Transcript found (934 chars)
+📝 Sample: "Eat 12 donuts, run five miles, and don't puke. Welcome to the Krispy Kreme Challenge. Every year in ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 179/954 (18.8%)
+📌 Post ID: e31bc66b-3ae7-4040-a80a-0958f0d39b10
+🔗 URL: https://www.instagram.com/p/DCno0FUObFN/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCno0FUObFN%2F
+✅ Transcript found (534 chars)
+📝 Sample: "This is life of a soda addict part twenty-five. Had to restock my supply and get 30 packs of soda in..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 180/954 (18.9%)
+📌 Post ID: 936dc24b-adab-4077-8108-71bdb3eddc23
+🔗 URL: https://www.instagram.com/p/DFvWgldxb80/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFvWgldxb80%2F
+✅ Transcript found (1417 chars)
+📝 Sample: "Welcome back to the journey of how I got fat. I'mma be honest with y'all. This one was tough to brea..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 181/954 (19.0%)
+📌 Post ID: cbe0dbcc-3472-48ea-adc3-27cdeaa9b306
+🔗 URL: https://www.instagram.com/p/C48sQQpI5aS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC48sQQpI5aS%2F
+✅ Transcript found (1428 chars)
+📝 Sample: "It's been six years since I've seen myself with two human legs and that's all about to change. So, I..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 182/954 (19.1%)
+📌 Post ID: 8de0e9ff-c581-4fbd-8c02-28a5cf3ccd8d
+🔗 URL: https://www.instagram.com/p/C5TmBcrrTxF/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC5TmBcrrTxF%2F
+✅ Transcript found (1255 chars)
+📝 Sample: "This was me. I was very skinny, insecure, and I had no friends growing up. Just when I thought it co..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 183/954 (19.2%)
+📌 Post ID: cf321060-86b4-4d29-b344-eecab0a4d49a
+🔗 URL: https://www.instagram.com/p/C8Zs6wqx2bi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8Zs6wqx2bi%2F
+✅ Transcript found (984 chars)
+📝 Sample: "I'm being real skinny to overweight, to lean, back to overweight, and currently down 41 pounds in th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 184/954 (19.3%)
+📌 Post ID: 172c7f48-cc99-4172-86eb-6551ed7d5131
+🔗 URL: https://www.instagram.com/p/DDubxvxpHc1/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDubxvxpHc1%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 185/954 (19.4%)
+📌 Post ID: eadc90bd-0657-4ab7-af0f-54dfe9ae7ae8
+🔗 URL: https://www.instagram.com/p/DIohXabuCQd/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIohXabuCQd%2F
+✅ Transcript found (1465 chars)
+📝 Sample: "I'm eating like President Trump for a full day and I'm going to see how much weight I gain by the en..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 186/954 (19.5%)
+📌 Post ID: b7b75b3b-2f67-4689-b583-7401c6e1f59f
+🔗 URL: https://www.instagram.com/p/DEpFrpHRKBN/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEpFrpHRKBN%2F
+✅ Transcript found (1139 chars)
+📝 Sample: "Two years ago, my younger brother moved in with me after my husband passed away. I didn't live with ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 187/954 (19.6%)
+📌 Post ID: d0807a78-8318-4ad1-a053-693d0e2e252a
+🔗 URL: https://www.instagram.com/p/DHrVRsRyA1t/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHrVRsRyA1t%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 188/954 (19.7%)
+📌 Post ID: 0ef3c34e-a682-48f5-96ca-b55c1ec34b05
+🔗 URL: https://www.instagram.com/p/DHlvQJEpYK1/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHlvQJEpYK1%2F
+✅ Transcript found (1563 chars)
+📝 Sample: "On two years no poo and today is the first time I get to use shampoo but first we're going to try a ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 189/954 (19.8%)
+📌 Post ID: efbfc5cf-ee6f-4f9f-b738-71fa7b452eee
+🔗 URL: https://www.instagram.com/p/DHrP6IqyOPT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHrP6IqyOPT%2F
+✅ Transcript found (1083 chars)
+📝 Sample: "Does this stuff actually work? Today, we're in beautiful Marco Island, Florida and we're putting sun..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 190/954 (19.9%)
+📌 Post ID: fb2cc17f-e576-4dbd-a62a-9a716bf2eb99
+🔗 URL: https://www.instagram.com/p/DG1ZicxMEJo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG1ZicxMEJo%2F
+✅ Transcript found (1356 chars)
+📝 Sample: "Gained 23. 5 kilograms during my pregnancy which is almost 52 pounds. And for some reason I thought ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 191/954 (20.0%)
+📌 Post ID: 3d55f39e-1610-4a7c-8928-e7e6189ace28
+🔗 URL: https://www.instagram.com/p/DBUGNe5Pn5g/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBUGNe5Pn5g%2F
+✅ Transcript found (2075 chars)
+📝 Sample: "I'm letting food companies control my diet. Domino's challenged me to eat ten of their pizzas a few ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 192/954 (20.1%)
+📌 Post ID: ddb4d7f1-d145-4198-b943-3bab07fbf11f
+🔗 URL: https://www.instagram.com/p/DIW6N1gto6i/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIW6N1gto6i%2F
+✅ Transcript found (688 chars)
+📝 Sample: "I'm eighteen. I work night shifts at Sainsbury's. That's the dream life, right? 13 pound an hour to ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 193/954 (20.2%)
+📌 Post ID: 389d9461-5e4b-48f1-a722-ceeeba571063
+🔗 URL: https://www.instagram.com/p/DI6pGLUN66W/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDI6pGLUN66W%2F
+✅ Transcript found (1250 chars)
+📝 Sample: "So it's been a week and I'm already on 40, 000 followers. I'm Gabriel. I'm 18 and I've realized bein..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 194/954 (20.3%)
+📌 Post ID: 2812d73e-cdcb-4dc1-b7ab-9577406131ec
+🔗 URL: https://www.instagram.com/p/DC2Mg4ON1m0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC2Mg4ON1m0%2F
+✅ Transcript found (1120 chars)
+📝 Sample: "When I was 16 years old I started taking creatine and at twenty-four I had to fly to Turkey to get a..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 195/954 (20.4%)
+📌 Post ID: cdb26691-1bfd-4e1c-974e-ee5feeadc96e
+🔗 URL: https://www.instagram.com/p/DHtlcflN9uQ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHtlcflN9uQ%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 196/954 (20.5%)
+📌 Post ID: 120044d6-8c2c-446d-a4e0-8075e8f63df5
+🔗 URL: https://www.instagram.com/p/DAvjqruooP3/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAvjqruooP3%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 197/954 (20.6%)
+📌 Post ID: b7ccc4bb-36aa-4ef9-921e-608b13a862e1
+🔗 URL: https://www.instagram.com/p/DEXaRPkOSjV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEXaRPkOSjV%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 198/954 (20.8%)
+📌 Post ID: 7a8efee3-7f5c-4b25-936b-90dcf41e023f
+🔗 URL: https://www.instagram.com/p/DBe3QaNyQEi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBe3QaNyQEi%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 199/954 (20.9%)
+📌 Post ID: efc53cb9-5e1a-4ba2-8c21-514013bdc7ed
+🔗 URL: https://www.instagram.com/p/DFAr9dPA4F4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFAr9dPA4F4%2F
+✅ Transcript found (1273 chars)
+📝 Sample: "Your life sucks because you don't have hobbies. You cannot just go to work, come home, watch Real Ho..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 200/954 (21.0%)
+📌 Post ID: 32d0161b-c3b7-46f1-9930-dffde18adbf5
+🔗 URL: https://www.instagram.com/p/C79z4euRhlV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC79z4euRhlV%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 200/954 (21.0%)
+   ✅ New transcripts added: 140
+   ❌ Failed: 59
+   ℹ️ Already had transcripts: 1
+   ⚠️ Skipped non-Instagram: 0
+
+🔍 Processing post 201/954 (21.1%)
+📌 Post ID: dda79d08-39cb-4142-a5ce-a8eb00426552
+🔗 URL: https://www.instagram.com/p/C9GM_SJpJ3k/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9GM_SJpJ3k%2F
+✅ Transcript found (924 chars)
+📝 Sample: "Read over 350 books in my life and for every single book I read, I think about how each author at so..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 202/954 (21.2%)
+📌 Post ID: 4dac63ea-df0b-431d-a709-8155c41477f7
+🔗 URL: https://www.instagram.com/p/DEq8rUQyR92/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEq8rUQyR92%2F
+✅ Transcript found (800 chars)
+📝 Sample: "Year ago I was reading my Bible from front to back and praying every single night because I was so d..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 203/954 (21.3%)
+📌 Post ID: a3c3b37a-6d6b-40f3-a282-0a480379fa44
+🔗 URL: https://www.instagram.com/p/DDrwl5ix3a0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDrwl5ix3a0%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 204/954 (21.4%)
+📌 Post ID: 53f2fc3e-eb58-4464-bcd0-5bafebca8ab3
+🔗 URL: https://www.instagram.com/p/CzevtHvyxxX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FCzevtHvyxxX%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 205/954 (21.5%)
+📌 Post ID: 6e49c23b-c014-4dd9-b5cb-96be39bd2d58
+🔗 URL: https://www.instagram.com/p/DBnbVTMSaJb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBnbVTMSaJb%2F
+✅ Transcript found (1479 chars)
+📝 Sample: "If you are anything like me, you take your New Year prep very seriously and I don't mean to alarm yo..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 206/954 (21.6%)
+📌 Post ID: 2dcc0b1c-bb3d-4705-a51e-07f25e4758f9
+🔗 URL: https://www.instagram.com/p/C-5yJQmoPsM/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-5yJQmoPsM%2F
+✅ Transcript found (1062 chars)
+📝 Sample: "Six months ago I quit my corporate job in London and attempted to salvage what's left of my soul. Fe..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 207/954 (21.7%)
+📌 Post ID: df659298-9d75-4255-9b68-90225df07e33
+🔗 URL: https://www.instagram.com/p/DAOowDot7OB/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAOowDot7OB%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 208/954 (21.8%)
+📌 Post ID: 92a38d14-0a21-4fa0-82ed-0dd453f60be8
+🔗 URL: https://www.instagram.com/p/DEJiasASTVx/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEJiasASTVx%2F
+✅ Transcript found (1398 chars)
+📝 Sample: "After three years of cycling through self improvement and lustful addictions, I gave my life to Jesu..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 209/954 (21.9%)
+📌 Post ID: 9a5a126e-30fe-420a-b360-7696ee4f44cb
+🔗 URL: https://www.instagram.com/p/DDvdqxIJcbe/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDvdqxIJcbe%2F
+✅ Transcript found (1196 chars)
+📝 Sample: "One year ago today, I stopped shooting NFL games, started working with the best athletes in sports, ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 210/954 (22.0%)
+📌 Post ID: 4113c625-72a9-40b3-91bf-d1f36cd9810d
+🔗 URL: https://www.instagram.com/p/DISbkqXJ5SD/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDISbkqXJ5SD%2F
+✅ Transcript found (1818 chars)
+📝 Sample: "It's flea and tick season so let's make a DIY super super easy flea and tick repellent spray for you..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 211/954 (22.1%)
+📌 Post ID: 288650fc-3382-47bd-bf0f-314e0524a692
+🔗 URL: https://www.instagram.com/p/DG8vTC4pie4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG8vTC4pie4%2F
+✅ Transcript found (2690 chars)
+📝 Sample: "I'm not a DIY guy but I'm going to show you how I spent $200 to transform my countertops from these ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 212/954 (22.2%)
+📌 Post ID: 6b5850cd-5007-43a7-998a-868dd7ea6aad
+🔗 URL: https://www.instagram.com/p/DHTamvwsQu8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHTamvwsQu8%2F
+✅ Transcript found (950 chars)
+📝 Sample: "People keep asking me what to do with leftover frying oil. If you rent, you can just pour it down th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 213/954 (22.3%)
+📌 Post ID: d6e974fd-7e88-4320-af10-07638b8b240f
+🔗 URL: https://www.instagram.com/p/DDxoAs_TciE/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDxoAs_TciE%2F
+✅ Transcript found (1102 chars)
+📝 Sample: "Things you should never put in the dishwasher. Number one is wooden cutting boards and utensils. The..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 214/954 (22.4%)
+📌 Post ID: 918e55aa-d87a-417f-a940-4bf0941749e1
+🔗 URL: https://www.instagram.com/p/DF-i8pixfba/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDF-i8pixfba%2F
+✅ Transcript found (1232 chars)
+📝 Sample: "Mom takes me to the doctor because I'm the sixteen year old kid who absolutely loves bodybuilding an..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 215/954 (22.5%)
+📌 Post ID: d265531e-1500-4152-8e20-14be4a8700f7
+🔗 URL: https://www.instagram.com/p/DG8iDwOuA6R/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG8iDwOuA6R%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 216/954 (22.6%)
+📌 Post ID: d2d447c0-6cb3-4f7e-b7a2-ef82097966bc
+🔗 URL: https://www.instagram.com/p/DAMm_LMsAxL/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAMm_LMsAxL%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 217/954 (22.7%)
+📌 Post ID: ca7771f7-01c5-4ac6-8796-db517487ce80
+🔗 URL: https://www.instagram.com/p/DHl8wDeR7KC/
+📱 Platform: instagram
+ℹ️ Post already has transcript (903 chars), skipping...
+
+🔍 Processing post 218/954 (22.9%)
+📌 Post ID: eb3f068b-54a4-41f7-9dfb-dcd5252c7e74
+🔗 URL: https://www.instagram.com/p/DFqHuOWvXcg/
+📱 Platform: instagram
+ℹ️ Post already has transcript (456 chars), skipping...
+
+🔍 Processing post 219/954 (23.0%)
+📌 Post ID: 77c2df38-1a1d-4680-9e07-40a52bce94b9
+🔗 URL: https://www.instagram.com/p/DFvjm8vJ-y6/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFvjm8vJ-y6%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 220/954 (23.1%)
+📌 Post ID: 61732f28-ceac-492d-bcc2-77a115c027a1
+🔗 URL: https://www.instagram.com/p/DHXENFjAOYb/
+📱 Platform: instagram
+ℹ️ Post already has transcript (670 chars), skipping...
+
+🔍 Processing post 221/954 (23.2%)
+📌 Post ID: b50a3c54-27fa-4959-8e43-e5111fd74082
+🔗 URL: https://www.instagram.com/p/DDnNX1PzLo5/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1542 chars), skipping...
+
+🔍 Processing post 222/954 (23.3%)
+📌 Post ID: e1b1f852-b269-416d-b988-715d98672069
+🔗 URL: https://www.instagram.com/p/DGDsc_ruW4j/
+📱 Platform: instagram
+ℹ️ Post already has transcript (626 chars), skipping...
+
+🔍 Processing post 223/954 (23.4%)
+📌 Post ID: 40c507ec-cda7-4f51-8237-2f18e1b8e87d
+🔗 URL: https://www.instagram.com/p/DDmoDpxu50R/
+📱 Platform: instagram
+ℹ️ Post already has transcript (138 chars), skipping...
+
+🔍 Processing post 224/954 (23.5%)
+📌 Post ID: 3ff14719-f795-48a5-a9bc-4e9c096c4066
+🔗 URL: https://www.instagram.com/p/DDfKvyZSE2b/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDfKvyZSE2b%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 225/954 (23.6%)
+📌 Post ID: 7049b9fc-40ca-4189-9bf8-f9dcb1a48045
+🔗 URL: https://www.instagram.com/p/DI8agH_zOw4/
+📱 Platform: instagram
+ℹ️ Post already has transcript (2099 chars), skipping...
+
+🔍 Processing post 226/954 (23.7%)
+📌 Post ID: 4591b18d-4731-4f1f-bbe7-e411bebf9bd9
+🔗 URL: https://www.instagram.com/p/DEnHb4QRNMc/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1742 chars), skipping...
+
+🔍 Processing post 227/954 (23.8%)
+📌 Post ID: d0aa26cf-e626-4d8c-a24b-f21027614980
+🔗 URL: https://www.instagram.com/p/DJelaYvsooB/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJelaYvsooB%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 228/954 (23.9%)
+📌 Post ID: a9ee2473-960e-41d7-8ec7-b60ccfad2c04
+🔗 URL: https://www.instagram.com/p/DJKsKpMp4cl/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJKsKpMp4cl%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 229/954 (24.0%)
+📌 Post ID: 6684da19-2c70-4a18-8991-bba8ee29657a
+🔗 URL: https://www.instagram.com/p/DGBNLZVRzl4/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1220 chars), skipping...
+
+🔍 Processing post 230/954 (24.1%)
+📌 Post ID: 53f3548a-a3e4-4e84-9269-640a96938b9d
+🔗 URL: https://www.instagram.com/p/DIxIjhIxLPU/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1627 chars), skipping...
+
+🔍 Processing post 231/954 (24.2%)
+📌 Post ID: 3eacdf57-400a-4b28-983e-ef52ec0c4305
+🔗 URL: https://www.instagram.com/p/DFV6am_Ipao/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFV6am_Ipao%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 232/954 (24.3%)
+📌 Post ID: 2917575a-6ce7-4f6d-824a-239110141cfc
+🔗 URL: https://www.instagram.com/p/DFiGBWPIu7c/
+📱 Platform: instagram
+ℹ️ Post already has transcript (965 chars), skipping...
+
+🔍 Processing post 233/954 (24.4%)
+📌 Post ID: 845dc3b6-70c6-4ad1-983c-3d75a50fe67f
+🔗 URL: https://www.instagram.com/p/DIryvFFzqXn/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1032 chars), skipping...
+
+🔍 Processing post 234/954 (24.5%)
+📌 Post ID: 73f75f73-17d9-4333-b255-812ccf74184a
+🔗 URL: https://www.instagram.com/p/DHRI9vYPydZ/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1185 chars), skipping...
+
+🔍 Processing post 235/954 (24.6%)
+📌 Post ID: 5eade3af-ee8e-414b-815a-d10fdbe15692
+🔗 URL: https://www.instagram.com/p/DJmmSXgPFLa/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1515 chars), skipping...
+
+🔍 Processing post 236/954 (24.7%)
+📌 Post ID: 62619ccc-cd48-493b-81bf-a3c080e7b384
+🔗 URL: https://www.instagram.com/p/DJN-6qyMvND/
+📱 Platform: instagram
+ℹ️ Post already has transcript (694 chars), skipping...
+
+🔍 Processing post 237/954 (24.8%)
+📌 Post ID: 602480b1-415d-4ef9-a338-96f7a15da22c
+🔗 URL: https://www.instagram.com/p/DF3ShMpSeTl/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1556 chars), skipping...
+
+🔍 Processing post 238/954 (24.9%)
+📌 Post ID: 97662f7c-ae17-451b-b30d-3058b68acf7e
+🔗 URL: https://www.instagram.com/p/DENd0Npx2kM/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1068 chars), skipping...
+
+🔍 Processing post 239/954 (25.1%)
+📌 Post ID: 85ca447e-907d-4216-aab9-50442c9fa4a4
+🔗 URL: https://www.instagram.com/p/DAmA1Wnqh4X/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAmA1Wnqh4X%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 240/954 (25.2%)
+📌 Post ID: 1fababa0-3416-4e99-8077-36ebdf58ffe1
+🔗 URL: https://www.instagram.com/p/C_oaRbkuJaG/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_oaRbkuJaG%2F
+✅ Transcript found (988 chars)
+📝 Sample: "More high schoolers need to hear this. High grades will not set you apart in the college admissions ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 241/954 (25.3%)
+📌 Post ID: 89cb2ba2-3338-4fc9-9c89-809745c78249
+🔗 URL: https://www.instagram.com/p/DDmm7AXxKLa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDmm7AXxKLa%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 242/954 (25.4%)
+📌 Post ID: cf0a2324-59f8-4cfd-bece-fba57ab2a810
+🔗 URL: https://www.instagram.com/p/DBROBQTK9De/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBROBQTK9De%2F
+✅ Transcript found (789 chars)
+📝 Sample: "You cannot be financially independent before you enter your twenties. Um yes you can be. Here is my ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 243/954 (25.5%)
+📌 Post ID: 0ecb0d9e-c25d-44b4-8364-2e9509a1f780
+🔗 URL: https://www.instagram.com/p/C9GHw6MO48j/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9GHw6MO48j%2F
+✅ Transcript found (1454 chars)
+📝 Sample: "As you might know, I started my pajama business when I was 19 with $800. The business was growing so..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 244/954 (25.6%)
+📌 Post ID: 664a5b0f-5a7b-4065-a9d3-1c0d38e0a2df
+🔗 URL: https://www.instagram.com/p/C7XpT7tPwCP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC7XpT7tPwCP%2F
+✅ Transcript found (604 chars)
+📝 Sample: "Have a backup plan so this kind of needs to work. Three months ago, I left my engineering job and a ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 245/954 (25.7%)
+📌 Post ID: f0b37026-cd35-438b-aa90-acdb4d154f5b
+🔗 URL: https://www.instagram.com/p/C_njKwBOuLi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_njKwBOuLi%2F
+✅ Transcript found (926 chars)
+📝 Sample: "A picture of my first date ever with this guy named Ben. When I was a freshman, I spotted the most m..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 246/954 (25.8%)
+📌 Post ID: a3cd52e1-41ab-4ec1-aed9-aec7e71321ae
+🔗 URL: https://www.instagram.com/p/C_ZVKRfSMm_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_ZVKRfSMm_%2F
+✅ Transcript found (2193 chars)
+📝 Sample: "Six years ago, my husband Zac and I spent every dollar we had to our names to buy our first home whe..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 247/954 (25.9%)
+📌 Post ID: 5d79004b-f663-432a-b6fc-3bde5f86a8fe
+🔗 URL: https://www.instagram.com/p/DDEBm2jOYMG/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDEBm2jOYMG%2F
+✅ Transcript found (764 chars)
+📝 Sample: "Everyone, I'm Neil. I'm 22 years old and I'm starting a coffee shop from scratch. I'm not worried at..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 248/954 (26.0%)
+📌 Post ID: 2a48369b-8b6a-47c5-b305-6ae9632faf60
+🔗 URL: https://www.instagram.com/p/DCg1__Wsy7F/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCg1__Wsy7F%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 249/954 (26.1%)
+📌 Post ID: cf425ca1-77de-41ab-af7a-122b38a55459
+🔗 URL: https://www.instagram.com/p/DDJM-ivP9-v/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDJM-ivP9-v%2F
+✅ Transcript found (1724 chars)
+📝 Sample: "I'm nineteen having an identity crisis. I just don't want to miss out on anything and I'm sure you'r..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 250/954 (26.2%)
+📌 Post ID: 68f2b909-d66f-406b-ade6-f3058b40b43d
+🔗 URL: https://www.instagram.com/p/C6uGU4xxKV_/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC6uGU4xxKV_%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+📈 PROGRESS UPDATE:
+   Posts processed: 250/954 (26.2%)
+   ✅ New transcripts added: 159
+   ❌ Failed: 73
+   ℹ️ Already had transcripts: 18
+   ⚠️ Skipped non-Instagram: 0
+
+🔍 Processing post 251/954 (26.3%)
+📌 Post ID: cf2d2148-b553-4e7c-8f1d-a68c0d56e665
+🔗 URL: https://www.instagram.com/p/C_50kObxUwc/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_50kObxUwc%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 252/954 (26.4%)
+📌 Post ID: ae412160-80e2-4d02-a680-309d5365fcf2
+🔗 URL: https://www.instagram.com/p/DFf7WpdREbp/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1916 chars), skipping...
+
+🔍 Processing post 253/954 (26.5%)
+📌 Post ID: 44260412-5f2a-4102-8555-c1fec91e8365
+🔗 URL: https://www.instagram.com/p/DBU47L9SRQ4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBU47L9SRQ4%2F
+✅ Transcript found (1217 chars)
+📝 Sample: "Let's start by mixing water and olive oil and I'm going to give it a good shake. What happens? The w..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 254/954 (26.6%)
+📌 Post ID: 87d286c1-3c37-4451-8191-b0228530e8da
+🔗 URL: https://www.instagram.com/p/DCVGFh9yqMK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCVGFh9yqMK%2F
+✅ Transcript found (658 chars)
+📝 Sample: "Out your black plastic kitchen utensils. I'm Doctor Tanya Elliot, board-certified internal medicine ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 255/954 (26.7%)
+📌 Post ID: f3715a36-dbc3-49dc-8778-b70c0cf89f79
+🔗 URL: https://www.instagram.com/p/DIZzqD9u-cJ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIZzqD9u-cJ%2F
+✅ Transcript found (888 chars)
+📝 Sample: "Yes sir. How do you clean a cast iron? I'm doing it right now. Perfect. Very important. Never put di..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 256/954 (26.8%)
+📌 Post ID: 407ec9f8-550f-4f96-9cec-81107405d8e1
+🔗 URL: https://www.instagram.com/p/DG2_ufDxNQJ/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG2_ufDxNQJ%2F
+✅ Transcript found (1999 chars)
+📝 Sample: "Here are four foods that you should never refrigerate due to increased toxicity mold formation and a..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 257/954 (26.9%)
+📌 Post ID: 5ed91c2b-2ead-48da-bc0f-eca66b9f1c7d
+🔗 URL: https://www.instagram.com/p/DH_Y1jnsjde/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDH_Y1jnsjde%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 258/954 (27.0%)
+📌 Post ID: 05325454-f518-47ad-9550-584721eabf49
+🔗 URL: https://www.instagram.com/p/DEkn1RAxZur/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEkn1RAxZur%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 259/954 (27.1%)
+📌 Post ID: 8b02e27f-5bcb-4e43-a154-a23b5ce9f99e
+🔗 URL: https://www.instagram.com/p/DFOOvvaxdnT/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFOOvvaxdnT%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 260/954 (27.3%)
+📌 Post ID: 639f1221-a35f-47a5-962c-ea07c796cdbe
+🔗 URL: https://www.instagram.com/p/C9QruINS4JX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9QruINS4JX%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 261/954 (27.4%)
+📌 Post ID: 3a867c6d-076d-45b0-9c26-3e32835b9754
+🔗 URL: https://www.instagram.com/p/DGOAQp_xX5D/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGOAQp_xX5D%2F
+✅ Transcript found (132 chars)
+📝 Sample: "Are five dog breeds as a veterinarian I'd never own. French Bulldog. French Bulldog. French Bulldog...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 262/954 (27.5%)
+📌 Post ID: 640d28df-b37b-42b1-bdfb-92aaba0db007
+🔗 URL: https://www.instagram.com/p/DFF6w_INWWc/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFF6w_INWWc%2F
+✅ Transcript found (1662 chars)
+📝 Sample: "These are five dog breeds that I would not own as a veterinarian. Number one is a dashant. Now I kno..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 263/954 (27.6%)
+📌 Post ID: 2415ffc8-a229-4ba2-9237-e061ad8bb50a
+🔗 URL: https://www.instagram.com/p/DBZtE6ERLOK/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDBZtE6ERLOK%2F
+✅ Transcript found (384 chars)
+📝 Sample: "Got a white dog but the bottoms of her feet are copper color, that's a dead giveaway that she's look..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 264/954 (27.7%)
+📌 Post ID: 8f71ebad-43d6-456f-9c48-663c7475fc97
+🔗 URL: https://www.instagram.com/p/DFq5P8VSzVD/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFq5P8VSzVD%2F
+✅ Transcript found (1099 chars)
+📝 Sample: "Before you ever take your puppy on a walk for the first time, you need to watch this. First, tether ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 265/954 (27.8%)
+📌 Post ID: 1341c738-7342-46b3-8e6e-8137066f232d
+🔗 URL: https://www.instagram.com/p/DDPtPtwMZ9h/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDPtPtwMZ9h%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 266/954 (27.9%)
+📌 Post ID: 37800f4e-2e4f-4cfc-b3a5-4e97279048fd
+🔗 URL: https://www.instagram.com/p/DF-vR6fJuoY/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDF-vR6fJuoY%2F
+✅ Transcript found (903 chars)
+📝 Sample: "You ate nothing but junk food for 10 weeks, how much weight would you gain? Well, thanks to Mark Hob..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 267/954 (28.0%)
+📌 Post ID: c714eee2-21f4-4863-ae04-20071a3b3732
+🔗 URL: https://www.instagram.com/p/DE0C6tWPrdA/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE0C6tWPrdA%2F
+✅ Transcript found (973 chars)
+📝 Sample: "The WiFi in this basement is trash. Maybe I should just get this cheap WiFi repeater. Yeah, I wouldn..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 268/954 (28.1%)
+📌 Post ID: 7ba86c18-6192-4918-96d8-3ddf059f69d7
+🔗 URL: https://www.instagram.com/p/DDvfNslO9bO/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDvfNslO9bO%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 269/954 (28.2%)
+📌 Post ID: b717d7d8-686e-462b-bdaa-35f9caf3e6cb
+🔗 URL: https://www.instagram.com/p/DG_UiWgyUgO/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG_UiWgyUgO%2F
+✅ Transcript found (845 chars)
+📝 Sample: "Have that one picky eater in our life. And for me it's my brother Leo. I'm going to try to cook the ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 270/954 (28.3%)
+📌 Post ID: df691532-e9d3-4ea1-be14-dd5ae105b4ad
+🔗 URL: https://www.instagram.com/p/DIjYAm5IQ_R/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIjYAm5IQ_R%2F
+✅ Transcript found (486 chars)
+📝 Sample: "500 calorie deficit per day for a month should mean around two kilos of fat loss but if I have a bot..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 271/954 (28.4%)
+📌 Post ID: 2a9c9beb-fdfa-4ad8-9bc4-8967ec65f7c0
+🔗 URL: https://www.instagram.com/p/C5B64cPIrhi/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC5B64cPIrhi%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 272/954 (28.5%)
+📌 Post ID: dd5c9641-39f4-41a6-aa22-985a5ebe2675
+🔗 URL: https://www.instagram.com/p/DFGOcEtIjFv/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFGOcEtIjFv%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 273/954 (28.6%)
+📌 Post ID: f61ba317-869d-44b3-852b-77c015b461a8
+🔗 URL: https://www.instagram.com/p/DE_2hH-M11D/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDE_2hH-M11D%2F
+✅ Transcript found (1595 chars)
+📝 Sample: "I had 90 days to go from being skinny fat to having abs, here's exactly how I would do it. The first..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 274/954 (28.7%)
+📌 Post ID: 28526ab6-0003-4f0d-8d99-dd0660ba9d11
+🔗 URL: https://www.instagram.com/p/DGLVKBUR6W0/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGLVKBUR6W0%2F
+✅ Transcript found (1478 chars)
+📝 Sample: "If you lift but don't know when to do cardio, you could be losing up to 50% of your muscle growth wi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 275/954 (28.8%)
+📌 Post ID: 9f9cbac6-a545-4977-8d81-82c82bae6c6c
+🔗 URL: https://www.instagram.com/p/DI1viVSN5N9/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDI1viVSN5N9%2F
+✅ Transcript found (764 chars)
+📝 Sample: "Hundred nineteen. What are you doing? Sit ups. I want to get a six pack before summer. More like a s..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 276/954 (28.9%)
+📌 Post ID: 299326c5-5ffa-4034-9298-503ffd89c313
+🔗 URL: https://www.instagram.com/p/DGbQ6H0t1Mv/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGbQ6H0t1Mv%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 277/954 (29.0%)
+📌 Post ID: 3a1371a9-22a7-40c1-89f4-2276991c308b
+🔗 URL: https://www.instagram.com/p/C8fU6cyP3Hc/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC8fU6cyP3Hc%2F
+✅ Transcript found (1005 chars)
+📝 Sample: "Spent two whole years with chronic sciatica so you don't have to. Four movements that got me out of ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 278/954 (29.1%)
+📌 Post ID: 56e7add2-b076-4695-bfae-c22d59cd6f07
+🔗 URL: https://www.instagram.com/p/DGefW1ANb0D/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGefW1ANb0D%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 279/954 (29.2%)
+📌 Post ID: af3063af-e797-4c87-a279-eb9e2fa82de2
+🔗 URL: https://www.instagram.com/p/CsVU4YTuQlg/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FCsVU4YTuQlg%2F
+✅ Transcript found (1054 chars)
+📝 Sample: "If you're serious about getting abs, this is the only video you'll ever need. So, save for later and..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 280/954 (29.4%)
+📌 Post ID: 08003f54-2604-4579-8095-f8d62a8abafa
+🔗 URL: https://www.instagram.com/p/DFUrWD3P_uA/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFUrWD3P_uA%2F
+✅ Transcript found (493 chars)
+📝 Sample: "Is the reason why plates are the size they are. It has nothing to do with the optimal bar height for..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 281/954 (29.5%)
+📌 Post ID: 2f9722df-c90c-4de5-be5b-160cc7af80b8
+🔗 URL: https://www.instagram.com/p/DFKru9CSKpb/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFKru9CSKpb%2F
+✅ Transcript found (800 chars)
+📝 Sample: "What if I told you to eat 10 eggs everyday? Yeah, I'll get cholesterol in diet. Yeah, whole eggs are..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 282/954 (29.6%)
+📌 Post ID: bf669eb8-5173-449c-a786-98afb9ccd2f3
+🔗 URL: https://www.instagram.com/p/DFbEwDjTJh-/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFbEwDjTJh-%2F
+✅ Transcript found (839 chars)
+📝 Sample: "Is what a full 6 AM workout looks like at a top five wrestling university in Japan. The workout begi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 283/954 (29.7%)
+📌 Post ID: 2b93fe92-62ff-41fb-94e3-3a2774b60e6c
+🔗 URL: https://www.instagram.com/p/DJC1PslvU1Z/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJC1PslvU1Z%2F
+✅ Transcript found (503 chars)
+📝 Sample: "This is a great trick. Mud all over the place, okay? Take your paper, set it on that hole, okay? Now..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 284/954 (29.8%)
+📌 Post ID: cb76127c-f64a-4768-ad6d-f3b283212925
+🔗 URL: https://www.instagram.com/p/DGmFoxiSikU/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGmFoxiSikU%2F
+✅ Transcript found (1252 chars)
+📝 Sample: "Here are three pricing mistakes we made when starting our farmstand. Number one, we didn't charge en..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 285/954 (29.9%)
+📌 Post ID: 065e5e2f-49b0-4b85-a7ae-483d1030246f
+🔗 URL: https://www.instagram.com/p/DHWAfqwv5Xf/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHWAfqwv5Xf%2F
+✅ Transcript found (1952 chars)
+📝 Sample: "Some space-saving apartment hacks that transformed our small space. First, skip the TV and go the pr..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 286/954 (30.0%)
+📌 Post ID: de0be009-2012-4b51-9eb0-a9de7345aa2d
+🔗 URL: https://www.instagram.com/p/DA_7YdHo3S2/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDA_7YdHo3S2%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 287/954 (30.1%)
+📌 Post ID: 4c7e1e9d-a930-4c43-83f2-1bb3483f2238
+🔗 URL: https://www.instagram.com/p/C_oT5Ibpvlf/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_oT5Ibpvlf%2F
+✅ Transcript found (1141 chars)
+📝 Sample: "I paid 68, 872 dollarsto build my own pool acting as my own general contractor. Here is the complete..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 288/954 (30.2%)
+📌 Post ID: bcf339d9-a12c-4695-9c66-e015afe3414f
+🔗 URL: https://www.instagram.com/p/DDAJK6STXlR/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDDAJK6STXlR%2F
+✅ Transcript found (366 chars)
+📝 Sample: "If you want to live in an exceptional home, you've gotta stop half assing things like that's too sma..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 289/954 (30.3%)
+📌 Post ID: 195082d4-09d2-4be1-8d71-addd1265ac34
+🔗 URL: https://www.instagram.com/p/C6a9V7vuein/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC6a9V7vuein%2F
+✅ Transcript found (637 chars)
+📝 Sample: "Light light dark for your next outfit and it's super simple. Take all the light colors you have in y..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 290/954 (30.4%)
+📌 Post ID: 17d4cdf7-32e8-4f07-b758-7ecfbcf41a36
+🔗 URL: https://www.instagram.com/p/DGoOJxMyffy/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGoOJxMyffy%2F
+✅ Transcript found (2362 chars)
+📝 Sample: "Pots and pans do I really need? This is episode two of how to cook anything in thirty steps? Pots an..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 291/954 (30.5%)
+📌 Post ID: d9b117f1-38ae-434e-89f4-823906f284ae
+🔗 URL: https://www.instagram.com/p/DIj9O4Az5GC/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIj9O4Az5GC%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 292/954 (30.6%)
+📌 Post ID: 446f3de6-e8ac-4125-a6e1-001aca5e251b
+🔗 URL: https://www.instagram.com/p/DGllDnGP4GS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGllDnGP4GS%2F
+✅ Transcript found (85 chars)
+📝 Sample: "Invest in Quality Basics. Simple, clean, versatile, quality silhouettes for everyday...."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 293/954 (30.7%)
+📌 Post ID: 42af2e8f-8d6b-4724-99ae-73a689a93d6c
+🔗 URL: https://www.instagram.com/p/DFgTirDB5xe/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFgTirDB5xe%2F
+✅ Transcript found (1571 chars)
+📝 Sample: "This guy has made $4, 600 profit in one day using the technique he's about to use. Hello, hello. Jus..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 294/954 (30.8%)
+📌 Post ID: ee92f5d0-1965-428a-9163-93446154207c
+🔗 URL: https://www.instagram.com/p/DD7Z0GWJrMB/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDD7Z0GWJrMB%2F
+✅ Transcript found (1788 chars)
+📝 Sample: "Every book of the Bible explained in one sentence. The beginning of everything. Creation, sin, and G..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 295/954 (30.9%)
+📌 Post ID: ff2e24b0-026d-40a0-a028-7a28c2dd871c
+🔗 URL: https://www.instagram.com/p/DIMbDQhsNyG/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIMbDQhsNyG%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 296/954 (31.0%)
+📌 Post ID: 1c356a1d-ace1-4584-86bd-edf42c24e8f4
+🔗 URL: https://www.instagram.com/p/DG1WCj0PIML/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG1WCj0PIML%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 297/954 (31.1%)
+📌 Post ID: 197b1eca-2016-4931-9570-9f0480bb78db
+🔗 URL: https://www.instagram.com/p/DCRJoGbo3oa/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCRJoGbo3oa%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 298/954 (31.2%)
+📌 Post ID: cf762042-3c9a-4c3b-b842-7c0b5a3bdb8f
+🔗 URL: https://www.instagram.com/p/DHEL0_cRwNA/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHEL0_cRwNA%2F
+✅ Transcript found (102 chars)
+📝 Sample: "If you're afraid to wear colors, start with neutrals. Subtle, versatile, soft, tones, yet still colo..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 299/954 (31.3%)
+📌 Post ID: 10b75bf7-ab5d-42bb-817f-961e5170ce8b
+🔗 URL: https://www.instagram.com/p/C_rB-Ntuhe8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC_rB-Ntuhe8%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 300/954 (31.4%)
+📌 Post ID: 2a48249f-8ed5-4a5b-a926-e61fa6913059
+🔗 URL: https://www.instagram.com/p/DIfR8HKN1S-/
+📱 Platform: instagram
+ℹ️ Post already has transcript (1893 chars), skipping...
+
+🔍 Processing post 301/954 (31.6%)
+📌 Post ID: 65ffa505-d782-45e8-a7be-150df745a6fc
+🔗 URL: https://www.instagram.com/p/DCAp43wtIxP/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCAp43wtIxP%2F
+✅ Transcript found (1162 chars)
+📝 Sample: "Competitor showed up at my job trying to get me fired. This is what happened. Recently, I had a job ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 302/954 (31.7%)
+📌 Post ID: d66c74bf-f6ef-4765-af16-5e873d4b3bd5
+🔗 URL: https://www.instagram.com/p/DI8xeTdOCGp/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDI8xeTdOCGp%2F
+✅ Transcript found (1193 chars)
+📝 Sample: "Damaged a customer's property and this is how I handled it. This week, I had a job pressure washing ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 303/954 (31.8%)
+📌 Post ID: 5a1d8b7a-c4eb-448a-9848-5ca908024ccc
+🔗 URL: https://www.instagram.com/p/DHorGhlyi3x/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHorGhlyi3x%2F
+✅ Transcript found (1184 chars)
+📝 Sample: "Customer changed their mind and tried to avoid paying. This is what happened. Recently, I had a job ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 304/954 (31.9%)
+📌 Post ID: 7f74bb80-ee21-4093-ac9c-eb01c951d0ac
+🔗 URL: https://www.instagram.com/p/DHZvMput7H8/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHZvMput7H8%2F
+✅ Transcript found (1121 chars)
+📝 Sample: "Was harassed by the HOA so I had to do this. A few weeks ago, I completed this job for a customer th..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 305/954 (32.0%)
+📌 Post ID: 1e6a3c88-0631-498f-b2e0-da1f51d9fb2e
+🔗 URL: https://www.instagram.com/p/DGYg6fDxohE/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGYg6fDxohE%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 306/954 (32.1%)
+📌 Post ID: 5da2b08f-2839-4a6e-8eb7-711a5e6ed71a
+🔗 URL: https://www.instagram.com/p/DEz4JQYvuSr/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEz4JQYvuSr%2F
+✅ Transcript found (1690 chars)
+📝 Sample: "I'm a retired nurse that now owns a laundromat so come with me to collect the quarters and see how m..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 307/954 (32.2%)
+📌 Post ID: ff45954a-eb7b-4f84-9f43-f35d3aebb929
+🔗 URL: https://www.instagram.com/p/DGv9SwVysky/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGv9SwVysky%2F
+✅ Transcript found (1436 chars)
+📝 Sample: "Did you know that you can start your very own bakery from home without a storefront, high startup co..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 308/954 (32.3%)
+📌 Post ID: ec7d0686-32ba-4270-9da9-c5931ffa8a56
+🔗 URL: https://www.instagram.com/p/DCZnnxFx-IX/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDCZnnxFx-IX%2F
+✅ Transcript found (1221 chars)
+📝 Sample: "Me show you how to make $600 in one day by installing a simple walkway. So I'm doing this work for o..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 309/954 (32.4%)
+📌 Post ID: 5c430e1d-b769-4f9c-b375-7344032dc089
+🔗 URL: https://www.instagram.com/p/DG4fj2xxD5n/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDG4fj2xxD5n%2F
+✅ Transcript found (1141 chars)
+📝 Sample: "Ever thought about starting your own furniture brand? Well, it's probably not what you'd expect it t..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 310/954 (32.5%)
+📌 Post ID: 1249d25f-1752-4409-b106-246c304f18d6
+🔗 URL: https://www.instagram.com/p/DJDLxItzPJV/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDJDLxItzPJV%2F
+✅ Transcript found (497 chars)
+📝 Sample: "Day one of trying a new hobby to recover from burnout. My name is Vanessa. I'm 25 and I'm still tryi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 311/954 (32.6%)
+📌 Post ID: a5134722-0329-4e35-b754-f8f83b91e4df
+🔗 URL: https://www.instagram.com/p/DIotrpKRU6x/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDIotrpKRU6x%2F
+✅ Transcript found (1011 chars)
+📝 Sample: "My pink Airbnb made me $11, 000 last month and what's crazy about this is that I used no money to st..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 312/954 (32.7%)
+📌 Post ID: ae4afa7c-017b-4c1a-9a33-8226e6bc21c7
+🔗 URL: https://www.instagram.com/p/DGW779fM0nD/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDGW779fM0nD%2F
+✅ Transcript found (1566 chars)
+📝 Sample: "Cookies and brownies with me for my online orders at the team baker. First we're cutting up like 11 ..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 313/954 (32.8%)
+📌 Post ID: fcbc860f-68f0-46df-9c3f-61dc15501d93
+🔗 URL: https://www.instagram.com/p/DFdu6ZHxg5i/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFdu6ZHxg5i%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 314/954 (32.9%)
+📌 Post ID: 81660b1e-9549-41c3-96bd-7e082b0ad135
+🔗 URL: https://www.instagram.com/p/DEBDyQLTOyO/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEBDyQLTOyO%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 315/954 (33.0%)
+📌 Post ID: 6a07aca3-f713-456a-b9de-2757523a94b9
+🔗 URL: https://www.instagram.com/p/DHOxtt0NE6o/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHOxtt0NE6o%2F
+✅ Transcript found (1826 chars)
+📝 Sample: "Welcome to day one of starting over at thirty-four. A series where I showed it's not too late to cha..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 316/954 (33.1%)
+📌 Post ID: 69484434-0864-4576-b953-b166f413e585
+🔗 URL: https://www.instagram.com/p/DEz23JVpGgE/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEz23JVpGgE%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 317/954 (33.2%)
+📌 Post ID: d5eef350-0837-403a-84a5-7d86e9b1c483
+🔗 URL: https://www.instagram.com/p/DHdesfVCuKx/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDHdesfVCuKx%2F
+✅ Transcript found (1565 chars)
+📝 Sample: "This is how I ended up taking the biggest risk of my life. Last year, I packed up everything I owned..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 318/954 (33.3%)
+📌 Post ID: 76ae9ee6-39cf-4d60-843e-86cbc58bebd8
+🔗 URL: https://www.instagram.com/p/DFX2ud_OwT4/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFX2ud_OwT4%2F
+✅ Transcript found (847 chars)
+📝 Sample: "In one year, I grew over 300 pounds of tomatoes plus some other vegetables in my extremely small tow..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 319/954 (33.4%)
+📌 Post ID: 5feb76c8-1d66-4254-bdf5-432890663eb1
+🔗 URL: https://www.instagram.com/p/C6qt2B4NKA1/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC6qt2B4NKA1%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 320/954 (33.5%)
+📌 Post ID: eb7fada7-277e-4c4b-b46a-bf375eb233d6
+🔗 URL: https://www.instagram.com/p/DA0kc0DCM0h/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDA0kc0DCM0h%2F
+✅ Transcript found (770 chars)
+📝 Sample: "Don't post anything on your stories until you've done this one thing. Go to Chat GPT and type in thi..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 321/954 (33.6%)
+📌 Post ID: 7a521f6b-969d-4d01-aa22-45f395d967ac
+🔗 URL: https://www.instagram.com/p/C9pwV7rPMVo/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9pwV7rPMVo%2F
+✅ Transcript found (970 chars)
+📝 Sample: "My wife says versus what she means. What my wife says doesn't always equate to what she means. Let m..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 322/954 (33.8%)
+📌 Post ID: 588f9b9b-33ee-447b-a2da-db7c1c4ba857
+🔗 URL: https://www.instagram.com/p/C84meBcM9NB/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC84meBcM9NB%2F
+✅ Transcript found (782 chars)
+📝 Sample: "Years ago, my teacher told me I'd never get in 10 I believe. I was halfway through high school and I..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 323/954 (33.9%)
+📌 Post ID: 637bc341-7b07-4a3b-bebe-0e9902c3e96e
+🔗 URL: https://www.instagram.com/p/C9t1s7myhI7/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9t1s7myhI7%2F
+✅ Transcript found (1306 chars)
+📝 Sample: "This is how my most viral video changed my life. I started as a teacher and I was just documenting a..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 324/954 (34.0%)
+📌 Post ID: 7b5227a6-2df7-4626-8cd0-a3e94799194a
+🔗 URL: https://www.instagram.com/p/C-IOTqUtbth/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC-IOTqUtbth%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 325/954 (34.1%)
+📌 Post ID: 299cf415-af1f-4d6f-8ceb-879e2c3c5cd6
+🔗 URL: https://www.instagram.com/p/DEgmPM_yqsz/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDEgmPM_yqsz%2F
+✅ Transcript found (1064 chars)
+📝 Sample: "It possible to love God and quit swearing in 10 days even though you're used to cussing around all y..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 326/954 (34.2%)
+📌 Post ID: fe752f49-167c-4dae-af21-dff397b3775c
+🔗 URL: https://www.instagram.com/p/DFfnKFWusVf/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFfnKFWusVf%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 327/954 (34.3%)
+📌 Post ID: 4d190998-a16f-4dac-a05f-9bdf2b0111a2
+🔗 URL: https://www.instagram.com/p/DAYtnokvm-J/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDAYtnokvm-J%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 328/954 (34.4%)
+📌 Post ID: b1f3692c-ea20-4474-bd50-dd1ae75ecbfe
+🔗 URL: https://www.instagram.com/p/DFkNykWxPoe/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFkNykWxPoe%2F
+❌ No transcript available for this post
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 329/954 (34.5%)
+📌 Post ID: 8d9398f0-0101-446d-a014-c4cfa78c387e
+🔗 URL: https://www.instagram.com/p/C9KNzOkIk6m/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC9KNzOkIk6m%2F
+✅ Transcript found (914 chars)
+📝 Sample: "Recently started feeling the pressure everyone talks about. You know the whole find a life partner s..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 330/954 (34.6%)
+📌 Post ID: e5cbf24a-ab39-4b51-b07b-23ddbb80af2e
+🔗 URL: https://www.instagram.com/p/DC5ioSRMrnS/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDC5ioSRMrnS%2F
+✅ Transcript found (862 chars)
+📝 Sample: "All started when this girl broke my heart. Uh Dennis, maybe you're oversharing a bit. No cap. Hi, I'..."
+💾 Database updated successfully
+⏳ Waiting 2 seconds before next request...
+
+🔍 Processing post 331/954 (34.7%)
+📌 Post ID: 85cc8199-907e-4e0b-b0d8-16a4f230002d
+🔗 URL: https://www.instagram.com/p/DFViUxyuruw/
+📱 Platform: instagram
+📡 Calling: https://api.scrapecreators.com/v2/instagram/media/transcript?url=https%3A%2F%2Fwww.instagram.com%2Fp%2FDFViUxyuruw%2F
