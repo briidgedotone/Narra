@@ -109,7 +109,7 @@ export class DatabaseService {
     profileId: string,
     updates: Database["public"]["Tables"]["profiles"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("profiles")
       .update(updates)
       .eq("id", profileId)
@@ -272,7 +272,7 @@ export class DatabaseService {
     folderId: string,
     updates: Database["public"]["Tables"]["folders"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("folders")
       .update(updates)
       .eq("id", folderId)
@@ -284,7 +284,7 @@ export class DatabaseService {
   }
 
   async deleteFolder(folderId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("folders")
       .delete()
       .eq("id", folderId);
@@ -461,7 +461,7 @@ export class DatabaseService {
   }
 
   async deleteBoard(boardId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("boards")
       .delete()
       .eq("id", boardId);
@@ -483,7 +483,7 @@ export class DatabaseService {
   }
 
   async removePostFromBoard(boardId: string, postId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("board_posts")
       .delete()
       .eq("board_id", boardId)
@@ -593,7 +593,7 @@ export class DatabaseService {
   }
 
   async unfollowProfile(userId: string, profileId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("follows")
       .delete()
       .eq("user_id", userId)
