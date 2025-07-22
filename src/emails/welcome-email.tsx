@@ -4,15 +4,11 @@ import {
   Container,
   Head,
   Html,
-  Img,
   Preview,
   Section,
   Text,
-  Button,
-  Row,
-  Column,
+  Link,
 } from "@react-email/components";
-import { EMAIL_IMAGES, EMAIL_LOGO } from "@/config/email-images";
 
 interface WelcomeEmailProps {
   userEmail?: string;
@@ -21,134 +17,51 @@ interface WelcomeEmailProps {
 
 export const WelcomeEmail = ({ 
   userEmail = "user@example.com",
-  baseUrl = "https://app.usenarra.com"
 }: WelcomeEmailProps) => {
   return (
     <Html>
-      <Head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;300;400;500;600;700;800;900"
-          rel="stylesheet"
-          type="text/css"
-        />
-      </Head>
-      <Preview>Welcome to Narra - Start discovering amazing content!</Preview>
+      <Head />
+      <Preview>Welcome to Narra! 💌</Preview>
       <Body style={main}>
         <Container style={container}>
-          {/* Logo Section */}
-          <Section style={logoSection}>
-            <Text style={EMAIL_LOGO.STYLES}>
-              {EMAIL_LOGO.TEXT}
-            </Text>
-          </Section>
-
-          {/* Hero Image Section */}
-          <Section style={heroSection}>
-            <Img
-              src={EMAIL_IMAGES.HERO}
-              width="306"
-              height="auto"
-              alt="Welcome to Narra"
-              style={heroImg}
-            />
-          </Section>
-
-          {/* Welcome Heading */}
-          <Section style={welcomeSection}>
-            <Text style={welcomeHeading}>Welcome to Narra!</Text>
-            <Text style={welcomeText}>
-              We&apos;re excited to have you on board. Narra helps you discover, organize, and save amazing social media content from TikTok and Instagram
-            </Text>
-          </Section>
-
-          {/* How It Works Section */}
-          <Section style={howItWorksSection}>
-            <Text style={sectionHeading}>How It Works</Text>
+          <Section style={section}>
+            <Text style={text}>Hey there,</Text>
             
-            {/* Discover */}
-            <Row style={featureRow}>
-              <Column style={featureIconColumn}>
-                <Img
-                  src={EMAIL_IMAGES.DISCOVER}
-                  width="111"
-                  height="auto"
-                  alt="Discover"
-                  style={featureIcon}
-                />
-              </Column>
-              <Column style={featureContentColumn}>
-                <Text style={featureTitle}>Discover</Text>
-                <Text style={featureDescription}>
-                  Explore trending content from TikTok and Instagram, filtered for quality and relevance.
-                </Text>
-              </Column>
-            </Row>
-
-            {/* Organize */}
-            <Row style={featureRow}>
-              <Column style={featureIconColumn}>
-                <Img
-                  src={EMAIL_IMAGES.ORGANIZE}
-                  width="111"
-                  height="auto"
-                  alt="Organize"
-                  style={featureIcon}
-                />
-              </Column>
-              <Column style={featureContentColumn}>
-                <Text style={featureTitle}>Organize</Text>
-                <Text style={featureDescription}>
-                  Create custom boards and folders to keep your content perfectly organized and accessible.
-                </Text>
-              </Column>
-            </Row>
-
-            {/* Share */}
-            <Row style={featureRow}>
-              <Column style={featureIconColumn}>
-                <Img
-                  src={EMAIL_IMAGES.SHARE}
-                  width="111"
-                  height="auto"
-                  alt="Share"
-                  style={featureIcon}
-                />
-              </Column>
-              <Column style={featureContentColumn}>
-                <Text style={featureTitle}>Share</Text>
-                <Text style={featureDescription}>
-                  Share your curated collections with your team.
-                </Text>
-              </Column>
-            </Row>
-
-            {/* CTA Button */}
-            <Section style={ctaSection}>
-              <Button style={ctaButton} href={`${baseUrl}/dashboard`}>
-                Start Curating Content
-              </Button>
-            </Section>
-          </Section>
-
-          {/* Get Started Section */}
-          <Section style={getStartedSection}>
-            <Text style={getStartedHeading}>Ready to Get Started?</Text>
-            <Text style={getStartedText}>
-              Jump into <strong>Narra</strong> and start discovering amazing content today.<br />
-              Follow your favorite creators, save inspiring posts, and build your content library.
+            <Text style={text}>
+              Thanks for checking out Narra! My name is Khoa and I&apos;m here to help you get setup quickly.
             </Text>
-            <Section style={ctaSection}>
-              <Button style={getStartedButton} href={`${baseUrl}/discovery`}>
-                Explore Content Now
-              </Button>
-            </Section>
-          </Section>
-
-          {/* Footer */}
-          <Section style={footerSection}>
-            <Text style={footerText}>
-              This email was sent to {userEmail} regarding your new Narra account.
-              If you need assistance, contact us at support@usenarra.com
+            
+            <Text style={text}>
+              Here&apos;s how you can start discovering & creating viral short form content:
+            </Text>
+            
+            <Text style={listItem}>
+              <strong>1. Check out our viral collections</strong><br />
+              Our team curated over 1000+ viral videos – take inspiration here
+            </Text>
+            
+            <Text style={listItem}>
+              <strong>2. Discover & follow top creators</strong><br />
+              Search up top creators, follow them, and even get transcripts to videos
+            </Text>
+            
+            <Text style={listItem}>
+              <strong>3. Save inspiration to your boards</strong><br />
+              Create and save unlimited videos to boards & folders
+            </Text>
+            
+            <Text style={listItem}>
+              <strong>4. Explore & create viral content</strong><br />
+              Get inspiration daily and create the most viral content yet
+            </Text>
+            
+            <Text style={text}>
+              If you have questions, just hit reply and I&apos;ll help you out.
+            </Text>
+            
+            <Text style={footer}>
+              You are receiving this email at {userEmail} because you opted-in to receive updates from Use Narra, 8 The Green, Dover, Delaware, 19901<br />
+              <Link href="#" style={unsubscribeLink}>Unsubscribe</Link>
             </Text>
           </Section>
         </Container>
@@ -157,183 +70,51 @@ export const WelcomeEmail = ({
   );
 };
 
-// Styles
+// Simple, clean styles - white background, black text
 const main = {
-  backgroundColor: "#f7f3ec",
-  fontFamily: '"Fira Sans", "Lucida Sans Unicode", "Lucida Grande", sans-serif',
+  backgroundColor: "#ffffff",
+  fontFamily: "Arial, sans-serif",
   margin: "0",
   padding: "0",
 };
 
 const container = {
-  backgroundColor: "#f7f3ec",
+  backgroundColor: "#ffffff",
   margin: "0 auto",
-  maxWidth: "680px",
+  maxWidth: "600px",
   width: "100%",
 };
 
-const logoSection = {
-  padding: "10px",
-  textAlign: "center" as const,
+const section = {
+  padding: "40px 20px",
 };
 
+const text = {
+  color: "#000000",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "0 0 16px 0",
+};
 
-const heroSection = {
-  backgroundColor: "#0d0b0e",
-  borderRadius: "20px",
-  padding: "20px 0",
-  textAlign: "center" as const,
+const listItem = {
+  color: "#000000",
+  fontSize: "16px",
+  lineHeight: "1.6",
   margin: "0 0 20px 0",
 };
 
-const heroImg = {
-  display: "block",
-  margin: "0 auto",
-};
-
-const welcomeSection = {
-  padding: "20px 10px 35px",
-  textAlign: "center" as const,
-};
-
-const welcomeHeading = {
-  color: "#101010",
-  fontSize: "50px",
-  fontWeight: "700",
-  lineHeight: "1.2",
-  margin: "0 0 20px 0",
-  textAlign: "center" as const,
-};
-
-const welcomeText = {
-  color: "#101010",
-  fontSize: "17px",
-  fontWeight: "400",
-  lineHeight: "1.5",
-  margin: "0",
-  padding: "0 10px",
-};
-
-const howItWorksSection = {
-  backgroundColor: "#0d0b0e",
-  padding: "30px 0",
-  borderRadius: "0",
-};
-
-const sectionHeading = {
-  color: "#ffffff",
-  fontSize: "42px",
-  fontWeight: "700",
-  lineHeight: "1.2",
-  margin: "0 0 25px 0",
-  textAlign: "center" as const,
-};
-
-const featureRow = {
-  padding: "0 0 30px 0",
-};
-
-const featureIconColumn = {
-  width: "25%",
-  verticalAlign: "middle" as const,
-  textAlign: "center" as const,
-};
-
-const featureContentColumn = {
-  width: "75%",
-  verticalAlign: "middle" as const,
-  paddingLeft: "15px",
-};
-
-const featureIcon = {
-  display: "block",
-  width: "111px",
-  height: "auto",
-};
-
-const featureTitle = {
-  color: "#ffffff",
-  fontSize: "24px",
-  fontWeight: "700",
-  lineHeight: "1.2",
-  margin: "0 0 10px 0",
-};
-
-const featureDescription = {
-  color: "#ffffff",
-  fontSize: "16px",
-  fontWeight: "300",
-  lineHeight: "1.5",
-  margin: "0",
-};
-
-const ctaSection = {
-  textAlign: "center" as const,
-  padding: "10px 0",
-};
-
-const ctaButton = {
-  backgroundColor: "#e7c5f8",
-  borderRadius: "60px",
-  color: "#0d0b0e",
-  fontSize: "16px",
-  fontWeight: "400",
-  padding: "5px 20px",
-  textDecoration: "none",
-  display: "inline-block",
-  lineHeight: "32px",
-};
-
-const getStartedSection = {
-  backgroundColor: "#e7c5f8",
-  borderRadius: "17px",
-  padding: "30px 20px",
-  margin: "15px 0",
-  textAlign: "center" as const,
-};
-
-const getStartedHeading = {
-  color: "#0d0b0e",
-  fontSize: "38px",
-  fontWeight: "700",
-  lineHeight: "1.2",
-  margin: "0 0 15px 0",
-  textAlign: "center" as const,
-};
-
-const getStartedText = {
-  color: "#0d0b0e",
-  fontSize: "16px",
-  fontWeight: "300",
-  lineHeight: "1.5",
-  margin: "0 0 25px 0",
-  textAlign: "center" as const,
-};
-
-const getStartedButton = {
-  backgroundColor: "#0d0b0e",
-  borderRadius: "60px",
-  color: "#ffffff",
-  fontSize: "16px",
-  fontWeight: "400",
-  padding: "12px 30px",
-  textDecoration: "none",
-  display: "inline-block",
-  lineHeight: "32px",
-};
-
-const footerSection = {
-  backgroundColor: "#ffffff",
-  padding: "20px",
-  textAlign: "center" as const,
-};
-
-const footerText = {
-  color: "#8898aa",
+const footer = {
+  color: "#666666",
   fontSize: "12px",
   lineHeight: "1.4",
-  margin: "0",
-  textAlign: "center" as const,
+  margin: "40px 0 0 0",
+  borderTop: "1px solid #eeeeee",
+  paddingTop: "20px",
+};
+
+const unsubscribeLink = {
+  color: "#666666",
+  textDecoration: "underline",
 };
 
 export default WelcomeEmail;

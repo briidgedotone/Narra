@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 import { db } from "@/lib/database";
-import { sendTemplateEmail } from "@/lib/email";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
@@ -133,20 +132,6 @@ export async function POST(request: NextRequest) {
 
             console.log("Subscription record created successfully");
 
-            // Send payment confirmation email
-            try {
-              const user = await db.getUserById(userId);
-              if (user?.email) {
-                await sendTemplateEmail('payment-success', {
-                  userEmail: user.email,
-                  planName: planId || 'Pro Plan',
-                  billingPeriod: (billingPeriod as 'monthly' | 'yearly') || 'monthly'
-                });
-                console.log("Payment confirmation email sent to:", user.email);
-              }
-            } catch (emailError) {
-              console.error("Failed to send payment confirmation email:", emailError);
-            }
           } catch (error) {
             console.error("Error creating subscription record:", error);
             console.error("Subscription object:", subscription);
@@ -264,18 +249,6 @@ export async function POST(request: NextRequest) {
               
               console.log(`Updated user ${subscriptionRecord.user_id} status to past_due`);
 
-              // Send payment failed email
-              try {
-                const user = await db.getUserById(subscriptionRecord.user_id);
-                if (user?.email) {
-                  await sendTemplateEmail('payment-failed', {
-                    userEmail: user.email,
-                    planName: subscriptionRecord.plan_id || 'Pro Plan'
-                  });
-                }
-              } catch (emailError) {
-                console.error("Failed to send payment failed email:", emailError);
-              }
             }
           } catch (error) {
             console.error("Error handling payment failure:", error);
