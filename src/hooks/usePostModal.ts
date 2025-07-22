@@ -80,13 +80,13 @@ export function usePostModal() {
   );
 
   const handleCopyTranscript = useCallback(async () => {
-    if (!transcript?.transcript) {
+    if (!transcript?.text) {
       toast.error("No transcript to copy");
       return;
     }
 
     try {
-      await navigator.clipboard.writeText(transcript.transcript);
+      await navigator.clipboard.writeText(transcript.text);
       toast.success("Transcript copied to clipboard");
     } catch (error) {
       console.error("Failed to copy transcript:", error);
