@@ -57,7 +57,7 @@ export const WelcomeEmail = ({
           <Section style={welcomeSection}>
             <Text style={welcomeHeading}>Welcome to Narra!</Text>
             <Text style={welcomeText}>
-              We're excited to have you on board. Narra helps you discover, organize, and save amazing social media content from TikTok and Instagram
+              We&apos;re excited to have you on board. Narra helps you discover, organize, and save amazing social media content from TikTok and Instagram
             </Text>
           </Section>
 

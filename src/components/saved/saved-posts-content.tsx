@@ -63,7 +63,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
   // Filter states
   const [activeFilter, setActiveFilter] = useState<"all" | "tiktok" | "instagram">("all");
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
-  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all-posts");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -271,34 +271,36 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
     }
 
     // Then apply date filter
-    const now = new Date();
-    let daysToFilter = 30; // default
+    if (dateFilter !== "all-posts") {
+      const now = new Date();
+      let daysToFilter = 30; // default
 
-    switch (dateFilter) {
-      case "last-30-days":
-        daysToFilter = 30;
-        break;
-      case "last-60-days":
-        daysToFilter = 60;
-        break;
-      case "last-90-days":
-        daysToFilter = 90;
-        break;
-      case "last-180-days":
-        daysToFilter = 180;
-        break;
-      case "last-365-days":
-        daysToFilter = 365;
-        break;
+      switch (dateFilter) {
+        case "last-30-days":
+          daysToFilter = 30;
+          break;
+        case "last-60-days":
+          daysToFilter = 60;
+          break;
+        case "last-90-days":
+          daysToFilter = 90;
+          break;
+        case "last-180-days":
+          daysToFilter = 180;
+          break;
+        case "last-365-days":
+          daysToFilter = 365;
+          break;
+      }
+
+      const cutoffDate = new Date();
+      cutoffDate.setDate(now.getDate() - daysToFilter);
+
+      filteredPosts = filteredPosts.filter(post => {
+        const postDate = new Date(post.datePosted);
+        return postDate >= cutoffDate;
+      });
     }
-
-    const cutoffDate = new Date();
-    cutoffDate.setDate(now.getDate() - daysToFilter);
-
-    filteredPosts = filteredPosts.filter(post => {
-      const postDate = new Date(post.datePosted);
-      return postDate >= cutoffDate;
-    });
 
     // Then apply sorting
     switch (sortOption) {
@@ -394,6 +396,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
                 </div>
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all-posts">All Posts</SelectItem>
                 <SelectItem value="last-30-days">Last 30 Days</SelectItem>
                 <SelectItem value="last-60-days">Last 60 Days</SelectItem>
                 <SelectItem value="last-90-days">Last 90 Days</SelectItem>
@@ -456,6 +459,7 @@ export function SavedPostsContent({}: SavedPostsContentProps) {
               </div>
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all-posts">All Posts</SelectItem>
               <SelectItem value="last-30-days">Last 30 Days</SelectItem>
               <SelectItem value="last-60-days">Last 60 Days</SelectItem>
               <SelectItem value="last-90-days">Last 90 Days</SelectItem>

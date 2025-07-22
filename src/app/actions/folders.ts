@@ -79,6 +79,16 @@ export async function deleteFolder(folderId: string) {
   }
 
   try {
+    // First verify the folder exists and user owns it
+    const folder = await db.getFolderById(folderId);
+    if (!folder) {
+      return { success: false, error: "Folder not found" };
+    }
+
+    if (folder.user_id !== userId) {
+      return { success: false, error: "Unauthorized to delete this folder" };
+    }
+
     await db.deleteFolder(folderId);
 
     revalidatePath("/dashboard");
@@ -141,6 +151,18 @@ export async function deleteBoard(boardId: string) {
   }
 
   try {
+    // First verify the board exists and user owns it
+    const board = await db.getBoardById(boardId);
+    if (!board) {
+      return { success: false, error: "Board not found" };
+    }
+
+    // Get the folder to check user ownership
+    const folder = await db.getFolderById(board.folder_id);
+    if (!folder || folder.user_id !== userId) {
+      return { success: false, error: "Unauthorized to delete this board" };
+    }
+
     await db.deleteBoard(boardId);
 
     revalidatePath("/dashboard");

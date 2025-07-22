@@ -246,6 +246,7 @@ export function FollowingContent({
                     </div>
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all-posts">All Posts</SelectItem>
                     <SelectItem value="last-30-days">Last 30 Days</SelectItem>
                     <SelectItem value="last-60-days">Last 60 Days</SelectItem>
                     <SelectItem value="last-90-days">Last 90 Days</SelectItem>

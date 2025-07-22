@@ -109,7 +109,7 @@ export class DatabaseService {
     profileId: string,
     updates: Database["public"]["Tables"]["profiles"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("profiles")
       .update(updates)
       .eq("id", profileId)
@@ -272,7 +272,7 @@ export class DatabaseService {
     folderId: string,
     updates: Database["public"]["Tables"]["folders"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("folders")
       .update(updates)
       .eq("id", folderId)
@@ -284,7 +284,7 @@ export class DatabaseService {
   }
 
   async deleteFolder(folderId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("folders")
       .delete()
       .eq("id", folderId);
@@ -415,7 +415,7 @@ export class DatabaseService {
     boardId: string,
     updates: Database["public"]["Tables"]["boards"]["Update"]
   ) {
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .update(updates)
       .eq("id", boardId)
@@ -428,7 +428,7 @@ export class DatabaseService {
 
   async enableBoardSharing(boardId: string) {
     // First check if board already has a public_id
-    const { data: existingBoard, error: fetchError } = await this.client
+    const { data: existingBoard, error: fetchError } = await this.adminClient
       .from("boards")
       .select("public_id, is_shared")
       .eq("id", boardId)
@@ -444,7 +444,7 @@ export class DatabaseService {
     // Generate a new public_id if needed
     const public_id = existingBoard?.public_id || this.generatePublicId();
     
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .update({ is_shared: true, public_id })
       .eq("id", boardId)
@@ -461,7 +461,7 @@ export class DatabaseService {
   }
 
   async deleteBoard(boardId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("boards")
       .delete()
       .eq("id", boardId);
@@ -483,7 +483,7 @@ export class DatabaseService {
   }
 
   async removePostFromBoard(boardId: string, postId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("board_posts")
       .delete()
       .eq("board_id", boardId)
@@ -593,7 +593,7 @@ export class DatabaseService {
   }
 
   async unfollowProfile(userId: string, profileId: string) {
-    const { error } = await this.client
+    const { error } = await this.adminClient
       .from("follows")
       .delete()
       .eq("user_id", userId)
