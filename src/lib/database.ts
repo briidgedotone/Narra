@@ -428,7 +428,7 @@ export class DatabaseService {
 
   async enableBoardSharing(boardId: string) {
     // First check if board already has a public_id
-    const { data: existingBoard, error: fetchError } = await this.client
+    const { data: existingBoard, error: fetchError } = await this.adminClient
       .from("boards")
       .select("public_id, is_shared")
       .eq("id", boardId)
@@ -444,7 +444,7 @@ export class DatabaseService {
     // Generate a new public_id if needed
     const public_id = existingBoard?.public_id || this.generatePublicId();
     
-    const { data, error } = await this.client
+    const { data, error } = await this.adminClient
       .from("boards")
       .update({ is_shared: true, public_id })
       .eq("id", boardId)
