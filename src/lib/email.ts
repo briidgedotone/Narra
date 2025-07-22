@@ -1,8 +1,6 @@
 import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import WelcomeEmail from '@/emails/welcome-email';
-import PaymentSuccessEmail from '@/emails/payment-success-email';
-import PaymentFailedEmail from '@/emails/payment-failed-email';
 
 // Initialize Resend client (lazy loading)
 let resend: Resend | null = null;
@@ -18,24 +16,11 @@ function getResendClient() {
 }
 
 // Email template types
-export type EmailTemplate = 'welcome' | 'payment-success' | 'payment-failed';
+export type EmailTemplate = 'welcome';
 
 // Template-specific props
 interface WelcomeEmailData {
   userEmail: string;
-}
-
-interface PaymentSuccessEmailData {
-  userEmail: string;
-  planName: string;
-  amount?: string;
-  billingPeriod?: 'monthly' | 'yearly';
-}
-
-interface PaymentFailedEmailData {
-  userEmail: string;
-  planName: string;
-  amount?: string;
 }
 
 // Enhanced email sending function with React templates
@@ -45,18 +30,8 @@ export async function sendTemplateEmail(
 ): Promise<{ success: boolean; data?: any; error?: any }>;
 
 export async function sendTemplateEmail(
-  template: 'payment-success',
-  data: PaymentSuccessEmailData
-): Promise<{ success: boolean; data?: any; error?: any }>;
-
-export async function sendTemplateEmail(
-  template: 'payment-failed',
-  data: PaymentFailedEmailData
-): Promise<{ success: boolean; data?: any; error?: any }>;
-
-export async function sendTemplateEmail(
   template: EmailTemplate,
-  data: WelcomeEmailData | PaymentSuccessEmailData | PaymentFailedEmailData
+  data: WelcomeEmailData
 ) {
   try {
     let html: string;
@@ -68,31 +43,6 @@ export async function sendTemplateEmail(
         const welcomeData = data as WelcomeEmailData;
         html = await render(WelcomeEmail({ userEmail: welcomeData.userEmail }));
         subject = 'Welcome to Narra!';
-        break;
-
-      case 'payment-success':
-        const successData = data as PaymentSuccessEmailData;
-        const successProps: any = {
-          userEmail: successData.userEmail,
-          planName: successData.planName,
-        };
-        if (successData.amount) successProps.amount = successData.amount;
-        if (successData.billingPeriod) successProps.billingPeriod = successData.billingPeriod;
-        
-        html = await render(PaymentSuccessEmail(successProps));
-        subject = 'Payment Confirmed - Welcome to Your Plan!';
-        break;
-
-      case 'payment-failed':
-        const failedData = data as PaymentFailedEmailData;
-        const failedProps: any = {
-          userEmail: failedData.userEmail,
-          planName: failedData.planName,
-        };
-        if (failedData.amount) failedProps.amount = failedData.amount;
-        
-        html = await render(PaymentFailedEmail(failedProps));
-        subject = 'Payment Failed - Action Required';
         break;
 
       default:
