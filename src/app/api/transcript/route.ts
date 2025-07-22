@@ -105,10 +105,10 @@ export async function GET(request: NextRequest) {
       // TikTok response format: { transcript: "text..." }
       transcriptText = (result.data as any)?.transcript || "";
     } else {
-      // Instagram response format: { transcripts: [{ text: "..." }] }
+      // Instagram response format: { transcripts: [{ transcript: "..." }] }
       const transcripts = (result.data as any)?.transcripts;
       if (transcripts && transcripts.length > 0) {
-        transcriptText = transcripts[0].text || "";
+        transcriptText = transcripts[0].transcript || "";
       }
     }
 
