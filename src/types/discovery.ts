@@ -168,6 +168,7 @@ export type SortOption =
   | "most-liked"
   | "most-commented";
 export type DateFilter =
+  | "all-posts"
   | "last-30-days"
   | "last-60-days"
   | "last-90-days"

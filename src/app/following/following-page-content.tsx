@@ -88,7 +88,7 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [sortOption, setSortOption] = useState<SortOption>("most-recent");
-  const [dateFilter, setDateFilter] = useState<DateFilter>("last-30-days");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all-posts");
 
   // Save post modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -291,34 +291,38 @@ export function FollowingPageContent({}: FollowingPageContentProps) {
   // Filter and sort posts based on selected options
   const filteredAndSortedPosts = useMemo(() => {
     // First apply date filter
-    const now = new Date();
-    let daysToFilter = 30; // default
+    let filteredPosts = posts;
+    
+    if (dateFilter !== "all-posts") {
+      const now = new Date();
+      let daysToFilter = 30; // default
 
-    switch (dateFilter) {
-      case "last-30-days":
-        daysToFilter = 30;
-        break;
-      case "last-60-days":
-        daysToFilter = 60;
-        break;
-      case "last-90-days":
-        daysToFilter = 90;
-        break;
-      case "last-180-days":
-        daysToFilter = 180;
-        break;
-      case "last-365-days":
-        daysToFilter = 365;
-        break;
+      switch (dateFilter) {
+        case "last-30-days":
+          daysToFilter = 30;
+          break;
+        case "last-60-days":
+          daysToFilter = 60;
+          break;
+        case "last-90-days":
+          daysToFilter = 90;
+          break;
+        case "last-180-days":
+          daysToFilter = 180;
+          break;
+        case "last-365-days":
+          daysToFilter = 365;
+          break;
+      }
+
+      const cutoffDate = new Date();
+      cutoffDate.setDate(now.getDate() - daysToFilter);
+
+      filteredPosts = posts.filter(post => {
+        const postDate = new Date(post.date_posted);
+        return postDate >= cutoffDate;
+      });
     }
-
-    const cutoffDate = new Date();
-    cutoffDate.setDate(now.getDate() - daysToFilter);
-
-    const filteredPosts = posts.filter(post => {
-      const postDate = new Date(post.date_posted);
-      return postDate >= cutoffDate;
-    });
 
     // Then apply sorting
     const sortedPosts = [...filteredPosts];
